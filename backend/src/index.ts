@@ -3,6 +3,8 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import { generateUploadUrl } from './services/r2.service.js';
 import { supabaseAdmin } from './services/supabase.service.js';
+import adminRouter from './routes/admin.routes.js';
+import { renderAdminPage } from './views/admin_page.js';
 
 dotenv.config();
 
@@ -12,12 +14,21 @@ const PORT = process.env.PORT || 4000;
 app.use(cors());
 app.use(express.json());
 
+// Giao diện Web Admin Portal trực quan
+app.get('/admin', (req, res) => {
+  res.send(renderAdminPage());
+});
+
+// Admin REST APIs
+app.use('/api/admin', adminRouter);
+
 // Root endpoint kiểm tra trạng thái
 app.get('/', (req, res) => {
   res.json({
     platform: 'Dorabox Mini Social Network API',
     status: 'online',
     version: '1.0.0',
+    adminPortal: '/admin',
     supabaseConfigured: Boolean(process.env.SUPABASE_URL),
     r2Configured: Boolean(process.env.R2_ACCOUNT_ID),
     timestamp: new Date().toISOString(),
