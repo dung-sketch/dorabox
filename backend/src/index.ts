@@ -12,6 +12,18 @@ const PORT = process.env.PORT || 4000;
 app.use(cors());
 app.use(express.json());
 
+// Root endpoint kiểm tra trạng thái
+app.get('/', (req, res) => {
+  res.json({
+    platform: 'Dorabox Mini Social Network API',
+    status: 'online',
+    version: '1.0.0',
+    supabaseConfigured: Boolean(process.env.SUPABASE_URL),
+    r2Configured: Boolean(process.env.R2_ACCOUNT_ID),
+    timestamp: new Date().toISOString(),
+  });
+});
+
 // Health check
 app.get('/api/health', (req, res) => {
   res.json({
