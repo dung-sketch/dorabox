@@ -1,7 +1,7 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import crypto from 'crypto';
 import { supabaseAdmin } from '../services/supabase.service.js';
-import { sendFcmHttpV1Message } from '../services/firebase.service.js';
+import { sendFcmHttpV1Message, getFirebaseProjectId } from '../services/firebase.service.js';
 
 const router = Router();
 
@@ -546,7 +546,7 @@ router.get('/system-health', async (req, res) => {
         },
         firebaseFcm: {
           status: 'ready_http_v1',
-          projectId: 'dorabox-4bbcb',
+          projectId: getFirebaseProjectId(),
         },
         memory: {
           rssMb: Math.round(memoryUsage.rss / 1024 / 1024),
