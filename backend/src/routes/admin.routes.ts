@@ -459,6 +459,34 @@ router.post('/reports/:id/action', async (req, res) => {
       return res.json({ success: true, message: 'Đã xử lý và dọn dẹp nội dung vi phạm thành công.' });
     }
 
+    if (action === 'approve_oa') {
+      await supabaseAdmin
+        .from('profiles')
+        .update({ is_oa: true, is_vip: true, account_type: 'oa' })
+        .eq('id', report.target_id);
+
+      await supabaseAdmin
+        .from('reports')
+        .update({ status: 'reviewed' })
+        .eq('id', id);
+
+      return res.json({ success: true, message: 'Đã duyệt và cấp Tích Vàng OA ⭐ cho tài khoản!' });
+    }
+
+    if (action === 'approve_verified') {
+      await supabaseAdmin
+        .from('profiles')
+        .update({ is_verified: true })
+        .eq('id', report.target_id);
+
+      await supabaseAdmin
+        .from('reports')
+        .update({ status: 'reviewed' })
+        .eq('id', id);
+
+      return res.json({ success: true, message: 'Đã duyệt và cấp Tích Xanh ✓ cho tài khoản!' });
+    }
+
     return res.status(400).json({ error: 'Hành động không hợp lệ.' });
   } catch (err: any) {
     return res.status(500).json({ error: err.message });

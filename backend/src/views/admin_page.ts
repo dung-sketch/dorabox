@@ -407,7 +407,7 @@ export function renderAdminPage(): string {
       <li class="nav-item" data-tab="bao-cao">
         <div class="nav-left">
           <span class="nav-icon">🚨</span>
-          <span>Báo Cáo Vi Phạm</span>
+          <span>Duyệt Hồ Sơ & Báo Cáo</span>
         </div>
         <span class="nav-pill" id="sidebar-report-badge">0</span>
       </li>
@@ -478,13 +478,13 @@ export function renderAdminPage(): string {
             <div class="kpi-meta"><span style="color: var(--gold);">★</span> Tài khoản chính chủ</div>
           </div>
 
-          <div class="kpi-card" style="--accent-color: var(--purple);">
+          <div class="kpi-card" style="--accent-color: var(--gold);">
             <div class="kpi-header">
-              <span class="kpi-title">Hội Viên VIP</span>
-              <div class="kpi-icon">👑</div>
+              <span class="kpi-title">Tích Vàng OA ⭐</span>
+              <div class="kpi-icon">⭐</div>
             </div>
             <div class="kpi-value" id="kpi-vip">-</div>
-            <div class="kpi-meta">Huy hiệu VIP đặc quyền</div>
+            <div class="kpi-meta"><span style="color: var(--gold);">★</span> Tài khoản OA chính thức</div>
           </div>
 
           <div class="kpi-card" style="--accent-color: var(--red);">
@@ -566,9 +566,9 @@ export function renderAdminPage(): string {
             <span>⚡ Phím Tắt Điều Hành Nhanh</span>
           </div>
           <div style="display: flex; gap: 12px; flex-wrap: wrap;">
-            <button class="btn btn-blue" onclick="switchTab('thanh-vien')">👥 Quản Lý Thành Viên & Duyệt Tích Xanh</button>
-            <button class="btn btn-danger" onclick="switchTab('bao-cao')">🚨 Xử Lý Hàng Đợi Báo Cáo Vi Phạm</button>
-            <button class="btn btn-gold" onclick="switchTab('bai-viet')">📝 Kiểm Duyệt Bài Viết Cộng Đồng</button>
+            <button class="btn btn-gold" onclick="switchTab('thanh-vien')">⭐ Cấp Tích Vàng OA & Tích Xanh</button>
+            <button class="btn btn-blue" onclick="switchTab('thanh-vien')">👥 Quản Lý Thành Viên</button>
+            <button class="btn btn-danger" onclick="switchTab('bao-cao')">🚨 Duyệt Hồ Sơ Chờ Cấp & Báo Cáo</button>
             <button class="btn btn-primary" onclick="switchTab('phat-thong-bao')">📢 Phát Sóng Push Notification</button>
           </div>
         </div>
@@ -585,13 +585,26 @@ export function renderAdminPage(): string {
 
             <div class="panel-filters">
               <button class="filter-btn active" onclick="filterUsers('all', this)">Tất cả</button>
+              <button class="filter-btn" onclick="filterUsers('oa', this)" style="border-color: rgba(255, 200, 55, 0.4); color: var(--gold); font-weight: 700;">Tích Vàng OA ⭐</button>
               <button class="filter-btn" onclick="filterUsers('verified', this)">Tích xanh ✓</button>
-              <button class="filter-btn" onclick="filterUsers('vip', this)">VIP 👑</button>
               <button class="filter-btn" onclick="filterUsers('banned', this)">Bị khóa 🚫</button>
 
               <div class="search-wrap">
                 <span class="search-icon">🔍</span>
                 <input type="text" id="user-search-input" class="search-input" placeholder="Tìm theo tên hoặc @username..." />
+              </div>
+            </div>
+          </div>
+
+          <!-- BANNER HƯỚNG DẪN CẤP TÍCH VÀNG OA -->
+          <div style="background: rgba(255, 200, 55, 0.08); border: 1px solid rgba(255, 200, 55, 0.35); border-radius: 14px; padding: 14px 18px; margin-bottom: 18px; display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <span style="font-size: 24px;">⭐</span>
+              <div>
+                <div style="font-size: 14px; font-weight: 700; color: var(--gold);">CÁCH CẤP TÍCH VÀNG OA CHO THÀNH VIÊN:</div>
+                <div style="font-size: 13px; color: var(--text-muted); margin-top: 2px;">
+                  Tìm thành viên trong danh sách bên dưới, rồi bấm nút màu vàng <span style="background: var(--gold); color: #000; padding: 2px 8px; border-radius: 6px; font-weight: 800; font-size: 11.5px;">Tích Vàng OA ⭐</span> tại cột <strong>Hành Động Quản Trị</strong>. Nick sẽ lập tức có huy hiệu Tích Vàng Sao và loại tài khoản OA trên toàn hệ thống!
+                </div>
               </div>
             </div>
           </div>
@@ -692,7 +705,7 @@ export function renderAdminPage(): string {
           <div class="panel-header">
             <div class="panel-title">
               <span>🚨</span>
-              <span>Hàng Đợi Xử Lý Báo Cáo Vi Phạm</span>
+              <span>Hàng Đợi Xử Lý Báo Cáo & Xét Duyệt Cấp Tích (OA / Xanh)</span>
             </div>
             <span class="badge badge-banned" id="reports-pending-count">0 Chờ xử lý</span>
           </div>
@@ -959,7 +972,7 @@ export function renderAdminPage(): string {
           renderUsersTable(allUsersCache);
 
           // Update VIP count
-          const vipCount = allUsersCache.filter(u => u.is_vip).length;
+          const vipCount = allUsersCache.filter(u => u.is_vip || u.is_oa || u.account_type === 'oa').length;
           document.getElementById('kpi-vip').textContent = vipCount;
         }
       } catch (err) {
@@ -1113,8 +1126,8 @@ export function renderAdminPage(): string {
         renderUsersTable(allUsersCache);
       } else if (type === 'verified') {
         renderUsersTable(allUsersCache.filter(u => u.is_verified));
-      } else if (type === 'vip') {
-        renderUsersTable(allUsersCache.filter(u => u.is_vip));
+      } else if (type === 'oa' || type === 'vip') {
+        renderUsersTable(allUsersCache.filter(u => u.is_oa || u.is_vip || u.account_type === 'oa'));
       } else if (type === 'banned') {
         renderUsersTable(allUsersCache.filter(u => u.is_banned));
       }
@@ -1340,45 +1353,70 @@ export function renderAdminPage(): string {
     function renderReportsTable(reports) {
       const tbody = document.getElementById('reports-table-body');
       if (!reports || reports.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 40px; color: var(--text-dim);">Chưa có báo cáo vi phạm nào trong hàng đợi.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 40px; color: var(--text-dim);">Chưa có báo cáo vi phạm hoặc hồ sơ nào trong hàng đợi.</td></tr>';
         return;
       }
 
       tbody.innerHTML = reports.map(r => {
         const reporter = r.profiles || {};
-        const reporterName = reporter.display_name || reporter.username || 'Thành viên ẩn danh';
+        const reporterName = reporter.display_name || reporter.username || 'Thành viên';
         const dateStr = r.created_at ? new Date(r.created_at).toLocaleDateString('vi-VN') : '-';
         const isPending = r.status === 'pending';
+        const isUserTarget = r.target_type === 'user';
 
         const statusBadge = isPending
           ? '<span class="badge badge-banned">CHỜ XỬ LÝ</span>'
-          : '<span class="badge badge-verified">ĐÃ XỬ LÝ</span>';
+          : (r.status === 'dismissed' ? '<span class="badge" style="background: rgba(255,255,255,0.1); color: var(--text-dim);">BÁC BỎ</span>' : '<span class="badge badge-verified">ĐÃ DUYỆT</span>');
+
+        const typeBadge = isUserTarget
+          ? '<span class="badge" style="background: rgba(255, 200, 55, 0.2); color: var(--gold); border: 1px solid rgba(255, 200, 55, 0.4);">⭐ HỒ SƠ CẤP TÍCH</span>'
+          : \`<span class="badge badge-vip">\${escapeHtml(r.target_type || 'Nội dung')}</span>\`;
+
+        let actionButtonsHtml = '<span style="color: var(--text-dim); font-size: 12px;">Đã hoàn tất</span>';
+        if (isPending) {
+          if (isUserTarget) {
+            actionButtonsHtml = \`
+              <div style="display: inline-flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end;">
+                <button class="btn btn-sm btn-gold" onclick="actionReport('\${r.id}', 'approve_oa')" title="Duyệt cấp Tích Vàng OA">
+                  ⭐ Duyệt Tích Vàng OA
+                </button>
+                <button class="btn btn-sm btn-blue" onclick="actionReport('\${r.id}', 'approve_verified')" title="Duyệt cấp Tích Xanh">
+                  ✓ Duyệt Tích Xanh
+                </button>
+                <button class="btn btn-sm btn-secondary" onclick="actionReport('\${r.id}', 'dismiss')">
+                  Bác Bỏ
+                </button>
+              </div>
+            \`;
+          } else {
+            actionButtonsHtml = \`
+              <div style="display: inline-flex; gap: 6px;">
+                <button class="btn btn-sm btn-secondary" onclick="actionReport('\${r.id}', 'dismiss')">
+                  Bác Bỏ
+                </button>
+                <button class="btn btn-sm btn-danger" onclick="actionReport('\${r.id}', 'delete_target')">
+                  Xử Lý & Xóa
+                </button>
+              </div>
+            \`;
+          }
+        }
 
         return \`
           <tr>
             <td>
               <div style="font-weight: 700; color: var(--text); font-size: 13.5px;">\${escapeHtml(reporterName)}</div>
-              <div style="font-size: 11.5px; color: var(--text-dim);">ID: \${r.id.substring(0, 8)}...</div>
+              <div style="font-size: 11.5px; color: var(--text-dim);">UID: \${r.reporter_id ? r.reporter_id.substring(0, 8) + '...' : '-'}</div>
             </td>
-            <td>
-              <span class="badge badge-vip">\${escapeHtml(r.target_type || 'Nội dung')}</span>
-            </td>
-            <td style="max-width: 280px; color: var(--text);">
-              \${escapeHtml(r.reason || 'Vi phạm tiêu chuẩn cộng đồng')}
+            <td>\${typeBadge}</td>
+            <td style="max-width: 300px; color: var(--text);">
+              <div style="font-weight: 500;">\${escapeHtml(r.reason || 'Yêu cầu xử lý')}</div>
+              \${isUserTarget ? \`<div style="font-size: 11px; color: var(--gold); margin-top: 4px;">Target UID: \${r.target_id}</div>\` : ''}
             </td>
             <td>\${statusBadge}</td>
             <td style="font-size: 12.5px;">\${dateStr}</td>
             <td style="text-align: right;">
-              \${isPending ? \`
-                <div style="display: inline-flex; gap: 6px;">
-                  <button class="btn btn-sm btn-secondary" onclick="actionReport('\${r.id}', 'dismiss')">
-                    Bác Bỏ
-                  </button>
-                  <button class="btn btn-sm btn-danger" onclick="actionReport('\${r.id}', 'delete_target')">
-                    Xử Lý & Xóa
-                  </button>
-                </div>
-              \` : '<span style="color: var(--text-dim); font-size: 12px;">Đã hoàn tất</span>'}
+              \${actionButtonsHtml}
             </td>
           </tr>
         \`;
