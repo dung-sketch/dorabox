@@ -206,3 +206,25 @@ set email = u.email
 from auth.users u
 where p.id = u.id and p.email is null;
 
+-- Phân quyền RLS cho bảng reports (Báo cáo vi phạm & Yêu cầu duyệt tích xanh)
+alter table public.reports enable row level security;
+
+drop policy if exists "Allow authenticated users to insert reports" on public.reports;
+create policy "Allow authenticated users to insert reports" on public.reports
+  for insert with check (auth.uid() = reporter_id);
+
+drop policy if exists "Allow users to read own reports" on public.reports;
+create policy "Allow users to read own reports" on public.reports
+  for select using (auth.uid() = reporter_id);
+
+drop policy if exists "Allow service role full access on reports" on public.reports;
+create policy "Allow service role full access on reports" on public.reports
+  for all using (true) with check (true);
+
+-- Phân quyền RLS cho bảng user_blocks
+alter table public.user_blocks enable row level security;
+
+drop policy if exists "Allow users to manage own blocks" on public.user_blocks;
+create policy "Allow users to manage own blocks" on public.user_blocks
+  for all using (auth.uid() = blocker_id) with check (auth.uid() = blocker_id);
+
