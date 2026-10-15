@@ -1,0 +1,21 @@
+# Node & Backend
+backend/node_modules/
+backend/dist/
+backend/.env
+backend/.env.local
+
+# Flutter & Dart
+mobile/.dart_tool/
+mobile/build/
+mobile/.flutter-plugins
+mobile/.flutter-plugins-dependencies
+mobile/.packages
+mobile/.pub-cache/
+mobile/.pub/
+
+# System & IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.log
