@@ -3,6 +3,8 @@ backend/node_modules/
 backend/dist/
 backend/.env
 backend/.env.local
+backend/*firebase-adminsdk*.json
+backend/*service-account*.json
 
 # Giữ private mã nguồn Flutter trên máy, không đưa lên GitHub
 mobile/

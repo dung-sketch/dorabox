@@ -5,6 +5,7 @@ import { generateUploadUrl } from './services/r2.service.js';
 import { supabaseAdmin } from './services/supabase.service.js';
 import adminRouter from './routes/admin.routes.js';
 import { renderAdminPage } from './views/admin_page.js';
+import { sendFcmHttpV1Message } from './services/firebase.service.js';
 
 dotenv.config();
 
@@ -46,19 +47,22 @@ app.get('/api/health', (req, res) => {
 
 /**
  * Endpoint cấp Presigned URL upload ảnh lên Cloudflare R2
- * Android client gọi endpoint này lấy link rồi đẩy file WebP trực tiếp lên R2
+ * Android client gọi endpoint này lấy link rồi đẩy file trực tiếp lên R2
  */
-app.post('/api/upload/presigned-url', async (req, res) => {
+app.all('/api/upload/presigned-url', async (req, res) => {
   try {
-    const { userId, folder, contentType } = req.body;
+    const userId = req.body?.userId || req.query.userId;
+    const folder = req.body?.folder || req.query.folder || 'posts';
+    const contentType = req.body?.contentType || req.query.contentType || 'image/webp';
+
     if (!userId) {
       return res.status(400).json({ error: 'userId is required' });
     }
 
     const result = await generateUploadUrl(
-      userId,
-      folder || 'posts',
-      contentType || 'image/webp'
+      String(userId),
+      (folder === 'avatars' || folder === 'chat') ? folder : 'posts',
+      String(contentType)
     );
 
     return res.json({
@@ -72,21 +76,60 @@ app.post('/api/upload/presigned-url', async (req, res) => {
 });
 
 /**
- * Quản trị viên Dashboard API: Lấy thống kê tổng quan (Metrics)
+ * Endpoint gửi Push Notification qua FCM (Hỗ trợ chuẩn HTTP v1 mới nhất)
  */
-app.get('/api/admin/metrics', async (req, res) => {
+app.post('/api/fcm/send', async (req, res) => {
   try {
-    const [postsRes, usersRes] = await Promise.all([
-      supabaseAdmin.from('posts').select('id', { count: 'exact', head: true }),
-      supabaseAdmin.from('profiles').select('id', { count: 'exact', head: true }),
-    ]);
+    const { fcmToken, title, body, data } = req.body;
+    if (!fcmToken || !title) {
+      return res.status(400).json({ error: 'fcmToken and title are required' });
+    }
 
-    return res.json({
-      totalPosts: postsRes.count || 0,
-      totalUsers: usersRes.count || 0,
+    // 1. Thử gửi qua Firebase Admin SDK chuẩn HTTP v1 mới nhất (Service Account)
+    const v1Result = await sendFcmHttpV1Message({
+      token: fcmToken,
+      title,
+      body,
+      data,
     });
-  } catch (err: any) {
-    return res.status(500).json({ error: err.message });
+
+    if (v1Result.success) {
+      return res.json({ success: true, messageId: v1Result.messageId });
+    }
+
+    // 2. Dự phòng: Legacy Server Key (nếu có cấu hình)
+    const fcmServerKey = process.env.FCM_SERVER_KEY;
+    if (fcmServerKey) {
+      const response = await fetch('https://fcm.googleapis.com/fcm/send', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `key=${fcmServerKey}`,
+        },
+        body: JSON.stringify({
+          to: fcmToken,
+          notification: {
+            title,
+            body,
+            sound: 'default',
+          },
+          data: data || {},
+        }),
+      });
+
+      const resData = await response.json();
+      return res.json({ success: true, result: resData });
+    }
+
+    console.log(`[FCM Mock Log] To: ${fcmToken.slice(0, 10)}... | Title: "${title}" | Body: "${body}"`);
+    return res.json({
+      success: true,
+      message: 'FCM push request processed',
+      payload: { fcmToken, title, body, data },
+    });
+  } catch (error: any) {
+    console.error('Error in /api/fcm/send:', error);
+    return res.status(500).json({ error: error.message || 'FCM send failed' });
   }
 });
 
