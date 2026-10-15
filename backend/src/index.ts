@@ -112,6 +112,13 @@ app.post('/api/fcm/send', async (req, res) => {
             title,
             body,
             sound: 'default',
+            android_channel_id: 'dorabox_channel',
+          },
+          android: {
+            priority: 'high',
+            notification: {
+              channel_id: 'dorabox_channel',
+            },
           },
           data: data || {},
         }),
@@ -130,6 +137,60 @@ app.post('/api/fcm/send', async (req, res) => {
   } catch (error: any) {
     console.error('Error in /api/fcm/send:', error);
     return res.status(500).json({ error: error.message || 'FCM send failed' });
+  }
+});
+
+/**
+ * Endpoint xóa bình luận an toàn cho User (Kiểm tra token & quyền tác giả/chủ bài viết)
+ */
+app.delete('/api/user/comments/:id', async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+    const token = authHeader?.replace(/^Bearer\s+/i, '');
+    if (!token) {
+      return res.status(401).json({ error: 'Missing Bearer token' });
+    }
+
+    const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(token);
+    if (authError || !user) {
+      return res.status(401).json({ error: 'Phiên đăng nhập không hợp lệ hoặc đã hết hạn' });
+    }
+
+    const commentId = req.params.id;
+    const { data: comment, error: fetchErr } = await supabaseAdmin
+      .from('comments')
+      .select('id, user_id, post_id')
+      .eq('id', commentId)
+      .maybeSingle();
+
+    if (fetchErr || !comment) {
+      return res.status(404).json({ error: 'Không tìm thấy bình luận' });
+    }
+
+    let isAuthorized = comment.user_id === user.id;
+    if (!isAuthorized) {
+      const { data: post } = await supabaseAdmin
+        .from('posts')
+        .select('author_id')
+        .eq('id', comment.post_id)
+        .maybeSingle();
+      if (post && post.author_id === user.id) {
+        isAuthorized = true;
+      }
+    }
+
+    if (!isAuthorized) {
+      return res.status(403).json({ error: 'Bạn không có quyền xóa bình luận này' });
+    }
+
+    const { error: delErr } = await supabaseAdmin.from('comments').delete().eq('id', commentId);
+    if (delErr) {
+      return res.status(500).json({ error: delErr.message });
+    }
+
+    return res.json({ success: true, message: 'Đã xóa bình luận thành công' });
+  } catch (err: any) {
+    return res.status(500).json({ error: err.message });
   }
 });
 

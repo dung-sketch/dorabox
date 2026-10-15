@@ -998,8 +998,8 @@ export function renderAdminPage(): string {
                 <div class="user-meta">
                   <h4>
                     \${escapeHtml(u.display_name || u.username || 'Dorabox User')}
-                    \${u.is_verified ? '<span style="color: var(--blue);" title="Đã xác minh">✓</span>' : ''}
-                    \${u.is_vip ? '<span style="color: var(--gold);" title="Thành viên VIP">★</span>' : ''}
+                    \${(u.is_oa || u.is_vip || u.account_type === 'oa') ? '<span style="color: var(--gold);" title="Tài khoản OA (Tích Vàng)">⭐</span>' : ''}
+                    \${u.is_verified ? '<span style="color: var(--blue);" title="Đã xác minh (Tích Xanh)">✓</span>' : ''}
                   </h4>
                   <p>UID: \${u.id.substring(0, 8)}...</p>
                 </div>
@@ -1014,10 +1014,10 @@ export function renderAdminPage(): string {
             <td style="text-align: right;">
               <div style="display: inline-flex; gap: 6px;">
                 <button class="btn btn-sm \${u.is_verified ? 'btn-secondary' : 'btn-blue'}" onclick="toggleVerify('\${u.id}', \${!u.is_verified})">
-                  \${u.is_verified ? 'Gỡ Tích' : 'Cấp Tích ✓'}
+                  \${u.is_verified ? 'Gỡ Tích Xanh' : 'Tích Xanh ✓'}
                 </button>
-                <button class="btn btn-sm \${u.is_vip ? 'btn-secondary' : 'btn-gold'}" onclick="toggleVip('\${u.id}', \${!u.is_vip})">
-                  \${u.is_vip ? 'Hủy VIP' : 'Cấp VIP 👑'}
+                <button class="btn btn-sm \${(u.is_oa || u.is_vip || u.account_type === 'oa') ? 'btn-secondary' : 'btn-gold'}" onclick="toggleVip('\${u.id}', \${!(u.is_oa || u.is_vip || u.account_type === 'oa')})">
+                  \${(u.is_oa || u.is_vip || u.account_type === 'oa') ? 'Gỡ Tích Vàng' : 'Tích Vàng OA ⭐'}
                 </button>
                 <button class="btn btn-sm \${u.is_banned ? 'btn-secondary' : 'btn-danger'}" onclick="toggleBan('\${u.id}', \${!u.is_banned})">
                   \${u.is_banned ? 'Mở Khóa' : 'Khóa Nick'}

@@ -110,7 +110,11 @@ export async function sendFcmHttpV1Message(params: {
       android: {
         priority: 'high',
         notification: {
+          channelId: 'dorabox_channel',
           sound: 'default',
+          defaultSound: true,
+          defaultVibrateTimings: true,
+          priority: 'max',
         },
       },
     });

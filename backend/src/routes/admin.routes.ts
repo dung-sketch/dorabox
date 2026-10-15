@@ -131,7 +131,7 @@ router.get('/users', async (req, res) => {
     const { q } = req.query;
     let query = supabaseAdmin
       .from('profiles')
-      .select('id, username, display_name, avatar_url, bio, is_verified, is_vip, is_banned, role, created_at')
+      .select('id, username, display_name, avatar_url, bio, is_verified, is_vip, is_oa, account_type, is_banned, role, created_at')
       .order('created_at', { ascending: false });
 
     if (q && typeof q === 'string' && q.trim()) {
@@ -182,6 +182,16 @@ router.post('/users/:id/toggle-ban', async (req, res) => {
       .single();
 
     if (error) throw error;
+
+    // Đồng bộ trạng thái khóa trực tiếp vào Supabase Auth
+    try {
+      await supabaseAdmin.auth.admin.updateUserById(id, {
+        ban_duration: isBanned ? '876000h' : 'none'
+      });
+    } catch (authBanErr) {
+      console.warn('👉 Notice on updateUserById ban_duration:', authBanErr);
+    }
+
     return res.json({
       success: true,
       user: data,
@@ -200,13 +210,17 @@ router.post('/users/:id/toggle-vip', async (req, res) => {
 
     const { data, error } = await supabaseAdmin
       .from('profiles')
-      .update({ is_vip: Boolean(isVip) })
+      .update({ 
+        is_vip: Boolean(isVip),
+        is_oa: Boolean(isVip),
+        account_type: Boolean(isVip) ? 'oa' : 'personal',
+      })
       .eq('id', id)
       .select()
       .single();
 
     if (error) throw error;
-    return res.json({ success: true, user: data, message: isVip ? 'Đã kích hoạt huy hiệu VIP ★' : 'Đã hủy huy hiệu VIP' });
+    return res.json({ success: true, user: data, message: isVip ? 'Đã kích hoạt Tích Vàng OA ⭐' : 'Đã hủy Tích Vàng OA' });
   } catch (err: any) {
     return res.status(500).json({ error: err.message });
   }
@@ -432,6 +446,9 @@ router.post('/reports/:id/action', async (req, res) => {
         await supabaseAdmin.from('comments').delete().eq('id', report.target_id);
       } else if (report.target_type === 'user') {
         await supabaseAdmin.from('profiles').update({ is_banned: true }).eq('id', report.target_id);
+        try {
+          await supabaseAdmin.auth.admin.updateUserById(report.target_id, { ban_duration: '876000h' });
+        } catch (_) {}
       }
 
       await supabaseAdmin
@@ -478,7 +495,7 @@ router.post('/broadcast', async (req, res) => {
       actor_id: systemActorId,
       action_type: 'admin_broadcast',
       target_id: null,
-      content: `[THÔNG BÁO TỪ BAN QUẢN TRỊ] ${title}: ${body}`,
+      content: `${title}: ${body}`,
       is_read: false,
     }));
 
@@ -492,7 +509,7 @@ router.post('/broadcast', async (req, res) => {
       try {
         await sendFcmHttpV1Message({
           token,
-          title: `📢 ${title}`,
+          title: title,
           body,
           data: {
             type: 'admin_broadcast',

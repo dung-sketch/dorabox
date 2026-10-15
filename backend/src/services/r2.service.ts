@@ -34,8 +34,11 @@ export async function generateUploadUrl(
   contentType: string = 'image/webp'
 ): Promise<PresignedUrlResult> {
   const fileHash = crypto.randomBytes(16).toString('hex');
-  const extension = contentType.includes('webp') ? 'webp' : 'jpg';
-  const key = `${folder}/${userId}/${Date.now()}-${fileHash}.${extension}`;
+  const extension = contentType.includes('webp') ? 'webp' : (contentType.includes('png') ? 'png' : 'jpg');
+  // Đối với avatar, lưu trực tiếp ghi đè vào key duy nhất của user để không lưu trùng ảnh
+  const key = folder === 'avatars'
+    ? `${folder}/${userId}/avatar.${extension}`
+    : `${folder}/${userId}/${Date.now()}-${fileHash}.${extension}`;
 
   const command = new PutObjectCommand({
     Bucket: R2_BUCKET_NAME,
@@ -45,7 +48,9 @@ export async function generateUploadUrl(
 
   // URL có hiệu lực trong 5 phút
   const uploadUrl = await getSignedUrl(s3Client, command, { expiresIn: 300 });
-  const publicUrl = `${R2_PUBLIC_URL.replace(/\/$/, '')}/${key}`;
+  const publicUrl = folder === 'avatars'
+    ? `${R2_PUBLIC_URL.replace(/\/$/, '')}/${key}?t=${Date.now()}`
+    : `${R2_PUBLIC_URL.replace(/\/$/, '')}/${key}`;
 
   return { uploadUrl, publicUrl, key };
 }
