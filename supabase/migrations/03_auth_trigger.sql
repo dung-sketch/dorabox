@@ -186,3 +186,23 @@ drop policy if exists "Allow users to delete own notifications" on public.notifi
 create policy "Allow users to delete own notifications" on public.notifications
   for delete using (auth.uid() = recipient_id);
 
+-- Thêm cột email vào profiles và hàm kiểm tra email tài khoản đã tồn tại hay chưa
+alter table public.profiles add column if not exists email text;
+
+create or replace function public.check_email_exists(lookup_email text)
+returns boolean as $$
+begin
+  return exists (
+    select 1 from auth.users where lower(email) = lower(trim(lookup_email))
+  );
+end;
+$$ language plpgsql security definer;
+
+grant execute on function public.check_email_exists(text) to anon, authenticated, service_role;
+
+-- Đồng bộ email hiện có từ auth.users vào profiles
+update public.profiles p
+set email = u.email
+from auth.users u
+where p.id = u.id and p.email is null;
+
