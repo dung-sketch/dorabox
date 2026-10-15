@@ -4,14 +4,8 @@ backend/dist/
 backend/.env
 backend/.env.local
 
-# Flutter & Dart
-mobile/.dart_tool/
-mobile/build/
-mobile/.flutter-plugins
-mobile/.flutter-plugins-dependencies
-mobile/.packages
-mobile/.pub-cache/
-mobile/.pub/
+# Giữ private mã nguồn Flutter trên máy, không đưa lên GitHub
+mobile/
 
 # System & IDE
 .DS_Store
