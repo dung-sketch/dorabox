@@ -31,10 +31,21 @@ export interface PresignedUrlResult {
 export async function generateUploadUrl(
   userId: string,
   folder: 'posts' | 'avatars' | 'chat' = 'posts',
-  contentType: string = 'image/webp'
+  contentType: string = 'image/webp',
+  fileExt?: string
 ): Promise<PresignedUrlResult> {
   const fileHash = crypto.randomBytes(16).toString('hex');
-  const extension = contentType.includes('webp') ? 'webp' : (contentType.includes('png') ? 'png' : 'jpg');
+  let extension = fileExt ? fileExt.toLowerCase().replace('.', '') : '';
+  if (!extension) {
+    if (contentType.includes('webp')) extension = 'webp';
+    else if (contentType.includes('png')) extension = 'png';
+    else if (contentType.includes('gif')) extension = 'gif';
+    else if (contentType.includes('mp4') || contentType.includes('video')) extension = 'mp4';
+    else if (contentType.includes('quicktime') || contentType.includes('mov')) extension = 'mov';
+    else if (contentType.includes('webm')) extension = 'webm';
+    else if (contentType.includes('m4a') || contentType.includes('audio')) extension = 'm4a';
+    else extension = 'jpg';
+  }
   // Đối với avatar, lưu trực tiếp ghi đè vào key duy nhất của user để không lưu trùng ảnh
   const key = folder === 'avatars'
     ? `${folder}/${userId}/avatar.${extension}`

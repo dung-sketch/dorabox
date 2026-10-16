@@ -59,10 +59,13 @@ app.all('/api/upload/presigned-url', async (req, res) => {
       return res.status(400).json({ error: 'userId is required' });
     }
 
+    const fileExt = req.body?.fileExt || req.query?.fileExt;
+
     const result = await generateUploadUrl(
       String(userId),
       (folder === 'avatars' || folder === 'chat') ? folder : 'posts',
-      String(contentType)
+      String(contentType),
+      fileExt ? String(fileExt) : undefined
     );
 
     return res.json({
@@ -72,6 +75,45 @@ app.all('/api/upload/presigned-url', async (req, res) => {
   } catch (error: any) {
     console.error('Error generating presigned URL:', error);
     return res.status(500).json({ error: error.message || 'Internal Server Error' });
+  }
+});
+
+/**
+ * Endpoint tra cứu Email tương ứng với Username
+ * Hỗ trợ tính năng đăng nhập bằng Email hoặc Username trên Dorabox
+ */
+app.post('/api/auth/resolve-username', async (req, res) => {
+  try {
+    let { username } = req.body;
+    if (!username) {
+      return res.status(400).json({ error: 'Username is required' });
+    }
+    username = String(username).replace(/^@/, '').trim().toLowerCase();
+
+    // 1. Tìm profile theo username
+    const { data: profile, error: profileErr } = await supabaseAdmin
+      .from('profiles')
+      .select('id, username')
+      .ilike('username', username)
+      .maybeSingle();
+
+    if (!profile) {
+      return res.status(404).json({ error: 'Username không tồn tại' });
+    }
+
+    // 2. Tra cứu email của user thông qua Supabase Admin Auth
+    const { data: userData, error: userErr } = await supabaseAdmin.auth.admin.getUserById(profile.id);
+    if (!userData?.user?.email) {
+      return res.status(404).json({ error: 'Không tìm thấy email liên kết' });
+    }
+
+    return res.json({
+      success: true,
+      email: userData.user.email,
+    });
+  } catch (err: any) {
+    console.error('Error resolving username:', err);
+    return res.status(500).json({ error: err.message || 'Internal Server Error' });
   }
 });
 
@@ -189,6 +231,50 @@ app.delete('/api/user/comments/:id', async (req, res) => {
     }
 
     return res.json({ success: true, message: 'Đã xóa bình luận thành công' });
+  } catch (err: any) {
+    return res.status(500).json({ error: err.message });
+  }
+});
+
+/**
+ * Endpoint xóa cuộc trò chuyện an toàn cho User (Xóa tin nhắn + cuộc trò chuyện)
+ */
+app.delete('/api/user/conversations/:id', async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+    const token = authHeader?.replace(/^Bearer\s+/i, '');
+    if (!token) {
+      return res.status(401).json({ error: 'Missing Bearer token' });
+    }
+
+    const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(token);
+    if (authError || !user) {
+      return res.status(401).json({ error: 'Phiên đăng nhập không hợp lệ hoặc đã hết hạn' });
+    }
+
+    const convId = req.params.id;
+    const { data: conv, error: fetchErr } = await supabaseAdmin
+      .from('conversations')
+      .select('id, user_a, user_b')
+      .eq('id', convId)
+      .maybeSingle();
+
+    if (fetchErr || !conv) {
+      return res.status(404).json({ error: 'Không tìm thấy cuộc trò chuyện' });
+    }
+
+    if (conv.user_a !== user.id && conv.user_b !== user.id) {
+      return res.status(403).json({ error: 'Bạn không có quyền xóa cuộc trò chuyện này' });
+    }
+
+    // Xóa messages trước, sau đó xóa conversation
+    await supabaseAdmin.from('messages').delete().eq('conversation_id', convId);
+    const { error: delErr } = await supabaseAdmin.from('conversations').delete().eq('id', convId);
+    if (delErr) {
+      return res.status(500).json({ error: delErr.message });
+    }
+
+    return res.json({ success: true, message: 'Đã xóa cuộc trò chuyện thành công' });
   } catch (err: any) {
     return res.status(500).json({ error: err.message });
   }

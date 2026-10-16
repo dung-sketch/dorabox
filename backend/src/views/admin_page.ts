@@ -1,615 +1,1307 @@
 export function renderAdminPage(): string {
   return `<!DOCTYPE html>
-<html lang="vi">
+<html lang="vi" class="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dorabox SuperAdmin Dashboard - Trung Tâm Quản Trị Hệ Thống</title>
+  <title>Dorabox Admin Console — Control Center</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #07090E;
-      --sidebar: #0B0F19;
-      --card: #121826;
-      --card-hover: #161E30;
-      --card-inner: #0F1420;
-      --border: rgba(255, 255, 255, 0.08);
-      --border-bright: rgba(255, 255, 255, 0.16);
-      --gold: #FFC837;
-      --gold-dark: #D49B00;
-      --gold-glow: rgba(255, 200, 55, 0.25);
-      --blue: #0084FF;
-      --blue-glow: rgba(0, 132, 255, 0.2);
-      --red: #FF453A;
-      --red-glow: rgba(255, 69, 58, 0.2);
-      --green: #30D158;
-      --green-glow: rgba(48, 209, 88, 0.2);
-      --purple: #BF5AF2;
-      --purple-glow: rgba(191, 90, 242, 0.2);
-      --text: #F8FAFC;
+      --bg-base: #080B11;
+      --bg-sidebar: #0C101A;
+      --bg-card: #121826;
+      --bg-card-subtle: #161F32;
+      --bg-card-hover: #192338;
+      --bg-input: #0E1422;
+      
+      --border-subtle: rgba(255, 255, 255, 0.07);
+      --border-focus: rgba(37, 99, 235, 0.6);
+      --border-hover: rgba(255, 255, 255, 0.14);
+      
+      --brand-primary: #2563EB;
+      --brand-primary-hover: #1D4ED8;
+      --brand-glow: rgba(37, 99, 235, 0.25);
+      
+      --color-gold: #F59E0B;
+      --color-gold-hover: #D97706;
+      --color-gold-bg: rgba(245, 158, 11, 0.12);
+      --color-gold-border: rgba(245, 158, 11, 0.3);
+      
+      --color-blue: #38BDF8;
+      --color-blue-bg: rgba(56, 189, 248, 0.12);
+      --color-blue-border: rgba(56, 189, 248, 0.3);
+      
+      --color-emerald: #10B981;
+      --color-emerald-bg: rgba(16, 185, 129, 0.12);
+      --color-emerald-border: rgba(16, 185, 129, 0.28);
+      
+      --color-rose: #F43F5E;
+      --color-rose-bg: rgba(244, 63, 94, 0.12);
+      --color-rose-border: rgba(244, 63, 94, 0.28);
+      
+      --color-violet: #A855F7;
+      --color-violet-bg: rgba(168, 85, 247, 0.12);
+      
+      --text-main: #F8FAFC;
       --text-muted: #94A3B8;
       --text-dim: #64748B;
+      
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-xl: 22px;
+      
+      --shadow-soft: 0 4px 20px -2px rgba(0, 0, 0, 0.4);
+      --shadow-elevated: 0 16px 40px -6px rgba(0, 0, 0, 0.7);
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', -apple-system, sans-serif; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif; }
+    
     body {
-      background: var(--bg);
-      color: var(--text);
+      background-color: var(--bg-base);
+      color: var(--text-main);
       min-height: 100vh;
       display: flex;
       overflow-x: hidden;
-      background-image: radial-gradient(circle at 15% 10%, rgba(0, 132, 255, 0.08) 0%, transparent 40%),
-                        radial-gradient(circle at 85% 85%, rgba(255, 200, 55, 0.06) 0%, transparent 40%);
+      background-image: 
+        radial-gradient(ellipse 60% 40% at 20% -10%, rgba(37, 99, 235, 0.12), transparent 50%),
+        radial-gradient(ellipse 40% 30% at 80% 100%, rgba(245, 158, 11, 0.05), transparent 50%);
+      -webkit-font-smoothing: antialiased;
     }
 
-    /* Scrollbar */
+    /* Scrollbars */
     ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: var(--bg); }
-    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 4px; }
-    ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.3); }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.12); border-radius: 999px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.22); }
 
-    /* --- LOGIN GATE MODAL --- */
+    /* Icons */
+    .icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 18px;
+      height: 18px;
+      stroke-width: 2;
+      stroke: currentColor;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      flex-shrink: 0;
+    }
+    .icon-sm { width: 14px; height: 14px; }
+    .icon-lg { width: 22px; height: 22px; }
+
+    /* AUTH OVERLAY (LOGIN GATE) */
     #auth-overlay {
-      position: fixed; inset: 0; background: rgba(5, 7, 12, 0.94);
-      backdrop-filter: blur(25px); display: flex; align-items: center; justify-content: center;
-      z-index: 10000; padding: 20px; transition: opacity 0.3s ease;
+      position: fixed;
+      inset: 0;
+      background: rgba(4, 6, 12, 0.88);
+      backdrop-filter: blur(20px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+      padding: 24px;
+      transition: opacity 0.25s ease, visibility 0.25s;
     }
-    .login-box {
-      background: var(--card); border: 1px solid rgba(255, 200, 55, 0.35);
-      border-radius: 28px; padding: 46px 38px; max-width: 440px; width: 100%;
-      box-shadow: 0 25px 80px rgba(0, 0, 0, 0.95), 0 0 50px rgba(255, 200, 55, 0.15);
-      text-align: center; position: relative; overflow: hidden;
+    .auth-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-xl);
+      padding: 44px 38px;
+      max-width: 420px;
+      width: 100%;
+      box-shadow: var(--shadow-elevated), 0 0 0 1px rgba(255, 255, 255, 0.04);
+      position: relative;
     }
-    .login-box::before {
-      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
-      background: linear-gradient(90deg, var(--gold), var(--blue), var(--purple), var(--gold));
-      background-size: 200% 100%; animation: gradientMove 4s linear infinite;
+    .auth-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 15%; right: 15%; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--brand-primary), transparent);
     }
-    @keyframes gradientMove { 0% { background-position: 0% 0%; } 100% { background-position: 200% 0%; } }
-    .login-badge {
-      width: 76px; height: 76px; margin: 0 auto 22px; border-radius: 24px;
-      background: rgba(255, 200, 55, 0.12); border: 2px solid var(--gold);
-      display: flex; align-items: center; justify-content: center; font-size: 38px;
-      box-shadow: 0 0 30px rgba(255, 200, 55, 0.3);
+    .auth-icon-wrap {
+      width: 52px;
+      height: 52px;
+      border-radius: var(--radius-md);
+      background: rgba(37, 99, 235, 0.12);
+      border: 1px solid rgba(37, 99, 235, 0.3);
+      color: var(--brand-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 22px;
     }
-    .login-box h2 { font-size: 24px; font-weight: 800; margin-bottom: 8px; color: var(--text); letter-spacing: -0.5px; }
-    .login-box p { font-size: 13.5px; color: var(--text-muted); margin-bottom: 28px; line-height: 1.5; }
-    .field-label { display: block; text-align: left; font-size: 12px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
-    .pass-input {
-      width: 100%; padding: 15px 18px; background: rgba(255,255,255,0.04);
-      border: 1px solid var(--border); border-radius: 14px; color: var(--text);
-      font-size: 15px; outline: none; margin-bottom: 20px; transition: 0.2s;
+    .auth-card h2 {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.4px;
+      color: var(--text-main);
+      margin-bottom: 6px;
     }
-    .pass-input:focus { border-color: var(--gold); box-shadow: 0 0 0 4px rgba(255, 200, 55, 0.18); }
-    .btn-unlock {
-      width: 100%; padding: 15px; background: linear-gradient(135deg, var(--gold), var(--gold-dark));
-      color: #07090E; font-weight: 800; font-size: 15px; border: none; border-radius: 14px;
-      cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 10px;
+    .auth-card p {
+      font-size: 13.5px;
+      color: var(--text-muted);
+      line-height: 1.5;
+      margin-bottom: 28px;
     }
-    .btn-unlock:hover { opacity: 0.95; transform: translateY(-2px); box-shadow: 0 8px 25px rgba(255, 200, 55, 0.35); }
+    .auth-input-group {
+      margin-bottom: 20px;
+      text-align: left;
+    }
+    .auth-label {
+      display: block;
+      font-size: 11.5px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .input-prefix-icon {
+      position: absolute;
+      left: 14px;
+      color: var(--text-dim);
+      pointer-events: none;
+    }
+    .auth-input {
+      width: 100%;
+      padding: 13px 14px 13px 42px;
+      background: var(--bg-input);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      color: var(--text-main);
+      font-size: 14px;
+      outline: none;
+      transition: all 0.2s ease;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .auth-input:focus {
+      border-color: var(--brand-primary);
+      box-shadow: 0 0 0 3px var(--brand-glow);
+    }
 
-    /* --- SIDEBAR --- */
+    /* SIDEBAR */
     aside {
-      width: 280px; background: var(--sidebar); border-right: 1px solid var(--border);
-      min-height: 100vh; display: flex; flex-direction: column; flex-shrink: 0;
-      position: sticky; top: 0; z-index: 100;
+      width: 270px;
+      background: var(--bg-sidebar);
+      border-right: 1px solid var(--border-subtle);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
     }
-    .sidebar-header {
-      padding: 26px 22px; border-bottom: 1px solid var(--border);
-      display: flex; align-items: center; gap: 14px;
+    .sidebar-brand {
+      padding: 24px 22px;
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      gap: 12px;
     }
-    .logo-cube {
-      width: 44px; height: 44px; background: rgba(255,200,55,0.12); border: 2px solid var(--gold);
-      border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 24px;
-      box-shadow: 0 0 20px rgba(255,200,55,0.25); flex-shrink: 0;
+    .brand-logo {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #2563EB, #1D4ED8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: 800;
+      font-size: 17px;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
+      flex-shrink: 0;
     }
-    .logo-text h3 { font-size: 18px; font-weight: 800; letter-spacing: -0.3px; line-height: 1.2; }
-    .role-tag {
-      font-size: 10px; font-weight: 800; color: var(--gold);
-      background: rgba(255, 200, 55, 0.15); padding: 3px 8px; border-radius: 6px;
-      display: inline-block; margin-top: 3px; letter-spacing: 0.5px;
+    .brand-meta h3 {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+      color: var(--text-main);
     }
-    .nav-list { list-style: none; padding: 22px 14px; flex: 1; display: flex; flex-direction: column; gap: 6px; }
+    .brand-badge {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: rgba(37, 99, 235, 0.15);
+      color: #60A5FA;
+      display: inline-block;
+      margin-top: 2px;
+    }
+
+    .nav-section-title {
+      font-size: 10.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--text-dim);
+      padding: 20px 22px 8px;
+    }
+    .nav-list {
+      list-style: none;
+      padding: 0 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex: 1;
+    }
     .nav-item {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 13px 18px; border-radius: 14px; font-size: 14.5px; font-weight: 600;
-      color: var(--text-muted); cursor: pointer; transition: 0.2s; border: 1px solid transparent;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      border-radius: var(--radius-md);
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.18s ease;
+      user-select: none;
     }
-    .nav-item:hover { color: var(--text); background: rgba(255,255,255,0.04); }
+    .nav-item:hover {
+      color: var(--text-main);
+      background: rgba(255, 255, 255, 0.04);
+    }
     .nav-item.active {
-      color: var(--text); background: var(--card); border-color: var(--border-bright);
-      font-weight: 700; box-shadow: 0 6px 20px rgba(0,0,0,0.35);
+      color: #FFFFFF;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
     }
-    .nav-left { display: flex; align-items: center; gap: 12px; }
-    .nav-icon { font-size: 18px; width: 22px; text-align: center; }
-    .nav-pill {
-      font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 20px;
-      background: rgba(255, 69, 58, 0.2); color: var(--red); border: 1px solid rgba(255, 69, 58, 0.4);
+    .nav-item-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
     }
+    .nav-item.active .icon {
+      color: var(--brand-primary);
+    }
+    .nav-count-badge {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 999px;
+      background: var(--color-rose-bg);
+      color: var(--color-rose);
+      border: 1px solid var(--color-rose-border);
+      min-width: 20px;
+      text-align: center;
+    }
+
     .sidebar-footer {
-      padding: 18px 22px; border-top: 1px solid var(--border);
-      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 20px;
+      border-top: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(0, 0, 0, 0.15);
     }
-    .status-pill {
-      display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--green); font-weight: 700;
+    .pulse-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
     }
-    .status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); box-shadow: 0 0 10px var(--green); }
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--color-emerald);
+      position: relative;
+    }
+    .pulse-dot::after {
+      content: '';
+      position: absolute;
+      inset: -3px;
+      border-radius: 50%;
+      background: var(--color-emerald);
+      opacity: 0.4;
+      animation: pulseAnimation 2s infinite;
+    }
+    @keyframes pulseAnimation {
+      0% { transform: scale(0.9); opacity: 0.6; }
+      50% { transform: scale(1.6); opacity: 0; }
+      100% { transform: scale(0.9); opacity: 0; }
+    }
 
-    /* --- TOPBAR --- */
-    main { flex: 1; min-width: 0; display: flex; flex-direction: column; min-height: 100vh; }
+    /* MAIN CONTENT */
+    main {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
     .topbar {
-      height: 74px; border-bottom: 1px solid var(--border); padding: 0 34px;
-      display: flex; align-items: center; justify-content: space-between;
-      background: rgba(11, 15, 25, 0.75); backdrop-filter: blur(15px);
-      position: sticky; top: 0; z-index: 90;
+      height: 68px;
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 0 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(12, 16, 26, 0.7);
+      backdrop-filter: blur(16px);
+      position: sticky;
+      top: 0;
+      z-index: 90;
     }
-    .page-title h1 { font-size: 21px; font-weight: 800; letter-spacing: -0.3px; }
-    .page-title p { font-size: 13px; color: var(--text-muted); margin-top: 2px; }
-    .topbar-actions { display: flex; align-items: center; gap: 12px; }
+    .breadcrumb-area h1 {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text-main);
+      letter-spacing: -0.3px;
+    }
+    .breadcrumb-area p {
+      font-size: 12px;
+      color: var(--text-dim);
+      margin-top: 1px;
+    }
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
 
-    /* Buttons */
+    /* BUTTONS */
     .btn {
-      padding: 10px 18px; border-radius: 12px; font-size: 13.5px; font-weight: 700;
-      border: 1px solid transparent; cursor: pointer; transition: 0.2s;
-      display: inline-flex; align-items: center; gap: 8px; text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 8px 14px;
+      border-radius: var(--radius-md);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.16s ease;
+      border: 1px solid transparent;
+      text-decoration: none;
+      white-space: nowrap;
+      user-select: none;
     }
-    .btn-secondary { background: rgba(255,255,255,0.06); color: var(--text); border-color: var(--border); }
-    .btn-secondary:hover { background: rgba(255,255,255,0.1); border-color: var(--border-bright); }
-    .btn-primary { background: linear-gradient(135deg, var(--gold), var(--gold-dark)); color: #07090E; font-weight: 800; }
-    .btn-primary:hover { opacity: 0.95; transform: translateY(-1px); box-shadow: 0 4px 15px rgba(255,200,55,0.3); }
-    .btn-blue { background: rgba(0, 132, 255, 0.15); color: var(--blue); border-color: rgba(0, 132, 255, 0.3); }
-    .btn-blue:hover { background: var(--blue); color: #fff; }
-    .btn-danger { background: rgba(255, 69, 58, 0.15); color: var(--red); border-color: rgba(255, 69, 58, 0.3); }
-    .btn-danger:hover { background: var(--red); color: #fff; }
-    .btn-gold { background: rgba(255, 200, 55, 0.15); color: var(--gold); border-color: rgba(255, 200, 55, 0.3); }
-    .btn-gold:hover { background: var(--gold); color: #07090E; }
-    .btn-sm { padding: 6px 12px; font-size: 12px; border-radius: 8px; }
+    .btn-primary {
+      background: var(--brand-primary);
+      color: #FFFFFF;
+      box-shadow: 0 2px 10px rgba(37, 99, 235, 0.35);
+    }
+    .btn-primary:hover {
+      background: var(--brand-primary-hover);
+      transform: translateY(-1px);
+    }
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-main);
+      border-color: var(--border-subtle);
+    }
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: var(--border-hover);
+    }
+    .btn-danger {
+      background: var(--color-rose-bg);
+      color: var(--color-rose);
+      border-color: var(--color-rose-border);
+    }
+    .btn-danger:hover {
+      background: var(--color-rose);
+      color: #FFFFFF;
+    }
+    .btn-gold {
+      background: var(--color-gold-bg);
+      color: var(--color-gold);
+      border-color: var(--color-gold-border);
+    }
+    .btn-gold:hover {
+      background: var(--color-gold);
+      color: #000000;
+    }
+    .btn-blue {
+      background: var(--color-blue-bg);
+      color: var(--color-blue);
+      border-color: var(--color-blue-border);
+    }
+    .btn-blue:hover {
+      background: var(--color-blue);
+      color: #000000;
+    }
+    .btn-sm {
+      padding: 5px 10px;
+      font-size: 12px;
+      border-radius: var(--radius-sm);
+    }
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none !important;
+    }
 
-    /* CONTENT AREA */
-    .content-area { padding: 34px; flex: 1; max-width: 1400px; width: 100%; margin: 0 auto; }
-    .tab-section { display: none; animation: fadeIn 0.3s ease; }
-    .tab-section.active { display: block; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+    /* CONTENT LAYOUT */
+    .content-container {
+      padding: 30px 32px;
+      flex: 1;
+      max-width: 1440px;
+      width: 100%;
+      margin: 0 auto;
+    }
+    .tab-section {
+      display: none;
+      animation: tabFadeIn 0.2s ease-out forwards;
+    }
+    .tab-section.active {
+      display: block;
+    }
+    @keyframes tabFadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
 
-    /* KPI METRICS */
-    .metrics-grid {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 18px; margin-bottom: 30px;
+    /* KPI STATS GRID */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
     }
     .kpi-card {
-      background: var(--card); border: 1px solid var(--border); border-radius: 20px;
-      padding: 22px; position: relative; overflow: hidden; transition: 0.25s;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      transition: all 0.2s ease;
+      box-shadow: var(--shadow-soft);
     }
-    .kpi-card:hover { transform: translateY(-3px); border-color: var(--border-bright); box-shadow: 0 10px 30px rgba(0,0,0,0.45); }
-    .kpi-card::after {
-      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
-      background: var(--accent-color, var(--blue));
+    .kpi-card:hover {
+      border-color: var(--border-hover);
+      transform: translateY(-2px);
     }
-    .kpi-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
-    .kpi-title { font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
-    .kpi-icon {
-      width: 38px; height: 38px; border-radius: 12px; background: rgba(255,255,255,0.05);
-      display: flex; align-items: center; justify-content: center; font-size: 18px;
+    .kpi-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
     }
-    .kpi-value { font-size: 34px; font-weight: 800; color: var(--text); letter-spacing: -1px; font-family: 'JetBrains Mono', monospace; }
-    .kpi-meta { font-size: 12px; color: var(--text-dim); margin-top: 6px; display: flex; align-items: center; gap: 6px; }
+    .kpi-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      letter-spacing: 0.3px;
+    }
+    .kpi-icon-box {
+      width: 34px;
+      height: 34px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .kpi-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 30px;
+      font-weight: 700;
+      color: var(--text-main);
+      letter-spacing: -1px;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+    .kpi-desc {
+      font-size: 11.5px;
+      color: var(--text-dim);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
 
-    /* PANELS & CARDS */
-    .glass-panel {
-      background: var(--card); border: 1px solid var(--border); border-radius: 22px;
-      padding: 26px; margin-bottom: 24px; box-shadow: 0 10px 35px rgba(0,0,0,0.3);
+    /* PANELS */
+    .card-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow-soft);
     }
     .panel-header {
-      display: flex; align-items: center; justify-content: space-between;
-      margin-bottom: 22px; padding-bottom: 16px; border-bottom: 1px solid var(--border);
-      flex-wrap: wrap; gap: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      gap: 16px;
+      flex-wrap: wrap;
     }
-    .panel-title { display: flex; align-items: center; gap: 10px; font-size: 17px; font-weight: 800; }
-    .panel-filters { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .panel-heading {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .panel-heading h3 {
+      font-size: 15.5px;
+      font-weight: 700;
+      color: var(--text-main);
+      letter-spacing: -0.2px;
+    }
+    .panel-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    /* FILTER PILLS */
+    .filter-group {
+      display: flex;
+      align-items: center;
+      background: var(--bg-input);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 3px;
+    }
     .filter-btn {
-      padding: 6px 14px; border-radius: 20px; font-size: 12.5px; font-weight: 600;
-      background: rgba(255,255,255,0.04); color: var(--text-muted); border: 1px solid var(--border);
-      cursor: pointer; transition: 0.2s;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.16s ease;
     }
-    .filter-btn:hover { color: var(--text); border-color: var(--border-bright); }
-    .filter-btn.active { background: rgba(255,200,55,0.15); color: var(--gold); border-color: rgba(255,200,55,0.4); font-weight: 700; }
+    .filter-btn:hover {
+      color: var(--text-main);
+    }
+    .filter-btn.active {
+      background: var(--bg-card-hover);
+      color: #FFFFFF;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+    }
 
     /* SEARCH INPUT */
-    .search-wrap { position: relative; max-width: 340px; width: 100%; }
-    .search-input {
-      width: 100%; padding: 10px 14px 10px 38px; background: rgba(255,255,255,0.04);
-      border: 1px solid var(--border); border-radius: 12px; color: var(--text);
-      font-size: 13.5px; outline: none; transition: 0.2s;
+    .search-box {
+      position: relative;
+      display: flex;
+      align-items: center;
+      min-width: 260px;
     }
-    .search-input:focus { border-color: var(--gold); background: rgba(255,255,255,0.07); }
-    .search-icon { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 14px; }
+    .search-icon {
+      position: absolute;
+      left: 12px;
+      color: var(--text-dim);
+      pointer-events: none;
+    }
+    .search-field {
+      width: 100%;
+      background: var(--bg-input);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 8px 12px 8px 36px;
+      font-size: 13px;
+      color: var(--text-main);
+      outline: none;
+      transition: all 0.16s ease;
+    }
+    .search-field:focus {
+      border-color: var(--brand-primary);
+      box-shadow: 0 0 0 2px var(--brand-glow);
+    }
 
-    /* TABLES */
-    .table-container { overflow-x: auto; border-radius: 14px; }
-    table { width: 100%; border-collapse: collapse; text-align: left; }
-    th {
-      padding: 14px 18px; font-size: 12px; font-weight: 700; text-transform: uppercase;
-      letter-spacing: 0.6px; color: var(--text-dim); background: rgba(255,255,255,0.02);
-      border-bottom: 1px solid var(--border);
+    /* NOTICE BANNER */
+    .notice-banner {
+      background: rgba(37, 99, 235, 0.06);
+      border: 1px solid rgba(37, 99, 235, 0.18);
+      border-radius: var(--radius-md);
+      padding: 12px 16px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 20px;
     }
-    td {
-      padding: 16px 18px; font-size: 14px; color: var(--text-muted);
-      border-bottom: 1px solid rgba(255,255,255,0.04); vertical-align: middle;
+    .notice-icon {
+      color: #60A5FA;
+      margin-top: 1px;
     }
-    tr:hover td { background: rgba(255,255,255,0.02); color: var(--text); }
+    .notice-text h4 {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 2px;
+    }
+    .notice-text p {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.45;
+    }
+
+    /* DATA TABLES */
+    .table-wrapper {
+      overflow-x: auto;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      background: var(--bg-input);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+    thead th {
+      padding: 12px 16px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: var(--text-dim);
+      background: rgba(255, 255, 255, 0.02);
+      border-bottom: 1px solid var(--border-subtle);
+      white-space: nowrap;
+    }
+    tbody td {
+      padding: 14px 16px;
+      font-size: 13.5px;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border-subtle);
+      vertical-align: middle;
+    }
+    tbody tr:last-child td {
+      border-bottom: none;
+    }
+    tbody tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+      color: var(--text-main);
+    }
 
     /* BADGES */
     .badge {
-      display: inline-flex; align-items: center; gap: 5px;
-      padding: 4px 10px; border-radius: 20px; font-size: 11.5px; font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      white-space: nowrap;
     }
-    .badge-verified { background: rgba(0, 132, 255, 0.15); color: var(--blue); border: 1px solid rgba(0, 132, 255, 0.3); }
-    .badge-vip { background: rgba(255, 200, 55, 0.15); color: var(--gold); border: 1px solid rgba(255, 200, 55, 0.4); }
-    .badge-banned { background: rgba(255, 69, 58, 0.15); color: var(--red); border: 1px solid rgba(255, 69, 58, 0.3); }
-    .badge-admin { background: rgba(191, 90, 242, 0.15); color: var(--purple); border: 1px solid rgba(191, 90, 242, 0.3); }
+    .badge-verified {
+      background: var(--color-blue-bg);
+      color: var(--color-blue);
+      border: 1px solid var(--color-blue-border);
+    }
+    .badge-oa {
+      background: var(--color-gold-bg);
+      color: var(--color-gold);
+      border: 1px solid var(--color-gold-border);
+    }
+    .badge-banned {
+      background: var(--color-rose-bg);
+      color: var(--color-rose);
+      border: 1px solid var(--color-rose-border);
+    }
+    .badge-admin {
+      background: var(--color-violet-bg);
+      color: var(--color-violet);
+      border: 1px solid rgba(168, 85, 247, 0.28);
+    }
+    .badge-neutral {
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text-dim);
+      border: 1px solid var(--border-subtle);
+    }
 
-    /* USER CELL */
-    .user-cell { display: flex; align-items: center; gap: 12px; }
-    .avatar-img {
-      width: 42px; height: 42px; border-radius: 12px; object-fit: cover;
-      background: rgba(255,255,255,0.08); border: 1px solid var(--border);
+    /* USER TABLE CELL */
+    .user-profile-cell {
+      display: flex;
+      align-items: center;
+      gap: 12px;
     }
-    .avatar-placeholder {
-      width: 42px; height: 42px; border-radius: 12px; background: linear-gradient(135deg, #2563EB, #1D4ED8);
-      display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 15px; color: #fff;
+    .user-avatar-img {
+      width: 38px;
+      height: 38px;
+      border-radius: var(--radius-sm);
+      object-fit: cover;
+      background: var(--bg-card-hover);
+      border: 1px solid var(--border-subtle);
     }
-    .user-meta h4 { font-size: 14px; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 5px; }
-    .user-meta p { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
+    .user-avatar-fallback {
+      width: 38px;
+      height: 38px;
+      border-radius: var(--radius-sm);
+      background: linear-gradient(135deg, #1E3A8A, #2563EB);
+      color: #FFFFFF;
+      font-weight: 700;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .user-name-title {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .user-uid-sub {
+      font-size: 11px;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text-dim);
+      margin-top: 1px;
+    }
 
     /* POST THUMBNAIL */
     .post-thumb {
-      width: 60px; height: 60px; border-radius: 10px; object-fit: cover;
-      border: 1px solid var(--border); cursor: pointer; transition: 0.2s;
+      width: 52px;
+      height: 52px;
+      border-radius: var(--radius-sm);
+      object-fit: cover;
+      border: 1px solid var(--border-subtle);
+      cursor: pointer;
+      transition: transform 0.16s ease;
     }
-    .post-thumb:hover { transform: scale(1.05); border-color: var(--gold); }
+    .post-thumb:hover {
+      transform: scale(1.06);
+      border-color: var(--brand-primary);
+    }
 
     /* BROADCAST STUDIO */
-    .broadcast-grid { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 28px; }
-    @media (max-width: 1024px) { .broadcast-grid { grid-template-columns: 1fr; } }
-    .form-group { margin-bottom: 20px; }
-    .form-group label { display: block; font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.5px; }
-    .form-control {
-      width: 100%; padding: 14px 16px; background: rgba(255,255,255,0.04);
-      border: 1px solid var(--border); border-radius: 12px; color: var(--text);
-      font-size: 14.5px; outline: none; transition: 0.2s;
+    .broadcast-container {
+      display: grid;
+      grid-template-columns: 1.25fr 0.75fr;
+      gap: 24px;
     }
-    .form-control:focus { border-color: var(--gold); background: rgba(255,255,255,0.06); }
-    textarea.form-control { resize: vertical; min-height: 120px; }
+    @media (max-width: 1024px) {
+      .broadcast-container { grid-template-columns: 1fr; }
+    }
+    .form-row {
+      margin-bottom: 20px;
+    }
+    .form-row label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .form-input {
+      width: 100%;
+      background: var(--bg-input);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      font-size: 14px;
+      color: var(--text-main);
+      outline: none;
+      transition: all 0.16s ease;
+    }
+    .form-input:focus {
+      border-color: var(--brand-primary);
+      box-shadow: 0 0 0 2px var(--brand-glow);
+    }
+    textarea.form-input {
+      resize: vertical;
+      min-height: 110px;
+      line-height: 1.5;
+    }
 
-    /* REALTIME PHONE MOCKUP */
-    .phone-mockup-wrapper {
-      background: #090C14; border: 1px solid var(--border); border-radius: 36px;
-      padding: 30px 22px; max-width: 360px; width: 100%; margin: 0 auto;
-      box-shadow: 0 25px 70px rgba(0,0,0,0.8), 0 0 40px rgba(0, 132, 255, 0.1);
-      position: relative;
+    /* DEVICE PREVIEW */
+    .phone-preview-card {
+      background: #090C14;
+      border: 1px solid var(--border-subtle);
+      border-radius: 28px;
+      padding: 24px 20px;
+      box-shadow: var(--shadow-elevated);
+      max-width: 360px;
+      margin: 0 auto;
+      width: 100%;
     }
-    .phone-notch {
-      width: 90px; height: 18px; background: #000; border-radius: 20px;
-      margin: 0 auto 24px; position: relative;
+    .phone-speaker-bar {
+      width: 60px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.12);
+      border-radius: 999px;
+      margin: 0 auto 20px;
     }
-    .phone-screen-label {
-      font-size: 11px; font-weight: 800; color: var(--text-dim); text-transform: uppercase;
-      letter-spacing: 1px; text-align: center; margin-bottom: 18px;
+    .phone-preview-title {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      text-align: center;
+      margin-bottom: 18px;
     }
-    .notif-bubble {
-      background: rgba(255,255,255,0.08); backdrop-filter: blur(20px);
-      border: 1px solid rgba(255,255,255,0.12); border-radius: 20px; padding: 16px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    .ios-notification {
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 18px;
+      padding: 14px 16px;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.5);
     }
-    .notif-bubble-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
-    .notif-app-info { display: flex; align-items: center; gap: 8px; }
-    .notif-app-icon {
-      width: 22px; height: 22px; border-radius: 6px; background: var(--gold);
-      display: flex; align-items: center; justify-content: center; font-size: 13px;
+    .ios-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 6px;
     }
-    .notif-app-name { font-size: 12px; font-weight: 800; color: var(--text); }
-    .notif-time { font-size: 11px; color: var(--text-dim); }
-    .notif-preview-title { font-size: 13.5px; font-weight: 700; color: var(--text); margin-bottom: 4px; word-break: break-word; }
-    .notif-preview-body { font-size: 12.5px; color: var(--text-muted); line-height: 1.4; word-break: break-word; }
+    .ios-brand {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+    .ios-app-icon {
+      width: 18px;
+      height: 18px;
+      border-radius: 4px;
+      background: #2563EB;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 800;
+      color: #fff;
+    }
+    .ios-app-name {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--text-main);
+      letter-spacing: 0.2px;
+    }
+    .ios-time {
+      font-size: 10.5px;
+      color: var(--text-dim);
+    }
+    .ios-content-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 3px;
+      word-break: break-word;
+    }
+    .ios-content-body {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.4;
+      word-break: break-word;
+    }
 
-    /* SYSTEM HEALTH CARDS */
-    .system-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 18px; }
-    .sys-card {
-      background: var(--card-inner); border: 1px solid var(--border); border-radius: 16px;
-      padding: 20px; display: flex; flex-direction: column; gap: 12px;
+    /* SYSTEM DIAGNOSTICS GRID */
+    .system-health-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
     }
-    .sys-card-header { display: flex; align-items: center; justify-content: space-between; }
-    .sys-card-title { font-size: 13px; font-weight: 700; color: var(--text-muted); display: flex; align-items: center; gap: 8px; }
-    .sys-status-badge { font-size: 11px; font-weight: 800; padding: 3px 8px; border-radius: 6px; }
+    .service-card {
+      background: var(--bg-card-subtle);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .service-card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .service-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
 
-    /* TOAST NOTIFICATION */
-    #toast-container { position: fixed; bottom: 25px; right: 25px; z-index: 10000; display: flex; flex-direction: column; gap: 10px; }
+    /* TOAST STACK */
+    #toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 10000;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      pointer-events: none;
+    }
     .toast {
-      padding: 14px 20px; border-radius: 14px; font-size: 13.5px; font-weight: 700;
-      color: #fff; background: var(--card); border: 1px solid var(--border);
-      box-shadow: 0 10px 30px rgba(0,0,0,0.6); display: flex; align-items: center; gap: 10px;
-      animation: slideIn 0.3s ease;
+      padding: 12px 18px;
+      border-radius: var(--radius-md);
+      background: var(--bg-card);
+      border: 1px solid var(--border-hover);
+      color: var(--text-main);
+      font-size: 13px;
+      font-weight: 600;
+      box-shadow: var(--shadow-elevated);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      pointer-events: auto;
+      animation: toastSlideIn 0.25s ease;
     }
-    @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    @keyframes toastSlideIn {
+      from { transform: translateX(30px); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
 
     /* LIGHTBOX MODAL */
     #lightbox-modal {
-      position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px);
-      display: none; align-items: center; justify-content: center; z-index: 10001; padding: 30px;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.88);
+      backdrop-filter: blur(12px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 10001;
+      padding: 24px;
+      cursor: zoom-out;
     }
-    #lightbox-img { max-width: 90vw; max-height: 90vh; border-radius: 16px; border: 1px solid rgba(255,255,255,0.2); }
+    #lightbox-img {
+      max-width: 90vw;
+      max-height: 90vh;
+      border-radius: var(--radius-md);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
   </style>
 </head>
 <body>
 
-  <!-- AUTHENTICATION OVERLAY -->
+  <!-- 1. AUTHENTICATION MODAL -->
   <div id="auth-overlay">
-    <div class="login-box">
-      <div class="login-badge">🛡️</div>
+    <div class="auth-card">
+      <div class="auth-icon-wrap">
+        <svg class="icon icon-lg" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      </div>
       <h2>Dorabox SuperAdmin</h2>
-      <p>Cổng quản trị bảo mật cấp cao. Vui lòng nhập Master Secret Key để truy cập hệ thống.</p>
+      <p>Cổng điều hành bảo mật cấp cao. Xác thực khóa quản trị viên để mở khóa bảng điều khiển trung tâm.</p>
       
-      <label class="field-label">Khóa Bảo Mật (Admin Secret Key)</label>
-      <input type="password" id="admin-pass-input" class="pass-input" placeholder="Nhập khóa quản trị viên..." autofocus />
+      <div class="auth-input-group">
+        <label class="auth-label">Khóa Quản Trị Hệ Thống (Master Key)</label>
+        <div class="input-wrapper">
+          <svg class="icon icon-sm input-prefix-icon" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          <input type="password" id="admin-pass-input" class="auth-input" placeholder="••••••••••••••••" autofocus autocomplete="current-password" />
+        </div>
+      </div>
       
-      <button class="btn-unlock" id="btn-unlock-gate">
-        <span>Mở Khóa Bảng Điều Khiển</span>
-        <span>→</span>
+      <button class="btn btn-primary" id="btn-unlock-gate" style="width: 100%; padding: 12px; font-size: 14px;">
+        <span>Xác Thực Phiên Quản Trị</span>
+        <svg class="icon icon-sm" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
       </button>
     </div>
   </div>
 
-  <!-- LIGHTBOX MODAL -->
+  <!-- 2. LIGHTBOX PREVIEW -->
   <div id="lightbox-modal" onclick="closeLightbox()">
-    <img id="lightbox-img" src="" alt="Enlarged view" />
+    <img id="lightbox-img" src="" alt="Zoom preview" />
   </div>
 
-  <!-- TOAST CONTAINER -->
+  <!-- 3. TOAST CONTAINER -->
   <div id="toast-container"></div>
 
-  <!-- SIDEBAR NAVIGATION -->
+  <!-- 4. SIDEBAR NAVIGATION -->
   <aside>
-    <div class="sidebar-header">
-      <div class="logo-cube">🐱</div>
-      <div class="logo-text">
+    <div class="sidebar-brand">
+      <div class="brand-logo">D</div>
+      <div class="brand-meta">
         <h3>Dorabox Admin</h3>
-        <span class="role-tag">SUPERADMIN PORTAL</span>
+        <span class="brand-badge">Control Center</span>
       </div>
     </div>
 
+    <div class="nav-section-title">Quản Trị Mạng Xã Hội</div>
     <ul class="nav-list">
       <li class="nav-item active" data-tab="tong-quan">
-        <div class="nav-left">
-          <span class="nav-icon">📊</span>
+        <div class="nav-item-left">
+          <svg class="icon" viewBox="0 0 24 24"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
           <span>Tổng Quan</span>
         </div>
       </li>
       <li class="nav-item" data-tab="thanh-vien">
-        <div class="nav-left">
-          <span class="nav-icon">👥</span>
+        <div class="nav-item-left">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
           <span>Thành Viên</span>
         </div>
       </li>
       <li class="nav-item" data-tab="bai-viet">
-        <div class="nav-left">
-          <span class="nav-icon">📝</span>
-          <span>Bài Viết</span>
+        <div class="nav-item-left">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8V6Z"/></svg>
+          <span>Bảng Tin</span>
         </div>
       </li>
       <li class="nav-item" data-tab="binh-luan">
-        <div class="nav-left">
-          <span class="nav-icon">💬</span>
+        <div class="nav-item-left">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
           <span>Bình Luận</span>
         </div>
       </li>
       <li class="nav-item" data-tab="bao-cao">
-        <div class="nav-left">
-          <span class="nav-icon">🚨</span>
-          <span>Duyệt Hồ Sơ & Báo Cáo</span>
+        <div class="nav-item-left">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
+          <span>Kiểm Duyệt & Báo Cáo</span>
         </div>
-        <span class="nav-pill" id="sidebar-report-badge">0</span>
+        <span class="nav-count-badge" id="sidebar-report-badge">0</span>
       </li>
       <li class="nav-item" data-tab="phat-thong-bao">
-        <div class="nav-left">
-          <span class="nav-icon">📢</span>
-          <span>Phát Thông Báo</span>
+        <div class="nav-item-left">
+          <svg class="icon" viewBox="0 0 24 24"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
+          <span>Broadcast Thông Báo</span>
         </div>
       </li>
       <li class="nav-item" data-tab="he-thong">
-        <div class="nav-left">
-          <span class="nav-icon">⚙️</span>
-          <span>Hệ Thống & Cloud</span>
+        <div class="nav-item-left">
+          <svg class="icon" viewBox="0 0 24 24"><rect width="20" height="8" x="2" y="2" rx="2" ry="2"/><rect width="20" height="8" x="2" y="14" rx="2" ry="2"/><line x1="6" x2="6.01" y1="6" y2="6"/><line x1="6" x2="6.01" y1="18" y2="18"/></svg>
+          <span>Hạ Tầng Cloud</span>
         </div>
       </li>
     </ul>
 
     <div class="sidebar-footer">
-      <div class="status-pill">
-        <div class="status-dot"></div>
-        <span>HỆ THỐNG ONLINE</span>
+      <div class="pulse-wrapper">
+        <div class="pulse-dot"></div>
+        <span>Cụm Máy Chủ Online</span>
       </div>
-      <button class="btn btn-secondary btn-sm" id="btn-logout" style="padding: 4px 8px;">Đăng xuất</button>
+      <button class="btn btn-secondary btn-sm" id="btn-logout" title="Đăng xuất khỏi phiên">
+        <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
+      </button>
     </div>
   </aside>
 
-  <!-- MAIN VIEW -->
+  <!-- 5. MAIN VIEWPORT -->
   <main>
     <header class="topbar">
-      <div class="page-title">
+      <div class="breadcrumb-area">
         <h1 id="topbar-title">Tổng Quan Hệ Thống</h1>
-        <p id="topbar-subtitle">Bảng điều khiển theo dõi chỉ số thời gian thực & kiểm duyệt cộng đồng</p>
+        <p id="topbar-subtitle">Chỉ số vận hành thời gian thực & trung tâm điều phối cộng đồng</p>
       </div>
 
-      <div class="topbar-actions">
-        <button class="btn btn-secondary" id="btn-refresh-data">
-          <span>🔄</span>
+      <div class="topbar-right">
+        <button class="btn btn-secondary" id="btn-refresh-data" title="Tải lại toàn bộ dữ liệu">
+          <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 21h5v-5"/></svg>
           <span>Làm Mới</span>
         </button>
         <button class="btn btn-primary" onclick="switchTab('phat-thong-bao')">
-          <span>📢</span>
-          <span>Gửi Thông Báo</span>
+          <svg class="icon icon-sm" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          <span>Soạn Broadcast</span>
         </button>
       </div>
     </header>
 
-    <div class="content-area">
+    <div class="content-container">
 
       <!-- ================= 1. TAB: TỔNG QUAN ================= -->
       <section id="tab-tong-quan" class="tab-section active">
         <!-- KPI METRICS -->
-        <div class="metrics-grid">
-          <div class="kpi-card" style="--accent-color: var(--blue);">
-            <div class="kpi-header">
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-top">
               <span class="kpi-title">Tổng Thành Viên</span>
-              <div class="kpi-icon">👥</div>
+              <div class="kpi-icon-box" style="background: rgba(37,99,235,0.12); color: var(--brand-primary);">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              </div>
             </div>
             <div class="kpi-value" id="kpi-users">-</div>
-            <div class="kpi-meta"><span style="color: var(--green);">●</span> Đang kích hoạt trong mạng</div>
+            <div class="kpi-desc"><span style="color: var(--color-emerald);">●</span> Người dùng đã đăng ký</div>
           </div>
 
-          <div class="kpi-card" style="--accent-color: var(--gold);">
-            <div class="kpi-header">
-              <span class="kpi-title">Tích Xanh Đã Cấp</span>
-              <div class="kpi-icon">✓</div>
+          <div class="kpi-card">
+            <div class="kpi-top">
+              <span class="kpi-title">Tài Khoản Tích Xanh</span>
+              <div class="kpi-icon-box" style="background: var(--color-blue-bg); color: var(--color-blue);">
+                <svg class="icon" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+              </div>
             </div>
             <div class="kpi-value" id="kpi-verified">-</div>
-            <div class="kpi-meta"><span style="color: var(--gold);">★</span> Tài khoản chính chủ</div>
+            <div class="kpi-desc"><span style="color: var(--color-blue);">✓</span> Cá nhân uy tín xác minh</div>
           </div>
 
-          <div class="kpi-card" style="--accent-color: var(--gold);">
-            <div class="kpi-header">
-              <span class="kpi-title">Tích Vàng OA ⭐</span>
-              <div class="kpi-icon">⭐</div>
+          <div class="kpi-card">
+            <div class="kpi-top">
+              <span class="kpi-title">Tổ Chức / Official OA</span>
+              <div class="kpi-icon-box" style="background: var(--color-gold-bg); color: var(--color-gold);">
+                <svg class="icon" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              </div>
             </div>
             <div class="kpi-value" id="kpi-vip">-</div>
-            <div class="kpi-meta"><span style="color: var(--gold);">★</span> Tài khoản OA chính thức</div>
+            <div class="kpi-desc"><span style="color: var(--color-gold);">★</span> Huy hiệu Tích Vàng OA</div>
           </div>
 
-          <div class="kpi-card" style="--accent-color: var(--red);">
-            <div class="kpi-header">
-              <span class="kpi-title">Tài Khoản Bị Khóa</span>
-              <div class="kpi-icon">🚫</div>
+          <div class="kpi-card">
+            <div class="kpi-top">
+              <span class="kpi-title">Tài Khoản Bị Đình Chỉ</span>
+              <div class="kpi-icon-box" style="background: var(--color-rose-bg); color: var(--color-rose);">
+                <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+              </div>
             </div>
             <div class="kpi-value" id="kpi-banned">-</div>
-            <div class="kpi-meta">Vi phạm tiêu chuẩn cộng đồng</div>
+            <div class="kpi-desc"><span style="color: var(--color-rose);">●</span> Vi phạm quy chuẩn</div>
           </div>
 
-          <div class="kpi-card" style="--accent-color: var(--green);">
-            <div class="kpi-header">
-              <span class="kpi-title">Tổng Bài Viết</span>
-              <div class="kpi-icon">📝</div>
+          <div class="kpi-card">
+            <div class="kpi-top">
+              <span class="kpi-title">Tổng Bài Đăng</span>
+              <div class="kpi-icon-box" style="background: rgba(16,185,129,0.12); color: var(--color-emerald);">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+              </div>
             </div>
             <div class="kpi-value" id="kpi-posts">-</div>
-            <div class="kpi-meta">Nội dung mạng xã hội</div>
+            <div class="kpi-desc">Nội dung đã chia sẻ</div>
           </div>
 
-          <div class="kpi-card" style="--accent-color: #06B6D4;">
-            <div class="kpi-header">
+          <div class="kpi-card">
+            <div class="kpi-top">
               <span class="kpi-title">Tổng Bình Luận</span>
-              <div class="kpi-icon">💬</div>
+              <div class="kpi-icon-box" style="background: rgba(168,85,247,0.12); color: var(--color-violet);">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              </div>
             </div>
             <div class="kpi-value" id="kpi-comments">-</div>
-            <div class="kpi-meta">Tương tác thảo luận</div>
+            <div class="kpi-desc">Thảo luận tương tác</div>
           </div>
         </div>
 
-        <!-- CLOUD HEALTH STRIP -->
-        <div class="glass-panel">
+        <!-- INFRASTRUCTURE STRIP -->
+        <div class="card-panel">
           <div class="panel-header">
-            <div class="panel-title">
-              <span>⚡</span>
-              <span>Trạng Thái Hạ Tầng & Dịch Vụ Đám Mây</span>
+            <div class="panel-heading">
+              <svg class="icon" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+              <h3>Trạng Thái Hạ Tầng & Kết Nối Đám Mây</h3>
             </div>
-            <span class="badge badge-verified" id="overall-health-badge">Hoạt động hoàn hảo</span>
+            <span class="badge badge-verified" id="overall-health-badge">Hoạt động bình thường</span>
           </div>
 
-          <div class="system-grid">
-            <div class="sys-card">
-              <div class="sys-card-header">
-                <span class="sys-card-title">🗄️ Supabase Postgres DB</span>
-                <span class="sys-status-badge badge-verified" id="sys-db-status">ĐÃ KẾT NỐI</span>
+          <div class="system-health-grid">
+            <div class="service-card">
+              <div class="service-card-top">
+                <span class="service-name">
+                  <svg class="icon icon-sm" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+                  Supabase Postgres DB
+                </span>
+                <span class="badge badge-verified" id="sys-db-status">CONNECTED</span>
               </div>
-              <p style="font-size: 13px; color: var(--text-dim);" id="sys-db-latency">Độ trễ: Đang đo...</p>
+              <p style="font-size: 12.5px; color: var(--text-dim);" id="sys-db-latency">Đang kiểm tra độ trễ...</p>
             </div>
 
-            <div class="sys-card">
-              <div class="sys-card-header">
-                <span class="sys-card-title">☁️ Cloudflare R2 Media CDN</span>
-                <span class="sys-status-badge badge-vip">SẴN SÀNG</span>
+            <div class="service-card">
+              <div class="service-card-top">
+                <span class="service-name">
+                  <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>
+                  Cloudflare R2 Media CDN
+                </span>
+                <span class="badge badge-oa">READY</span>
               </div>
-              <p style="font-size: 13px; color: var(--text-dim);">Lưu trữ ảnh & media tốc độ cao</p>
+              <p style="font-size: 12.5px; color: var(--text-dim);">Lưu trữ media doraboxcdn.zpiltk.io.vn</p>
             </div>
 
-            <div class="sys-card">
-              <div class="sys-card-header">
-                <span class="sys-card-title">🔔 Firebase Push HTTP v1</span>
-                <span class="sys-status-badge badge-verified">ACTIVE</span>
+            <div class="service-card">
+              <div class="service-card-top">
+                <span class="service-name">
+                  <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+                  Firebase Push Notification
+                </span>
+                <span class="badge badge-verified">HTTP v1</span>
               </div>
-              <p style="font-size: 13px; color: var(--text-dim);">Project: dorabox-4bbcb</p>
+              <p style="font-size: 12.5px; color: var(--text-dim);">Project ID: dorabox-4bbcb</p>
             </div>
 
-            <div class="sys-card">
-              <div class="sys-card-header">
-                <span class="sys-card-title">🚀 Node.js Backend API</span>
-                <span class="sys-status-badge badge-verified">PORT 4000</span>
+            <div class="service-card">
+              <div class="service-card-top">
+                <span class="service-name">
+                  <svg class="icon icon-sm" viewBox="0 0 24 24"><rect width="20" height="8" x="2" y="2" rx="2" ry="2"/><rect width="20" height="8" x="2" y="14" rx="2" ry="2"/></svg>
+                  Node.js API Cluster
+                </span>
+                <span class="badge badge-verified">PORT 4000</span>
               </div>
-              <p style="font-size: 13px; color: var(--text-dim);" id="sys-uptime">Uptime: Đang tính...</p>
+              <p style="font-size: 12.5px; color: var(--text-dim);" id="sys-uptime">Thời gian chạy: Đang tính...</p>
             </div>
           </div>
         </div>
 
-        <!-- QUICK ACTION ROW -->
-        <div class="glass-panel">
-          <div class="panel-title" style="margin-bottom: 16px;">
-            <span>⚡ Phím Tắt Điều Hành Nhanh</span>
+        <!-- QUICK ACCESS ROW -->
+        <div class="card-panel">
+          <div class="panel-heading" style="margin-bottom: 16px;">
+            <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 14 14"/></svg>
+            <h3>Tác Vụ Quản Trị Nhanh</h3>
           </div>
-          <div style="display: flex; gap: 12px; flex-wrap: wrap;">
-            <button class="btn btn-gold" onclick="switchTab('thanh-vien')">⭐ Cấp Tích Vàng OA & Tích Xanh</button>
-            <button class="btn btn-blue" onclick="switchTab('thanh-vien')">👥 Quản Lý Thành Viên</button>
-            <button class="btn btn-danger" onclick="switchTab('bao-cao')">🚨 Duyệt Hồ Sơ Chờ Cấp & Báo Cáo</button>
-            <button class="btn btn-primary" onclick="switchTab('phat-thong-bao')">📢 Phát Sóng Push Notification</button>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <button class="btn btn-gold" onclick="switchTab('thanh-vien')">
+              <svg class="icon icon-sm" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <span>Phân Cấp Tích Vàng OA / Tích Xanh</span>
+            </button>
+            <button class="btn btn-secondary" onclick="switchTab('thanh-vien')">
+              <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+              <span>Tra Cứu Thành Viên</span>
+            </button>
+            <button class="btn btn-danger" onclick="switchTab('bao-cao')">
+              <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              <span>Hàng Đợi Duyệt Hồ Sơ & Báo Cáo</span>
+            </button>
+            <button class="btn btn-primary" onclick="switchTab('phat-thong-bao')">
+              <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="m3 11 18-5v12L3 14v-3z"/></svg>
+              <span>Phát Thông Báo Toàn Mạng</span>
+            </button>
           </div>
         </div>
       </section>
 
       <!-- ================= 2. TAB: THÀNH VIÊN ================= -->
       <section id="tab-thanh-vien" class="tab-section">
-        <div class="glass-panel">
+        <div class="card-panel">
           <div class="panel-header">
-            <div class="panel-title">
-              <span>👥</span>
-              <span>Danh Sách Thành Viên Dorabox</span>
+            <div class="panel-heading">
+              <svg class="icon" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+              <h3>Danh Sách Thành Viên & Phân Quyền</h3>
             </div>
 
-            <div class="panel-filters">
-              <button class="filter-btn active" onclick="filterUsers('all', this)">Tất cả</button>
-              <button class="filter-btn" onclick="filterUsers('oa', this)" style="border-color: rgba(255, 200, 55, 0.4); color: var(--gold); font-weight: 700;">Tích Vàng OA ⭐</button>
-              <button class="filter-btn" onclick="filterUsers('verified', this)">Tích xanh ✓</button>
-              <button class="filter-btn" onclick="filterUsers('banned', this)">Bị khóa 🚫</button>
+            <div class="panel-actions">
+              <div class="filter-group">
+                <button class="filter-btn active" onclick="filterUsers('all', this)">Tất cả</button>
+                <button class="filter-btn" onclick="filterUsers('oa', this)">Tích Vàng OA</button>
+                <button class="filter-btn" onclick="filterUsers('verified', this)">Tích Xanh</button>
+                <button class="filter-btn" onclick="filterUsers('banned', this)">Bị Khóa</button>
+              </div>
 
-              <div class="search-wrap">
-                <span class="search-icon">🔍</span>
-                <input type="text" id="user-search-input" class="search-input" placeholder="Tìm theo tên hoặc @username..." />
+              <div class="search-box">
+                <svg class="icon icon-sm search-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input type="text" id="user-search-input" class="search-field" placeholder="Tìm theo tên hoặc @username..." />
               </div>
             </div>
           </div>
 
-          <!-- BANNER HƯỚNG DẪN CẤP TÍCH VÀNG OA -->
-          <div style="background: rgba(255, 200, 55, 0.08); border: 1px solid rgba(255, 200, 55, 0.35); border-radius: 14px; padding: 14px 18px; margin-bottom: 18px; display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap;">
-            <div style="display: flex; align-items: center; gap: 12px;">
-              <span style="font-size: 24px;">⭐</span>
-              <div>
-                <div style="font-size: 14px; font-weight: 700; color: var(--gold);">CÁCH CẤP TÍCH VÀNG OA CHO THÀNH VIÊN:</div>
-                <div style="font-size: 13px; color: var(--text-muted); margin-top: 2px;">
-                  Tìm thành viên trong danh sách bên dưới, rồi bấm nút màu vàng <span style="background: var(--gold); color: #000; padding: 2px 8px; border-radius: 6px; font-weight: 800; font-size: 11.5px;">Tích Vàng OA ⭐</span> tại cột <strong>Hành Động Quản Trị</strong>. Nick sẽ lập tức có huy hiệu Tích Vàng Sao và loại tài khoản OA trên toàn hệ thống!
-                </div>
-              </div>
+          <div class="notice-banner">
+            <svg class="icon notice-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+            <div class="notice-text">
+              <h4>Chính sách cấp huy hiệu chính chủ & tài khoản doanh nghiệp:</h4>
+              <p>Nút <strong>Tích Vàng OA</strong> cấp quyền Official Account cho tổ chức, cơ quan và doanh nghiệp. Nút <strong>Tích Xanh</strong> xác thực cá nhân uy tín. Trạng thái có hiệu lực ngay lập tức trên app mobile.</p>
             </div>
           </div>
 
-          <div class="table-container">
+          <div class="table-wrapper">
             <table>
               <thead>
                 <tr>
@@ -618,11 +1310,11 @@ export function renderAdminPage(): string {
                   <th>Vai Trò</th>
                   <th>Trạng Thái</th>
                   <th>Ngày Gia Nhập</th>
-                  <th style="text-align: right;">Hành Động Quản Trị</th>
+                  <th style="text-align: right;">Hành Động</th>
                 </tr>
               </thead>
               <tbody id="users-table-body">
-                <tr><td colspan="6" style="text-align: center; padding: 40px;">Đang tải danh sách thành viên...</td></tr>
+                <tr><td colspan="6" style="text-align: center; padding: 40px; color: var(--text-dim);">Đang tải danh sách thành viên...</td></tr>
               </tbody>
             </table>
           </div>
@@ -631,34 +1323,34 @@ export function renderAdminPage(): string {
 
       <!-- ================= 3. TAB: BÀI VIẾT ================= -->
       <section id="tab-bai-viet" class="tab-section">
-        <div class="glass-panel">
+        <div class="card-panel">
           <div class="panel-header">
-            <div class="panel-title">
-              <span>📝</span>
-              <span>Kiểm Duyệt Bài Viết & Đa Phương Tiện</span>
+            <div class="panel-heading">
+              <svg class="icon" viewBox="0 0 24 24"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8V6Z"/></svg>
+              <h3>Kiểm Duyệt Bảng Tin & Bài Viết</h3>
             </div>
 
-            <div class="search-wrap">
-              <span class="search-icon">🔍</span>
-              <input type="text" id="post-search-input" class="search-input" placeholder="Tìm kiếm nội dung bài viết..." />
+            <div class="search-box">
+              <svg class="icon icon-sm search-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input type="text" id="post-search-input" class="search-field" placeholder="Tìm kiếm nội dung bài viết..." />
             </div>
           </div>
 
-          <div class="table-container">
+          <div class="table-wrapper">
             <table>
               <thead>
                 <tr>
                   <th>Tác Giả</th>
                   <th>Nội Dung Bài Viết</th>
-                  <th>Đính Kèm</th>
+                  <th>Ảnh Đính Kèm</th>
                   <th>Tương Tác</th>
-                  <th>Ghim</th>
+                  <th>Trạng Thái Ghim</th>
                   <th>Ngày Đăng</th>
                   <th style="text-align: right;">Hành Động</th>
                 </tr>
               </thead>
               <tbody id="posts-table-body">
-                <tr><td colspan="7" style="text-align: center; padding: 40px;">Đang tải danh sách bài viết...</td></tr>
+                <tr><td colspan="7" style="text-align: center; padding: 40px; color: var(--text-dim);">Đang tải danh sách bài viết...</td></tr>
               </tbody>
             </table>
           </div>
@@ -667,20 +1359,20 @@ export function renderAdminPage(): string {
 
       <!-- ================= 4. TAB: BÌNH LUẬN ================= -->
       <section id="tab-binh-luan" class="tab-section">
-        <div class="glass-panel">
+        <div class="card-panel">
           <div class="panel-header">
-            <div class="panel-title">
-              <span>💬</span>
-              <span>Quản Lý Bình Luận Cộng Đồng</span>
+            <div class="panel-heading">
+              <svg class="icon" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              <h3>Quản Lý Bình Luận Cộng Đồng</h3>
             </div>
 
-            <div class="search-wrap">
-              <span class="search-icon">🔍</span>
-              <input type="text" id="comment-search-input" class="search-input" placeholder="Tìm theo nội dung bình luận..." />
+            <div class="search-box">
+              <svg class="icon icon-sm search-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input type="text" id="comment-search-input" class="search-field" placeholder="Tìm theo nội dung bình luận..." />
             </div>
           </div>
 
-          <div class="table-container">
+          <div class="table-wrapper">
             <table>
               <thead>
                 <tr>
@@ -692,7 +1384,7 @@ export function renderAdminPage(): string {
                 </tr>
               </thead>
               <tbody id="comments-table-body">
-                <tr><td colspan="5" style="text-align: center; padding: 40px;">Đang tải danh sách bình luận...</td></tr>
+                <tr><td colspan="5" style="text-align: center; padding: 40px; color: var(--text-dim);">Đang tải danh sách bình luận...</td></tr>
               </tbody>
             </table>
           </div>
@@ -701,29 +1393,29 @@ export function renderAdminPage(): string {
 
       <!-- ================= 5. TAB: BÁO CÁO VI PHẠM ================= -->
       <section id="tab-bao-cao" class="tab-section">
-        <div class="glass-panel">
+        <div class="card-panel">
           <div class="panel-header">
-            <div class="panel-title">
-              <span>🚨</span>
-              <span>Hàng Đợi Xử Lý Báo Cáo & Xét Duyệt Cấp Tích (OA / Xanh)</span>
+            <div class="panel-heading">
+              <svg class="icon" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              <h3>Hàng Đợi Xử Lý Hồ Sơ Cấp Tích & Báo Cáo Vi Phạm</h3>
             </div>
             <span class="badge badge-banned" id="reports-pending-count">0 Chờ xử lý</span>
           </div>
 
-          <div class="table-container">
+          <div class="table-wrapper">
             <table>
               <thead>
                 <tr>
                   <th>Người Báo Cáo</th>
-                  <th>Loại Vi Phạm</th>
+                  <th>Loại Yêu Cầu</th>
                   <th>Lý Do Chi Tiết</th>
                   <th>Trạng Thái</th>
                   <th>Thời Gian</th>
-                  <th style="text-align: right;">Xử Lý Nhanh</th>
+                  <th style="text-align: right;">Xử Lý</th>
                 </tr>
               </thead>
               <tbody id="reports-table-body">
-                <tr><td colspan="6" style="text-align: center; padding: 40px;">Chưa có báo cáo vi phạm nào trong hàng đợi.</td></tr>
+                <tr><td colspan="6" style="text-align: center; padding: 40px; color: var(--text-dim);">Chưa có báo cáo vi phạm nào trong hàng đợi.</td></tr>
               </tbody>
             </table>
           </div>
@@ -732,44 +1424,44 @@ export function renderAdminPage(): string {
 
       <!-- ================= 6. TAB: PHÁT THÔNG BÁO ================= -->
       <section id="tab-phat-thong-bao" class="tab-section">
-        <div class="broadcast-grid">
-          <div class="glass-panel">
-            <div class="panel-title" style="margin-bottom: 22px;">
-              <span>📢</span>
-              <span>Broadcast Studio – Phát Thông Báo Toàn Mạng</span>
+        <div class="broadcast-container">
+          <div class="card-panel">
+            <div class="panel-heading" style="margin-bottom: 22px;">
+              <svg class="icon" viewBox="0 0 24 24"><path d="m3 11 18-5v12L3 14v-3z"/></svg>
+              <h3>Broadcast Studio — Phát Tin Nhắn Toàn Hệ Thống</h3>
             </div>
 
-            <div class="form-group">
-              <label>Tiêu Đề Thông Báo</label>
-              <input type="text" id="broadcast-title-input" class="form-control" placeholder="Ví dụ: Chúc mừng cập nhật Dorabox phiên bản mới..." value="🎉 Chào mừng tới Dorabox!" />
+            <div class="form-row">
+              <label>Tiêu Đề Thông Báo (Notification Title)</label>
+              <input type="text" id="broadcast-title-input" class="form-input" placeholder="Ví dụ: Chào mừng tới Dorabox phiên bản mới..." value="🎉 Chào mừng tới Dorabox!" />
             </div>
 
-            <div class="form-group">
-              <label>Nội Dung Thông Báo Chi Tiết</label>
-              <textarea id="broadcast-body-input" class="form-control" placeholder="Nhập nội dung bạn muốn gửi tới toàn thể thành viên...">Khám phá các tính năng mới: Ghi âm giọng nói 120s, gửi ảnh siêu tốc, thu hồi tin nhắn và nhiều trải nghiệm tuyệt vời!</textarea>
+            <div class="form-row">
+              <label>Nội Dung Thông Báo (Message Body)</label>
+              <textarea id="broadcast-body-input" class="form-input" placeholder="Nhập nội dung gửi tới toàn thể người dùng app...">Khám phá các tính năng mới: Ghi âm giọng nói 120s, gửi ảnh siêu tốc, thu hồi tin nhắn và nhiều trải nghiệm tuyệt vời!</textarea>
             </div>
 
-            <button class="btn btn-primary" id="btn-send-broadcast" style="width: 100%; padding: 16px; font-size: 15px;">
-              <span>🚀</span>
+            <button class="btn btn-primary" id="btn-send-broadcast" style="width: 100%; padding: 14px; font-size: 14px;">
+              <svg class="icon icon-sm" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
               <span>Phát Sóng Push Notification Tức Thì</span>
             </button>
           </div>
 
           <!-- REALTIME PHONE PREVIEW -->
-          <div class="phone-mockup-wrapper">
-            <div class="phone-notch"></div>
-            <div class="phone-screen-label">XEM TRƯỚC TRÊN MÀN HÌNH KHÓA ĐIỆN THOẠI</div>
+          <div class="phone-preview-card">
+            <div class="phone-speaker-bar"></div>
+            <div class="phone-preview-title">Xem trước màn hình khóa điện thoại</div>
 
-            <div class="notif-bubble">
-              <div class="notif-bubble-header">
-                <div class="notif-app-info">
-                  <div class="notif-app-icon">🐱</div>
-                  <span class="notif-app-name">DORABOX</span>
+            <div class="ios-notification">
+              <div class="ios-header">
+                <div class="ios-brand">
+                  <div class="ios-app-icon">D</div>
+                  <span class="ios-app-name">DORABOX</span>
                 </div>
-                <span class="notif-time">Vừa xong</span>
+                <span class="ios-time">Vừa xong</span>
               </div>
-              <div class="notif-preview-title" id="preview-notif-title">🎉 Chào mừng tới Dorabox!</div>
-              <div class="notif-preview-body" id="preview-notif-body">Khám phá các tính năng mới: Ghi âm giọng nói 120s, gửi ảnh siêu tốc, thu hồi tin nhắn và nhiều trải nghiệm tuyệt vời!</div>
+              <div class="ios-content-title" id="preview-notif-title">🎉 Chào mừng tới Dorabox!</div>
+              <div class="ios-content-body" id="preview-notif-body">Khám phá các tính năng mới: Ghi âm giọng nói 120s, gửi ảnh siêu tốc, thu hồi tin nhắn và nhiều trải nghiệm tuyệt vời!</div>
             </div>
           </div>
         </div>
@@ -777,53 +1469,65 @@ export function renderAdminPage(): string {
 
       <!-- ================= 7. TAB: HỆ THỐNG & CLOUD ================= -->
       <section id="tab-he-thong" class="tab-section">
-        <div class="glass-panel">
+        <div class="card-panel">
           <div class="panel-header">
-            <div class="panel-title">
-              <span>⚙️</span>
-              <span>Kiểm Định & Giám Sát Hệ Thống Đám Mây</span>
+            <div class="panel-heading">
+              <svg class="icon" viewBox="0 0 24 24"><rect width="20" height="8" x="2" y="2" rx="2" ry="2"/><rect width="20" height="8" x="2" y="14" rx="2" ry="2"/></svg>
+              <h3>Kiểm Định & Giám Sát Hạ Tầng Đám Mây</h3>
             </div>
             <button class="btn btn-secondary btn-sm" onclick="fetchSystemHealth(true)">
-              <span>🔄</span>
+              <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 21h5v-5"/></svg>
               <span>Kiểm Tra Toàn Diện Ngay</span>
             </button>
           </div>
 
-          <div class="system-grid" id="full-system-grid">
-            <div class="sys-card">
-              <div class="sys-card-header">
-                <span class="sys-card-title">🗄️ Supabase Postgres & Auth</span>
-                <span class="sys-status-badge badge-verified" id="diag-db-badge">CONNECTED</span>
+          <div class="system-health-grid" id="full-system-grid">
+            <div class="service-card">
+              <div class="service-card-top">
+                <span class="service-name">
+                  <svg class="icon icon-sm" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+                  Supabase Postgres & Auth
+                </span>
+                <span class="badge badge-verified" id="diag-db-badge">CONNECTED</span>
               </div>
-              <p style="font-size: 13px; color: var(--text-dim);" id="diag-db-url">URL: vcmsmyaupsksbjusnzoy.supabase.co</p>
-              <p style="font-size: 13px; color: var(--green);" id="diag-db-lat">Độ trễ phản hồi: Đang kiểm tra...</p>
+              <p style="font-size: 12.5px; color: var(--text-dim);" id="diag-db-url">Endpoint: vcmsmyaupsksbjusnzoy.supabase.co</p>
+              <p style="font-size: 12.5px; color: var(--color-emerald);" id="diag-db-lat">Độ trễ: Đang kiểm tra...</p>
             </div>
 
-            <div class="sys-card">
-              <div class="sys-card-header">
-                <span class="sys-card-title">☁️ Cloudflare R2 Storage</span>
-                <span class="sys-status-badge badge-vip">READY</span>
+            <div class="service-card">
+              <div class="service-card-top">
+                <span class="service-name">
+                  <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>
+                  Cloudflare R2 Storage
+                </span>
+                <span class="badge badge-oa">READY</span>
               </div>
-              <p style="font-size: 13px; color: var(--text-dim);">Bucket: dung-sketch-team-dorabox</p>
-              <p style="font-size: 13px; color: var(--text-dim);">Domain CDN: doraboxcdn.zpiltk.io.vn</p>
+              <p style="font-size: 12.5px; color: var(--text-dim);">Bucket: dung-sketch-team-dorabox</p>
+              <p style="font-size: 12.5px; color: var(--text-dim);">CDN Domain: doraboxcdn.zpiltk.io.vn</p>
             </div>
 
-            <div class="sys-card">
-              <div class="sys-card-header">
-                <span class="sys-card-title">🔔 Firebase Cloud Messaging</span>
-                <span class="sys-status-badge badge-verified">HTTP v1</span>
+            <div class="service-card">
+              <div class="service-card-top">
+                <span class="service-name">
+                  <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/></svg>
+                  Firebase Cloud Messaging
+                </span>
+                <span class="badge badge-verified">HTTP v1</span>
               </div>
-              <p style="font-size: 13px; color: var(--text-dim);">Google Service Account: dorabox-4bbcb</p>
-              <p style="font-size: 13px; color: var(--green);">Sẵn sàng gửi Push Notification</p>
+              <p style="font-size: 12.5px; color: var(--text-dim);">Google Service Account: dorabox-4bbcb</p>
+              <p style="font-size: 12.5px; color: var(--color-emerald);">Kênh Push Notification hoạt động</p>
             </div>
 
-            <div class="sys-card">
-              <div class="sys-card-header">
-                <span class="sys-card-title">💻 Bộ Nhớ & Runtime API</span>
-                <span class="sys-status-badge badge-verified" id="diag-node-badge">NODE.JS</span>
+            <div class="service-card">
+              <div class="service-card-top">
+                <span class="service-name">
+                  <svg class="icon icon-sm" viewBox="0 0 24 24"><rect width="20" height="8" x="2" y="2" rx="2" ry="2"/><rect width="20" height="8" x="2" y="14" rx="2" ry="2"/></svg>
+                  Bộ Nhớ & Runtime API
+                </span>
+                <span class="badge badge-verified" id="diag-node-badge">NODE.JS</span>
               </div>
-              <p style="font-size: 13px; color: var(--text-dim);" id="diag-memory">Bộ nhớ RAM: Đang tính...</p>
-              <p style="font-size: 13px; color: var(--text-dim);" id="diag-uptime-val">Thời gian chạy: Đang tính...</p>
+              <p style="font-size: 12.5px; color: var(--text-dim);" id="diag-memory">Bộ nhớ RAM: Đang tính...</p>
+              <p style="font-size: 12.5px; color: var(--text-dim);" id="diag-uptime-val">Thời gian chạy: Đang tính...</p>
             </div>
           </div>
         </div>
@@ -832,6 +1536,7 @@ export function renderAdminPage(): string {
     </div>
   </main>
 
+  <!-- JAVASCRIPT LOGIC & API INTEGRATIONS -->
   <script>
     // State Quản Trị
     let adminToken = localStorage.getItem('dorabox_admin_token') || '';
@@ -947,11 +1652,11 @@ export function renderAdminPage(): string {
         const data = await res.json();
         if (data.success && data.metrics) {
           const m = data.metrics;
-          document.getElementById('kpi-users').textContent = m.totalUsers;
-          document.getElementById('kpi-verified').textContent = m.verifiedUsers;
-          document.getElementById('kpi-banned').textContent = m.bannedUsers;
-          document.getElementById('kpi-posts').textContent = m.totalPosts;
-          document.getElementById('kpi-comments').textContent = m.totalComments;
+          document.getElementById('kpi-users').textContent = Number(m.totalUsers || 0).toLocaleString();
+          document.getElementById('kpi-verified').textContent = Number(m.verifiedUsers || 0).toLocaleString();
+          document.getElementById('kpi-banned').textContent = Number(m.bannedUsers || 0).toLocaleString();
+          document.getElementById('kpi-posts').textContent = Number(m.totalPosts || 0).toLocaleString();
+          document.getElementById('kpi-comments').textContent = Number(m.totalComments || 0).toLocaleString();
           document.getElementById('sidebar-report-badge').textContent = m.pendingReports;
           document.getElementById('reports-pending-count').textContent = m.pendingReports + ' Chờ xử lý';
         }
@@ -971,9 +1676,9 @@ export function renderAdminPage(): string {
           allUsersCache = data.users;
           renderUsersTable(allUsersCache);
 
-          // Update VIP count
+          // Update VIP / OA count
           const vipCount = allUsersCache.filter(u => u.is_vip || u.is_oa || u.account_type === 'oa').length;
-          document.getElementById('kpi-vip').textContent = vipCount;
+          document.getElementById('kpi-vip').textContent = Number(vipCount).toLocaleString();
         }
       } catch (err) {
         console.error('Fetch users error:', err);
@@ -990,31 +1695,32 @@ export function renderAdminPage(): string {
       tbody.innerHTML = users.map(u => {
         const initial = (u.display_name || u.username || 'U').charAt(0).toUpperCase();
         const avatarHtml = u.avatar_url 
-          ? \`<img class="avatar-img" src="\${u.avatar_url}" alt="\${u.username}" onerror="this.outerHTML='<div class=\\'avatar-placeholder\\'>\${initial}</div>'" />\`
-          : \`<div class="avatar-placeholder">\${initial}</div>\`;
+          ? \`<img class="user-avatar-img" src="\${u.avatar_url}" alt="\${u.username}" onerror="this.outerHTML='<div class=\\'user-avatar-fallback\\'>\${initial}</div>'" />\`
+          : \`<div class="user-avatar-fallback">\${initial}</div>\`;
 
         const statusBadge = u.is_banned
-          ? '<span class="badge badge-banned">ĐANG KHÓA</span>'
-          : '<span class="badge badge-verified">HOẠT ĐỘNG</span>';
+          ? '<span class="badge badge-banned"><svg class="icon icon-sm" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg> ĐÃ KHÓA</span>'
+          : '<span class="badge badge-verified"><svg class="icon icon-sm" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> HOẠT ĐỘNG</span>';
 
         const roleBadge = u.role === 'admin'
-          ? '<span class="badge badge-admin">ADMIN</span>'
-          : (u.role === 'moderator' ? '<span class="badge badge-vip">MOD</span>' : '<span style="font-size: 12px; color: var(--text-dim);">Member</span>');
+          ? '<span class="badge badge-admin"><svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> ADMIN</span>'
+          : (u.role === 'moderator' ? '<span class="badge badge-oa">MOD</span>' : '<span class="badge badge-neutral">MEMBER</span>');
 
         const joinDate = u.created_at ? new Date(u.created_at).toLocaleDateString('vi-VN') : '-';
+        const isOA = (u.is_oa || u.is_vip || u.account_type === 'oa');
 
         return \`
           <tr>
             <td>
-              <div class="user-cell">
+              <div class="user-profile-cell">
                 \${avatarHtml}
-                <div class="user-meta">
-                  <h4>
+                <div>
+                  <div class="user-name-title">
                     \${escapeHtml(u.display_name || u.username || 'Dorabox User')}
-                    \${(u.is_oa || u.is_vip || u.account_type === 'oa') ? '<span style="color: var(--gold);" title="Tài khoản OA (Tích Vàng)">⭐</span>' : ''}
-                    \${u.is_verified ? '<span style="color: var(--blue);" title="Đã xác minh (Tích Xanh)">✓</span>' : ''}
-                  </h4>
-                  <p>UID: \${u.id.substring(0, 8)}...</p>
+                    \${isOA ? '<span style="color: var(--color-gold);" title="Tài khoản Doanh Nghiệp OA"><svg class="icon icon-sm" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span>' : ''}
+                    \${u.is_verified ? '<span style="color: var(--color-blue);" title="Đã xác thực"><svg class="icon icon-sm" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span>' : ''}
+                  </div>
+                  <div class="user-uid-sub">UID: \${u.id.substring(0, 8)}...</div>
                 </div>
               </div>
             </td>
@@ -1027,13 +1733,16 @@ export function renderAdminPage(): string {
             <td style="text-align: right;">
               <div style="display: inline-flex; gap: 6px;">
                 <button class="btn btn-sm \${u.is_verified ? 'btn-secondary' : 'btn-blue'}" onclick="toggleVerify('\${u.id}', \${!u.is_verified})">
-                  \${u.is_verified ? 'Gỡ Tích Xanh' : 'Tích Xanh ✓'}
+                  <svg class="icon icon-sm" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                  <span>\${u.is_verified ? 'Gỡ Xanh' : 'Cấp Tích Xanh'}</span>
                 </button>
-                <button class="btn btn-sm \${(u.is_oa || u.is_vip || u.account_type === 'oa') ? 'btn-secondary' : 'btn-gold'}" onclick="toggleVip('\${u.id}', \${!(u.is_oa || u.is_vip || u.account_type === 'oa')})">
-                  \${(u.is_oa || u.is_vip || u.account_type === 'oa') ? 'Gỡ Tích Vàng' : 'Tích Vàng OA ⭐'}
+                <button class="btn btn-sm \${isOA ? 'btn-secondary' : 'btn-gold'}" onclick="toggleVip('\${u.id}', \${!isOA})">
+                  <svg class="icon icon-sm" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                  <span>\${isOA ? 'Gỡ OA' : 'Cấp Tích Vàng OA'}</span>
                 </button>
                 <button class="btn btn-sm \${u.is_banned ? 'btn-secondary' : 'btn-danger'}" onclick="toggleBan('\${u.id}', \${!u.is_banned})">
-                  \${u.is_banned ? 'Mở Khóa' : 'Khóa Nick'}
+                  <svg class="icon icon-sm" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+                  <span>\${u.is_banned ? 'Mở Khóa' : 'Khóa Nick'}</span>
                 </button>
               </div>
             </td>
@@ -1056,14 +1765,14 @@ export function renderAdminPage(): string {
           fetchUsers();
           fetchMetrics();
         } else {
-          showToast(data.error || 'Thất bại', 'error');
+          showToast(data.error || 'Thao tác thất bại', 'error');
         }
       } catch (err) {
         showToast('Lỗi: ' + err.message, 'error');
       }
     }
 
-    // Toggle VIP
+    // Toggle VIP / OA
     async function toggleVip(userId, newStatus) {
       try {
         const res = await fetch(\`/api/admin/users/\${userId}/toggle-vip\`, {
@@ -1077,7 +1786,7 @@ export function renderAdminPage(): string {
           fetchUsers();
           fetchMetrics();
         } else {
-          showToast(data.error || 'Thất bại', 'error');
+          showToast(data.error || 'Thao tác thất bại', 'error');
         }
       } catch (err) {
         showToast('Lỗi: ' + err.message, 'error');
@@ -1086,7 +1795,7 @@ export function renderAdminPage(): string {
 
     // Toggle Ban
     async function toggleBan(userId, newStatus) {
-      const confirmMsg = newStatus ? 'Bạn có chắc chắn muốn KHÓA tài khoản này không?' : 'Mở khóa cho tài khoản này?';
+      const confirmMsg = newStatus ? 'Xác nhận KHÓA tài khoản này khỏi hệ thống?' : 'Xác nhận mở khóa hoạt động cho tài khoản này?';
       if (!confirm(confirmMsg)) return;
 
       try {
@@ -1101,7 +1810,7 @@ export function renderAdminPage(): string {
           fetchUsers();
           fetchMetrics();
         } else {
-          showToast(data.error || 'Thất bại', 'error');
+          showToast(data.error || 'Thao tác thất bại', 'error');
         }
       } catch (err) {
         showToast('Lỗi: ' + err.message, 'error');
@@ -1119,7 +1828,7 @@ export function renderAdminPage(): string {
     });
 
     function filterUsers(type, btn) {
-      document.querySelectorAll('.panel-filters .filter-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.filter-group .filter-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
 
       if (type === 'all') {
@@ -1160,8 +1869,8 @@ export function renderAdminPage(): string {
         const author = p.profiles || {};
         const authorName = author.display_name || author.username || 'Thành viên';
         const authorAvatar = author.avatar_url 
-          ? \`<img class="avatar-img" style="width:34px;height:34px;" src="\${author.avatar_url}" />\`
-          : \`<div class="avatar-placeholder" style="width:34px;height:34px;font-size:12px;">\${authorName.charAt(0).toUpperCase()}</div>\`;
+          ? \`<img class="user-avatar-img" style="width:32px;height:32px;" src="\${author.avatar_url}" />\`
+          : \`<div class="user-avatar-fallback" style="width:32px;height:32px;font-size:12px;">\${authorName.charAt(0).toUpperCase()}</div>\`;
 
         let mediaHtml = '<span style="color: var(--text-dim); font-size: 12px;">Không có</span>';
         if (p.media_urls && p.media_urls.length > 0) {
@@ -1176,34 +1885,36 @@ export function renderAdminPage(): string {
               <div style="display: flex; align-items: center; gap: 8px;">
                 \${authorAvatar}
                 <div>
-                  <div style="font-weight: 700; font-size: 13.5px; color: var(--text);">\${escapeHtml(authorName)}</div>
-                  <div style="font-size: 11.5px; color: var(--text-dim);">@\${escapeHtml(author.username || '')}</div>
+                  <div style="font-weight: 600; font-size: 13.5px; color: var(--text-main);">\${escapeHtml(authorName)}</div>
+                  <div style="font-size: 11px; color: var(--text-dim);">@\${escapeHtml(author.username || '')}</div>
                 </div>
               </div>
             </td>
-            <td style="max-width: 320px;">
-              <div style="color: var(--text); font-size: 13.5px; line-height: 1.4; word-break: break-word;">
+            <td style="max-width: 300px;">
+              <div style="color: var(--text-main); font-size: 13.5px; line-height: 1.45; word-break: break-word;">
                 \${escapeHtml(p.content || '')}
               </div>
             </td>
             <td>\${mediaHtml}</td>
             <td>
-              <div style="display: flex; gap: 10px; font-size: 13px;">
+              <div style="display: flex; gap: 10px; font-size: 12.5px; color: var(--text-muted);">
                 <span>❤️ \${p.likes_count || 0}</span>
                 <span>💬 \${p.comments_count || 0}</span>
               </div>
             </td>
             <td>
-              \${p.is_pinned ? '<span class="badge badge-vip">📌 Đã ghim</span>' : '<span style="color: var(--text-dim); font-size: 12px;">-</span>'}
+              \${p.is_pinned ? '<span class="badge badge-oa"><svg class="icon icon-sm" viewBox="0 0 24 24"><line x1="12" y1="17" x2="12" y2="22"/><path d="M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V6h1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4h1v4.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24Z"/></svg> Đã ghim</span>' : '<span style="color: var(--text-dim); font-size: 12px;">-</span>'}
             </td>
             <td style="font-size: 12.5px;">\${dateStr}</td>
             <td style="text-align: right;">
               <div style="display: inline-flex; gap: 6px;">
                 <button class="btn btn-sm btn-secondary" onclick="togglePinPost('\${p.id}', \${!p.is_pinned})">
-                  \${p.is_pinned ? 'Bỏ ghim' : '📌 Ghim'}
+                  <svg class="icon icon-sm" viewBox="0 0 24 24"><line x1="12" y1="17" x2="12" y2="22"/><path d="M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V6h1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4h1v4.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24Z"/></svg>
+                  <span>\${p.is_pinned ? 'Bỏ Ghim' : 'Ghim'}</span>
                 </button>
                 <button class="btn btn-sm btn-danger" onclick="deletePost('\${p.id}')">
-                  Xóa Bài
+                  <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+                  <span>Xóa</span>
                 </button>
               </div>
             </td>
@@ -1230,7 +1941,7 @@ export function renderAdminPage(): string {
     }
 
     async function deletePost(postId) {
-      if (!confirm('Xóa vĩnh viễn bài viết này khỏi hệ thống Dorabox?')) return;
+      if (!confirm('Xác nhận xóa vĩnh viễn bài viết này khỏi hệ thống?')) return;
 
       try {
         const res = await fetch(\`/api/admin/posts/\${postId}\`, {
@@ -1287,21 +1998,22 @@ export function renderAdminPage(): string {
         return \`
           <tr>
             <td>
-              <div style="font-weight: 700; color: var(--text); font-size: 13.5px;">\${escapeHtml(userName)}</div>
-              <div style="font-size: 11.5px; color: var(--text-dim);">@\${escapeHtml(user.username || '')}</div>
+              <div style="font-weight: 600; color: var(--text-main); font-size: 13.5px;">\${escapeHtml(userName)}</div>
+              <div style="font-size: 11px; color: var(--text-dim);">@\${escapeHtml(user.username || '')}</div>
             </td>
             <td style="max-width: 340px;">
-              <div style="color: var(--text); font-size: 13.5px; line-height: 1.4; word-break: break-word;">
+              <div style="color: var(--text-main); font-size: 13.5px; line-height: 1.45; word-break: break-word;">
                 \${escapeHtml(c.content || '')}
               </div>
             </td>
             <td>
-              <span class="badge badge-verified" style="font-size: 11.5px;">\${escapeHtml(postSnippet)}</span>
+              <span class="badge badge-neutral" style="font-size: 11px;">\${escapeHtml(postSnippet)}</span>
             </td>
             <td style="font-size: 12.5px;">\${dateStr}</td>
             <td style="text-align: right;">
               <button class="btn btn-sm btn-danger" onclick="deleteComment('\${c.id}')">
-                Xóa Bình Luận
+                <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/></svg>
+                <span>Xóa</span>
               </button>
             </td>
           </tr>
@@ -1310,7 +2022,7 @@ export function renderAdminPage(): string {
     }
 
     async function deleteComment(commentId) {
-      if (!confirm('Xóa bình luận vi phạm này?')) return;
+      if (!confirm('Xác nhận xóa bình luận vi phạm này?')) return;
 
       try {
         const res = await fetch(\`/api/admin/comments/\${commentId}\`, {
@@ -1366,22 +2078,24 @@ export function renderAdminPage(): string {
 
         const statusBadge = isPending
           ? '<span class="badge badge-banned">CHỜ XỬ LÝ</span>'
-          : (r.status === 'dismissed' ? '<span class="badge" style="background: rgba(255,255,255,0.1); color: var(--text-dim);">BÁC BỎ</span>' : '<span class="badge badge-verified">ĐÃ DUYỆT</span>');
+          : (r.status === 'dismissed' ? '<span class="badge badge-neutral">ĐÃ BÁC BỎ</span>' : '<span class="badge badge-verified">ĐÃ XỬ LÝ</span>');
 
         const typeBadge = isUserTarget
-          ? '<span class="badge" style="background: rgba(255, 200, 55, 0.2); color: var(--gold); border: 1px solid rgba(255, 200, 55, 0.4);">⭐ HỒ SƠ CẤP TÍCH</span>'
-          : \`<span class="badge badge-vip">\${escapeHtml(r.target_type || 'Nội dung')}</span>\`;
+          ? '<span class="badge badge-oa">HỒ SƠ CẤP TÍCH</span>'
+          : \`<span class="badge badge-neutral">\${escapeHtml(r.target_type || 'Nội dung')}</span>\`;
 
-        let actionButtonsHtml = '<span style="color: var(--text-dim); font-size: 12px;">Đã hoàn tất</span>';
+        let actionButtonsHtml = '<span style="color: var(--text-dim); font-size: 12px;">Hoàn tất</span>';
         if (isPending) {
           if (isUserTarget) {
             actionButtonsHtml = \`
               <div style="display: inline-flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end;">
                 <button class="btn btn-sm btn-gold" onclick="actionReport('\${r.id}', 'approve_oa')" title="Duyệt cấp Tích Vàng OA">
-                  ⭐ Duyệt Tích Vàng OA
+                  <svg class="icon icon-sm" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                  <span>Duyệt OA</span>
                 </button>
                 <button class="btn btn-sm btn-blue" onclick="actionReport('\${r.id}', 'approve_verified')" title="Duyệt cấp Tích Xanh">
-                  ✓ Duyệt Tích Xanh
+                  <svg class="icon icon-sm" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                  <span>Duyệt Tích Xanh</span>
                 </button>
                 <button class="btn btn-sm btn-secondary" onclick="actionReport('\${r.id}', 'dismiss')">
                   Bác Bỏ
@@ -1395,7 +2109,8 @@ export function renderAdminPage(): string {
                   Bác Bỏ
                 </button>
                 <button class="btn btn-sm btn-danger" onclick="actionReport('\${r.id}', 'delete_target')">
-                  Xử Lý & Xóa
+                  <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/></svg>
+                  <span>Xóa Vi Phạm</span>
                 </button>
               </div>
             \`;
@@ -1405,13 +2120,13 @@ export function renderAdminPage(): string {
         return \`
           <tr>
             <td>
-              <div style="font-weight: 700; color: var(--text); font-size: 13.5px;">\${escapeHtml(reporterName)}</div>
-              <div style="font-size: 11.5px; color: var(--text-dim);">UID: \${r.reporter_id ? r.reporter_id.substring(0, 8) + '...' : '-'}</div>
+              <div style="font-weight: 600; color: var(--text-main); font-size: 13.5px;">\${escapeHtml(reporterName)}</div>
+              <div style="font-size: 11px; color: var(--text-dim); font-family: 'JetBrains Mono', monospace;">UID: \${r.reporter_id ? r.reporter_id.substring(0, 8) + '...' : '-'}</div>
             </td>
             <td>\${typeBadge}</td>
-            <td style="max-width: 300px; color: var(--text);">
-              <div style="font-weight: 500;">\${escapeHtml(r.reason || 'Yêu cầu xử lý')}</div>
-              \${isUserTarget ? \`<div style="font-size: 11px; color: var(--gold); margin-top: 4px;">Target UID: \${r.target_id}</div>\` : ''}
+            <td style="max-width: 300px; color: var(--text-main);">
+              <div style="font-weight: 500;">\${escapeHtml(r.reason || 'Yêu cầu kiểm duyệt')}</div>
+              \${isUserTarget ? \`<div style="font-size: 11px; color: var(--color-gold); margin-top: 4px; font-family: 'JetBrains Mono', monospace;">Mục tiêu UID: \${r.target_id}</div>\` : ''}
             </td>
             <td>\${statusBadge}</td>
             <td style="font-size: 12.5px;">\${dateStr}</td>
@@ -1435,6 +2150,8 @@ export function renderAdminPage(): string {
           showToast(data.message, 'success');
           fetchReports();
           fetchMetrics();
+        } else {
+          showToast(data.error || 'Thao tác thất bại', 'error');
         }
       } catch (err) {
         showToast('Lỗi: ' + err.message, 'error');
@@ -1465,7 +2182,7 @@ export function renderAdminPage(): string {
           return;
         }
 
-        if (!confirm('Bạn có chắc chắn muốn phát sóng thông báo này tới TOÀN BỘ thành viên?')) return;
+        if (!confirm('Xác nhận phát sóng thông báo này tới TOÀN BỘ thành viên ứng dụng?')) return;
 
         const btn = document.getElementById('btn-send-broadcast');
         btn.disabled = true;
@@ -1490,7 +2207,7 @@ export function renderAdminPage(): string {
           showToast('Lỗi: ' + err.message, 'error');
         } finally {
           btn.disabled = false;
-          btn.innerHTML = '<span>🚀</span><span>Phát Sóng Push Notification Tức Thì</span>';
+          btn.innerHTML = \`<svg class="icon icon-sm" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg><span>Phát Sóng Push Notification Tức Thì</span>\`;
         }
       });
     }
@@ -1512,11 +2229,11 @@ export function renderAdminPage(): string {
           document.getElementById('sys-uptime').textContent = \`Thời gian chạy: \${uptimeStr}\`;
           document.getElementById('diag-uptime-val').textContent = \`Thời gian chạy: \${uptimeStr}\`;
 
-          document.getElementById('diag-memory').textContent = \`Bộ nhớ Heap: \${h.memory.heapUsedMb} MB / RSS: \${h.memory.rssMb} MB\`;
+          document.getElementById('diag-memory').textContent = \`Heap RAM: \${h.memory.heapUsedMb} MB / RSS: \${h.memory.rssMb} MB\`;
           document.getElementById('diag-node-badge').textContent = h.nodeVersion;
 
           if (showNotification) {
-            showToast(\`Hệ thống hoàn hảo! Supabase DB: \${h.database.latencyMs}ms, R2: Sẵn sàng, FCM: HTTP v1\`, 'success');
+            showToast(\`Hạ tầng hoạt động hoàn hảo! DB: \${h.database.latencyMs}ms | Cloudflare R2 | Firebase v1\`, 'success');
           }
         }
       } catch (err) {
@@ -1551,13 +2268,13 @@ export function renderAdminPage(): string {
 
       // Update Topbar Titles
       const titleMap = {
-        'tong-quan': { title: 'Tổng Quan Hệ Thống', subtitle: 'Bảng điều khiển theo dõi chỉ số thời gian thực & kiểm duyệt cộng đồng' },
-        'thanh-vien': { title: 'Quản Lý Thành Viên', subtitle: 'Cấp tích xanh, phân quyền VIP, khóa hoặc mở khóa tài khoản' },
-        'bai-viet': { title: 'Quản Lý Bài Viết', subtitle: 'Kiểm duyệt nội dung, ảnh đính kèm, ghim hoặc xóa bài vi phạm' },
-        'binh-luan': { title: 'Quản Lý Bình Luận', subtitle: 'Kiểm tra bình luận cộng đồng và loại bỏ spam' },
-        'bao-cao': { title: 'Báo Cáo Vi Phạm', subtitle: 'Hàng đợi xử lý khiếu nại và phản ánh từ cộng đồng người dùng' },
-        'phat-thong-bao': { title: 'Phát Thông Báo Toàn Mạng', subtitle: 'Soạn thảo & gửi Push Notification kèm xem trước trực quan trên điện thoại' },
-        'he-thong': { title: 'Hệ Thống & Cloud Services', subtitle: 'Giám sát kết nối Supabase, Cloudflare R2 Media và Firebase Push v1' }
+        'tong-quan': { title: 'Tổng Quan Hệ Thống', subtitle: 'Chỉ số vận hành thời gian thực & trung tâm điều phối cộng đồng' },
+        'thanh-vien': { title: 'Quản Lý Thành Viên', subtitle: 'Phân quyền, cấp tích xanh, xét duyệt Official Account & khóa tài khoản' },
+        'bai-viet': { title: 'Quản Lý Bảng Tin & Bài Viết', subtitle: 'Kiểm duyệt nội dung bảng tin, hình ảnh đính kèm, ghim bài nổi bật & xóa vi phạm' },
+        'binh-luan': { title: 'Quản Lý Bình Luận', subtitle: 'Giám sát tương tác thảo luận cộng đồng & ngăn chặn spam' },
+        'bao-cao': { title: 'Kiểm Duyệt & Báo Cáo', subtitle: 'Hàng đợi xét duyệt hồ sơ cấp tích và xử lý vi phạm tiêu chuẩn cộng đồng' },
+        'phat-thong-bao': { title: 'Broadcast Studio', subtitle: 'Soạn thảo và phát Push Notification tới ứng dụng kèm xem trước trên mobile' },
+        'he-thong': { title: 'Hạ Tầng Cloud & Services', subtitle: 'Giám sát dịch vụ Supabase Postgres, Cloudflare R2 CDN và Firebase v1' }
       };
 
       if (titleMap[tabId]) {
@@ -1580,15 +2297,22 @@ export function renderAdminPage(): string {
       const container = document.getElementById('toast-container');
       const toast = document.createElement('div');
       toast.className = 'toast';
-      const icon = type === 'success' ? '✅' : (type === 'error' ? '❌' : 'ℹ️');
-      toast.innerHTML = \`<span>\${icon}</span><span>\${escapeHtml(message)}</span>\`;
+      
+      let iconSvg = '<svg class="icon icon-sm" style="color:var(--brand-primary);" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>';
+      if (type === 'success') {
+        iconSvg = '<svg class="icon icon-sm" style="color:var(--color-emerald);" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>';
+      } else if (type === 'error') {
+        iconSvg = '<svg class="icon icon-sm" style="color:var(--color-rose);" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>';
+      }
+
+      toast.innerHTML = \`\${iconSvg}<span>\${escapeHtml(message)}</span>\`;
       container.appendChild(toast);
 
       setTimeout(() => {
         toast.style.opacity = '0';
         toast.style.transform = 'translateY(10px)';
-        toast.style.transition = '0.3s';
-        setTimeout(() => toast.remove(), 300);
+        toast.style.transition = '0.2s';
+        setTimeout(() => toast.remove(), 250);
       }, 3500);
     }
 
