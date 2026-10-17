@@ -209,29 +209,38 @@ app.post('/api/fcm/send', async (req, res) => {
         soundName = 'goiden';
       }
 
+      const isCall = targetChannel.includes('calls') || (data && data.type === 'call');
+      const legacyPayload: any = {
+        to: fcmToken,
+        priority: 'high',
+        data: {
+          ...(data || {}),
+          title,
+          body,
+        },
+        android: {
+          priority: 'high',
+        },
+      };
+
+      legacyPayload.notification = {
+        title,
+        body,
+        sound: soundName,
+        android_channel_id: targetChannel,
+      };
+      legacyPayload.android.notification = {
+        channel_id: targetChannel,
+        sound: soundName,
+      };
+
       const response = await fetch('https://fcm.googleapis.com/fcm/send', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `key=${fcmServerKey}`,
         },
-        body: JSON.stringify({
-          to: fcmToken,
-          notification: {
-            title,
-            body,
-            sound: soundName,
-            android_channel_id: targetChannel,
-          },
-          android: {
-            priority: 'high',
-            notification: {
-              channel_id: targetChannel,
-              sound: soundName,
-            },
-          },
-          data: data || {},
-        }),
+        body: JSON.stringify(legacyPayload),
       });
 
       const resData = await response.json();

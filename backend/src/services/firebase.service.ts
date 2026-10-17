@@ -135,32 +135,60 @@ export async function sendFcmHttpV1Message(params: {
       soundName = 'goiden';
     }
 
-    const messageId = await getMessaging(firebaseApp).send({
+    const isCall = channel.includes('calls') || stringData.type === 'call';
+
+    const messagePayload: any = {
       token: params.token,
-      notification: {
+      data: {
+        ...stringData,
         title: params.title,
         body: params.body,
       },
-      data: stringData,
       android: {
         priority: 'high',
-        notification: {
-          channelId: channel,
-          sound: soundName,
-          defaultSound: false,
-          defaultVibrateTimings: true,
-          priority: 'max',
-        },
       },
-      apns: {
+    };
+
+    messagePayload.notification = {
+      title: params.title,
+      body: params.body,
+    };
+    messagePayload.android.notification = {
+      channelId: channel,
+      sound: soundName,
+      defaultSound: false,
+      defaultVibrateTimings: true,
+      priority: 'max',
+      visibility: isCall ? 'public' : 'private',
+    };
+
+    if (!isCall) {
+      messagePayload.apns = {
         payload: {
           aps: {
             sound: `${soundName}.caf`,
             badge: 1,
           },
         },
-      },
-    });
+      };
+    } else {
+      // Cuộc gọi đến: Gói High Priority kèm TTL 60s để đánh thức máy ngay lập tức
+      messagePayload.android.ttl = 60 * 1000;
+      messagePayload.apns = {
+        headers: {
+          'apns-priority': '10',
+          'apns-push-type': 'voip',
+        },
+        payload: {
+          aps: {
+            'content-available': 1,
+            sound: `${soundName}.caf`,
+          },
+        },
+      };
+    }
+
+    const messageId = await getMessaging(firebaseApp).send(messagePayload);
 
     console.log(`✅ [FCM v1 Success] Message ID: ${messageId} to: ${params.token.slice(0, 10)}... (Channel: ${channel})`);
     return { success: true, messageId };
