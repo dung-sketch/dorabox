@@ -1073,6 +1073,13 @@ export function renderAdminPage(): string {
           <span>Broadcast Thông Báo</span>
         </div>
       </li>
+      <li class="nav-item" data-tab="bao-mat-audit">
+        <div class="nav-item-left">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+          <span>Bảo Mật & Anti-Spam</span>
+        </div>
+        <span class="nav-count-badge" id="sidebar-security-badge" style="background: rgba(16, 185, 129, 0.2); color: #10B981; border: 1px solid rgba(16,185,129,0.3);">SHIELD</span>
+      </li>
       <li class="nav-item" data-tab="he-thong">
         <div class="nav-item-left">
           <svg class="icon" viewBox="0 0 24 24"><rect width="20" height="8" x="2" y="2" rx="2" ry="2"/><rect width="20" height="8" x="2" y="14" rx="2" ry="2"/><line x1="6" x2="6.01" y1="6" y2="6"/><line x1="6" x2="6.01" y1="18" y2="18"/></svg>
@@ -1284,6 +1291,7 @@ export function renderAdminPage(): string {
                 <button class="filter-btn" onclick="filterUsers('oa', this)">Tích Vàng OA</button>
                 <button class="filter-btn" onclick="filterUsers('verified', this)">Tích Xanh</button>
                 <button class="filter-btn" onclick="filterUsers('banned', this)">Bị Khóa</button>
+                <button class="filter-btn" onclick="filterUsers('admin', this)">Quản Trị / Mod</button>
               </div>
 
               <div class="search-box">
@@ -1533,6 +1541,89 @@ export function renderAdminPage(): string {
         </div>
       </section>
 
+      <!-- ================= 8. TAB: BẢO MẬT & AUDIT LOGS ================= -->
+      <section id="tab-bao-mat-audit" class="tab-section">
+        <!-- CARD 1: CƠ CHẾ CHỐNG SPAM PHẢN ỨNG -->
+        <div class="card-panel">
+          <div class="panel-header">
+            <div class="panel-heading">
+              <svg class="icon" viewBox="0 0 24 24" style="color: var(--color-emerald);"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+              <h3>Cơ Chế Chống Spam Phản Ứng (Reaction Anti-Spam Guard)</h3>
+            </div>
+            <button class="btn btn-primary" id="btn-clean-spam-reactions" onclick="cleanSpamReactions()">
+              <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+              <span>Quét & Dọn Phản Ứng Spam / Đồng Bộ Lượt Thích</span>
+            </button>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-bottom: 16px;">
+            <div class="service-card">
+              <div class="service-card-top">
+                <span class="service-name">
+                  <svg class="icon icon-sm" style="color: var(--color-blue);" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 14 14"/></svg>
+                  Debounce & Throttle
+                </span>
+                <span class="badge badge-verified">120Hz ULTRA</span>
+              </div>
+              <p style="font-size: 12.5px; color: var(--text-dim);">Chặn tap liên tục &lt; 250ms, Gom lệnh mạng 350ms phản hồi tức thì 120Hz mượt mà.</p>
+            </div>
+
+            <div class="service-card">
+              <div class="service-card-top">
+                <span class="service-name">
+                  <svg class="icon icon-sm" style="color: var(--color-gold);" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/></svg>
+                  Rate Limit Push FCM
+                </span>
+                <span class="badge badge-oa">2 PHÚT</span>
+              </div>
+              <p style="font-size: 12.5px; color: var(--text-dim);">Tối đa 1 thông báo đẩy/2 phút mỗi tác giả bài viết, chống spam rung chuông máy người dùng.</p>
+            </div>
+
+            <div class="service-card">
+              <div class="service-card-top">
+                <span class="service-name">
+                  <svg class="icon icon-sm" style="color: var(--color-emerald);" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
+                  Atomic UPSERT RPC
+                </span>
+                <span class="badge badge-verified">POSTGRES</span>
+              </div>
+              <p style="font-size: 12.5px; color: var(--text-dim);">Xử lý nguyên tử toggle_post_reaction, khóa race-condition chống sai lệch số đếm.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- CARD 2: NHẬT KÝ BẢO MẬT AUDIT LOGS -->
+        <div class="card-panel">
+          <div class="panel-header">
+            <div class="panel-heading">
+              <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+              <h3>Nhật Ký Bảo Mật & Kiểm Toán Hệ Thống (Audit Logs)</h3>
+            </div>
+            <button class="btn btn-secondary btn-sm" onclick="fetchSecurityLogs(true)">
+              <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+              <span>Làm Mới Nhật Ký</span>
+            </button>
+          </div>
+
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th style="width: 170px;">Thời Gian</th>
+                  <th>Loại Sự Kiện</th>
+                  <th>Mức Độ</th>
+                  <th>Tác Nhân</th>
+                  <th>Chi Tiết Hoạt Động</th>
+                </tr>
+              </thead>
+              <tbody id="audit-logs-table-body">
+                <tr><td colspan="5" style="text-align: center; padding: 30px; color: var(--text-dim);">Đang tải nhật ký bảo mật...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
     </div>
   </main>
 
@@ -1636,6 +1727,7 @@ export function renderAdminPage(): string {
       fetchComments();
       fetchReports();
       fetchSystemHealth();
+      fetchSecurityLogs();
     }
 
     document.getElementById('btn-refresh-data').addEventListener('click', () => {
@@ -1732,6 +1824,10 @@ export function renderAdminPage(): string {
             <td style="font-size: 13px;">\${joinDate}</td>
             <td style="text-align: right;">
               <div style="display: inline-flex; gap: 6px;">
+                <button class="btn btn-sm btn-secondary" title="Đổi vai trò phân quyền: User, Mod, Admin" onclick="promptChangeRole('\${u.id}', '\${escapeHtml(u.display_name || u.username || 'User')}', '\${u.role || 'user'}')">
+                  <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                  <span>Vai Trò</span>
+                </button>
                 <button class="btn btn-sm \${u.is_verified ? 'btn-secondary' : 'btn-blue'}" onclick="toggleVerify('\${u.id}', \${!u.is_verified})">
                   <svg class="icon icon-sm" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
                   <span>\${u.is_verified ? 'Gỡ Xanh' : 'Cấp Tích Xanh'}</span>
@@ -1839,6 +1935,37 @@ export function renderAdminPage(): string {
         renderUsersTable(allUsersCache.filter(u => u.is_oa || u.is_vip || u.account_type === 'oa'));
       } else if (type === 'banned') {
         renderUsersTable(allUsersCache.filter(u => u.is_banned));
+      } else if (type === 'admin') {
+        renderUsersTable(allUsersCache.filter(u => u.role === 'admin' || u.role === 'moderator'));
+      }
+    }
+
+    // Đổi vai trò tài khoản (Role Promotion/Demotion)
+    async function promptChangeRole(userId, name, currentRole) {
+      const newRole = prompt('Phân quyền vai trò cho [' + name + ']: Nhập user, moderator hoặc admin:', currentRole);
+      if (!newRole) return;
+      const clean = newRole.trim().toLowerCase();
+      if (!['user', 'moderator', 'admin'].includes(clean)) {
+        showToast('Vai trò không hợp lệ! Phải là user, moderator hoặc admin', 'error');
+        return;
+      }
+
+      try {
+        const res = await fetch(\`/api/admin/users/\${userId}/change-role\`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + adminToken },
+          body: JSON.stringify({ role: clean })
+        });
+        const data = await res.json();
+        if (data.success) {
+          showToast(data.message, 'success');
+          fetchUsers();
+          fetchSecurityLogs();
+        } else {
+          showToast(data.error || 'Phân quyền thất bại', 'error');
+        }
+      } catch (err) {
+        showToast('Lỗi: ' + err.message, 'error');
       }
     }
 
@@ -2241,6 +2368,96 @@ export function renderAdminPage(): string {
       }
     }
 
+    // 8. Fetch Security Audit Logs
+    async function fetchSecurityLogs(showNotification = false) {
+      try {
+        const res = await fetch('/api/admin/security-logs', {
+          headers: { 'Authorization': 'Bearer ' + adminToken }
+        });
+        const data = await res.json();
+        if (data.success && data.logs) {
+          renderAuditLogsTable(data.logs);
+          if (showNotification) {
+            showToast('Đã làm mới nhật ký kiểm toán bảo mật!', 'success');
+          }
+        }
+      } catch (err) {
+        console.error('Fetch security logs error:', err);
+      }
+    }
+
+    function renderAuditLogsTable(logs) {
+      const tbody = document.getElementById('audit-logs-table-body');
+      if (!tbody) return;
+
+      if (!logs || logs.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 30px; color: var(--text-dim);">Chưa có sự kiện an ninh nào được ghi nhận.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = logs.map(l => {
+        let badgeClass = 'badge-verified';
+        let badgeText = 'INFO';
+        if (l.severity === 'warning') {
+          badgeClass = 'badge-oa';
+          badgeText = 'WARNING';
+        } else if (l.severity === 'alert') {
+          badgeClass = 'badge-banned';
+          badgeText = 'ALERT';
+        }
+
+        const dateStr = l.timestamp ? new Date(l.timestamp).toLocaleString('vi-VN') : '-';
+
+        return \`
+          <tr>
+            <td style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text-muted);">\${dateStr}</td>
+            <td>
+              <span style="font-weight: 700; font-size: 12.5px; color: var(--text-main);">\${escapeHtml(l.eventType || 'system')}</span>
+            </td>
+            <td><span class="badge \${badgeClass}">\${badgeText}</span></td>
+            <td>
+              <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text-muted);">\${escapeHtml(l.actor || 'system')}</span>
+            </td>
+            <td style="font-size: 13px; color: var(--text-main); word-break: break-word;">\${escapeHtml(l.details || '')}</td>
+          </tr>
+        \`;
+      }).join('');
+    }
+
+    // Quét & Dọn Dẹp Phản Ứng Spam
+    async function cleanSpamReactions() {
+      const btn = document.getElementById('btn-clean-spam-reactions');
+      if (!confirm('Khởi chạy quét toàn bộ cơ sở dữ liệu để tìm kiếm và xử lý các phản ứng spam/trùng lặp?')) return;
+
+      try {
+        if (btn) {
+          btn.disabled = true;
+          btn.innerHTML = '<span class="spinner"></span> <span>Đang rà soát và tối ưu dữ liệu...</span>';
+        }
+
+        const res = await fetch('/api/admin/clean-spam-reactions', {
+          method: 'POST',
+          headers: { 'Authorization': 'Bearer ' + adminToken }
+        });
+        const data = await res.json();
+
+        if (data.success) {
+          showToast(data.message, 'success');
+          fetchSecurityLogs();
+          fetchMetrics();
+        } else {
+          showToast(data.error || 'Quá trình bảo trì thất bại', 'error');
+        }
+      } catch (err) {
+        showToast('Lỗi: ' + err.message, 'error');
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = '<svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg><span>Quét & Dọn Phản Ứng Spam / Đồng Bộ Lượt Thích</span>';
+        }
+      }
+    }
+
     // Navigation Tabs Switching
     function setupTabs() {
       document.querySelectorAll('.nav-item').forEach(item => {
@@ -2274,6 +2491,7 @@ export function renderAdminPage(): string {
         'binh-luan': { title: 'Quản Lý Bình Luận', subtitle: 'Giám sát tương tác thảo luận cộng đồng & ngăn chặn spam' },
         'bao-cao': { title: 'Kiểm Duyệt & Báo Cáo', subtitle: 'Hàng đợi xét duyệt hồ sơ cấp tích và xử lý vi phạm tiêu chuẩn cộng đồng' },
         'phat-thong-bao': { title: 'Broadcast Studio', subtitle: 'Soạn thảo và phát Push Notification tới ứng dụng kèm xem trước trên mobile' },
+        'bao-mat-audit': { title: 'Bảo Mật Hệ Thống & Nhật Ký Audit', subtitle: 'Giám sát khiên chống spam 120Hz, bảo trì dọn dẹp phản ứng rác & theo dõi an ninh' },
         'he-thong': { title: 'Hạ Tầng Cloud & Services', subtitle: 'Giám sát dịch vụ Supabase Postgres, Cloudflare R2 CDN và Firebase v1' }
       };
 

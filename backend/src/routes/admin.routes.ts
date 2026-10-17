@@ -16,6 +16,50 @@ function generateAdminToken(): string {
     .digest('hex');
 }
 
+// Cấu trúc Nhật ký Bảo mật & Audit Log hệ thống
+export interface SecurityAuditLog {
+  id: string;
+  timestamp: string;
+  eventType: 'admin_login' | 'role_change' | 'user_ban' | 'user_unban' | 'verify_toggle' | 'spam_clean' | 'broadcast' | 'rate_limit';
+  severity: 'info' | 'warning' | 'alert';
+  actor: string;
+  details: string;
+  ip?: string;
+}
+
+const auditLogsBuffer: SecurityAuditLog[] = [
+  {
+    id: 'log-boot-01',
+    timestamp: new Date().toISOString(),
+    eventType: 'admin_login',
+    severity: 'info',
+    actor: 'system',
+    details: 'Hệ thống bảo vệ Dorabox Security Shield 2026 khởi động thành công.'
+  }
+];
+
+export function logSecurityEvent(
+  eventType: SecurityAuditLog['eventType'],
+  details: string,
+  severity: SecurityAuditLog['severity'] = 'info',
+  actor = 'superadmin',
+  ip?: string
+) {
+  const logItem: SecurityAuditLog = {
+    id: 'log-' + Date.now() + '-' + Math.random().toString(36).substring(2, 6),
+    timestamp: new Date().toISOString(),
+    eventType,
+    severity,
+    actor,
+    details,
+    ip
+  };
+  auditLogsBuffer.unshift(logItem);
+  if (auditLogsBuffer.length > 200) {
+    auditLogsBuffer.pop();
+  }
+}
+
 /**
  * Middleware kiểm tra bảo mật nghiêm ngặt cho tất cả các API Quản trị
  */
@@ -55,6 +99,13 @@ router.post('/login', async (req, res) => {
     await new Promise(resolve => setTimeout(resolve, 250));
 
     if (!password || password !== ADMIN_SECRET) {
+      logSecurityEvent(
+        'admin_login',
+        `Cố gắng xác thực Master Key không chính xác từ IP: ${req.ip || 'ẩn danh'}`,
+        'warning',
+        'unknown',
+        req.ip
+      );
       return res.status(401).json({
         success: false,
         error: 'Khóa bảo mật Quản trị viên không chính xác! Vui lòng thử lại.'
@@ -62,6 +113,14 @@ router.post('/login', async (req, res) => {
     }
 
     const token = generateAdminToken();
+    logSecurityEvent(
+      'admin_login',
+      'Quản trị viên đăng nhập thành công vào phiên điều hành Master Console',
+      'info',
+      'superadmin',
+      req.ip
+    );
+
     return res.json({
       success: true,
       message: 'Xác thực Quản trị viên thành công.',
@@ -128,7 +187,7 @@ router.get('/metrics', async (req, res) => {
 
 router.get('/users', async (req, res) => {
   try {
-    const { q } = req.query;
+    const { q, filter } = req.query;
     let query = supabaseAdmin
       .from('profiles')
       .select('id, username, display_name, avatar_url, bio, is_verified, is_vip, is_oa, account_type, is_banned, role, created_at')
@@ -137,6 +196,16 @@ router.get('/users', async (req, res) => {
     if (q && typeof q === 'string' && q.trim()) {
       const term = q.trim();
       query = query.or(`username.ilike.%${term}%,display_name.ilike.%${term}%`);
+    }
+
+    if (filter === 'verified') {
+      query = query.eq('is_verified', true);
+    } else if (filter === 'oa' || filter === 'vip') {
+      query = query.or('is_oa.eq.true,is_vip.eq.true,account_type.eq.oa');
+    } else if (filter === 'banned') {
+      query = query.eq('is_banned', true);
+    } else if (filter === 'admin') {
+      query = query.or('role.eq.admin,role.eq.moderator');
     }
 
     const { data, error } = await query.limit(100);
@@ -162,6 +231,13 @@ router.post('/users/:id/toggle-verify', async (req, res) => {
       .single();
 
     if (error) throw error;
+
+    logSecurityEvent(
+      'verify_toggle',
+      `${isVerified ? 'Cấp' : 'Gỡ'} Tích Xanh ✓ cho tài khoản (UID: ${id.substring(0, 8)}...)`,
+      'info'
+    );
+
     return res.json({ success: true, user: data, message: isVerified ? 'Đã cấp tích xanh ✓' : 'Đã gỡ tích xanh' });
   } catch (err: any) {
     return res.status(500).json({ error: err.message });
@@ -192,6 +268,12 @@ router.post('/users/:id/toggle-ban', async (req, res) => {
       console.warn('👉 Notice on updateUserById ban_duration:', authBanErr);
     }
 
+    logSecurityEvent(
+      isBanned ? 'user_ban' : 'user_unban',
+      `${isBanned ? 'KHÓA VĨNH VIỄN' : 'Mở khóa hoạt động'} cho tài khoản (UID: ${id.substring(0, 8)}...)`,
+      isBanned ? 'alert' : 'info'
+    );
+
     return res.json({
       success: true,
       user: data,
@@ -220,6 +302,13 @@ router.post('/users/:id/toggle-vip', async (req, res) => {
       .single();
 
     if (error) throw error;
+
+    logSecurityEvent(
+      'verify_toggle',
+      `${isVip ? 'Cấp' : 'Gỡ'} Tích Vàng OA ⭐ cho tài khoản (UID: ${id.substring(0, 8)}...)`,
+      'info'
+    );
+
     return res.json({ success: true, user: data, message: isVip ? 'Đã kích hoạt Tích Vàng OA ⭐' : 'Đã hủy Tích Vàng OA' });
   } catch (err: any) {
     return res.status(500).json({ error: err.message });
@@ -244,6 +333,13 @@ router.post('/users/:id/change-role', async (req, res) => {
       .single();
 
     if (error) throw error;
+
+    logSecurityEvent(
+      'role_change',
+      `Phân quyền tài khoản (UID: ${id.substring(0, 8)}...) thành vai trò: [${role.toUpperCase()}]`,
+      'alert'
+    );
+
     return res.json({ success: true, user: data, message: `Đã phân quyền tài khoản thành: ${role}` });
   } catch (err: any) {
     return res.status(500).json({ error: err.message });
@@ -550,11 +646,112 @@ router.post('/broadcast', async (req, res) => {
       }
     }
 
+    logSecurityEvent(
+      'broadcast',
+      `Phát thông báo toàn hệ thống: "${title}" tới ${users.length} tài khoản (${fcmSentCount} thiết bị nhận Push FCM)`,
+      'info'
+    );
+
     return res.json({
       success: true,
       count: users.length,
       fcmSent: fcmSentCount,
       message: `Đã phát thông báo thành công tới ${users.length} tài khoản (${fcmSentCount} thiết bị nhận Push FCM tức thì)!`
+    });
+  } catch (err: any) {
+    return res.status(500).json({ error: err.message });
+  }
+});
+
+// -------------------------------------------------------------
+// 7. SECURITY AUDIT LOGS & ANTI-SPAM CLEANUP
+// -------------------------------------------------------------
+
+router.get('/security-logs', async (req, res) => {
+  try {
+    return res.json({
+      success: true,
+      logs: auditLogsBuffer,
+      stats: {
+        totalLogs: auditLogsBuffer.length,
+        alerts: auditLogsBuffer.filter(l => l.severity === 'alert').length,
+        warnings: auditLogsBuffer.filter(l => l.severity === 'warning').length,
+        info: auditLogsBuffer.filter(l => l.severity === 'info').length,
+      }
+    });
+  } catch (err: any) {
+    return res.status(500).json({ error: err.message });
+  }
+});
+
+// Quét & dọn sạch phản ứng spam trùng lặp, đồng bộ lượt thích chuẩn xác
+router.post('/clean-spam-reactions', async (req, res) => {
+  try {
+    // 1. Quét bảng post_reactions
+    const { data: reactions, error: rErr } = await supabaseAdmin
+      .from('post_reactions')
+      .select('id, post_id, user_id, reaction_type, created_at')
+      .order('created_at', { ascending: false });
+
+    if (rErr) throw rErr;
+
+    // 2. Tìm duplicate reactions theo cặp (user_id, post_id)
+    const seen = new Set<string>();
+    const duplicateIds: string[] = [];
+    const affectedPostIds = new Set<string>();
+
+    for (const r of (reactions || [])) {
+      const key = `${r.user_id}_${r.post_id}`;
+      if (seen.has(key)) {
+        duplicateIds.push(r.id);
+        affectedPostIds.add(r.post_id);
+      } else {
+        seen.add(key);
+        affectedPostIds.add(r.post_id);
+      }
+    }
+
+    let deletedCount = 0;
+    if (duplicateIds.length > 0) {
+      const { error: delErr } = await supabaseAdmin
+        .from('post_reactions')
+        .delete()
+        .in('id', duplicateIds);
+
+      if (!delErr) {
+        deletedCount = duplicateIds.length;
+      }
+    }
+
+    // 3. Cập nhật lại số lượng likes_count chuẩn xác cho các bài viết bị ảnh hưởng
+    let updatedPostsCount = 0;
+    for (const postId of Array.from(affectedPostIds).slice(0, 60)) {
+      try {
+        const { count } = await supabaseAdmin
+          .from('post_reactions')
+          .select('id', { count: 'exact', head: true })
+          .eq('post_id', postId);
+
+        await supabaseAdmin
+          .from('posts')
+          .update({ likes_count: count || 0 })
+          .eq('id', postId);
+        updatedPostsCount++;
+      } catch (_) {}
+    }
+
+    logSecurityEvent(
+      'spam_clean',
+      `Bảo trì hoàn tất: Quét ${reactions?.length || 0} lượt phản ứng, dọn sạch ${deletedCount} phản ứng rác trùng lặp, đồng bộ ${updatedPostsCount} bài viết.`,
+      deletedCount > 0 ? 'warning' : 'info'
+    );
+
+    return res.json({
+      success: true,
+      scannedReactions: reactions?.length || 0,
+      duplicatesCleaned: deletedCount,
+      postsSynchronized: updatedPostsCount,
+      message: `Đã hoàn tất bảo trì: Dọn sạch ${deletedCount} phản ứng spam và đồng bộ chính xác ${updatedPostsCount} bài viết.`
     });
   } catch (err: any) {
     return res.status(500).json({ error: err.message });
