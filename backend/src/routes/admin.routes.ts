@@ -20,7 +20,7 @@ function generateAdminToken(): string {
 export interface SecurityAuditLog {
   id: string;
   timestamp: string;
-  eventType: 'admin_login' | 'role_change' | 'user_ban' | 'user_unban' | 'verify_toggle' | 'spam_clean' | 'broadcast' | 'rate_limit';
+  eventType: 'admin_login' | 'role_change' | 'user_ban' | 'user_unban' | 'verify_toggle' | 'spam_clean' | 'broadcast' | 'rate_limit' | 'account_wiped';
   severity: 'info' | 'warning' | 'alert';
   actor: string;
   details: string;
@@ -346,20 +346,112 @@ router.post('/users/:id/change-role', async (req, res) => {
   }
 });
 
-// Xóa tài khoản thành viên
+// Hàm dọn dẹp và xóa sạch 100% toàn bộ dữ liệu tài khoản
+export async function wipeUserAccountCompletely(userId: string): Promise<{ success: boolean; error?: string }> {
+  try {
+    console.log(`🧹 [Account Wipe] Bắt đầu xóa sạch toàn bộ dữ liệu người dùng: ${userId}`);
+
+    // Lấy FCM token trước khi xóa để gửi thông báo đăng xuất khẩn cấp tới thiết bị
+    try {
+      const { data: prof } = await supabaseAdmin.from('profiles').select('fcm_token').eq('id', userId).maybeSingle();
+      if (prof?.fcm_token) {
+        await sendFcmHttpV1Message({
+          token: prof.fcm_token,
+          title: 'Tài khoản đã bị xóa',
+          body: 'Tài khoản của bạn đã bị xóa khỏi hệ thống.',
+          data: {
+            type: 'FORCE_LOGOUT',
+            reason: 'account_deleted',
+          },
+        }).catch(() => {});
+      }
+    } catch (_) {}
+
+    // 1. Xóa tất cả reactions của user và reactions trên bài viết của user
+    try {
+      await supabaseAdmin.from('post_reactions').delete().eq('user_id', userId);
+    } catch (e: any) {
+      console.warn('post_reactions clean error:', e.message);
+    }
+
+    const { data: userPosts } = await supabaseAdmin.from('posts').select('id').eq('author_id', userId);
+    if (userPosts && userPosts.length > 0) {
+      const postIds = userPosts.map(p => p.id);
+      try {
+        await supabaseAdmin.from('post_reactions').delete().in('post_id', postIds);
+        await supabaseAdmin.from('comments').delete().in('post_id', postIds);
+      } catch (_) {}
+    }
+
+    // 2. Xóa các bình luận do user viết
+    try {
+      await supabaseAdmin.from('comments').delete().eq('user_id', userId);
+    } catch (_) {}
+
+    // 3. Xóa các bài viết do user đăng
+    try {
+      await supabaseAdmin.from('posts').delete().eq('author_id', userId);
+    } catch (_) {}
+
+    // 4. Xóa tin nhắn do user gửi
+    try {
+      await supabaseAdmin.from('messages').delete().eq('sender_id', userId);
+    } catch (_) {}
+
+    // 5. Xóa các cuộc trò chuyện của user
+    try {
+      await supabaseAdmin.from('conversations').delete().or(`user_a.eq.${userId},user_b.eq.${userId}`);
+    } catch (_) {}
+
+    // 6. Xóa thông báo liên quan
+    try {
+      await supabaseAdmin.from('notifications').delete().or(`recipient_id.eq.${userId},actor_id.eq.${userId}`);
+    } catch (_) {}
+
+    // 7. Xóa báo cáo và chặn liên quan
+    try {
+      await supabaseAdmin.from('reports').delete().or(`reporter_id.eq.${userId},target_id.eq.${userId}`);
+      await supabaseAdmin.from('user_blocks').delete().or(`blocker_id.eq.${userId},blocked_id.eq.${userId}`);
+    } catch (_) {}
+
+    // 8. Xóa hồ sơ trong bảng profiles
+    try {
+      await supabaseAdmin.from('profiles').delete().eq('id', userId);
+    } catch (e: any) {
+      console.warn('profiles delete warning:', e.message);
+    }
+
+    // 9. Xóa tài khoản Supabase Auth (auth.users)
+    try {
+      await supabaseAdmin.auth.admin.deleteUser(userId);
+    } catch (authErr: any) {
+      console.warn('Supabase auth deleteUser warning:', authErr.message);
+    }
+
+    logSecurityEvent(
+      'account_wiped',
+      `XÓA SẠCH TOÀN BỘ dữ liệu tài khoản (UID: ${userId.substring(0, 8)}...)`,
+      'alert'
+    );
+
+    console.log(`✅ [Account Wipe Success] Đã xóa sạch toàn bộ dữ liệu tài khoản: ${userId}`);
+    return { success: true };
+  } catch (err: any) {
+    console.error('❌ Error in wipeUserAccountCompletely:', err);
+    return { success: false, error: err.message };
+  }
+}
+
+// Xóa tài khoản thành viên (Admin)
 router.delete('/users/:id', async (req, res) => {
   try {
     const { id } = req.params;
-
-    // Xóa từ Supabase Auth (cascade sẽ tự dọn profiles và posts)
-    try {
-      await supabaseAdmin.auth.admin.deleteUser(id);
-    } catch {
-      // Nếu auth user đã bị xóa trước đó, xóa thủ công ở profiles
-      await supabaseAdmin.from('profiles').delete().eq('id', id);
+    const result = await wipeUserAccountCompletely(id);
+    if (!result.success) {
+      return res.status(500).json({ error: result.error || 'Lỗi khi xóa tài khoản' });
     }
 
-    return res.json({ success: true, message: 'Đã xóa vĩnh viễn tài khoản người dùng.' });
+    return res.json({ success: true, message: 'Đã xóa vĩnh viễn và quét sạch toàn bộ dữ liệu tài khoản người dùng.' });
   } catch (err: any) {
     return res.status(500).json({ error: err.message });
   }

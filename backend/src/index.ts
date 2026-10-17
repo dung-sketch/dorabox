@@ -3,7 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import { generateUploadUrl } from './services/r2.service.js';
 import { supabaseAdmin } from './services/supabase.service.js';
-import adminRouter from './routes/admin.routes.js';
+import adminRouter, { wipeUserAccountCompletely } from './routes/admin.routes.js';
 import { renderAdminPage } from './views/admin_page.js';
 import { renderArtPlayerPage } from './views/artplayer_page.js';
 import { sendFcmHttpV1Message } from './services/firebase.service.js';
@@ -374,31 +374,12 @@ app.delete('/api/user/account', async (req, res) => {
       return res.status(401).json({ error: 'Phiên đăng nhập không hợp lệ hoặc đã hết hạn' });
     }
 
-    const userId = user.id;
-
-    // Dọn dẹp dữ liệu người dùng trong cơ sở dữ liệu
-    try {
-      await supabaseAdmin.from('notifications').delete().or(`user_id.eq.${userId},actor_id.eq.${userId}`);
-      await supabaseAdmin.from('post_likes').delete().eq('user_id', userId);
-      await supabaseAdmin.from('post_bookmarks').delete().eq('user_id', userId);
-      await supabaseAdmin.from('comments').delete().eq('user_id', userId);
-      await supabaseAdmin.from('posts').delete().eq('author_id', userId);
-      await supabaseAdmin.from('messages').delete().eq('sender_id', userId);
-      await supabaseAdmin.from('conversations').delete().or(`user_a.eq.${userId},user_b.eq.${userId}`);
-      await supabaseAdmin.from('blocks').delete().or(`blocker_id.eq.${userId},blocked_id.eq.${userId}`);
-      await supabaseAdmin.from('profiles').delete().eq('id', userId);
-    } catch (cleanErr) {
-      console.warn('Lỗi dọn dữ liệu khi xóa user:', cleanErr);
+    const result = await wipeUserAccountCompletely(user.id);
+    if (!result.success) {
+      return res.status(500).json({ error: result.error || 'Lỗi khi xóa sạch tài khoản' });
     }
 
-    // Xóa user vĩnh viễn khỏi Supabase Auth
-    try {
-      await supabaseAdmin.auth.admin.deleteUser(userId);
-    } catch (authDelErr) {
-      console.error('Lỗi xóa auth user:', authDelErr);
-    }
-
-    return res.json({ success: true, message: 'Đã xóa vĩnh viễn tài khoản người dùng thành công.' });
+    return res.json({ success: true, message: 'Đã xóa vĩnh viễn và quét sạch toàn bộ dữ liệu tài khoản người dùng thành công.' });
   } catch (err: any) {
     return res.status(500).json({ error: err.message });
   }

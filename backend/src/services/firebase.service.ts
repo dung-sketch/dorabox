@@ -127,15 +127,14 @@ export async function sendFcmHttpV1Message(params: {
       }
     }
 
-    const channel = params.channelId || 'dorabox_general_v3';
-    let soundName = 'ting';
-    if (channel.includes('messages')) {
-      soundName = 'tingtingmes';
-    } else if (channel.includes('calls')) {
-      soundName = 'goiden';
+    let channel = params.channelId || 'dorabox_general_v4';
+    // Tự động nâng cấp channel sang v4 nếu request gửi v3
+    if (channel.endsWith('_v3')) {
+      channel = channel.replace('_v3', '_v4');
     }
 
     const isCall = channel.includes('calls') || stringData.type === 'call';
+    const isMessage = channel.includes('messages') || stringData.type === 'message' || stringData.conversation_id != null;
 
     const messagePayload: any = {
       token: params.token,
@@ -153,26 +152,17 @@ export async function sendFcmHttpV1Message(params: {
       title: params.title,
       body: params.body,
     };
-    messagePayload.android.notification = {
-      channelId: channel,
-      sound: soundName,
-      defaultSound: false,
-      defaultVibrateTimings: true,
-      priority: 'max',
-      visibility: isCall ? 'public' : 'private',
-    };
 
-    if (!isCall) {
-      messagePayload.apns = {
-        payload: {
-          aps: {
-            sound: `${soundName}.caf`,
-            badge: 1,
-          },
-        },
+    if (isCall) {
+      // Cuộc gọi: phát chuông cuộc gọi đặc thù goiden và ưu tiên cao nhất
+      messagePayload.android.notification = {
+        channelId: 'dorabox_calls_v4',
+        sound: 'goiden',
+        defaultSound: false,
+        defaultVibrateTimings: true,
+        priority: 'max',
+        visibility: 'public',
       };
-    } else {
-      // Cuộc gọi đến: Gói High Priority kèm TTL 60s để đánh thức máy ngay lập tức
       messagePayload.android.ttl = 60 * 1000;
       messagePayload.apns = {
         headers: {
@@ -182,7 +172,25 @@ export async function sendFcmHttpV1Message(params: {
         payload: {
           aps: {
             'content-available': 1,
-            sound: `${soundName}.caf`,
+            sound: 'goiden.caf',
+          },
+        },
+      };
+    } else {
+      // Tin nhắn & thông báo: Cho phép phát TIẾNG CHUÔNG THÔNG BÁO MẶC ĐỊNH CỦA THIẾT BỊ (defaultSound: true)
+      messagePayload.android.notification = {
+        channelId: isMessage ? 'dorabox_messages_v4' : 'dorabox_general_v4',
+        sound: 'default',
+        defaultSound: true,
+        defaultVibrateTimings: true,
+        priority: 'max',
+        visibility: 'public',
+      };
+      messagePayload.apns = {
+        payload: {
+          aps: {
+            sound: 'default',
+            badge: 1,
           },
         },
       };
