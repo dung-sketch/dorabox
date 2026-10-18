@@ -988,6 +988,66 @@ export function renderAdminPage(): string {
       box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9);
       border: 1px solid rgba(255, 255, 255, 0.15);
     }
+
+    /* OA REQUESTS CARD & DIFF */
+    .oa-request-card {
+      background: var(--bg-card-subtle);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      margin-bottom: 16px;
+      transition: all 0.2s ease;
+    }
+    .oa-request-card:hover {
+      border-color: var(--border-hover);
+      box-shadow: var(--shadow-soft);
+    }
+    .oa-request-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border-subtle);
+      flex-wrap: wrap;
+    }
+    .oa-diff-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 16px;
+      font-size: 13px;
+    }
+    .oa-diff-table th {
+      text-align: left;
+      padding: 8px 12px;
+      background: rgba(0, 0, 0, 0.25);
+      color: var(--text-muted);
+      font-weight: 600;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .oa-diff-table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      vertical-align: top;
+    }
+    .oa-val-old {
+      color: var(--text-dim);
+      text-decoration: line-through;
+      margin-right: 8px;
+    }
+    .oa-val-new {
+      color: #34D399;
+      font-weight: 600;
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.28);
+      padding: 2px 8px;
+      border-radius: 4px;
+      display: inline-block;
+    }
+    .oa-val-same {
+      color: var(--text-muted);
+    }
   </style>
 </head>
 <body>
@@ -1066,6 +1126,13 @@ export function renderAdminPage(): string {
           <span>Kiểm Duyệt & Báo Cáo</span>
         </div>
         <span class="nav-count-badge" id="sidebar-report-badge">0</span>
+      </li>
+      <li class="nav-item" data-tab="duyet-oa">
+        <div class="nav-item-left">
+          <svg class="icon" viewBox="0 0 24 24" style="color: var(--color-gold);"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <span>Duyệt Thông Tin OA</span>
+        </div>
+        <span class="nav-count-badge" id="sidebar-oa-badge" style="background: rgba(245, 158, 11, 0.2); color: #F59E0B; border: 1px solid rgba(245,158,11,0.3);">0</span>
       </li>
       <li class="nav-item" data-tab="phat-thong-bao">
         <div class="nav-item-left">
@@ -1156,6 +1223,17 @@ export function renderAdminPage(): string {
             </div>
             <div class="kpi-value" id="kpi-vip">-</div>
             <div class="kpi-desc"><span style="color: var(--color-gold);">★</span> Huy hiệu Tích Vàng OA</div>
+          </div>
+
+          <div class="kpi-card" style="cursor: pointer;" onclick="switchTab('duyet-oa')">
+            <div class="kpi-top">
+              <span class="kpi-title">Yêu Cầu Duyệt OA</span>
+              <div class="kpi-icon-box" style="background: rgba(245, 158, 11, 0.15); color: var(--color-gold);">
+                <svg class="icon" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              </div>
+            </div>
+            <div class="kpi-value" id="kpi-oa-pending" style="color: var(--color-gold);">-</div>
+            <div class="kpi-desc"><span style="color: var(--color-gold);">●</span> Chờ quản trị viên duyệt</div>
           </div>
 
           <div class="kpi-card">
@@ -1259,6 +1337,10 @@ export function renderAdminPage(): string {
             <button class="btn btn-gold" onclick="switchTab('thanh-vien')">
               <svg class="icon icon-sm" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
               <span>Phân Cấp Tích Vàng OA / Tích Xanh</span>
+            </button>
+            <button class="btn btn-gold" onclick="switchTab('duyet-oa')">
+              <svg class="icon icon-sm" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <span>Duyệt Đề Xuất Thông Tin OA</span>
             </button>
             <button class="btn btn-secondary" onclick="switchTab('thanh-vien')">
               <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
@@ -1622,6 +1704,32 @@ export function renderAdminPage(): string {
             </table>
           </div>
         </div>
+      <!-- ================= TAB: DUYỆT THÔNG TIN OA ================= -->
+      <section id="tab-duyet-oa" class="tab-section">
+        <div class="card-panel">
+          <div class="panel-header">
+            <div class="panel-heading">
+              <svg class="icon" viewBox="0 0 24 24" style="color: var(--color-gold);"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <h3>Hàng Đợi Xét Duyệt Thông Tin Official Account</h3>
+            </div>
+            <button class="btn btn-secondary btn-sm" onclick="fetchOaRequests(true)">
+              <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+              <span>Làm Mới Yêu Cầu</span>
+            </button>
+          </div>
+
+          <div class="notice-banner">
+            <svg class="icon notice-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+            <div class="notice-text">
+              <h4>Quy trình kiểm duyệt thông tin Official Account:</h4>
+              <p>Mỗi tài khoản OA được phép tự do chỉnh sửa <strong>1 lần duy nhất đầu tiên</strong>. Từ lần thứ 2 trở đi, mọi thay đổi (Tên OA, Lĩnh vực, Mã định danh, Bio và Trạng thái) đều phải gửi yêu cầu vào hàng đợi này. Khi Quản trị viên duyệt, thông tin mới sẽ được cập nhật công khai ngay lập tức lên ứng dụng di động.</p>
+            </div>
+          </div>
+
+          <div id="oa-requests-container">
+            <div style="text-align: center; padding: 40px; color: var(--text-dim);">Đang tải danh sách yêu cầu xét duyệt OA...</div>
+          </div>
+        </div>
       </section>
 
     </div>
@@ -1723,6 +1831,7 @@ export function renderAdminPage(): string {
     async function loadDashboardData() {
       fetchMetrics();
       fetchUsers();
+      fetchOaRequests();
       fetchPosts();
       fetchComments();
       fetchReports();
@@ -1751,6 +1860,16 @@ export function renderAdminPage(): string {
           document.getElementById('kpi-comments').textContent = Number(m.totalComments || 0).toLocaleString();
           document.getElementById('sidebar-report-badge').textContent = m.pendingReports;
           document.getElementById('reports-pending-count').textContent = m.pendingReports + ' Chờ xử lý';
+
+          // Cập nhật số lượng đề xuất duyệt thông tin OA
+          const pendingOa = Number(m.pendingOaRequests || 0);
+          const kpiOa = document.getElementById('kpi-oa-pending');
+          if (kpiOa) kpiOa.textContent = pendingOa.toLocaleString();
+          const oaBadge = document.getElementById('sidebar-oa-badge');
+          if (oaBadge) {
+            oaBadge.textContent = pendingOa;
+            oaBadge.style.display = pendingOa > 0 ? 'inline-block' : 'none';
+          }
         }
       } catch (err) {
         console.error('Fetch metrics error:', err);
@@ -1812,7 +1931,10 @@ export function renderAdminPage(): string {
                     \${isOA ? '<span style="color: var(--color-gold);" title="Tài khoản Doanh Nghiệp OA"><svg class="icon icon-sm" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span>' : ''}
                     \${u.is_verified ? '<span style="color: var(--color-blue);" title="Đã xác thực"><svg class="icon icon-sm" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span>' : ''}
                   </div>
-                  <div class="user-uid-sub">UID: \${u.id.substring(0, 8)}...</div>
+                  <div class="user-uid-sub">
+                    UID: \${u.id.substring(0, 8)}...
+                    \${isOA ? \`<span style="color: var(--color-gold); margin-left: 6px;">[OA: \${escapeHtml(u.oa_category || 'Dịch vụ')} · Đã sửa: \${u.oa_info_edited_count || 0}/1]</span>\` : ''}
+                  </div>
                 </div>
               </div>
             </td>
@@ -1836,6 +1958,12 @@ export function renderAdminPage(): string {
                   <svg class="icon icon-sm" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
                   <span>\${isOA ? 'Gỡ OA' : 'Cấp Tích Vàng OA'}</span>
                 </button>
+                \${isOA ? \`
+                <button class="btn btn-sm btn-gold" title="Cấp lại 1 lượt chỉnh sửa trực tiếp không cần duyệt cho OA" onclick="resetOaEditCount('\${u.id}', '\${escapeHtml(u.display_name || u.username || 'OA')}')">
+                  <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+                  <span>Cấp Sửa (\${u.oa_info_edited_count || 0}/1)</span>
+                </button>
+                \` : ''}
                 <button class="btn btn-sm \${u.is_banned ? 'btn-secondary' : 'btn-danger'}" onclick="toggleBan('\${u.id}', \${!u.is_banned})">
                   <svg class="icon icon-sm" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
                   <span>\${u.is_banned ? 'Mở Khóa' : 'Khóa Nick'}</span>
@@ -2458,6 +2586,213 @@ export function renderAdminPage(): string {
       }
     }
 
+    // 9. Fetch & Render OA Requests
+    let allOaRequestsCache = [];
+    async function fetchOaRequests(showNotification = false) {
+      try {
+        const res = await fetch('/api/admin/oa-requests', {
+          headers: { 'Authorization': 'Bearer ' + adminToken }
+        });
+        const data = await res.json();
+        if (data.success && data.requests) {
+          allOaRequestsCache = data.requests;
+          renderOaRequestsTable(allOaRequestsCache);
+          const count = allOaRequestsCache.length;
+          const badge = document.getElementById('sidebar-oa-badge');
+          if (badge) {
+            badge.textContent = count;
+            badge.style.display = count > 0 ? 'inline-block' : 'none';
+          }
+          const kpi = document.getElementById('kpi-oa-pending');
+          if (kpi) kpi.textContent = count;
+          if (showNotification) {
+            showToast('Đã làm mới danh sách yêu cầu duyệt OA!', 'success');
+          }
+        }
+      } catch (err) {
+        console.error('Fetch OA requests error:', err);
+      }
+    }
+
+    function renderOaRequestsTable(requests) {
+      const container = document.getElementById('oa-requests-container');
+      if (!container) return;
+
+      if (!requests || requests.length === 0) {
+        container.innerHTML = \`
+          <div style="text-align: center; padding: 48px 20px; color: var(--text-dim);">
+            <svg class="icon" style="width: 44px; height: 44px; margin-bottom: 12px; color: var(--color-emerald);" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            <div style="font-size: 15px; font-weight: 700; color: var(--text-main); margin-bottom: 4px;">Tất cả thông tin OA đã được xử lý</div>
+            <div style="font-size: 13px;">Hiện tại không có yêu cầu thay đổi thông tin Official Account nào đang chờ xét duyệt.</div>
+          </div>
+        \`;
+        return;
+      }
+
+      container.innerHTML = requests.map(r => {
+        const p = r.oa_pending_update || {};
+        const reqDate = p.requested_at ? new Date(p.requested_at).toLocaleString('vi-VN') : (r.updated_at ? new Date(r.updated_at).toLocaleString('vi-VN') : '-');
+
+        const curName = r.display_name || r.username || 'Chưa đặt';
+        const newName = p.display_name || curName;
+        const nameChanged = p.display_name && p.display_name !== curName;
+
+        const curUser = r.username || '';
+        const newUser = p.username || curUser;
+        const userChanged = p.username && p.username !== curUser;
+
+        const curCat = r.oa_category || 'Doanh nghiệp & Dịch vụ trực tuyến';
+        const newCat = p.oa_category || curCat;
+        const catChanged = p.oa_category && p.oa_category !== curCat;
+
+        const curStatus = r.oa_status || 'Trực tuyến 24/7 · Sẵn sàng giải đáp';
+        const newStatus = p.oa_status || curStatus;
+        const statusChanged = p.oa_status && p.oa_status !== curStatus;
+
+        const curBio = r.bio || '(Chưa có)';
+        const newBio = p.bio !== undefined ? p.bio : curBio;
+        const bioChanged = p.bio !== undefined && p.bio !== curBio;
+
+        const initial = (curName).charAt(0).toUpperCase();
+        const avatarHtml = r.avatar_url 
+          ? \`<img class="user-avatar-img" src="\${r.avatar_url}" alt="\${curName}" onerror="this.outerHTML='<div class=\\'user-avatar-fallback\\'>\${initial}</div>'" />\`
+          : \`<div class="user-avatar-fallback">\${initial}</div>\`;
+
+        return \`
+          <div class="oa-request-card">
+            <div class="oa-request-header">
+              <div class="user-profile-cell">
+                \${avatarHtml}
+                <div>
+                  <div class="user-name-title" style="font-size: 15px;">
+                    \${escapeHtml(curName)}
+                    <span style="color: var(--color-gold);"><svg class="icon icon-sm" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span>
+                  </div>
+                  <div class="user-uid-sub">@\${escapeHtml(curUser)} · Yêu cầu lúc: \${reqDate}</div>
+                </div>
+              </div>
+              <div style="display: flex; gap: 8px;">
+                <button class="btn btn-sm btn-primary" style="background: #059669; border-color: #10B981;" onclick="approveOaRequest('\${r.id}', '\${escapeHtml(curName)}')">
+                  <svg class="icon icon-sm" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                  <span>Phê Duyệt Ngay</span>
+                </button>
+                <button class="btn btn-sm btn-danger" onclick="rejectOaRequest('\${r.id}', '\${escapeHtml(curName)}')">
+                  <svg class="icon icon-sm" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                  <span>Từ Chối</span>
+                </button>
+              </div>
+            </div>
+
+            <table class="oa-diff-table">
+              <thead>
+                <tr>
+                  <th style="width: 22%;">Trường Thông Tin</th>
+                  <th style="width: 38%;">Hiện Tại (Đang Công Khai)</th>
+                  <th style="width: 40%;">Đề Xuất Mới (Chờ Duyệt)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Tên Official Account</strong></td>
+                  <td>\${escapeHtml(curName)}</td>
+                  <td>\${nameChanged ? \`<span class="oa-val-new">\${escapeHtml(newName)}</span>\` : \`<span class="oa-val-same">\${escapeHtml(curName)}</span>\`}</td>
+                </tr>
+                <tr>
+                  <td><strong>Mã định danh (@handle)</strong></td>
+                  <td>@\${escapeHtml(curUser)}</td>
+                  <td>\${userChanged ? \`<span class="oa-val-new">@\${escapeHtml(newUser)}</span>\` : \`<span class="oa-val-same">@\${escapeHtml(curUser)}</span>\`}</td>
+                </tr>
+                <tr>
+                  <td><strong>Lĩnh vực hoạt động</strong></td>
+                  <td>\${escapeHtml(curCat)}</td>
+                  <td>\${catChanged ? \`<span class="oa-val-new">\${escapeHtml(newCat)}</span>\` : \`<span class="oa-val-same">\${escapeHtml(curCat)}</span>\`}</td>
+                </tr>
+                <tr>
+                  <td><strong>Trạng thái hiển thị</strong></td>
+                  <td>\${escapeHtml(curStatus)}</td>
+                  <td>\${statusChanged ? \`<span class="oa-val-new">\${escapeHtml(newStatus)}</span>\` : \`<span class="oa-val-same">\${escapeHtml(curStatus)}</span>\`}</td>
+                </tr>
+                <tr>
+                  <td><strong>Tiểu sử / Giới thiệu</strong></td>
+                  <td style="line-height: 1.4;">\${escapeHtml(curBio)}</td>
+                  <td style="line-height: 1.4;">\${bioChanged ? \`<span class="oa-val-new">\${escapeHtml(newBio)}</span>\` : \`<span class="oa-val-same">\${escapeHtml(curBio)}</span>\`}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        \`;
+      }).join('');
+    }
+
+    async function approveOaRequest(userId, name) {
+      if (!confirm(\`Xác nhận phê duyệt các thay đổi thông tin cho Official Account "\${name}"? Thông tin mới sẽ cập nhật trực tiếp lên ứng dụng.\`)) return;
+
+      try {
+        const res = await fetch(\`/api/admin/oa-requests/\${userId}/approve\`, {
+          method: 'POST',
+          headers: { 'Authorization': 'Bearer ' + adminToken }
+        });
+        const data = await res.json();
+        if (data.success) {
+          showToast(data.message || 'Đã phê duyệt thông tin OA thành công!', 'success');
+          fetchOaRequests();
+          fetchUsers();
+          fetchMetrics();
+        } else {
+          showToast(data.error || 'Phê duyệt thất bại', 'error');
+        }
+      } catch (err) {
+        showToast('Lỗi mạng: ' + err.message, 'error');
+      }
+    }
+
+    async function rejectOaRequest(userId, name) {
+      const reason = prompt(\`Lý do từ chối yêu cầu thay đổi thông tin của OA "\${name}":\`, 'Nội dung thông tin không phù hợp với quy chuẩn nhận diện thương hiệu');
+      if (reason === null) return;
+
+      try {
+        const res = await fetch(\`/api/admin/oa-requests/\${userId}/reject\`, {
+          method: 'POST',
+          headers: {
+            'Authorization': 'Bearer ' + adminToken,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ reason })
+        });
+        const data = await res.json();
+        if (data.success) {
+          showToast(data.message || 'Đã từ chối yêu cầu đổi thông tin OA.', 'info');
+          fetchOaRequests();
+          fetchMetrics();
+        } else {
+          showToast(data.error || 'Từ chối thất bại', 'error');
+        }
+      } catch (err) {
+        showToast('Lỗi mạng: ' + err.message, 'error');
+      }
+    }
+
+    async function resetOaEditCount(userId, name) {
+      if (!confirm(\`Cấp lại lượt chỉnh sửa trực tiếp (1/1) cho tài khoản OA "\${name}"? Chủ tài khoản sẽ có thể tự sửa đổi thông tin 1 lần mà không cần chờ duyệt.\`)) return;
+
+      try {
+        const res = await fetch(\`/api/admin/users/\${userId}/reset-oa-edit\`, {
+          method: 'POST',
+          headers: { 'Authorization': 'Bearer ' + adminToken }
+        });
+        const data = await res.json();
+        if (data.success) {
+          showToast(data.message || 'Đã cấp lại lượt chỉnh sửa cho OA!', 'success');
+          fetchUsers();
+          fetchOaRequests();
+        } else {
+          showToast(data.error || 'Không thể cấp lại lượt sửa', 'error');
+        }
+      } catch (err) {
+        showToast('Lỗi: ' + err.message, 'error');
+      }
+    }
+
     // Navigation Tabs Switching
     function setupTabs() {
       document.querySelectorAll('.nav-item').forEach(item => {
@@ -2487,6 +2822,7 @@ export function renderAdminPage(): string {
       const titleMap = {
         'tong-quan': { title: 'Tổng Quan Hệ Thống', subtitle: 'Chỉ số vận hành thời gian thực & trung tâm điều phối cộng đồng' },
         'thanh-vien': { title: 'Quản Lý Thành Viên', subtitle: 'Phân quyền, cấp tích xanh, xét duyệt Official Account & khóa tài khoản' },
+        'duyet-oa': { title: 'Xét Duyệt Thông Tin OA', subtitle: 'Phê duyệt các thay đổi Tên, Lĩnh vực, Mã định danh, Tiểu sử và Trạng thái Official Account' },
         'bai-viet': { title: 'Quản Lý Bảng Tin & Bài Viết', subtitle: 'Kiểm duyệt nội dung bảng tin, hình ảnh đính kèm, ghim bài nổi bật & xóa vi phạm' },
         'binh-luan': { title: 'Quản Lý Bình Luận', subtitle: 'Giám sát tương tác thảo luận cộng đồng & ngăn chặn spam' },
         'bao-cao': { title: 'Kiểm Duyệt & Báo Cáo', subtitle: 'Hàng đợi xét duyệt hồ sơ cấp tích và xử lý vi phạm tiêu chuẩn cộng đồng' },

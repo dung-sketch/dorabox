@@ -153,7 +153,8 @@ router.get('/metrics', async (req, res) => {
       postsRes,
       commentsRes,
       pendingReportsRes,
-      resolvedReportsRes
+      resolvedReportsRes,
+      pendingOaRes
     ] = await Promise.all([
       supabaseAdmin.from('profiles').select('id', { count: 'exact', head: true }),
       supabaseAdmin.from('profiles').select('id', { count: 'exact', head: true }).eq('is_verified', true),
@@ -162,6 +163,7 @@ router.get('/metrics', async (req, res) => {
       supabaseAdmin.from('comments').select('id', { count: 'exact', head: true }),
       supabaseAdmin.from('reports').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
       supabaseAdmin.from('reports').select('id', { count: 'exact', head: true }).neq('status', 'pending'),
+      supabaseAdmin.from('profiles').select('id', { count: 'exact', head: true }).eq('oa_pending_status', 'pending_approval'),
     ]);
 
     return res.json({
@@ -174,6 +176,7 @@ router.get('/metrics', async (req, res) => {
         totalComments: commentsRes.count || 0,
         pendingReports: pendingReportsRes.count || 0,
         resolvedReports: resolvedReportsRes.count || 0,
+        pendingOaRequests: pendingOaRes.count || 0,
       }
     });
   } catch (err: any) {
@@ -190,7 +193,7 @@ router.get('/users', async (req, res) => {
     const { q, filter } = req.query;
     let query = supabaseAdmin
       .from('profiles')
-      .select('id, username, display_name, avatar_url, bio, is_verified, is_vip, is_oa, account_type, is_banned, role, created_at')
+      .select('id, username, display_name, avatar_url, bio, is_verified, is_vip, is_oa, account_type, is_banned, role, created_at, oa_category, oa_status, oa_info_edited_count, oa_pending_status, oa_pending_update')
       .order('created_at', { ascending: false });
 
     if (q && typeof q === 'string' && q.trim()) {
@@ -676,6 +679,167 @@ router.post('/reports/:id/action', async (req, res) => {
     }
 
     return res.status(400).json({ error: 'Hành động không hợp lệ.' });
+  } catch (err: any) {
+    return res.status(500).json({ error: err.message });
+  }
+});
+
+// -------------------------------------------------------------
+// 5.1. OA PENDING INFO APPROVALS (Xét Duyệt Thay Đổi Thông Tin OA)
+// -------------------------------------------------------------
+
+// Danh sách yêu cầu thay đổi thông tin OA đang chờ duyệt
+router.get('/oa-requests', async (req, res) => {
+  try {
+    const { data, error } = await supabaseAdmin
+      .from('profiles')
+      .select('id, username, display_name, avatar_url, bio, oa_category, oa_status, oa_info_edited_count, oa_pending_update, oa_pending_status, updated_at')
+      .eq('oa_pending_status', 'pending_approval')
+      .order('updated_at', { ascending: false });
+
+    if (error) throw error;
+    return res.json({ success: true, requests: data || [] });
+  } catch (err: any) {
+    return res.status(500).json({ error: err.message });
+  }
+});
+
+// Phê duyệt yêu cầu thay đổi thông tin OA
+router.post('/oa-requests/:id/approve', async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const { data: profile, error: getErr } = await supabaseAdmin
+      .from('profiles')
+      .select('id, display_name, username, bio, oa_category, oa_status, oa_pending_update')
+      .eq('id', id)
+      .single();
+
+    if (getErr || !profile) {
+      return res.status(404).json({ error: 'Không tìm thấy hồ sơ OA tương ứng.' });
+    }
+
+    const pending = profile.oa_pending_update as any;
+    if (!pending) {
+      return res.status(400).json({ error: 'Hồ sơ không có dữ liệu thay đổi nào đang chờ xét duyệt.' });
+    }
+
+    const newDisplayName = pending.display_name?.trim() || profile.display_name;
+    const newUsername = pending.username?.trim() || profile.username;
+    const newBio = pending.bio !== undefined ? pending.bio : profile.bio;
+    const newCategory = pending.oa_category?.trim() || profile.oa_category;
+    const newStatus = pending.oa_status?.trim() || profile.oa_status;
+
+    // Cập nhật bảng profiles
+    const { data: updated, error: updErr } = await supabaseAdmin
+      .from('profiles')
+      .update({
+        display_name: newDisplayName,
+        username: newUsername,
+        bio: newBio,
+        oa_category: newCategory,
+        oa_status: newStatus,
+        oa_pending_status: 'approved',
+        oa_pending_update: null,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (updErr) throw updErr;
+
+    // Đồng bộ user_metadata
+    try {
+      await supabaseAdmin.auth.admin.updateUserById(id, {
+        user_metadata: {
+          display_name: newDisplayName,
+          username: newUsername,
+        }
+      });
+    } catch (_) {}
+
+    logSecurityEvent(
+      'verify_toggle',
+      `Phê duyệt thay đổi thông tin Official Account: "${newDisplayName}" (@${newUsername})`,
+      'info'
+    );
+
+    return res.json({
+      success: true,
+      user: updated,
+      message: `Đã phê duyệt cập nhật thông tin Official Account "${newDisplayName}"!`
+    });
+  } catch (err: any) {
+    return res.status(500).json({ error: err.message });
+  }
+});
+
+// Từ chối yêu cầu thay đổi thông tin OA
+router.post('/oa-requests/:id/reject', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { reason } = req.body;
+
+    const { data: updated, error } = await supabaseAdmin
+      .from('profiles')
+      .update({
+        oa_pending_status: 'rejected',
+        oa_pending_update: null,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    logSecurityEvent(
+      'verify_toggle',
+      `Từ chối yêu cầu đổi thông tin OA (UID: ${id.substring(0, 8)}...). Lý do: ${reason || 'Không đạt quy chuẩn'}`,
+      'warning'
+    );
+
+    return res.json({
+      success: true,
+      user: updated,
+      message: 'Đã từ chối yêu cầu thay đổi thông tin OA.'
+    });
+  } catch (err: any) {
+    return res.status(500).json({ error: err.message });
+  }
+});
+
+// Cấp lại lượt chỉnh sửa trực tiếp (1 lần) cho tài khoản OA
+router.post('/users/:id/reset-oa-edit', async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const { data: updated, error } = await supabaseAdmin
+      .from('profiles')
+      .update({
+        oa_info_edited_count: 0,
+        oa_pending_status: null,
+        oa_pending_update: null,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    logSecurityEvent(
+      'verify_toggle',
+      `Cấp lại lượt chỉnh sửa thông tin trực tiếp (1/1) cho tài khoản OA (UID: ${id.substring(0, 8)}...)`,
+      'info'
+    );
+
+    return res.json({
+      success: true,
+      user: updated,
+      message: 'Đã cấp lại lượt chỉnh sửa trực tiếp cho tài khoản OA thành công!'
+    });
   } catch (err: any) {
     return res.status(500).json({ error: err.message });
   }

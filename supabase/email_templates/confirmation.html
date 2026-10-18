@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mã xác nhận Dorabox</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #f0f2f5;
+      font-family: Helvetica, Arial, sans-serif;
+      color: #1c1e21;
+      -webkit-font-smoothing: antialiased;
+    }
+    .wrapper {
+      width: 100%;
+      background-color: #f0f2f5;
+      padding: 40px 16px;
+      box-sizing: border-box;
+    }
+    .card {
+      max-width: 540px;
+      margin: 0 auto;
+      background-color: #ffffff;
+      border: 1px solid #dddfe2;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    /* Thanh bar xanh chuẩn nhận diện Facebook */
+    .top-bar {
+      background-color: #0866ff;
+      padding: 16px 24px;
+    }
+    .top-logo {
+      color: #ffffff;
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin: 0;
+      display: inline-block;
+    }
+    .content {
+      padding: 28px 24px 24px;
+      text-align: left;
+    }
+    .heading {
+      font-size: 19px;
+      font-weight: 700;
+      color: #1c1e21;
+      margin: 0 0 16px 0;
+      line-height: 1.3;
+    }
+    .text {
+      font-size: 15px;
+      color: #1c1e21;
+      line-height: 1.5;
+      margin: 0 0 18px 0;
+    }
+    /* Mã OTP dạng hộp gọn gàng chuẩn Facebook, không dàn trang to quá đà */
+    .code-container {
+      margin: 20px 0;
+    }
+    .code-badge {
+      display: inline-block;
+      background-color: #e7f3ff;
+      border: 1px solid #1877f2;
+      border-radius: 6px;
+      padding: 10px 24px;
+      font-size: 26px;
+      font-weight: bold;
+      color: #0866ff;
+      letter-spacing: 4px;
+      user-select: all;
+    }
+    .subtext {
+      font-size: 13px;
+      color: #65676b;
+      line-height: 1.5;
+      margin: 0 0 20px 0;
+    }
+    .divider {
+      height: 1px;
+      background-color: #e4e6eb;
+      margin: 24px 0 16px 0;
+    }
+    .footer {
+      font-size: 11px;
+      color: #8a8d91;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="card">
+      <!-- Thanh tiêu đề xanh chuẩn Facebook -->
+      <div class="top-bar">
+        <span class="top-logo">Dorabox</span>
+      </div>
+
+      <!-- Nội dung căn trái tự nhiên chuẩn Facebook -->
+      <div class="content">
+        <h1 class="heading">Xác nhận địa chỉ email của bạn</h1>
+        <p class="text">
+          Xin chào,<br><br>
+          Gần đây bạn đã đăng ký tài khoản Dorabox bằng địa chỉ email <strong>{{ .Email }}</strong>.<br><br>
+          Để hoàn tất đăng ký và xác minh đây chính là email của bạn, vui lòng nhập mã xác nhận sau vào ứng dụng:
+        </p>
+
+        <!-- Khung mã OTP gọn gàng, inline vừa vặn -->
+        <div class="code-container">
+          <div class="code-badge">{{ .Token }}</div>
+        </div>
+
+        <p class="subtext">
+          Mã xác nhận này sẽ hết hạn sau 10 phút. Để bảo mật tài khoản, vui lòng không chia sẻ mã này với bất kỳ ai.
+        </p>
+
+        <div class="divider"></div>
+
+        <div class="footer">
+          Email này được gửi tự động để bảo vệ tài khoản Dorabox.<br>
+          Nếu bạn không yêu cầu mã này, bạn có thể an tâm bỏ qua email.<br><br>
+          &copy; 2026 Dorabox, Inc.
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
