@@ -5,11 +5,33 @@ import { sendFcmHttpV1Message, getFirebaseProjectId } from '../services/firebase
 
 const router = Router();
 
-// Khóa bảo mật Admin - được lấy từ biến môi trường hoặc fallback bảo mật
-const ADMIN_SECRET = process.env.ADMIN_SECRET_KEY || 'dorabox_admin_secret_2026';
+// Khóa bảo mật Admin - được nạp trực tiếp từ biến môi trường (không dùng fallback mặc định để tránh lỗ hổng bảo mật)
+const ADMIN_SECRET = process.env.ADMIN_SECRET_KEY ? process.env.ADMIN_SECRET_KEY.trim() : '';
+
+// Hàm so sánh chuỗi bảo mật chống tấn công Timing Attack bằng SHA-256 Digest và crypto.timingSafeEqual
+function secureCompare(a: string, b: string): boolean {
+  if (!a || !b) return false;
+  try {
+    const hashA = crypto.createHash('sha256').update(String(a)).digest();
+    const hashB = crypto.createHash('sha256').update(String(b)).digest();
+    return crypto.timingSafeEqual(hashA, hashB);
+  } catch (_) {
+    return false;
+  }
+}
+
+// Bộ lưu trữ IP chống Brute-Force đăng nhập Admin (Tối đa 5 lần thử sai, khóa 15 phút)
+interface LoginAttemptRecord {
+  failures: number;
+  lockedUntil: number;
+}
+const loginAttemptsMap = new Map<string, LoginAttemptRecord>();
+const MAX_LOGIN_FAILURES = 5;
+const LOCKOUT_DURATION_MS = 15 * 60 * 1000; // 15 phút
 
 // Tạo session token bảo mật dựa trên Secret Key và ngày hiện tại
 function generateAdminToken(): string {
+  if (!ADMIN_SECRET) return '';
   return crypto
     .createHmac('sha256', ADMIN_SECRET)
     .update('dorabox_admin_session_' + new Date().toDateString())
@@ -34,7 +56,7 @@ const auditLogsBuffer: SecurityAuditLog[] = [
     eventType: 'admin_login',
     severity: 'info',
     actor: 'system',
-    details: 'Hệ thống bảo vệ Dorabox Security Shield 2026 khởi động thành công.'
+    details: 'Hệ thống bảo vệ Dorabox Security Shield 2026 khởi động thành công (Zero-Trust Key Protection).'
   }
 ];
 
@@ -64,6 +86,13 @@ export function logSecurityEvent(
  * Middleware kiểm tra bảo mật nghiêm ngặt cho tất cả các API Quản trị
  */
 export function requireAdminAuth(req: Request, res: Response, next: NextFunction) {
+  if (!ADMIN_SECRET || ADMIN_SECRET.length < 24) {
+    return res.status(500).json({
+      success: false,
+      error: 'Bảo mật máy chủ: ADMIN_SECRET_KEY chưa được thiết lập an toàn trên Server (Yêu cầu tối thiểu 24 ký tự mã hóa).'
+    });
+  }
+
   const authHeader = req.headers.authorization;
   const adminKeyHeader = req.headers['x-admin-key'];
 
@@ -77,7 +106,7 @@ export function requireAdminAuth(req: Request, res: Response, next: NextFunction
   }
 
   const validToken = generateAdminToken();
-  if (token === ADMIN_SECRET || token === validToken) {
+  if (secureCompare(token, ADMIN_SECRET) || (validToken && secureCompare(token, validToken))) {
     return next();
   }
 
@@ -94,23 +123,74 @@ export function requireAdminAuth(req: Request, res: Response, next: NextFunction
 router.post('/login', async (req, res) => {
   try {
     const { password } = req.body;
+    const clientIp = (req.headers['x-forwarded-for'] as string)?.split(',')[0]?.trim() || req.ip || 'unknown';
+    const now = Date.now();
 
-    // Chống brute-force timing attack nhẹ
-    await new Promise(resolve => setTimeout(resolve, 250));
-
-    if (!password || password !== ADMIN_SECRET) {
+    // 1. Kiểm tra khóa Brute-Force đối với IP hiện tại
+    const attempt = loginAttemptsMap.get(clientIp);
+    if (attempt && attempt.lockedUntil > now) {
+      const remainingSeconds = Math.ceil((attempt.lockedUntil - now) / 1000);
       logSecurityEvent(
-        'admin_login',
-        `Cố gắng xác thực Master Key không chính xác từ IP: ${req.ip || 'ẩn danh'}`,
-        'warning',
-        'unknown',
-        req.ip
+        'rate_limit',
+        `Chặn yêu cầu đăng nhập từ IP bị tạm khóa: ${clientIp} (Còn ${remainingSeconds}s)`,
+        'alert',
+        'security_shield',
+        clientIp
       );
-      return res.status(401).json({
+      return res.status(429).json({
         success: false,
-        error: 'Khóa bảo mật Quản trị viên không chính xác! Vui lòng thử lại.'
+        error: `Bảo mật: IP của bạn đã bị tạm khóa do nhập sai khóa quản trị quá 5 lần. Vui lòng thử lại sau ${remainingSeconds} giây.`
       });
     }
+
+    // 2. Chống timing attack nhẹ bằng random jitter trễ
+    const jitter = 150 + Math.floor(Math.random() * 150);
+    await new Promise(resolve => setTimeout(resolve, jitter));
+
+    // 3. Kiểm tra tính hợp lệ của ADMIN_SECRET cấu hình trên máy chủ
+    if (!ADMIN_SECRET || ADMIN_SECRET.length < 24) {
+      logSecurityEvent(
+        'admin_login',
+        'Cảnh báo nghiêm trọng: Máy chủ chưa cấu hình ADMIN_SECRET_KEY đủ an toàn (yêu cầu >= 24 ký tự)',
+        'alert',
+        'system'
+      );
+      return res.status(500).json({
+        success: false,
+        error: 'Cấu hình bảo mật máy chủ: ADMIN_SECRET_KEY chưa được cấu hình hoặc chưa đạt tiêu chuẩn mã hóa.'
+      });
+    }
+
+    // 4. So sánh mật khẩu an toàn theo thời gian thực (Constant-Time Comparison)
+    const isMatched = typeof password === 'string' && secureCompare(password.trim(), ADMIN_SECRET);
+
+    if (!isMatched) {
+      const currentFailures = (attempt ? attempt.failures : 0) + 1;
+      const isLocking = currentFailures >= MAX_LOGIN_FAILURES;
+
+      loginAttemptsMap.set(clientIp, {
+        failures: isLocking ? 0 : currentFailures,
+        lockedUntil: isLocking ? now + LOCKOUT_DURATION_MS : 0,
+      });
+
+      logSecurityEvent(
+        'admin_login',
+        `Nhập sai Master Key lần ${currentFailures}/${MAX_LOGIN_FAILURES} từ IP: ${clientIp}${isLocking ? ' -> KHÓA IP 15 PHÚT' : ''}`,
+        isLocking ? 'alert' : 'warning',
+        'unknown',
+        clientIp
+      );
+
+      return res.status(401).json({
+        success: false,
+        error: isLocking
+          ? 'Bạn đã nhập sai quá 5 lần. IP này đã bị khóa 15 phút vì lý do an toàn.'
+          : `Khóa bảo mật không chính xác! Còn lại ${MAX_LOGIN_FAILURES - currentFailures} lần thử trước khi bị khóa tạm thời.`
+      });
+    }
+
+    // 5. Đăng nhập thành công -> Xóa bộ nhớ đếm sai cho IP này
+    loginAttemptsMap.delete(clientIp);
 
     const token = generateAdminToken();
     logSecurityEvent(
@@ -118,7 +198,7 @@ router.post('/login', async (req, res) => {
       'Quản trị viên đăng nhập thành công vào phiên điều hành Master Console',
       'info',
       'superadmin',
-      req.ip
+      clientIp
     );
 
     return res.json({
