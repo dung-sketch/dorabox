@@ -1704,6 +1704,8 @@ export function renderAdminPage(): string {
             </table>
           </div>
         </div>
+      </section>
+
       <!-- ================= TAB: DUYỆT THÔNG TIN OA ================= -->
       <section id="tab-duyet-oa" class="tab-section">
         <div class="card-panel">
