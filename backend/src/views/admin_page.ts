@@ -25,197 +25,628 @@ export function renderAdminPage(): string {
 
   <style>
     :root {
-      --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       --font-mono: 'JetBrains Mono', monospace;
-      --dora-blue: #0084ff;
-      --dora-gold: #f59e0b;
-      --dora-dark-bg: #0b0f19;
-      --dora-dark-card: #131a29;
-      --dora-dark-border: rgba(255, 255, 255, 0.08);
+      --dora-blue: #38bdf8;
+      --dora-blue-glow: rgba(56, 189, 248, 0.2);
+      --dora-amber: #f59e0b;
+      --dora-emerald: #10b981;
+      --dora-rose: #f43f5e;
+      --dora-purple: #8b5cf6;
+      --dora-teal: #14b8a6;
+      --dora-bg: #07090e;
+      --dora-surface: rgba(17, 24, 39, 0.75);
+      --dora-surface-hover: rgba(26, 36, 56, 0.85);
+      --dora-border: rgba(255, 255, 255, 0.08);
+      --dora-border-hover: rgba(255, 255, 255, 0.18);
+    }
+
+    * {
+      box-sizing: border-box;
     }
 
     body, html {
       font-family: var(--font-sans);
       font-size: 14px;
+      letter-spacing: -0.01em;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
 
-    /* AdminLTE Dark Mode Customization */
+    /* Modern Dark Canvas with Subtle Radial Mesh Lights */
     body.dark-mode {
-      background-color: var(--dora-dark-bg) !important;
+      background-color: var(--dora-bg) !important;
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.08) 0px, transparent 40%),
+        radial-gradient(at 100% 0%, rgba(139, 92, 246, 0.08) 0px, transparent 45%),
+        radial-gradient(at 50% 100%, rgba(16, 185, 129, 0.04) 0px, transparent 50%) !important;
+      background-attachment: fixed !important;
       color: #e2e8f0;
     }
+
     body.dark-mode .content-wrapper {
-      background-color: var(--dora-dark-bg) !important;
-    }
-    body.dark-mode .main-header {
-      background-color: #0f1523 !important;
-      border-bottom: 1px solid var(--dora-dark-border) !important;
-    }
-    body.dark-mode .main-sidebar {
-      background-color: #0d121f !important;
-      border-right: 1px solid var(--dora-dark-border) !important;
-    }
-    body.dark-mode .card {
-      background-color: var(--dora-dark-card) !important;
-      border: 1px solid var(--dora-dark-border) !important;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25) !important;
-    }
-    body.dark-mode .card-header {
-      border-bottom: 1px solid var(--dora-dark-border) !important;
-    }
-    body.dark-mode .table {
-      color: #cbd5e1 !important;
-    }
-    body.dark-mode .table-bordered td, body.dark-mode .table-bordered th {
-      border-color: rgba(255, 255, 255, 0.07) !important;
-    }
-    body.dark-mode .table hover tbody tr:hover {
-      background-color: rgba(255, 255, 255, 0.04) !important;
-    }
-    body.dark-mode .modal-content {
-      background-color: var(--dora-dark-card) !important;
-      border: 1px solid var(--dora-dark-border) !important;
-      color: #f8fafc !important;
-    }
-    body.dark-mode .modal-header, body.dark-mode .modal-footer {
-      border-color: var(--dora-dark-border) !important;
+      background: transparent !important;
     }
 
-    /* Brand Logo & Header */
+    /* Frosted Top Navbar */
+    body.dark-mode .main-header.navbar {
+      background: rgba(10, 14, 24, 0.78) !important;
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border-bottom: 1px solid var(--dora-border) !important;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      padding: 10px 18px;
+    }
+
+    .nav-link {
+      font-weight: 600;
+      font-size: 0.88rem;
+      color: #94a3b8 !important;
+      border-radius: 10px;
+      padding: 8px 14px !important;
+      transition: all 0.2s ease;
+    }
+    .nav-link:hover {
+      color: #ffffff !important;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .navbar-action-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--dora-border);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #cbd5e1 !important;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+    .navbar-action-btn:hover {
+      background: rgba(255, 255, 255, 0.09);
+      color: #ffffff !important;
+      border-color: rgba(255, 255, 255, 0.2);
+      transform: translateY(-1px);
+    }
+
+    /* Live Radar Pulse Indicator */
+    .live-radar-chip {
+      background: rgba(34, 197, 94, 0.1);
+      border: 1px solid rgba(34, 197, 94, 0.3);
+      border-radius: 9999px;
+      padding: 6px 14px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #4ade80;
+      box-shadow: 0 0 15px rgba(34, 197, 94, 0.15);
+    }
+    .live-radar-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #22c55e;
+      position: relative;
+    }
+    .live-radar-dot::after {
+      content: '';
+      position: absolute;
+      inset: -3px;
+      border-radius: 50%;
+      background: rgba(34, 197, 94, 0.5);
+      animation: radarPulse 1.8s infinite cubic-bezier(0, 0, 0.2, 1);
+    }
+    @keyframes radarPulse {
+      0% { transform: scale(0.8); opacity: 1; }
+      100% { transform: scale(2.4); opacity: 0; }
+    }
+
+    /* Frosted Sidebar */
+    body.dark-mode .main-sidebar {
+      background: rgba(9, 13, 22, 0.94) !important;
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border-right: 1px solid var(--dora-border) !important;
+      box-shadow: 4px 0 24px rgba(0, 0, 0, 0.4);
+    }
     .brand-link {
-      border-bottom: 1px solid var(--dora-dark-border) !important;
-      padding: 14px 16px !important;
+      border-bottom: 1px solid var(--dora-border) !important;
+      padding: 18px 20px !important;
     }
     .brand-icon-box {
-      width: 36px;
-      height: 36px;
-      border-radius: 10px;
-      background: linear-gradient(135deg, #0084ff, #0056b3);
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #0284c7 0%, #3b82f6 50%, #8b5cf6 100%);
       display: inline-flex;
       align-items: center;
       justify-content: center;
       color: #fff;
       font-weight: 800;
-      font-size: 16px;
-      box-shadow: 0 4px 12px rgba(0, 132, 255, 0.4);
-      margin-right: 10px;
+      font-size: 18px;
+      box-shadow: 0 4px 18px rgba(59, 130, 246, 0.45);
+      margin-right: 12px;
+      transition: transform 0.2s ease;
+    }
+    .brand-link:hover .brand-icon-box {
+      transform: scale(1.05);
     }
 
-    /* Small-box Enhanced */
-    .small-box {
-      border-radius: 16px !important;
-      overflow: hidden;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15) !important;
-      transition: transform 0.25s ease, box-shadow 0.25s ease;
-      position: relative;
+    /* Sidebar User Info */
+    .user-panel {
+      padding: 12px 14px;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 14px;
+      border: 1px solid var(--dora-border);
+      margin: 12px 14px !important;
     }
-    .small-box:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25) !important;
-    }
-    .small-box .inner {
-      padding: 20px 22px !important;
-    }
-    .small-box .inner h3 {
-      font-size: 2.2rem !important;
-      font-weight: 800 !important;
+
+    /* Sidebar Nav Links */
+    .nav-sidebar .nav-item {
       margin-bottom: 4px;
     }
-    .small-box .inner p {
-      font-size: 0.95rem;
+    .nav-sidebar .nav-link {
+      border-radius: 12px !important;
+      padding: 10px 14px !important;
       font-weight: 600;
-      opacity: 0.9;
+      color: #94a3b8 !important;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      align-items: center;
     }
-    .small-box .icon {
-      font-size: 68px !important;
-      top: 15px !important;
-      right: 18px !important;
-      opacity: 0.22;
-      transition: all 0.3s linear;
+    .nav-sidebar .nav-link .nav-icon {
+      font-size: 1.05rem;
+      margin-right: 12px;
+      width: 22px;
+      text-align: center;
+      transition: transform 0.2s ease;
     }
-    .small-box:hover .icon {
-      font-size: 74px !important;
-      opacity: 0.35;
+    .nav-sidebar .nav-link:hover {
+      background: rgba(255, 255, 255, 0.05) !important;
+      color: #ffffff !important;
+      transform: translateX(3px);
     }
-    .small-box-footer {
-      background: rgba(0, 0, 0, 0.18) !important;
-      padding: 8px 0 !important;
-      font-weight: 600;
-      letter-spacing: 0.3px;
+    .nav-sidebar .nav-link:hover .nav-icon {
+      transform: scale(1.15);
+    }
+    .nav-sidebar .nav-link.active {
+      background: linear-gradient(90deg, rgba(56, 189, 248, 0.16) 0%, rgba(139, 92, 246, 0.08) 100%) !important;
+      color: #ffffff !important;
+      border: 1px solid rgba(56, 189, 248, 0.32) !important;
+      box-shadow: 0 4px 18px rgba(56, 189, 248, 0.14) !important;
+      position: relative;
+    }
+    .nav-sidebar .nav-link.active::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 15%;
+      bottom: 15%;
+      width: 3.5px;
+      border-radius: 0 4px 4px 0;
+      background: #38bdf8;
+      box-shadow: 0 0 10px #38bdf8;
     }
 
-    /* Info Box */
-    .info-box {
-      border-radius: 14px !important;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1) !important;
-      min-height: 84px !important;
-      border: 1px solid var(--dora-dark-border);
+    /* Cards - Executive Glassmorphism */
+    body.dark-mode .card {
+      background: linear-gradient(145deg, rgba(18, 25, 41, 0.72) 0%, rgba(12, 17, 29, 0.82) 100%) !important;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--dora-border) !important;
+      border-radius: 20px !important;
+      box-shadow: 0 12px 32px -10px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.06) !important;
+      overflow: hidden;
+      margin-bottom: 22px;
     }
-    .info-box .info-box-icon {
-      border-radius: 12px !important;
-      width: 64px !important;
+    body.dark-mode .card-header {
+      background: transparent !important;
+      border-bottom: 1px solid var(--dora-border) !important;
+      padding: 16px 22px !important;
     }
-    .info-box-number {
-      font-size: 1.4rem !important;
-      font-weight: 800 !important;
+    body.dark-mode .card-body {
+      padding: 22px !important;
+    }
+
+    /* =========================================================================
+       LUXURY KPI METRIC CARD (.metric-card)
+       Replaces ugly solid flat small-box & clunky info-box
+       ========================================================================= */
+    .metric-card {
+      position: relative;
+      border-radius: 20px;
+      background: linear-gradient(145deg, rgba(18, 26, 43, 0.75) 0%, rgba(12, 18, 30, 0.85) 100%);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--dora-border);
+      box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      padding: 22px 22px 18px 22px;
+      overflow: hidden;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 172px;
+      margin-bottom: 20px;
+    }
+    .metric-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 42px -12px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+      border-color: var(--dora-border-hover);
+    }
+    /* Top Accent Hairline Glow */
+    .metric-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2.5px;
+      background: var(--card-accent, #38bdf8);
+      box-shadow: 0 0 16px var(--card-accent, #38bdf8);
+    }
+    /* Ambient Glow Spot inside Card */
+    .metric-card::after {
+      content: '';
+      position: absolute;
+      top: -35px;
+      right: -35px;
+      width: 130px;
+      height: 130px;
+      border-radius: 50%;
+      background: var(--card-glow, rgba(56, 189, 248, 0.14));
+      filter: blur(35px);
+      pointer-events: none;
+    }
+
+    .metric-card .metric-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      position: relative;
+      z-index: 2;
+    }
+    .metric-card .metric-title {
+      font-size: 0.74rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #94a3b8;
+      margin: 0;
+    }
+    .metric-card .metric-icon-box {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 19px;
+      background: var(--icon-bg, rgba(56, 189, 248, 0.12));
+      color: var(--icon-color, #38bdf8);
+      border: 1px solid var(--icon-border, rgba(56, 189, 248, 0.25));
+      box-shadow: 0 4px 15px var(--icon-shadow, rgba(56, 189, 248, 0.15));
+      transition: transform 0.25s ease;
+    }
+    .metric-card:hover .metric-icon-box {
+      transform: scale(1.08);
+    }
+
+    .metric-card .metric-body {
+      position: relative;
+      z-index: 2;
+    }
+    .metric-card .metric-value {
+      font-size: 2.25rem;
+      font-weight: 800;
+      color: #ffffff;
+      letter-spacing: -0.035em;
+      line-height: 1.1;
+      margin-bottom: 6px;
+      font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    }
+
+    .metric-card .metric-meta {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.74rem;
+      color: #94a3b8;
+      font-weight: 600;
+    }
+    .metric-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 8px;
+      border-radius: 9999px;
+      font-size: 0.7rem;
+      font-weight: 700;
+    }
+    .metric-badge.live {
+      background: rgba(34, 197, 94, 0.15);
+      color: #4ade80;
+      border: 1px solid rgba(34, 197, 94, 0.3);
+    }
+    .metric-badge.gold {
+      background: rgba(245, 158, 11, 0.15);
+      color: #fbbf24;
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+    .metric-badge.cyan {
+      background: rgba(56, 189, 248, 0.15);
+      color: #38bdf8;
+      border: 1px solid rgba(56, 189, 248, 0.3);
+    }
+    .metric-badge.rose {
+      background: rgba(244, 63, 94, 0.15);
+      color: #fb7185;
+      border: 1px solid rgba(244, 63, 94, 0.3);
+    }
+
+    .metric-card .metric-footer {
+      margin-top: 14px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      z-index: 2;
+    }
+    .metric-card .metric-link {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #94a3b8;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+    .metric-card .metric-link:hover {
+      color: #ffffff;
+      transform: translateX(4px);
+    }
+    .metric-card .metric-link i {
+      font-size: 0.75rem;
+      transition: transform 0.2s ease;
+    }
+    .metric-card .metric-link:hover i {
+      transform: translateX(3px);
+    }
+
+    /* Specific Card Themes */
+    .metric-card.theme-blue {
+      --card-accent: #38bdf8;
+      --card-glow: rgba(56, 189, 248, 0.16);
+      --icon-bg: rgba(56, 189, 248, 0.12);
+      --icon-color: #38bdf8;
+      --icon-border: rgba(56, 189, 248, 0.25);
+      --icon-shadow: rgba(56, 189, 248, 0.15);
+    }
+    .metric-card.theme-amber {
+      --card-accent: #f59e0b;
+      --card-glow: rgba(245, 158, 11, 0.16);
+      --icon-bg: rgba(245, 158, 11, 0.12);
+      --icon-color: #fbbf24;
+      --icon-border: rgba(245, 158, 11, 0.25);
+      --icon-shadow: rgba(245, 158, 11, 0.15);
+    }
+    .metric-card.theme-emerald {
+      --card-accent: #10b981;
+      --card-glow: rgba(16, 185, 129, 0.16);
+      --icon-bg: rgba(16, 185, 129, 0.12);
+      --icon-color: #34d399;
+      --icon-border: rgba(16, 185, 129, 0.25);
+      --icon-shadow: rgba(16, 185, 129, 0.15);
+    }
+    .metric-card.theme-rose {
+      --card-accent: #f43f5e;
+      --card-glow: rgba(244, 63, 94, 0.16);
+      --icon-bg: rgba(244, 63, 94, 0.12);
+      --icon-color: #fb7185;
+      --icon-border: rgba(244, 63, 94, 0.25);
+      --icon-shadow: rgba(244, 63, 94, 0.15);
+    }
+    .metric-card.theme-cyan {
+      --card-accent: #06b6d4;
+      --card-glow: rgba(6, 182, 212, 0.16);
+      --icon-bg: rgba(6, 182, 212, 0.12);
+      --icon-color: #22d3ee;
+      --icon-border: rgba(6, 182, 212, 0.25);
+      --icon-shadow: rgba(6, 182, 212, 0.15);
+    }
+    .metric-card.theme-purple {
+      --card-accent: #8b5cf6;
+      --card-glow: rgba(139, 92, 246, 0.16);
+      --icon-bg: rgba(139, 92, 246, 0.12);
+      --icon-color: #a78bfa;
+      --icon-border: rgba(139, 92, 246, 0.25);
+      --icon-shadow: rgba(139, 92, 246, 0.15);
+    }
+    .metric-card.theme-yellow {
+      --card-accent: #eab308;
+      --card-glow: rgba(234, 179, 8, 0.16);
+      --icon-bg: rgba(234, 179, 8, 0.12);
+      --icon-color: #facc15;
+      --icon-border: rgba(234, 179, 8, 0.25);
+      --icon-shadow: rgba(234, 179, 8, 0.15);
+    }
+    .metric-card.theme-teal {
+      --card-accent: #14b8a6;
+      --card-glow: rgba(20, 184, 166, 0.16);
+      --icon-bg: rgba(20, 184, 166, 0.12);
+      --icon-color: #2dd4bf;
+      --icon-border: rgba(20, 184, 166, 0.25);
+      --icon-shadow: rgba(20, 184, 166, 0.15);
+    }
+
+    /* =========================================================================
+       QUICK ACTION TILES
+       ========================================================================= */
+    .quick-action-tile {
+      background: linear-gradient(145deg, rgba(20, 28, 48, 0.72) 0%, rgba(13, 19, 32, 0.82) 100%);
+      border: 1px solid var(--dora-border);
+      border-radius: 18px;
+      padding: 20px 20px;
+      text-align: left;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      width: 100%;
+      outline: none;
+    }
+    .quick-action-tile:hover {
+      transform: translateY(-3px);
+      border-color: rgba(255, 255, 255, 0.2);
+      box-shadow: 0 14px 30px -10px rgba(0, 0, 0, 0.6);
+      background: linear-gradient(145deg, rgba(28, 38, 64, 0.85) 0%, rgba(17, 25, 42, 0.95) 100%);
+    }
+    .quick-action-tile .action-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 21px;
+      flex-shrink: 0;
+      transition: transform 0.25s ease;
+    }
+    .quick-action-tile:hover .action-icon {
+      transform: scale(1.1);
+    }
+    .quick-action-tile .action-title {
+      font-size: 0.94rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 3px;
+    }
+    .quick-action-tile .action-desc {
+      font-size: 0.76rem;
+      color: #94a3b8;
+      margin: 0;
+    }
+
+    /* Tables Enhancement */
+    body.dark-mode .table {
+      --bs-table-bg: transparent !important;
+      --bs-table-striped-bg: rgba(255, 255, 255, 0.015) !important;
+      --bs-table-hover-bg: rgba(255, 255, 255, 0.04) !important;
+      color: #cbd5e1 !important;
+      border-color: rgba(255, 255, 255, 0.06) !important;
+    }
+    body.dark-mode .table thead th {
+      background: rgba(15, 23, 42, 0.85) !important;
+      color: #94a3b8 !important;
+      font-size: 0.74rem !important;
+      font-weight: 700 !important;
+      text-transform: uppercase !important;
+      letter-spacing: 0.07em !important;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+      padding: 14px 16px !important;
+    }
+    body.dark-mode .table tbody td {
+      padding: 14px 16px !important;
+      border-color: rgba(255, 255, 255, 0.05) !important;
+      vertical-align: middle;
     }
 
     /* Badges */
-    .badge-oa {
-      background: rgba(245, 158, 11, 0.18) !important;
-      color: #f59e0b !important;
-      border: 1px solid rgba(245, 158, 11, 0.4) !important;
+    .badge {
+      border-radius: 9999px;
+      padding: 5px 10px;
       font-weight: 700;
+      font-size: 11px;
+      letter-spacing: 0.02em;
+    }
+    .badge-oa {
+      background: rgba(245, 158, 11, 0.16) !important;
+      color: #fbbf24 !important;
+      border: 1px solid rgba(245, 158, 11, 0.35) !important;
     }
     .badge-verified {
-      background: rgba(0, 132, 255, 0.18) !important;
+      background: rgba(56, 189, 248, 0.16) !important;
       color: #38bdf8 !important;
-      border: 1px solid rgba(0, 132, 255, 0.4) !important;
-      font-weight: 700;
+      border: 1px solid rgba(56, 189, 248, 0.35) !important;
     }
 
     /* Avatars */
     .avatar-img-sm {
-      width: 38px;
-      height: 38px;
-      border-radius: 10px;
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
       object-fit: cover;
       border: 1.5px solid rgba(255, 255, 255, 0.15);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     }
     .avatar-fallback-sm {
-      width: 38px;
-      height: 38px;
-      border-radius: 10px;
-      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #0284c7, #3b82f6);
       color: #fff;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       font-weight: 700;
       font-size: 14px;
+      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);
+    }
+
+    /* Form Controls */
+    .form-control, .form-select {
+      background-color: rgba(15, 23, 42, 0.8) !important;
+      border: 1px solid var(--dora-border) !important;
+      color: #f1f5f9 !important;
+      border-radius: 12px !important;
+      font-size: 0.88rem;
+    }
+    .form-control:focus, .form-select:focus {
+      background-color: rgba(15, 23, 42, 0.95) !important;
+      border-color: #38bdf8 !important;
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2) !important;
+      color: #ffffff !important;
+    }
+
+    /* Buttons */
+    .btn {
+      border-radius: 10px;
+      font-weight: 600;
+      transition: all 0.2s ease;
     }
 
     /* Mobile Mockup Preview */
     .phone-mockup {
-      width: 300px;
+      width: 310px;
       margin: 0 auto;
-      background: #111827;
-      border: 8px solid #1f2937;
-      border-radius: 36px;
+      background: #0d121f;
+      border: 9px solid #1e293b;
+      border-radius: 38px;
       padding: 18px 14px;
-      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), 0 0 30px rgba(59, 130, 246, 0.1);
     }
     .phone-notch {
       width: 100px;
       height: 18px;
-      background: #1f2937;
+      background: #1e293b;
       border-radius: 0 0 12px 12px;
       margin: -18px auto 16px;
     }
     .phone-notif-bubble {
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.15);
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
       border-radius: 16px;
       padding: 12px;
     }
@@ -224,8 +655,8 @@ export function renderAdminPage(): string {
     #auth-overlay {
       position: fixed;
       inset: 0;
-      background: rgba(7, 10, 18, 0.92);
-      backdrop-filter: blur(20px);
+      background: rgba(5, 7, 12, 0.94);
+      backdrop-filter: blur(24px);
       z-index: 99999;
       display: flex;
       align-items: center;
@@ -236,11 +667,11 @@ export function renderAdminPage(): string {
     .login-box-card {
       width: 100%;
       max-width: 440px;
-      background: #131a29;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 24px;
-      padding: 38px 32px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+      background: linear-gradient(145deg, rgba(20, 28, 48, 0.85) 0%, rgba(12, 17, 30, 0.95) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 26px;
+      padding: 40px 34px;
+      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.7), 0 0 40px rgba(56, 189, 248, 0.15);
       text-align: center;
     }
 
@@ -255,10 +686,10 @@ export function renderAdminPage(): string {
     }
     .tab-section.active {
       display: block;
-      animation: fadeIn 0.25s ease;
+      animation: fadeIn 0.28s ease;
     }
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(6px); }
+      from { opacity: 0; transform: translateY(8px); }
       to { opacity: 1; transform: translateY(0); }
     }
   </style>
@@ -308,77 +739,98 @@ export function renderAdminPage(): string {
     <!-- Top Navbar -->
     <nav class="main-header navbar navbar-expand navbar-dark">
       <!-- Left navbar links -->
-      <ul class="navbar-nav">
+      <ul class="navbar-nav align-items-center">
         <li class="nav-item">
           <a class="nav-link" data-widget="pushmenu" href="#" role="button" title="Thu gọn / Mở rộng Menu">
             <i class="fas fa-bars"></i>
           </a>
         </li>
-        <li class="nav-item d-none d-sm-inline-block">
-          <a href="javascript:void(0)" onclick="switchTab('tong-quan')" class="nav-link">Tổng Quan</a>
-        </li>
-        <li class="nav-item d-none d-sm-inline-block">
-          <a href="javascript:void(0)" onclick="switchTab('thanh-vien')" class="nav-link">Thành Viên</a>
-        </li>
-        <li class="nav-item d-none d-sm-inline-block">
-          <a href="javascript:void(0)" onclick="switchTab('duyet-oa')" class="nav-link">
-            Xét Duyệt OA <span id="nav-oa-badge" class="badge badge-warning navbar-badge" style="display:none;">0</span>
+        <li class="nav-item d-none d-md-inline-block">
+          <a href="javascript:void(0)" onclick="switchTab('tong-quan')" class="nav-link">
+            <i class="fas fa-gauge-high me-1 text-info"></i> Tổng Quan
           </a>
         </li>
-        <li class="nav-item d-none d-sm-inline-block">
-          <a href="javascript:void(0)" onclick="switchTab('he-thong')" class="nav-link">Hạ Tầng Cloud</a>
+        <li class="nav-item d-none d-md-inline-block">
+          <a href="javascript:void(0)" onclick="switchTab('thanh-vien')" class="nav-link">
+            <i class="fas fa-users me-1 text-primary"></i> Thành Viên
+          </a>
+        </li>
+        <li class="nav-item d-none d-md-inline-block">
+          <a href="javascript:void(0)" onclick="switchTab('duyet-oa')" class="nav-link">
+            <i class="fas fa-certificate me-1 text-warning"></i> Xét Duyệt OA 
+            <span id="nav-oa-badge" class="badge bg-warning text-dark ms-1" style="display:none;">0</span>
+          </a>
+        </li>
+        <li class="nav-item d-none d-md-inline-block">
+          <a href="javascript:void(0)" onclick="switchTab('he-thong')" class="nav-link">
+            <i class="fas fa-server me-1 text-teal" style="color:#2dd4bf;"></i> Hạ Tầng Cloud
+          </a>
         </li>
       </ul>
 
       <!-- Right navbar links -->
-      <ul class="navbar-nav ms-auto">
+      <ul class="navbar-nav ms-auto align-items-center gap-2">
+        <!-- Live System Radar Chip -->
+        <li class="nav-item d-none d-sm-inline-flex">
+          <div class="live-radar-chip">
+            <span class="live-radar-dot"></span>
+            <span>Cloud 120Hz Realtime</span>
+          </div>
+        </li>
+
         <!-- Quick Refresh -->
         <li class="nav-item">
-          <a class="nav-link" href="javascript:void(0)" id="btn-refresh-data" title="Làm mới dữ liệu">
+          <a class="navbar-action-btn" href="javascript:void(0)" id="btn-refresh-data" title="Làm mới toàn bộ dữ liệu">
             <i class="fas fa-arrows-rotate"></i>
           </a>
         </li>
 
         <!-- Notifications Dropdown -->
         <li class="nav-item dropdown">
-          <a class="nav-link" data-bs-toggle="dropdown" href="#" role="button">
+          <a class="navbar-action-btn position-relative" data-bs-toggle="dropdown" href="#" role="button" title="Thông báo hệ thống">
             <i class="far fa-bell"></i>
-            <span class="badge bg-danger navbar-badge" id="top-report-badge">0</span>
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="top-report-badge" style="font-size: 10px;">0</span>
           </a>
-          <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
-            <span class="dropdown-header fw-bold" id="dropdown-header-notif">0 Thông báo cần xử lý</span>
-            <div class="dropdown-divider"></div>
-            <a href="javascript:void(0)" onclick="switchTab('bao-cao')" class="dropdown-item">
-              <i class="fas fa-flag text-danger me-2"></i>
-              <span id="dropdown-reports-text">0 Báo cáo vi phạm</span>
-              <span class="float-end text-muted text-sm">Xem ngay</span>
+          <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end" style="background: rgba(17, 24, 39, 0.95); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; box-shadow: 0 16px 40px rgba(0,0,0,0.6);">
+            <div class="px-3 py-2 border-bottom border-secondary text-white fw-bold d-flex align-items-center justify-content-between">
+              <span id="dropdown-header-notif">0 Thông báo cần xử lý</span>
+              <span class="badge bg-primary">Thời gian thực</span>
+            </div>
+            <a href="javascript:void(0)" onclick="switchTab('bao-cao')" class="dropdown-item py-2 px-3 text-white d-flex align-items-center justify-content-between">
+              <div>
+                <i class="fas fa-triangle-exclamation text-danger me-2"></i>
+                <span id="dropdown-reports-text">0 Báo cáo vi phạm</span>
+              </div>
+              <span class="badge bg-danger rounded-pill">Xử lý</span>
             </a>
-            <div class="dropdown-divider"></div>
-            <a href="javascript:void(0)" onclick="switchTab('duyet-oa')" class="dropdown-item">
-              <i class="fas fa-building text-warning me-2"></i>
-              <span id="dropdown-oa-text">0 Yêu cầu cấp OA</span>
-              <span class="float-end text-muted text-sm">Duyệt ngay</span>
+            <div class="dropdown-divider my-0 border-secondary"></div>
+            <a href="javascript:void(0)" onclick="switchTab('duyet-oa')" class="dropdown-item py-2 px-3 text-white d-flex align-items-center justify-content-between">
+              <div>
+                <i class="fas fa-certificate text-warning me-2"></i>
+                <span id="dropdown-oa-text">0 Yêu cầu cấp OA</span>
+              </div>
+              <span class="badge bg-warning text-dark rounded-pill">Duyệt ngay</span>
             </a>
           </div>
         </li>
 
         <!-- Dark / Light Mode Switch -->
         <li class="nav-item">
-          <a class="nav-link" href="javascript:void(0)" id="btn-toggle-dark-mode" title="Đổi chế độ Sáng / Tối">
+          <a class="navbar-action-btn" href="javascript:void(0)" id="btn-toggle-dark-mode" title="Đổi chế độ Sáng / Tối">
             <i class="fas fa-sun" id="theme-toggle-icon"></i>
           </a>
         </li>
 
         <!-- Fullscreen -->
-        <li class="nav-item">
-          <a class="nav-link" data-widget="fullscreen" href="#" role="button" title="Toàn màn hình">
+        <li class="nav-item d-none d-sm-inline-flex">
+          <a class="navbar-action-btn" data-widget="fullscreen" href="#" role="button" title="Toàn màn hình">
             <i class="fas fa-expand-arrows-alt"></i>
           </a>
         </li>
 
         <!-- Logout Button -->
         <li class="nav-item">
-          <a class="nav-link text-danger" href="javascript:void(0)" id="btn-logout" title="Đăng xuất khỏi hệ thống">
+          <a class="navbar-action-btn text-danger border-danger-subtle" href="javascript:void(0)" id="btn-logout" title="Đăng xuất khỏi hệ thống">
             <i class="fas fa-arrow-right-from-bracket"></i>
           </a>
         </li>
@@ -393,55 +845,56 @@ export function renderAdminPage(): string {
           <i class="fas fa-box-open"></i>
         </div>
         <div class="d-flex flex-column">
-          <span class="brand-text fw-bold text-white fs-6">Dorabox Admin</span>
-          <span class="text-muted" style="font-size: 10.5px;">Control Center 1.1.2</span>
+          <span class="brand-text fw-bold text-white fs-6" style="letter-spacing: -0.02em;">Dorabox Admin</span>
+          <span class="text-info fw-semibold" style="font-size: 11px; opacity: 0.9;">Control Center v1.1.2</span>
         </div>
       </a>
 
       <!-- Sidebar -->
       <div class="sidebar">
         <!-- Sidebar user panel -->
-        <div class="user-panel mt-3 pb-3 mb-3 d-flex align-items-center">
+        <div class="user-panel d-flex align-items-center">
           <div class="image">
-            <div class="avatar-fallback-sm" style="width: 34px; height: 34px; font-size: 12px;">AD</div>
+            <div class="avatar-fallback-sm">AD</div>
           </div>
           <div class="info ms-2">
-            <a href="javascript:void(0)" class="d-block fw-bold text-white">SuperAdministrator</a>
-            <span class="badge bg-success p-1" style="font-size: 9px;"><i class="fas fa-circle me-1"></i> Trực Tuyến</span>
-          </div>
-        </div>
-
-        <!-- Sidebar Search -->
-        <div class="form-inline mb-3">
-          <div class="input-group">
-            <input class="form-control form-control-sidebar bg-dark border-secondary text-white small" type="search" id="sidebar-search-input" placeholder="Tìm tính năng..." aria-label="Search">
-            <div class="input-group-append">
-              <button class="btn btn-sidebar bg-dark border-secondary text-secondary">
-                <i class="fas fa-search fa-fw"></i>
-              </button>
+            <div class="fw-bold text-white" style="font-size: 0.88rem;">SuperAdministrator</div>
+            <div class="d-flex align-items-center gap-1 mt-1">
+              <span style="width: 7px; height: 7px; border-radius: 50%; background: #22c55e; display: inline-block; box-shadow: 0 0 8px #22c55e;"></span>
+              <span class="text-success small fw-semibold" style="font-size: 10.5px;">Trực Tuyến Root</span>
             </div>
           </div>
         </div>
 
+        <!-- Sidebar Search -->
+        <div class="px-3 mb-3">
+          <div class="input-group">
+            <input class="form-control form-control-sm bg-dark border-secondary text-white" type="search" id="sidebar-search-input" placeholder="Tìm tính năng..." aria-label="Search" style="border-radius: 10px 0 0 10px !important;">
+            <button class="btn btn-sm btn-dark border-secondary text-secondary" style="border-radius: 0 10px 10px 0 !important;">
+              <i class="fas fa-search fa-fw"></i>
+            </button>
+          </div>
+        </div>
+
         <!-- Sidebar Menu -->
-        <nav class="mt-2">
+        <nav class="mt-2 px-2">
           <ul class="nav nav-pills nav-sidebar flex-column nav-child-indent" data-widget="treeview" role="menu" data-accordion="false">
             
-            <li class="nav-header text-uppercase small text-muted fw-bold">QUẢN TRỊ NỘI DUNG</li>
+            <li class="nav-header text-uppercase small text-muted fw-bold px-2 mb-1" style="font-size: 10px; letter-spacing: 0.08em;">QUẢN TRỊ NỘI DUNG</li>
 
             <li class="nav-item">
               <a href="javascript:void(0)" class="nav-link active" data-tab="tong-quan">
-                <i class="nav-icon fas fa-gauge-high text-primary"></i>
+                <i class="nav-icon fas fa-gauge-high text-info"></i>
                 <p>Tổng Quan Hệ Thống</p>
               </a>
             </li>
 
             <li class="nav-item">
               <a href="javascript:void(0)" class="nav-link" data-tab="thanh-vien">
-                <i class="nav-icon fas fa-users text-info"></i>
+                <i class="nav-icon fas fa-users text-primary"></i>
                 <p>
                   Thành Viên
-                  <span class="badge bg-info float-end" id="sidebar-user-badge">0</span>
+                  <span class="badge bg-primary float-end" id="sidebar-user-badge">0</span>
                 </p>
               </a>
             </li>
@@ -480,25 +933,25 @@ export function renderAdminPage(): string {
               </a>
             </li>
 
-            <li class="nav-header text-uppercase small text-muted fw-bold mt-2">ĐIỀU HÀNH & KỸ THUẬT</li>
+            <li class="nav-header text-uppercase small text-muted fw-bold px-2 mt-3 mb-1" style="font-size: 10px; letter-spacing: 0.08em;">ĐIỀU HÀNH & KỸ THUẬT</li>
 
             <li class="nav-item">
               <a href="javascript:void(0)" class="nav-link" data-tab="phat-thong-bao">
-                <i class="nav-icon fas fa-bullhorn text-purple" style="color: #a855f7;"></i>
+                <i class="nav-icon fas fa-bullhorn text-purple" style="color: #c084fc;"></i>
                 <p>Phát Sóng Push FCM</p>
               </a>
             </li>
 
             <li class="nav-item">
               <a href="javascript:void(0)" class="nav-link" data-tab="bao-mat-audit">
-                <i class="nav-icon fas fa-shield-virus text-indigo" style="color: #6366f1;"></i>
+                <i class="nav-icon fas fa-shield-virus text-indigo" style="color: #818cf8;"></i>
                 <p>Audit Log & Bảo Mật</p>
               </a>
             </li>
 
             <li class="nav-item">
               <a href="javascript:void(0)" class="nav-link" data-tab="he-thong">
-                <i class="nav-icon fas fa-server text-teal" style="color: #14b8a6;"></i>
+                <i class="nav-icon fas fa-server text-teal" style="color: #2dd4bf;"></i>
                 <p>Hạ Tầng & Cloud R2</p>
               </a>
             </li>
@@ -509,19 +962,27 @@ export function renderAdminPage(): string {
     </aside>
 
     <!-- Content Wrapper. Contains page content -->
-    <div class="content-wrapper p-3">
+    <div class="content-wrapper p-3 p-md-4">
       <!-- Content Header (Page header) -->
-      <div class="content-header pb-2">
+      <div class="content-header pb-3 mb-2">
         <div class="container-fluid">
           <div class="row align-items-center">
-            <div class="col-sm-6">
-              <h4 class="m-0 fw-bold" id="topbar-title">Tổng Quan Hệ Thống</h4>
-              <p class="text-muted small mb-0" id="topbar-subtitle">Chỉ số vận hành thời gian thực & trung tâm điều phối cộng đồng Dorabox</p>
+            <div class="col-sm-7">
+              <div class="d-flex align-items-center gap-2">
+                <h3 class="m-0 fw-bold text-white" id="topbar-title" style="letter-spacing: -0.02em;">Tổng Quan Hệ Thống</h3>
+                <span class="badge bg-primary-subtle text-info border border-info-subtle px-2 py-1">Live Engine</span>
+              </div>
+              <p class="text-muted small mb-0 mt-1" id="topbar-subtitle">Chỉ số vận hành thời gian thực & trung tâm điều phối cộng đồng Dorabox</p>
             </div>
-            <div class="col-sm-6 text-sm-end mt-2 mt-sm-0">
-              <span class="badge bg-primary px-3 py-2 fw-semibold">
-                <i class="fas fa-bolt me-1"></i> Trạng Thái: Tối Ưu 120Hz
-              </span>
+            <div class="col-sm-5 text-sm-end mt-3 mt-sm-0">
+              <div class="d-inline-flex align-items-center gap-2">
+                <span class="badge bg-dark border border-secondary text-light px-3 py-2 fw-semibold">
+                  <i class="fas fa-bolt text-warning me-1"></i> Tối Ưu Tần Số Quét 120Hz
+                </span>
+                <button class="btn btn-sm btn-outline-info" onclick="loadDashboardData()" title="Đồng bộ lại">
+                  <i class="fas fa-rotate"></i>
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -532,181 +993,330 @@ export function renderAdminPage(): string {
         <div class="container-fluid">
 
           <!-- =========================================================================
-               TAB 1: TỔNG QUAN (DASHBOARD)
+               TAB 1: TỔNG QUAN (DASHBOARD) - LUXURY EXECUTIVE GLASSMORPHISM
                ========================================================================= -->
           <div id="tab-tong-quan" class="tab-section active">
-            <!-- 4 Small Boxes AdminLTE -->
-            <div class="row">
-              <div class="col-lg-3 col-6">
-                <div class="small-box bg-info">
-                  <div class="inner">
-                    <h3 id="kpi-users">0</h3>
-                    <p>Tổng Thành Viên</p>
+            
+            <!-- ROW 1: 4 PRIMARY EXECUTIVE KPI CARDS -->
+            <div class="row g-3">
+              <!-- KPI 1: Tổng Thành Viên -->
+              <div class="col-xl-3 col-md-6 col-12">
+                <div class="metric-card theme-blue">
+                  <div class="metric-header">
+                    <span class="metric-title">Tổng Thành Viên</span>
+                    <div class="metric-icon-box">
+                      <i class="fas fa-users"></i>
+                    </div>
                   </div>
-                  <div class="icon">
-                    <i class="fas fa-users"></i>
+                  <div class="metric-body">
+                    <div class="metric-value" id="kpi-users">0</div>
+                    <div class="metric-meta">
+                      <span class="metric-badge live">
+                        <i class="fas fa-circle" style="font-size: 6px;"></i> Trực tuyến
+                      </span>
+                      <span>Tài khoản mạng xã hội</span>
+                    </div>
                   </div>
-                  <a href="javascript:void(0)" onclick="switchTab('thanh-vien')" class="small-box-footer">
-                    Quản lý thành viên <i class="fas fa-arrow-circle-right ms-1"></i>
-                  </a>
+                  <div class="metric-footer">
+                    <a href="javascript:void(0)" onclick="switchTab('thanh-vien')" class="metric-link">
+                      <span>Quản lý thành viên</span>
+                      <i class="fas fa-arrow-right"></i>
+                    </a>
+                  </div>
                 </div>
               </div>
 
-              <div class="col-lg-3 col-6">
-                <div class="small-box bg-warning text-dark">
-                  <div class="inner">
-                    <h3 id="kpi-vip">0</h3>
-                    <p>Tài Khoản Tích Vàng / OA</p>
+              <!-- KPI 2: Tài Khoản Tích Vàng / OA -->
+              <div class="col-xl-3 col-md-6 col-12">
+                <div class="metric-card theme-amber">
+                  <div class="metric-header">
+                    <span class="metric-title">Tài Khoản Tích Vàng / OA</span>
+                    <div class="metric-icon-box">
+                      <i class="fas fa-certificate"></i>
+                    </div>
                   </div>
-                  <div class="icon">
-                    <i class="fas fa-certificate"></i>
+                  <div class="metric-body">
+                    <div class="metric-value" id="kpi-vip">0</div>
+                    <div class="metric-meta">
+                      <span class="metric-badge gold">
+                        <i class="fas fa-star" style="font-size: 7px;"></i> Chính thức
+                      </span>
+                      <span>Doanh nghiệp & VIP</span>
+                    </div>
                   </div>
-                  <a href="javascript:void(0)" onclick="switchTab('duyet-oa')" class="small-box-footer text-dark">
-                    Xét duyệt OA <i class="fas fa-arrow-circle-right ms-1"></i>
-                  </a>
+                  <div class="metric-footer">
+                    <a href="javascript:void(0)" onclick="switchTab('duyet-oa')" class="metric-link">
+                      <span>Hàng đợi xét duyệt OA</span>
+                      <i class="fas fa-arrow-right"></i>
+                    </a>
+                  </div>
                 </div>
               </div>
 
-              <div class="col-lg-3 col-6">
-                <div class="small-box bg-success">
-                  <div class="inner">
-                    <h3 id="kpi-posts">0</h3>
-                    <p>Bài Viết Bảng Tin</p>
+              <!-- KPI 3: Bài Viết Bảng Tin -->
+              <div class="col-xl-3 col-md-6 col-12">
+                <div class="metric-card theme-emerald">
+                  <div class="metric-header">
+                    <span class="metric-title">Bài Viết Bảng Tin</span>
+                    <div class="metric-icon-box">
+                      <i class="fas fa-newspaper"></i>
+                    </div>
                   </div>
-                  <div class="icon">
-                    <i class="fas fa-newspaper"></i>
+                  <div class="metric-body">
+                    <div class="metric-value" id="kpi-posts">0</div>
+                    <div class="metric-meta">
+                      <span class="metric-badge live">
+                        <i class="fas fa-chart-line" style="font-size: 8px;"></i> Tương tác cao
+                      </span>
+                      <span>Nội dung đã xuất bản</span>
+                    </div>
                   </div>
-                  <a href="javascript:void(0)" onclick="switchTab('bai-viet')" class="small-box-footer">
-                    Quản lý bảng tin <i class="fas fa-arrow-circle-right ms-1"></i>
-                  </a>
+                  <div class="metric-footer">
+                    <a href="javascript:void(0)" onclick="switchTab('bai-viet')" class="metric-link">
+                      <span>Kiểm duyệt bài viết</span>
+                      <i class="fas fa-arrow-right"></i>
+                    </a>
+                  </div>
                 </div>
               </div>
 
-              <div class="col-lg-3 col-6">
-                <div class="small-box bg-danger">
-                  <div class="inner">
-                    <h3 id="kpi-banned">0</h3>
-                    <p>Báo Cáo & Khóa Vi Phạm</p>
+              <!-- KPI 4: Báo Cáo & Khóa Vi Phạm -->
+              <div class="col-xl-3 col-md-6 col-12">
+                <div class="metric-card theme-rose">
+                  <div class="metric-header">
+                    <span class="metric-title">Báo Cáo & Khóa Vi Phạm</span>
+                    <div class="metric-icon-box">
+                      <i class="fas fa-shield-virus"></i>
+                    </div>
                   </div>
-                  <div class="icon">
-                    <i class="fas fa-shield-virus"></i>
+                  <div class="metric-body">
+                    <div class="metric-value" id="kpi-banned">0</div>
+                    <div class="metric-meta">
+                      <span class="metric-badge rose">
+                        <i class="fas fa-lock" style="font-size: 7px;"></i> Kiểm soát
+                      </span>
+                      <span>Xử phạt & vi phạm</span>
+                    </div>
                   </div>
-                  <a href="javascript:void(0)" onclick="switchTab('bao-cao')" class="small-box-footer">
-                    Xử lý vi phạm <i class="fas fa-arrow-circle-right ms-1"></i>
-                  </a>
+                  <div class="metric-footer">
+                    <a href="javascript:void(0)" onclick="switchTab('bao-cao')" class="metric-link">
+                      <span>Xử lý báo cáo vi phạm</span>
+                      <i class="fas fa-arrow-right"></i>
+                    </a>
+                  </div>
                 </div>
               </div>
             </div>
 
-            <!-- 4 Info Boxes -->
-            <div class="row">
-              <div class="col-md-3 col-sm-6 col-12">
-                <div class="info-box bg-dark">
-                  <span class="info-box-icon bg-primary"><i class="fas fa-check-double"></i></span>
-                  <div class="info-box-content">
-                    <span class="info-box-text text-muted">Đã Xác Minh</span>
-                    <span class="info-box-number" id="kpi-verified">0</span>
+            <!-- ROW 2: 4 SECONDARY METRIC CARDS -->
+            <div class="row g-3 mt-1">
+              <!-- Sub 1: Đã Xác Minh -->
+              <div class="col-xl-3 col-md-6 col-12">
+                <div class="metric-card theme-cyan" style="min-height: 150px;">
+                  <div class="metric-header">
+                    <span class="metric-title">Đã Xác Minh (Tích Xanh)</span>
+                    <div class="metric-icon-box" style="width: 38px; height: 38px; font-size: 16px;">
+                      <i class="fas fa-check-double"></i>
+                    </div>
+                  </div>
+                  <div class="metric-body">
+                    <div class="metric-value" id="kpi-verified" style="font-size: 1.9rem;">0</div>
+                    <div class="metric-meta">
+                      <span class="metric-badge cyan">Độ tin cậy cao</span>
+                    </div>
+                  </div>
+                  <div class="metric-footer" style="margin-top: 10px; padding-top: 8px;">
+                    <a href="javascript:void(0)" onclick="switchTab('thanh-vien')" class="metric-link">
+                      <span>Lọc thành viên tích xanh</span>
+                      <i class="fas fa-arrow-right"></i>
+                    </a>
                   </div>
                 </div>
               </div>
 
-              <div class="col-md-3 col-sm-6 col-12">
-                <div class="info-box bg-dark">
-                  <span class="info-box-icon bg-success"><i class="fas fa-comments"></i></span>
-                  <div class="info-box-content">
-                    <span class="info-box-text text-muted">Tổng Bình Luận</span>
-                    <span class="info-box-number" id="kpi-comments">0</span>
+              <!-- Sub 2: Tổng Bình Luận -->
+              <div class="col-xl-3 col-md-6 col-12">
+                <div class="metric-card theme-purple" style="min-height: 150px;">
+                  <div class="metric-header">
+                    <span class="metric-title">Tổng Bình Luận Thảo Luận</span>
+                    <div class="metric-icon-box" style="width: 38px; height: 38px; font-size: 16px;">
+                      <i class="fas fa-comments"></i>
+                    </div>
+                  </div>
+                  <div class="metric-body">
+                    <div class="metric-value" id="kpi-comments" style="font-size: 1.9rem;">0</div>
+                    <div class="metric-meta">
+                      <span class="text-muted small">Cộng đồng thảo luận sôi nổi</span>
+                    </div>
+                  </div>
+                  <div class="metric-footer" style="margin-top: 10px; padding-top: 8px;">
+                    <a href="javascript:void(0)" onclick="switchTab('binh-luan')" class="metric-link">
+                      <span>Quản lý thảo luận</span>
+                      <i class="fas fa-arrow-right"></i>
+                    </a>
                   </div>
                 </div>
               </div>
 
-              <div class="col-md-3 col-sm-6 col-12">
-                <div class="info-box bg-dark">
-                  <span class="info-box-icon bg-warning"><i class="fas fa-hourglass-half"></i></span>
-                  <div class="info-box-content">
-                    <span class="info-box-text text-muted">OA Chờ Phê Duyệt</span>
-                    <span class="info-box-number" id="kpi-oa-pending">0</span>
+              <!-- Sub 3: OA Chờ Phê Duyệt -->
+              <div class="col-xl-3 col-md-6 col-12">
+                <div class="metric-card theme-yellow" style="min-height: 150px;">
+                  <div class="metric-header">
+                    <span class="metric-title">Hàng Đợi Chờ Duyệt OA</span>
+                    <div class="metric-icon-box" style="width: 38px; height: 38px; font-size: 16px;">
+                      <i class="fas fa-hourglass-half"></i>
+                    </div>
+                  </div>
+                  <div class="metric-body">
+                    <div class="metric-value" id="kpi-oa-pending" style="font-size: 1.9rem;">0</div>
+                    <div class="metric-meta">
+                      <span class="metric-badge gold">Cần thẩm định</span>
+                    </div>
+                  </div>
+                  <div class="metric-footer" style="margin-top: 10px; padding-top: 8px;">
+                    <a href="javascript:void(0)" onclick="switchTab('duyet-oa')" class="metric-link">
+                      <span>Duyệt hồ sơ ngay</span>
+                      <i class="fas fa-arrow-right"></i>
+                    </a>
                   </div>
                 </div>
               </div>
 
-              <div class="col-md-3 col-sm-6 col-12">
-                <div class="info-box bg-dark">
-                  <span class="info-box-icon bg-teal text-white"><i class="fas fa-heart-pulse"></i></span>
-                  <div class="info-box-content">
-                    <span class="info-box-text text-muted">Sức Khỏe Hệ Thống</span>
-                    <span class="info-box-number text-success" style="font-size: 1.15rem !important;">100% Khỏe Mạnh</span>
+              <!-- Sub 4: Sức Khỏe Hệ Thống -->
+              <div class="col-xl-3 col-md-6 col-12">
+                <div class="metric-card theme-teal" style="min-height: 150px;">
+                  <div class="metric-header">
+                    <span class="metric-title">Sức Khỏe Hạ Tầng Cloud</span>
+                    <div class="metric-icon-box" style="width: 38px; height: 38px; font-size: 16px;">
+                      <i class="fas fa-heart-pulse"></i>
+                    </div>
+                  </div>
+                  <div class="metric-body">
+                    <div class="metric-value text-teal" style="font-size: 1.6rem; color: #2dd4bf;">100% Khỏe Mạnh</div>
+                    <div class="metric-meta">
+                      <span class="metric-badge live">Supabase & Cloudflare R2</span>
+                    </div>
+                  </div>
+                  <div class="metric-footer" style="margin-top: 10px; padding-top: 8px;">
+                    <a href="javascript:void(0)" onclick="switchTab('he-thong')" class="metric-link">
+                      <span>Kiểm tra hạ tầng</span>
+                      <i class="fas fa-arrow-right"></i>
+                    </a>
                   </div>
                 </div>
               </div>
             </div>
 
-            <!-- Charts & Quick Action Center -->
-            <div class="row">
+            <!-- CHARTS & DISTRIBUTION SECTION -->
+            <div class="row g-3 mt-1">
               <div class="col-lg-8">
-                <div class="card">
-                  <div class="card-header border-0 d-flex justify-content-between align-items-center">
-                    <h5 class="card-title fw-bold m-0">
-                      <i class="fas fa-chart-line text-primary me-2"></i> Xu Hướng Hoạt Động & Tăng Trưởng
-                    </h5>
-                    <div class="card-tools">
-                      <span class="badge bg-primary">Thời gian thực</span>
+                <div class="card h-100">
+                  <div class="card-header d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center gap-2">
+                      <div class="avatar-fallback-sm" style="width: 32px; height: 32px; font-size: 12px; background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3);">
+                        <i class="fas fa-chart-line"></i>
+                      </div>
+                      <h5 class="card-title fw-bold m-0 text-white fs-6">Xu Hướng Hoạt Động & Tăng Trưởng</h5>
+                    </div>
+                    <div class="card-tools d-flex align-items-center gap-2">
+                      <span class="live-radar-chip" style="font-size: 0.72rem; padding: 4px 10px;">
+                        <span class="live-radar-dot" style="width: 6px; height: 6px;"></span>
+                        <span>Dữ liệu thực</span>
+                      </span>
                     </div>
                   </div>
                   <div class="card-body">
-                    <canvas id="growthChart" style="min-height: 260px; height: 260px; max-height: 260px; max-width: 100%;"></canvas>
+                    <canvas id="growthChart" style="min-height: 270px; height: 270px; max-height: 270px; max-width: 100%;"></canvas>
                   </div>
                 </div>
               </div>
 
               <div class="col-lg-4">
-                <div class="card">
-                  <div class="card-header border-0">
-                    <h5 class="card-title fw-bold m-0">
-                      <i class="fas fa-chart-pie text-warning me-2"></i> Phân Bổ Dữ Liệu
-                    </h5>
+                <div class="card h-100">
+                  <div class="card-header d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center gap-2">
+                      <div class="avatar-fallback-sm" style="width: 32px; height: 32px; font-size: 12px; background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3);">
+                        <i class="fas fa-chart-pie"></i>
+                      </div>
+                      <h5 class="card-title fw-bold m-0 text-white fs-6">Phân Bổ Dữ Liệu</h5>
+                    </div>
+                    <span class="text-muted small">Cộng đồng</span>
                   </div>
-                  <div class="card-body">
-                    <canvas id="distributionChart" style="min-height: 260px; height: 260px; max-height: 260px; max-width: 100%;"></canvas>
+                  <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                    <canvas id="distributionChart" style="min-height: 270px; height: 270px; max-height: 270px; max-width: 100%;"></canvas>
                   </div>
                 </div>
               </div>
             </div>
 
-            <!-- Quick Action Cards -->
-            <div class="card mt-2">
-              <div class="card-header">
-                <h5 class="card-title fw-bold m-0"><i class="fas fa-bolt text-warning me-2"></i> Thao Tác Nhanh Quản Trị Viên</h5>
+            <!-- QUICK ACTION CENTER - 4 LUXURY INTERACTIVE TILES -->
+            <div class="card mt-3">
+              <div class="card-header d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center gap-2">
+                  <div class="avatar-fallback-sm" style="width: 32px; height: 32px; font-size: 12px; background: rgba(234, 179, 8, 0.15); color: #facc15; border: 1px solid rgba(234, 179, 8, 0.3);">
+                    <i class="fas fa-bolt"></i>
+                  </div>
+                  <h5 class="card-title fw-bold m-0 text-white fs-6">Trung Tâm Thao Tác Nhanh Quản Trị Viên</h5>
+                </div>
+                <span class="badge bg-secondary-subtle text-muted">Điều khiển một chạm</span>
               </div>
               <div class="card-body">
                 <div class="row g-3">
-                  <div class="col-md-3">
-                    <button class="btn btn-outline-primary w-100 py-3 d-flex flex-column align-items-center gap-2 rounded-3" onclick="switchTab('phat-thong-bao')">
-                      <i class="fas fa-bullhorn fs-3"></i>
-                      <span class="fw-bold">Phát Push Notification</span>
+                  <!-- Action 1 -->
+                  <div class="col-xl-3 col-md-6 col-12">
+                    <button class="quick-action-tile" onclick="switchTab('phat-thong-bao')">
+                      <div class="action-icon" style="background: rgba(168, 85, 247, 0.15); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.3); box-shadow: 0 4px 15px rgba(168, 85, 247, 0.2);">
+                        <i class="fas fa-bullhorn"></i>
+                      </div>
+                      <div>
+                        <div class="action-title">Phát Sóng Push FCM</div>
+                        <p class="action-desc">Gửi thông báo đẩy toàn mạng xã hội</p>
+                      </div>
                     </button>
                   </div>
-                  <div class="col-md-3">
-                    <button class="btn btn-outline-warning w-100 py-3 d-flex flex-column align-items-center gap-2 rounded-3" onclick="cleanSpamReactions()">
-                      <i class="fas fa-broom fs-3"></i>
-                      <span class="fw-bold">Dọn Dẹp Spam 120Hz</span>
+
+                  <!-- Action 2 -->
+                  <div class="col-xl-3 col-md-6 col-12">
+                    <button class="quick-action-tile" onclick="cleanSpamReactions()">
+                      <div class="action-icon" style="background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); box-shadow: 0 4px 15px rgba(245, 158, 11, 0.2);">
+                        <i class="fas fa-broom"></i>
+                      </div>
+                      <div>
+                        <div class="action-title">Dọn Dẹp Spam 120Hz</div>
+                        <p class="action-desc">Tối ưu hóa dữ liệu & thanh lọc feed</p>
+                      </div>
                     </button>
                   </div>
-                  <div class="col-md-3">
-                    <button class="btn btn-outline-success w-100 py-3 d-flex flex-column align-items-center gap-2 rounded-3" onclick="switchTab('duyet-oa')">
-                      <i class="fas fa-building-circle-check fs-3"></i>
-                      <span class="fw-bold">Xét Duyệt Tài Khoản OA</span>
+
+                  <!-- Action 3 -->
+                  <div class="col-xl-3 col-md-6 col-12">
+                    <button class="quick-action-tile" onclick="switchTab('duyet-oa')">
+                      <div class="action-icon" style="background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);">
+                        <i class="fas fa-building-circle-check"></i>
+                      </div>
+                      <div>
+                        <div class="action-title">Xét Duyệt Hồ Sơ OA</div>
+                        <p class="action-desc">Phê duyệt tích vàng & thương hiệu</p>
+                      </div>
                     </button>
                   </div>
-                  <div class="col-md-3">
-                    <button class="btn btn-outline-info w-100 py-3 d-flex flex-column align-items-center gap-2 rounded-3" onclick="switchTab('he-thong')">
-                      <i class="fas fa-shield-heart fs-3"></i>
-                      <span class="fw-bold">Kiểm Tra Hạ Tầng Cloud</span>
+
+                  <!-- Action 4 -->
+                  <div class="col-xl-3 col-md-6 col-12">
+                    <button class="quick-action-tile" onclick="switchTab('he-thong')">
+                      <div class="action-icon" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); box-shadow: 0 4px 15px rgba(56, 189, 248, 0.2);">
+                        <i class="fas fa-shield-heart"></i>
+                      </div>
+                      <div>
+                        <div class="action-title">Kiểm Tra Hạ Tầng Cloud</div>
+                        <p class="action-desc">Cloudflare R2, Supabase & Uptime</p>
+                      </div>
                     </button>
                   </div>
                 </div>
               </div>
             </div>
+
           </div>
 
           <!-- =========================================================================
@@ -1285,6 +1895,17 @@ export function renderAdminPage(): string {
       const ctxGrowth = document.getElementById('growthChart');
       if (ctxGrowth) {
         if (growthChartInstance) growthChartInstance.destroy();
+
+        // Create gradient fills
+        const chartCtx = ctxGrowth.getContext('2d');
+        const blueGrad = chartCtx.createLinearGradient(0, 0, 0, 260);
+        blueGrad.addColorStop(0, 'rgba(56, 189, 248, 0.28)');
+        blueGrad.addColorStop(1, 'rgba(56, 189, 248, 0.0)');
+
+        const greenGrad = chartCtx.createLinearGradient(0, 0, 0, 260);
+        greenGrad.addColorStop(0, 'rgba(52, 211, 153, 0.22)');
+        greenGrad.addColorStop(1, 'rgba(52, 211, 153, 0.0)');
+
         growthChartInstance = new Chart(ctxGrowth, {
           type: 'line',
           data: {
@@ -1293,20 +1914,30 @@ export function renderAdminPage(): string {
               {
                 label: 'Thành viên mới',
                 data: [12, 19, 25, 32, 45, 58, Number(m.totalUsers || 70)],
-                borderColor: '#0084ff',
-                backgroundColor: 'rgba(0, 132, 255, 0.15)',
+                borderColor: '#38bdf8',
+                backgroundColor: blueGrad,
                 fill: true,
-                tension: 0.35,
-                borderWidth: 2.5
+                tension: 0.4,
+                borderWidth: 3,
+                pointBackgroundColor: '#38bdf8',
+                pointBorderColor: '#0b101d',
+                pointBorderWidth: 2,
+                pointRadius: 4,
+                pointHoverRadius: 7
               },
               {
                 label: 'Bài viết & Tương tác',
                 data: [35, 48, 62, 85, 110, 145, Number(m.totalPosts || 160)],
-                borderColor: '#10b981',
-                backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                borderColor: '#34d399',
+                backgroundColor: greenGrad,
                 fill: true,
-                tension: 0.35,
-                borderWidth: 2.5
+                tension: 0.4,
+                borderWidth: 3,
+                pointBackgroundColor: '#34d399',
+                pointBorderColor: '#0b101d',
+                pointBorderWidth: 2,
+                pointRadius: 4,
+                pointHoverRadius: 7
               }
             ]
           },
@@ -1314,11 +1945,35 @@ export function renderAdminPage(): string {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-              legend: { labels: { color: '#cbd5e1', font: { family: 'Plus Jakarta Sans' } } }
+              legend: { 
+                labels: { 
+                  color: '#cbd5e1', 
+                  font: { family: 'Plus Jakarta Sans', weight: '600', size: 12 },
+                  usePointStyle: true,
+                  boxWidth: 8
+                } 
+              },
+              tooltip: {
+                backgroundColor: 'rgba(15, 23, 42, 0.92)',
+                titleColor: '#ffffff',
+                bodyColor: '#e2e8f0',
+                borderColor: 'rgba(255, 255, 255, 0.12)',
+                borderWidth: 1,
+                padding: 12,
+                cornerRadius: 12,
+                bodyFont: { family: 'Plus Jakarta Sans' },
+                titleFont: { family: 'Plus Jakarta Sans', weight: '700' }
+              }
             },
             scales: {
-              x: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255,255,255,0.05)' } },
-              y: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255,255,255,0.05)' } }
+              x: { 
+                ticks: { color: '#94a3b8', font: { family: 'Plus Jakarta Sans' } }, 
+                grid: { color: 'rgba(255, 255, 255, 0.04)' } 
+              },
+              y: { 
+                ticks: { color: '#94a3b8', font: { family: 'Plus Jakarta Sans' } }, 
+                grid: { color: 'rgba(255, 255, 255, 0.04)' } 
+              }
             }
           }
         });
@@ -1331,7 +1986,7 @@ export function renderAdminPage(): string {
         distributionChartInstance = new Chart(ctxDist, {
           type: 'doughnut',
           data: {
-            labels: ['Người dùng', 'Bài viết', 'Bình luận', 'Báo cáo'],
+            labels: ['Người dùng', 'Bài viết', 'Bình luận', 'Báo cáo vi phạm'],
             datasets: [{
               data: [
                 Number(m.totalUsers || 10),
@@ -1339,15 +1994,35 @@ export function renderAdminPage(): string {
                 Number(m.totalComments || 25),
                 Number(m.pendingReports || 2)
               ],
-              backgroundColor: ['#0084ff', '#10b981', '#f59e0b', '#ef4444'],
-              borderWidth: 0
+              backgroundColor: ['#38bdf8', '#34d399', '#fbbf24', '#f43f5e'],
+              borderColor: '#0f172a',
+              borderWidth: 3,
+              hoverOffset: 8
             }]
           },
           options: {
             responsive: true,
             maintainAspectRatio: false,
+            cutout: '72%',
             plugins: {
-              legend: { position: 'bottom', labels: { color: '#cbd5e1', boxWidth: 14 } }
+              legend: { 
+                position: 'bottom', 
+                labels: { 
+                  color: '#cbd5e1', 
+                  boxWidth: 10,
+                  usePointStyle: true,
+                  font: { family: 'Plus Jakarta Sans', weight: '600', size: 11 },
+                  padding: 14
+                } 
+              },
+              tooltip: {
+                backgroundColor: 'rgba(15, 23, 42, 0.92)',
+                borderColor: 'rgba(255, 255, 255, 0.12)',
+                borderWidth: 1,
+                padding: 12,
+                cornerRadius: 12,
+                bodyFont: { family: 'Plus Jakarta Sans' }
+              }
             }
           }
         });
