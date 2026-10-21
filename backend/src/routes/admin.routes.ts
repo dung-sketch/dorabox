@@ -42,7 +42,7 @@ function generateAdminToken(): string {
 export interface SecurityAuditLog {
   id: string;
   timestamp: string;
-  eventType: 'admin_login' | 'role_change' | 'user_ban' | 'user_unban' | 'verify_toggle' | 'spam_clean' | 'broadcast' | 'rate_limit' | 'account_wiped';
+  eventType: 'admin_login' | 'role_change' | 'user_ban' | 'user_unban' | 'verify_toggle' | 'spam_clean' | 'broadcast' | 'rate_limit' | 'account_wiped' | 'group_deleted';
   severity: 'info' | 'warning' | 'alert';
   actor: string;
   details: string;
@@ -234,7 +234,8 @@ router.get('/metrics', async (req, res) => {
       commentsRes,
       pendingReportsRes,
       resolvedReportsRes,
-      pendingOaRes
+      pendingOaRes,
+      groupsRes
     ] = await Promise.all([
       supabaseAdmin.from('profiles').select('id', { count: 'exact', head: true }),
       supabaseAdmin.from('profiles').select('id', { count: 'exact', head: true }).eq('is_verified', true),
@@ -244,6 +245,7 @@ router.get('/metrics', async (req, res) => {
       supabaseAdmin.from('reports').select('id, target_type, target_id, reporter_id, reason').eq('status', 'pending'),
       supabaseAdmin.from('reports').select('id', { count: 'exact', head: true }).neq('status', 'pending'),
       supabaseAdmin.from('profiles').select('id', { count: 'exact', head: true }).eq('oa_pending_status', 'pending_approval'),
+      supabaseAdmin.from('conversations').select('id', { count: 'exact', head: true }).eq('is_group', true),
     ]);
 
     let pendingViolationsCount = 0;
@@ -278,6 +280,7 @@ router.get('/metrics', async (req, res) => {
         pendingOaRequests: pendingOaCount,
         pendingBadgeRequests: pendingBadgeRequestsCount,
         pendingRequests: totalPendingRequests,
+        totalGroups: groupsRes.count || 0,
       }
     });
   } catch (err: any) {
@@ -1202,7 +1205,146 @@ router.post('/users/:id/reset-oa-edit', async (req, res) => {
 });
 
 // -------------------------------------------------------------
-// 6. SYSTEM BROADCAST (Phát thông báo toàn hệ thống)
+// 6. GROUP CHATS MANAGEMENT (Quản lý Nhóm trò chuyện)
+// -------------------------------------------------------------
+
+router.get('/groups', async (req, res) => {
+  try {
+    const page = Math.max(1, parseInt(req.query.page as string) || 1);
+    const limit = Math.min(100, Math.max(1, parseInt(req.query.limit as string) || 20));
+    const search = (req.query.search as string || '').trim();
+
+    let query = supabaseAdmin
+      .from('conversations')
+      .select('*', { count: 'exact' })
+      .eq('is_group', true)
+      .order('created_at', { ascending: false });
+
+    if (search) {
+      query = query.ilike('name', `%${search}%`);
+    }
+
+    const from = (page - 1) * limit;
+    const to = from + limit - 1;
+    const { data, count, error } = await query.range(from, to);
+    if (error) throw error;
+
+    const groups = data || [];
+
+    // Lấy thông tin người tạo nhóm
+    const creatorIds = Array.from(new Set(groups.map((g: any) => g.created_by).filter(Boolean)));
+    const creatorsMap: Record<string, any> = {};
+    if (creatorIds.length > 0) {
+      const { data: creators } = await supabaseAdmin
+        .from('profiles')
+        .select('id, username, display_name, avatar_url, is_verified, is_oa')
+        .in('id', creatorIds);
+      (creators || []).forEach((cr: any) => {
+        creatorsMap[cr.id] = cr;
+      });
+    }
+
+    const enrichedGroups = groups.map((g: any) => ({
+      id: g.id,
+      name: g.name || 'Nhóm chưa đặt tên',
+      avatar_url: g.avatar_url,
+      created_by: g.created_by,
+      creator: creatorsMap[g.created_by] || null,
+      member_count: Array.isArray(g.member_ids) ? g.member_ids.length : 0,
+      member_ids: g.member_ids || [],
+      nicknames: g.nicknames || {},
+      last_message: g.last_message || 'Chưa có tin nhắn',
+      last_message_at: g.last_message_at || g.created_at,
+      created_at: g.created_at
+    }));
+
+    return res.json({
+      success: true,
+      groups: enrichedGroups,
+      pagination: {
+        page,
+        limit,
+        total: count || 0,
+        totalPages: Math.ceil((count || 0) / limit)
+      }
+    });
+  } catch (err: any) {
+    return res.status(500).json({ error: err.message });
+  }
+});
+
+router.get('/groups/:id/members', async (req, res) => {
+  try {
+    const groupId = req.params.id;
+    const { data: conv, error: convErr } = await supabaseAdmin
+      .from('conversations')
+      .select('*')
+      .eq('id', groupId)
+      .single();
+
+    if (convErr || !conv || !conv.is_group) {
+      return res.status(404).json({ error: 'Không tìm thấy nhóm trò chuyện' });
+    }
+
+    const memberIds: string[] = Array.isArray(conv.member_ids) ? conv.member_ids : [];
+    let memberProfiles: any[] = [];
+    if (memberIds.length > 0) {
+      const { data: profiles } = await supabaseAdmin
+        .from('profiles')
+        .select('id, username, display_name, avatar_url, is_verified, is_oa')
+        .in('id', memberIds);
+      memberProfiles = profiles || [];
+    }
+
+    const nicknames = conv.nicknames || {};
+    const members = memberProfiles.map((p: any) => ({
+      ...p,
+      nickname: nicknames[p.id] || null,
+      is_creator: p.id === conv.created_by
+    }));
+
+    return res.json({
+      success: true,
+      group: {
+        id: conv.id,
+        name: conv.name,
+        avatar_url: conv.avatar_url,
+        created_by: conv.created_by,
+        created_at: conv.created_at
+      },
+      members
+    });
+  } catch (err: any) {
+    return res.status(500).json({ error: err.message });
+  }
+});
+
+router.delete('/groups/:id', async (req, res) => {
+  try {
+    const groupId = req.params.id;
+    const { data: conv } = await supabaseAdmin
+      .from('conversations')
+      .select('name')
+      .eq('id', groupId)
+      .maybeSingle();
+
+    await supabaseAdmin.from('messages').delete().eq('conversation_id', groupId);
+    await supabaseAdmin.from('conversations').delete().eq('id', groupId);
+
+    const groupName = conv?.name || groupId;
+    logSecurityEvent('group_deleted', `Admin giải tán và xóa vĩnh viễn nhóm "${groupName}" (ID: ${groupId})`, 'alert', 'superadmin');
+
+    return res.json({
+      success: true,
+      message: `Đã giải tán và xóa sạch toàn bộ dữ liệu nhóm "${groupName}" thành công.`
+    });
+  } catch (err: any) {
+    return res.status(500).json({ error: err.message });
+  }
+});
+
+// -------------------------------------------------------------
+// 7. SYSTEM BROADCAST (Phát thông báo toàn hệ thống)
 // -------------------------------------------------------------
 
 router.post('/broadcast', async (req, res) => {

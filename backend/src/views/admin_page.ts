@@ -868,8 +868,12 @@ export function renderAdminPage(): string {
       <!-- Navigation -->
       <nav class="sidebar-menu">
         <div class="menu-group-label">Quản Trị & Kiểm Duyệt</div>
-        <button class="nav-item-btn active" data-tab="tong-quan" onclick="switchTab('tong-quan')">
+<button class="nav-item-btn active" data-tab="tong-quan" onclick="switchTab('tong-quan')">
           <span class="nav-left"><i class="fas fa-chart-pie text-info"></i> Tổng Quan</span>
+        </button>
+        <button class="nav-item-btn" data-tab="nhom-tro-chuyen" onclick="switchTab('nhom-tro-chuyen')">
+          <span class="nav-left"><i class="fas fa-users-rectangle text-primary"></i> Nhóm Trò Chuyện</span>
+          <span class="nav-counter" id="sidebar-groups-badge">0</span>
         </button>
         <button class="nav-item-btn" data-tab="thanh-vien" onclick="switchTab('thanh-vien')">
           <span class="nav-left"><i class="fas fa-users text-primary"></i> Thành Viên</span>
@@ -982,6 +986,21 @@ export function renderAdminPage(): string {
                 <div class="stat-number" id="kpi-users">0</div>
                 <div class="stat-footnote">
                   <span class="text-info fw-semibold" id="kpi-verified">0</span> đã cấp tích xanh
+                </div>
+              </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6 col-12">
+              <div class="stat-card" onclick="switchTab('nhom-tro-chuyen')">
+                <div class="stat-card-header">
+                  <span class="stat-label">Nhóm Trò Chuyện</span>
+                  <div class="stat-icon-wrap" style="background: rgba(14, 165, 233, 0.12); color: #0ea5e9;">
+                    <i class="fas fa-users-rectangle"></i>
+                  </div>
+                </div>
+                <div class="stat-number" id="kpi-groups">0</div>
+                <div class="stat-footnote">
+                  <span class="text-primary fw-semibold"><i class="fas fa-comments me-1"></i>Hoạt động cộng đồng</span>
                 </div>
               </div>
             </div>
@@ -1452,7 +1471,78 @@ export function renderAdminPage(): string {
           </div>
         </div>
 
+        <!-- =========================================================
+             TAB: NHÓM TRÒ CHUYỆN (GROUP CHATS)
+             ========================================================= -->
+        <div id="tab-nhom-tro-chuyen" class="tab-section">
+          <div class="glass-panel">
+            <div class="panel-header d-flex flex-wrap align-items-center justify-content-between gap-3 p-3 border-bottom border-subtle">
+              <div class="d-flex align-items-center gap-2">
+                <span class="fw-bold fs-5 text-main">Danh Sách Nhóm Trò Chuyện</span>
+                <span class="badge bg-primary rounded-pill px-3 py-2" id="groups-total-badge">0 nhóm</span>
+              </div>
+              <div class="d-flex align-items-center gap-2 flex-grow-1 justify-content-end" style="max-width: 480px;">
+                <div class="search-box-wrap flex-grow-1" style="position: relative;">
+                  <i class="fas fa-search search-icon" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-muted);"></i>
+                  <input type="text" id="groups-search-input" class="form-control form-control-sm ps-5 bg-dark border-subtle text-light rounded-pill" placeholder="Tìm theo tên nhóm..." onkeyup="handleGroupsSearch(event)">
+                </div>
+                <button class="btn btn-outline-secondary btn-sm rounded-pill px-3" onclick="loadGroups(1)" title="Làm mới">
+                  <i class="fas fa-sync-alt"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="panel-body p-0">
+              <div class="table-responsive">
+                <table class="table custom-table align-middle mb-0">
+                  <thead>
+                    <tr>
+                      <th style="min-width: 240px;">Tên Nhóm</th>
+                      <th style="min-width: 200px;">Trưởng Nhóm</th>
+                      <th style="width: 140px;" class="text-center">Thành Viên</th>
+                      <th style="min-width: 220px;">Tin Nhắn Gần Nhất</th>
+                      <th style="width: 160px;">Thời Gian</th>
+                      <th style="width: 170px;" class="text-end">Hành Động</th>
+                    </tr>
+                  </thead>
+                  <tbody id="groups-table-body">
+                    <tr>
+                      <td colspan="6" class="text-center py-5 text-muted">
+                        <div class="spinner-border spinner-border-sm text-primary me-2"></div> Đang tải dữ liệu nhóm trò chuyện...
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="panel-footer d-flex align-items-center justify-content-between p-3 border-top border-subtle" id="groups-pagination">
+              <!-- Phân trang render động -->
+            </div>
+          </div>
+        </div>
+
       </main>
+    </div>
+  </div>
+
+  <!-- Group Members Modal -->
+  <div class="modal fade" id="groupMembersModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content border-subtle" style="background-color: var(--bg-surface); border: 1px solid var(--border-subtle);">
+        <div class="modal-header border-subtle" style="border-bottom: 1px solid var(--border-subtle);">
+          <h5 class="modal-title fw-bold text-main" id="groupMembersModalTitle">
+            <i class="fas fa-users text-primary me-2"></i> Danh Sách Thành Viên Nhóm
+          </h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body p-3" id="groupMembersModalBody">
+          <!-- Loaded dynamically -->
+        </div>
+        <div class="modal-footer border-subtle" style="border-top: 1px solid var(--border-subtle);">
+          <button type="button" class="btn btn-secondary btn-sm rounded-pill px-4" data-bs-dismiss="modal">Đóng</button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -1653,6 +1743,7 @@ export function renderAdminPage(): string {
 
     // Load All Data
     async function loadDashboardData() {
+      fetchGroups();
       fetchMetrics();
       fetchUsers();
       fetchRequests();
@@ -1684,6 +1775,11 @@ export function renderAdminPage(): string {
         if (data.success && data.metrics) {
           const m = data.metrics;
           document.getElementById('kpi-users').textContent = Number(m.totalUsers || 0).toLocaleString();
+          const totalGroups = Number(m.totalGroups || 0);
+          const kpiGroups = document.getElementById('kpi-groups');
+          if (kpiGroups) kpiGroups.textContent = totalGroups.toLocaleString();
+          const sideGroups = document.getElementById('sidebar-groups-badge');
+          if (sideGroups) sideGroups.textContent = totalGroups.toLocaleString();
           document.getElementById('sidebar-user-badge').textContent = Number(m.totalUsers || 0).toLocaleString();
           document.getElementById('kpi-verified').textContent = Number(m.verifiedUsers || 0).toLocaleString();
           document.getElementById('kpi-banned').textContent = Number(m.bannedUsers || 0).toLocaleString();
@@ -3122,6 +3218,7 @@ export function renderAdminPage(): string {
       if (targetSec) targetSec.classList.add('active');
 
       const titleMap = {
+        'nhom-tro-chuyen': { short: 'Nhóm Trò Chuyện', title: 'Quản Lý Nhóm Trò Chuyện Cộng Đồng', subtitle: 'Giám sát các nhóm chat, số lượng thành viên và xử lý giải tán nhóm vi phạm' },
         'tong-quan': { short: 'Tổng Quan', title: 'Tổng Quan Hệ Thống', subtitle: 'Chỉ số vận hành mạng xã hội Dorabox theo thời gian thực' },
         'thanh-vien': { short: 'Thành Viên', title: 'Quản Lý Danh Sách Thành Viên', subtitle: 'Phân quyền, cấp tích xanh, xét duyệt Official Account & khóa tài khoản' },
         'xet-duyet': { short: 'Xét Duyệt & Yêu Cầu', title: 'Hàng Đợi Xét Duyệt & Yêu Cầu Người Dùng', subtitle: 'Phê duyệt hồ sơ cấp Tích Xanh cá nhân, Tích Vàng OA và đề xuất cập nhật thông tin thương hiệu' },
@@ -3165,6 +3262,235 @@ export function renderAdminPage(): string {
         .replace(/>/g, '&gt;')
         .replace(/"/g, '&quot;')
         .replace(/'/g, '&#039;');
+    }
+  
+    // =========================================================================
+    // QUẢN LÝ NHÓM TRÒ CHUYỆN (GROUP CHATS)
+    // =========================================================================
+    let currentGroupsPage = 1;
+    let groupsSearchDebounce = null;
+
+    function handleGroupsSearch(e) {
+      clearTimeout(groupsSearchDebounce);
+      groupsSearchDebounce = setTimeout(() => {
+        loadGroups(1);
+      }, 350);
+    }
+
+    async function fetchGroups() {
+      await loadGroups(1);
+    }
+
+    async function loadGroups(page = 1) {
+      currentGroupsPage = page;
+      const tbody = document.getElementById('groups-table-body');
+      if (!tbody) return;
+      tbody.innerHTML = '<tr><td colspan="6" class="text-center py-5 text-muted"><div class="spinner-border spinner-border-sm text-primary me-2"></div> Đang tải danh sách nhóm...</td></tr>';
+
+      const searchInput = document.getElementById('groups-search-input');
+      const search = (searchInput ? searchInput.value : '').trim();
+      const url = '/api/admin/groups?page=' + page + '&limit=15&search=' + encodeURIComponent(search);
+      const data = await safeFetchJson(url, {
+        headers: { 'Authorization': 'Bearer ' + adminToken }
+      });
+
+      if (!data.success || !Array.isArray(data.groups)) {
+        tbody.innerHTML = '<tr><td colspan="6" class="text-center py-4 text-danger"><i class="fas fa-exclamation-triangle me-2"></i>' + escapeHtml(data.error || 'Lỗi khi tải danh sách nhóm') + '</td></tr>';
+        return;
+      }
+
+      const total = (data.pagination && data.pagination.total) || 0;
+      const badge = document.getElementById('groups-total-badge');
+      if (badge) badge.textContent = total + ' nhóm';
+      const sideBadge = document.getElementById('sidebar-groups-badge');
+      if (sideBadge) sideBadge.textContent = total;
+
+      if (data.groups.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" class="text-center py-5 text-muted"><i class="fas fa-users-slash fs-2 mb-2 d-block"></i>Không tìm thấy nhóm trò chuyện nào.</td></tr>';
+        renderGroupsPagination(data.pagination);
+        return;
+      }
+
+      let html = '';
+      data.groups.forEach(g => {
+        const creator = g.creator;
+        const creatorName = creator ? (creator.display_name || creator.username || 'Người dùng') : 'Hệ thống';
+        const creatorAvatar = creator ? creator.avatar_url : '';
+        const groupAvatar = g.avatar_url || '';
+        const groupName = escapeHtml(g.name || 'Nhóm trò chuyện');
+        const lastMsg = escapeHtml(g.last_message || 'Chưa có tin nhắn');
+        const timeStr = g.last_message_at ? new Date(g.last_message_at).toLocaleString('vi-VN') : '—';
+        const membersCount = g.member_count || 0;
+        const safeGroupName = groupName.replace(/'/g, "\\'");
+
+        html += '<tr>' +
+          '<td>' +
+            '<div class="d-flex align-items-center gap-2">' +
+              '<div class="avatar-wrap flex-shrink-0" style="width: 42px; height: 42px; border-radius: 12px; overflow: hidden; background: rgba(56, 189, 248, 0.15); display: flex; align-items: center; justify-content: center;">' +
+                (groupAvatar ? '<img src="' + escapeHtml(groupAvatar) + '" style="width: 100%; height: 100%; object-fit: cover;">' : '<i class="fas fa-users text-primary"></i>') +
+              '</div>' +
+              '<div style="min-width: 0;">' +
+                '<div class="fw-bold text-main text-truncate" style="max-width: 180px;" title="' + groupName + '">' + groupName + '</div>' +
+                '<div class="text-muted small font-monospace" style="font-size: 11px;">ID: ' + g.id.substring(0, 8) + '...</div>' +
+              '</div>' +
+            '</div>' +
+          '</td>' +
+          '<td>' +
+            '<div class="d-flex align-items-center gap-2">' +
+              '<div class="avatar-wrap flex-shrink-0" style="width: 32px; height: 32px; border-radius: 50%; overflow: hidden; background: #334155; display: flex; align-items: center; justify-content: center;">' +
+                (creatorAvatar ? '<img src="' + escapeHtml(creatorAvatar) + '" style="width: 100%; height: 100%; object-fit: cover;">' : '<i class="fas fa-user text-muted small"></i>') +
+              '</div>' +
+              '<div style="min-width: 0;">' +
+                '<div class="text-main fw-semibold text-truncate" style="max-width: 140px;">' + escapeHtml(creatorName) + '</div>' +
+                (creator && creator.username ? '<div class="text-muted small">@' + escapeHtml(creator.username) + '</div>' : '') +
+              '</div>' +
+            '</div>' +
+          '</td>' +
+          '<td class="text-center">' +
+            '<span class="badge rounded-pill bg-info text-dark fw-bold px-2 py-1">' +
+              '<i class="fas fa-user-friends me-1"></i>' + membersCount +
+            '</span>' +
+          '</td>' +
+          '<td>' +
+            '<div class="text-muted text-truncate small" style="max-width: 220px;" title="' + lastMsg + '">' +
+              lastMsg +
+            '</div>' +
+          '</td>' +
+          '<td>' +
+            '<span class="text-muted small">' + timeStr + '</span>' +
+          '</td>' +
+          '<td class="text-end">' +
+            '<div class="btn-group btn-group-sm">' +
+              '<button class="btn btn-outline-info" onclick="showGroupMembers('' + g.id + '', '' + safeGroupName + '')" title="Xem danh sách thành viên">' +
+                '<i class="fas fa-users"></i>' +
+              '</button>' +
+              '<button class="btn btn-outline-danger" onclick="confirmDisbandGroup('' + g.id + '', '' + safeGroupName + '')" title="Giải tán & xóa nhóm">' +
+                '<i class="fas fa-trash-alt"></i>' +
+              '</button>' +
+            '</div>' +
+          '</td>' +
+        '</tr>';
+      });
+
+      tbody.innerHTML = html;
+      renderGroupsPagination(data.pagination);
+    }
+
+    function renderGroupsPagination(p) {
+      const container = document.getElementById('groups-pagination');
+      if (!container) return;
+      if (!p || p.totalPages <= 1) {
+        container.innerHTML = '<span class="text-muted small">Hiển thị toàn bộ nhóm</span>';
+        return;
+      }
+
+      let html = '<span class="text-muted small">Trang ' + p.page + ' / ' + p.totalPages + ' (Tổng cộng ' + p.total + ' nhóm)</span><div class="btn-group btn-group-sm">';
+      if (p.page > 1) {
+        html += '<button class="btn btn-outline-secondary" onclick="loadGroups(' + (p.page - 1) + ')"><i class="fas fa-chevron-left"></i></button>';
+      }
+      for (let i = 1; i <= p.totalPages; i++) {
+        if (i === 1 || i === p.totalPages || (i >= p.page - 1 && i <= p.page + 1)) {
+          html += '<button class="btn ' + (i === p.page ? 'btn-primary' : 'btn-outline-secondary') + '" onclick="loadGroups(' + i + ')">' + i + '</button>';
+        } else if (i === p.page - 2 || i === p.page + 2) {
+          html += '<button class="btn btn-outline-secondary disabled">...</button>';
+        }
+      }
+      if (p.page < p.totalPages) {
+        html += '<button class="btn btn-outline-secondary" onclick="loadGroups(' + (p.page + 1) + ')"><i class="fas fa-chevron-right"></i></button>';
+      }
+      html += '</div>';
+      container.innerHTML = html;
+    }
+
+    async function showGroupMembers(groupId, groupName) {
+      const title = document.getElementById('groupMembersModalTitle');
+      const body = document.getElementById('groupMembersModalBody');
+      if (title) title.innerHTML = '<i class="fas fa-users text-primary me-2"></i> Thành Viên: <strong>' + escapeHtml(groupName) + '</strong>';
+      if (body) body.innerHTML = '<div class="text-center py-4 text-muted"><div class="spinner-border spinner-border-sm text-primary me-2"></div> Đang tải thông tin thành viên...</div>';
+
+      const modalEl = document.getElementById('groupMembersModal');
+      const modal = new bootstrap.Modal(modalEl);
+      modal.show();
+
+      const data = await safeFetchJson('/api/admin/groups/' + groupId + '/members', {
+        headers: { 'Authorization': 'Bearer ' + adminToken }
+      });
+
+      if (!data.success || !Array.isArray(data.members)) {
+        body.innerHTML = '<div class="alert alert-danger mb-0"><i class="fas fa-exclamation-triangle me-2"></i>' + escapeHtml(data.error || 'Không thể tải danh sách thành viên') + '</div>';
+        return;
+      }
+
+      if (data.members.length === 0) {
+        body.innerHTML = '<div class="text-center py-4 text-muted">Nhóm hiện không có thành viên nào.</div>';
+        return;
+      }
+
+      let html = '<div class="list-group list-group-flush">';
+      data.members.forEach(m => {
+        const dName = escapeHtml(m.display_name || m.username || 'Người dùng');
+        const uName = m.username ? '@' + escapeHtml(m.username) : '';
+        const nick = m.nickname ? escapeHtml(m.nickname) : null;
+        const avatar = m.avatar_url || '';
+        const isCreator = m.is_creator;
+
+        html += '<div class="list-group-item d-flex align-items-center justify-content-between p-2" style="background: transparent; border-color: var(--border-subtle);">' +
+          '<div class="d-flex align-items-center gap-3">' +
+            '<div class="avatar-wrap" style="width: 38px; height: 38px; border-radius: 50%; overflow: hidden; background: #334155; display: flex; align-items: center; justify-content: center;">' +
+              (avatar ? '<img src="' + escapeHtml(avatar) + '" style="width: 100%; height: 100%; object-fit: cover;">' : '<i class="fas fa-user text-muted"></i>') +
+            '</div>' +
+            '<div>' +
+              '<div class="d-flex align-items-center gap-2">' +
+                '<span class="fw-bold text-main">' + dName + '</span>' +
+                (nick ? '<span class="badge bg-secondary-subtle text-light border border-subtle small">Biệt danh: ' + nick + '</span>' : '') +
+                (isCreator ? '<span class="badge bg-warning text-dark fw-bold"><i class="fas fa-crown me-1"></i>Trưởng nhóm</span>' : '') +
+              '</div>' +
+              '<div class="text-muted small">' + uName + '</div>' +
+            '</div>' +
+          '</div>' +
+        '</div>';
+      });
+      html += '</div>';
+      body.innerHTML = html;
+    }
+
+    async function confirmDisbandGroup(groupId, groupName) {
+      const result = await Swal.fire({
+        title: 'Giải tán nhóm này?',
+        text: 'Bạn có chắc muốn xóa vĩnh viễn nhóm "' + groupName + '" và toàn bộ tin nhắn liên quan? Hành động này không thể hoàn tác!',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#f43f5e',
+        cancelButtonColor: '#475569',
+        confirmButtonText: '<i class="fas fa-trash-alt me-1"></i> Xác nhận xóa vĩnh viễn',
+        cancelButtonText: 'Hủy'
+      });
+
+      if (!result.isConfirmed) return;
+
+      Swal.showLoading();
+      const res = await safeFetchJson('/api/admin/groups/' + groupId, {
+        method: 'DELETE',
+        headers: { 'Authorization': 'Bearer ' + adminToken }
+      });
+
+      if (res.success) {
+        Swal.fire({
+          icon: 'success',
+          title: 'Đã giải tán nhóm!',
+          text: res.message || 'Nhóm trò chuyện đã bị xóa sạch hoàn toàn.',
+          timer: 2000,
+          showConfirmButton: false
+        });
+        loadGroups(currentGroupsPage);
+        fetchMetrics();
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Lỗi',
+          text: res.error || 'Không thể xóa nhóm lúc này'
+        });
+      }
     }
   </script>
 </body>
