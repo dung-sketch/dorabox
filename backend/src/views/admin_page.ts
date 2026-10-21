@@ -2138,9 +2138,16 @@ export function renderAdminPage(): string {
       }
 
       tbody.innerHTML = posts.map(p => {
-        const author = p.author || {};
-        const authorName = escapeHtml(author.display_name || author.username || 'Người dùng ẩn danh');
+        const prof = Array.isArray(p.profiles) ? p.profiles[0] : p.profiles;
+        const author = p.author || prof || {};
+        const authorName = escapeHtml(author.display_name || author.username || 'Người dùng Dorabox');
         const authorInitial = authorName.charAt(0).toUpperCase();
+        const authorUsername = author.username 
+          ? ('@' + escapeHtml(author.username)) 
+          : (author.display_name ? ('@' + escapeHtml(author.display_name.toLowerCase().replace(/\\s+/g, ''))) : (p.author_id ? ('@' + p.author_id.substring(0, 8)) : ''));
+        const verifiedBadge = (author.is_verified || author.is_oa)
+          ? '<i class="fas fa-badge-check text-primary ms-1" title="Đã xác thực"></i>'
+          : '';
         const authorAvatar = author.avatar_url 
           ? \`<img class="user-avatar-sm me-2" src="\${author.avatar_url}" alt="\${authorName}" onerror="this.outerHTML='<div class=\\'user-avatar-fallback me-2\\'>\${authorInitial}</div>'" />\`
           : \`<div class="user-avatar-fallback me-2">\${authorInitial}</div>\`;
@@ -2150,8 +2157,8 @@ export function renderAdminPage(): string {
         let mediaHtml = '<span class="text-muted small">Không đính kèm</span>';
         if (p.media_urls && p.media_urls.length > 0) {
           mediaHtml = \`
-            <div class="d-flex gap-1">
-              <img src="\${p.media_urls[0]}" class="rounded-2" style="width: 44px; height: 44px; object-fit: cover; cursor: pointer;" onclick="openLightbox('\${p.media_urls[0]}')" />
+            <div class="d-flex gap-1 align-items-center">
+              <img src="\${p.media_urls[0]}" class="rounded-2" style="width: 44px; height: 44px; object-fit: cover; cursor: pointer;" onclick="openLightbox('\${p.media_urls[0]}')" title="Phóng to ảnh" />
               \${p.media_urls.length > 1 ? \`<span class="badge bg-dark border border-secondary align-self-center">+\${p.media_urls.length - 1}</span>\` : ''}
             </div>
           \`;
@@ -2163,8 +2170,8 @@ export function renderAdminPage(): string {
               <div class="d-flex align-items-center">
                 \${authorAvatar}
                 <div>
-                  <div class="fw-bold text-white">\${authorName}</div>
-                  <div class="text-muted font-mono" style="font-size: 11px;">@\${escapeHtml(author.username || '')}</div>
+                  <div class="fw-bold text-white d-flex align-items-center">\${authorName} \${verifiedBadge}</div>
+                  <div class="text-muted font-mono" style="font-size: 11px;">\${authorUsername}</div>
                 </div>
               </div>
             </td>
@@ -2277,15 +2284,28 @@ export function renderAdminPage(): string {
       }
 
       tbody.innerHTML = comments.map(c => {
-        const user = c.user || {};
-        const userName = escapeHtml(user.display_name || user.username || 'Người dùng');
+        const prof = Array.isArray(c.profiles) ? c.profiles[0] : c.profiles;
+        const user = c.user || prof || {};
+        const userName = escapeHtml(user.display_name || user.username || 'Người dùng Dorabox');
+        const userInitial = userName.charAt(0).toUpperCase();
+        const userUsername = user.username 
+          ? ('@' + escapeHtml(user.username)) 
+          : (user.display_name ? ('@' + escapeHtml(user.display_name.toLowerCase().replace(/\\s+/g, ''))) : (c.user_id ? ('@' + c.user_id.substring(0, 8)) : ''));
+        const userAvatar = user.avatar_url 
+          ? \`<img class="user-avatar-sm me-2" src="\${user.avatar_url}" alt="\${userName}" onerror="this.outerHTML='<div class=\\'user-avatar-fallback me-2\\'>\${userInitial}</div>'" />\`
+          : \`<div class="user-avatar-fallback me-2">\${userInitial}</div>\`;
         const dateStr = c.created_at ? new Date(c.created_at).toLocaleString('vi-VN') : '-';
 
         return \`
           <tr>
             <td style="padding-left: 20px;">
-              <div class="fw-bold text-white">\${userName}</div>
-              <div class="text-muted font-mono" style="font-size: 11px;">@\${escapeHtml(user.username || '')}</div>
+              <div class="d-flex align-items-center">
+                \${userAvatar}
+                <div>
+                  <div class="fw-bold text-white">\${userName}</div>
+                  <div class="text-muted font-mono" style="font-size: 11px;">\${userUsername}</div>
+                </div>
+              </div>
             </td>
             <td>
               <div class="text-light small text-break">\${escapeHtml(c.content || '')}</div>
@@ -2384,47 +2404,131 @@ export function renderAdminPage(): string {
       }
 
       tbody.innerHTML = reports.map(r => {
-        const reporterName = escapeHtml(r.reporter?.display_name || r.reporter?.username || 'Ẩn danh');
-        const reporterAvatar = r.reporter?.avatar_url || 'https://api.dicebear.com/7.x/bottts/svg?seed=' + (r.reporter_id || 'rep');
+        const rep = r.reporter || {};
+        const reporterName = escapeHtml(rep.display_name || rep.username || 'Người dùng');
+        const reporterUsername = rep.username ? ('@' + escapeHtml(rep.username)) : (r.reporter_id ? ('ID: ' + r.reporter_id.substring(0, 8)) : '');
+        const reporterAvatar = rep.avatar_url || ('https://api.dicebear.com/7.x/bottts/svg?seed=' + (r.reporter_id || 'rep'));
 
         let targetHtml = '';
         if (r.target_type === 'post') {
-          const authorName = escapeHtml(r.target_data?.author?.display_name || r.target_data?.author?.username || 'Tác giả');
-          const snippet = escapeHtml(r.target_data?.content || 'Bài viết hình ảnh / không có văn bản');
-          targetHtml = \`
-            <div>
-              <span class="badge bg-primary mb-1"><i class="fas fa-newspaper me-1"></i>BÀI VIẾT</span>
-              <div class="p-2 rounded mt-1" style="background: rgba(255,255,255,0.03); border-left: 3px solid #38bdf8;">
-                <div class="text-white small fw-medium" style="max-height: 48px; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">\${snippet}</div>
-                <div class="text-muted small mt-1 font-mono" style="font-size: 11px;">Đăng bởi: \${authorName} (ID: \${r.target_id.substring(0, 8)})</div>
+          if (r.is_deleted || !r.target_data) {
+            targetHtml = \`
+              <div>
+                <span class="badge bg-secondary mb-1"><i class="fas fa-trash-alt me-1"></i>BÀI VIẾT (ĐÃ GỠ BỎ)</span>
+                <div class="p-2 rounded mt-1" style="background: rgba(255,255,255,0.02); border-left: 3px solid #64748b;">
+                  <div class="text-warning small"><i class="fas fa-info-circle me-1"></i>Bài viết này đã bị xóa hoặc đã xử phạt gỡ bỏ trước đó.</div>
+                  <div class="text-muted small mt-1 font-mono" style="font-size: 11px;">Mã bài viết: \${r.target_id}</div>
+                </div>
               </div>
-            </div>
-          \`;
+            \`;
+          } else {
+            const author = r.target_data.author || {};
+            const authorName = escapeHtml(author.display_name || author.username || 'Tác giả');
+            const authorUsername = author.username ? ('@' + escapeHtml(author.username)) : (r.target_data.author_id ? ('ID: ' + r.target_data.author_id.substring(0, 8)) : '');
+            const authorAvatar = author.avatar_url || ('https://api.dicebear.com/7.x/bottts/svg?seed=' + (author.id || 'usr'));
+            const snippet = escapeHtml(r.target_data.content || '(Bài viết hình ảnh / không có văn bản)');
+            
+            let mediaPreview = '';
+            if (r.target_data.media_urls && r.target_data.media_urls.length > 0) {
+              mediaPreview = \`
+                <div class="d-flex gap-1.5 mt-2 align-items-center">
+                  \${r.target_data.media_urls.slice(0, 3).map(url => \`
+                    <img src="\${url}" class="rounded-2 border border-secondary" style="width: 44px; height: 44px; object-fit: cover; cursor: pointer;" onclick="openLightbox('\${url}')" title="Click để phóng to ảnh xem chứng cứ" />
+                  \`).join('')}
+                  \${r.target_data.media_urls.length > 3 ? \`<span class="badge bg-dark border border-secondary">+\${r.target_data.media_urls.length - 3}</span>\` : ''}
+                </div>
+              \`;
+            }
+
+            targetHtml = \`
+              <div>
+                <div class="d-flex align-items-center justify-content-between mb-1">
+                  <span class="badge bg-primary"><i class="fas fa-newspaper me-1"></i>BÀI VIẾT</span>
+                  <button class="btn btn-sm btn-outline-info py-0 px-2" style="font-size: 11px;" onclick="viewReportDetail('\${r.id}')"><i class="fas fa-eye me-1"></i>Chi tiết</button>
+                </div>
+                <div class="p-2 rounded mt-1" style="background: rgba(255,255,255,0.03); border-left: 3px solid #38bdf8;">
+                  <div class="d-flex align-items-center gap-2 mb-1">
+                    <img src="\${authorAvatar}" style="width: 20px; height: 20px; border-radius: 50%; object-fit: cover;" onerror="this.src='https://api.dicebear.com/7.x/bottts/svg?seed=usr'" />
+                    <span class="text-white small fw-bold">\${authorName}</span>
+                    <span class="text-muted font-mono" style="font-size: 11px;">\${authorUsername}</span>
+                  </div>
+                  <div class="text-light small text-break" style="max-height: 48px; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">\${snippet}</div>
+                  \${mediaPreview}
+                </div>
+              </div>
+            \`;
+          }
         } else if (r.target_type === 'comment') {
-          const commenterName = escapeHtml(r.target_data?.author?.display_name || r.target_data?.author?.username || 'Người bình luận');
-          const snippet = escapeHtml(r.target_data?.content || 'Nội dung bình luận');
-          targetHtml = \`
-            <div>
-              <span class="badge bg-info mb-1"><i class="fas fa-comment me-1"></i>BÌNH LUẬN</span>
-              <div class="p-2 rounded mt-1" style="background: rgba(255,255,255,0.03); border-left: 3px solid #06b6d4;">
-                <div class="text-white small fw-medium">\${snippet}</div>
-                <div class="text-muted small mt-1 font-mono" style="font-size: 11px;">Bình luận bởi: \${commenterName}</div>
+          if (r.is_deleted || !r.target_data) {
+            targetHtml = \`
+              <div>
+                <span class="badge bg-secondary mb-1"><i class="fas fa-trash-alt me-1"></i>BÌNH LUẬN (ĐÃ GỠ BỎ)</span>
+                <div class="p-2 rounded mt-1" style="background: rgba(255,255,255,0.02); border-left: 3px solid #64748b;">
+                  <div class="text-warning small"><i class="fas fa-info-circle me-1"></i>Bình luận đã bị gỡ bỏ khỏi bài viết.</div>
+                  <div class="text-muted small mt-1 font-mono" style="font-size: 11px;">Mã bình luận: \${r.target_id}</div>
+                </div>
               </div>
-            </div>
-          \`;
+            \`;
+          } else {
+            const author = r.target_data.author || {};
+            const authorName = escapeHtml(author.display_name || author.username || 'Người bình luận');
+            const authorUsername = author.username ? ('@' + escapeHtml(author.username)) : '';
+            const authorAvatar = author.avatar_url || ('https://api.dicebear.com/7.x/bottts/svg?seed=' + (author.id || 'cmt'));
+            const snippet = escapeHtml(r.target_data.content || '(Bình luận trống)');
+
+            targetHtml = \`
+              <div>
+                <div class="d-flex align-items-center justify-content-between mb-1">
+                  <span class="badge bg-info"><i class="fas fa-comment me-1"></i>BÌNH LUẬN</span>
+                  <button class="btn btn-sm btn-outline-info py-0 px-2" style="font-size: 11px;" onclick="viewReportDetail('\${r.id}')"><i class="fas fa-eye me-1"></i>Chi tiết</button>
+                </div>
+                <div class="p-2 rounded mt-1" style="background: rgba(255,255,255,0.03); border-left: 3px solid #06b6d4;">
+                  <div class="d-flex align-items-center gap-2 mb-1">
+                    <img src="\${authorAvatar}" style="width: 20px; height: 20px; border-radius: 50%; object-fit: cover;" onerror="this.src='https://api.dicebear.com/7.x/bottts/svg?seed=cmt'" />
+                    <span class="text-white small fw-bold">\${authorName}</span>
+                    <span class="text-muted font-mono" style="font-size: 11px;">\${authorUsername}</span>
+                  </div>
+                  <div class="text-white small">\${snippet}</div>
+                </div>
+              </div>
+            \`;
+          }
         } else {
-          const targetName = escapeHtml(r.target_data?.display_name || 'Tài khoản');
-          const targetUsername = escapeHtml(r.target_data?.username || '-');
-          const isBanned = r.target_data?.is_banned ? '<span class="text-danger fw-bold ms-1">(Đang bị khóa)</span>' : '';
-          targetHtml = \`
-            <div>
-              <span class="badge bg-danger mb-1"><i class="fas fa-user-slash me-1"></i>TÀI KHOẢN</span>
-              <div class="p-2 rounded mt-1" style="background: rgba(255,255,255,0.03); border-left: 3px solid #ef4444;">
-                <div class="text-white small fw-bold">\${targetName} <span class="text-muted font-mono fw-normal">@\${targetUsername}</span> \${isBanned}</div>
-                <div class="text-muted small mt-1 font-mono" style="font-size: 11px;">UID: \${r.target_id.substring(0, 8)}</div>
+          // target_type === 'user'
+          if (r.is_deleted || !r.target_data) {
+            targetHtml = \`
+              <div>
+                <span class="badge bg-secondary mb-1"><i class="fas fa-user-slash me-1"></i>TÀI KHOẢN (ĐÃ XÓA)</span>
+                <div class="p-2 rounded mt-1" style="background: rgba(255,255,255,0.02); border-left: 3px solid #64748b;">
+                  <div class="text-warning small"><i class="fas fa-info-circle me-1"></i>Tài khoản không còn tồn tại trên hệ thống.</div>
+                  <div class="text-muted small mt-1 font-mono" style="font-size: 11px;">Mã UID: \${r.target_id}</div>
+                </div>
               </div>
-            </div>
-          \`;
+            \`;
+          } else {
+            const targetName = escapeHtml(r.target_data.display_name || 'Tài khoản');
+            const targetUsername = escapeHtml(r.target_data.username || '-');
+            const targetAvatar = r.target_data.avatar_url || ('https://api.dicebear.com/7.x/bottts/svg?seed=' + r.target_id);
+            const isBanned = r.target_data.is_banned ? '<span class="text-danger fw-bold ms-1">(Đang bị khóa)</span>' : '';
+
+            targetHtml = \`
+              <div>
+                <div class="d-flex align-items-center justify-content-between mb-1">
+                  <span class="badge bg-danger"><i class="fas fa-user-slash me-1"></i>TÀI KHOẢN</span>
+                  <button class="btn btn-sm btn-outline-info py-0 px-2" style="font-size: 11px;" onclick="viewReportDetail('\${r.id}')"><i class="fas fa-eye me-1"></i>Chi tiết</button>
+                </div>
+                <div class="p-2 rounded mt-1" style="background: rgba(255,255,255,0.03); border-left: 3px solid #ef4444;">
+                  <div class="d-flex align-items-center gap-2">
+                    <img src="\${targetAvatar}" style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover;" onerror="this.src='https://api.dicebear.com/7.x/bottts/svg?seed=usr'" />
+                    <div>
+                      <div class="text-white small fw-bold">\${targetName} \${isBanned}</div>
+                      <div class="text-muted font-mono" style="font-size: 11px;">@\${targetUsername} &bull; UID: \${r.target_id.substring(0, 8)}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            \`;
+          }
         }
 
         const statusBadge = r.status === 'reviewed' 
@@ -2460,10 +2564,10 @@ export function renderAdminPage(): string {
           <tr>
             <td style="padding-left: 20px;">
               <div class="d-flex align-items-center gap-2">
-                <img src="\${reporterAvatar}" style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover;">
+                <img src="\${reporterAvatar}" style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover;" onerror="this.src='https://api.dicebear.com/7.x/bottts/svg?seed=rep'">
                 <div>
                   <div class="fw-bold text-white">\${reporterName}</div>
-                  <div class="text-muted font-mono" style="font-size: 11px;">UID: \${r.reporter_id ? r.reporter_id.substring(0, 8) : '-'}</div>
+                  <div class="text-muted font-mono" style="font-size: 11px;">\${reporterUsername}</div>
                 </div>
               </div>
             </td>
@@ -2477,6 +2581,156 @@ export function renderAdminPage(): string {
           </tr>
         \`;
       }).join('');
+    }
+
+    function viewReportDetail(reportId) {
+      const r = allReportsCache.find(item => item.id === reportId);
+      if (!r) return;
+
+      const rep = r.reporter || {};
+      const reporterName = escapeHtml(rep.display_name || rep.username || 'Người dùng');
+      const reporterUsername = rep.username ? ('@' + escapeHtml(rep.username)) : (r.reporter_id ? ('ID: ' + r.reporter_id.substring(0, 8)) : '');
+      const reporterAvatar = rep.avatar_url || ('https://api.dicebear.com/7.x/bottts/svg?seed=' + (r.reporter_id || 'rep'));
+
+      let contentSection = '';
+      if (r.target_type === 'post') {
+        if (r.is_deleted || !r.target_data) {
+          contentSection = \`
+            <div class="alert alert-warning text-start mb-3">
+              <i class="fas fa-exclamation-triangle me-2"></i><strong>Bài viết đã bị gỡ bỏ hoặc đã xử phạt xóa trước đó.</strong>
+              <div class="small text-muted font-mono mt-1">Post ID: \${r.target_id}</div>
+            </div>
+          \`;
+        } else {
+          const author = r.target_data.author || {};
+          const authorName = escapeHtml(author.display_name || author.username || 'Tác giả');
+          const authorUsername = author.username ? ('@' + escapeHtml(author.username)) : '';
+          const authorAvatar = author.avatar_url || ('https://api.dicebear.com/7.x/bottts/svg?seed=' + (author.id || 'usr'));
+          const postText = escapeHtml(r.target_data.content || '(Bài viết không có nội dung chữ)');
+
+          let mediaGrid = '';
+          if (r.target_data.media_urls && r.target_data.media_urls.length > 0) {
+            mediaGrid = \`
+              <div class="mt-3">
+                <label class="form-label text-muted small fw-bold">HÌNH ẢNH / TÀI LIỆU ĐÍNH KÈM (\${r.target_data.media_urls.length}):</label>
+                <div class="d-flex flex-wrap gap-2">
+                  \${r.target_data.media_urls.map(url => \`
+                    <div style="position: relative;">
+                      <img src="\${url}" class="rounded-3 border border-secondary" style="width: 120px; height: 120px; object-fit: cover; cursor: pointer;" onclick="openLightbox('\${url}')" title="Click để phóng to ảnh" />
+                    </div>
+                  \`).join('')}
+                </div>
+              </div>
+            \`;
+          }
+
+          contentSection = \`
+            <div class="card bg-dark border-secondary p-3 text-start mb-3">
+              <div class="d-flex align-items-center gap-2 mb-2 pb-2 border-bottom border-secondary">
+                <img src="\${authorAvatar}" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;" onerror="this.src='https://api.dicebear.com/7.x/bottts/svg?seed=usr'" />
+                <div>
+                  <div class="fw-bold text-white">\${authorName}</div>
+                  <div class="text-muted font-mono small">\${authorUsername} &bull; ID: \${r.target_id.substring(0, 8)}</div>
+                </div>
+              </div>
+              <div class="text-light mb-2 text-break" style="white-space: pre-wrap; font-size: 14px;">\${postText}</div>
+              \${mediaGrid}
+            </div>
+          \`;
+        }
+      } else if (r.target_type === 'comment') {
+        if (r.is_deleted || !r.target_data) {
+          contentSection = \`
+            <div class="alert alert-warning text-start mb-3">
+              <i class="fas fa-exclamation-triangle me-2"></i><strong>Bình luận đã bị gỡ bỏ.</strong>
+              <div class="small text-muted font-mono mt-1">Comment ID: \${r.target_id}</div>
+            </div>
+          \`;
+        } else {
+          const author = r.target_data.author || {};
+          const authorName = escapeHtml(author.display_name || author.username || 'Người bình luận');
+          const authorUsername = author.username ? ('@' + escapeHtml(author.username)) : '';
+          const authorAvatar = author.avatar_url || ('https://api.dicebear.com/7.x/bottts/svg?seed=' + (author.id || 'cmt'));
+          const commentText = escapeHtml(r.target_data.content || '(Bình luận trống)');
+
+          contentSection = \`
+            <div class="card bg-dark border-secondary p-3 text-start mb-3">
+              <div class="d-flex align-items-center gap-2 mb-2 pb-2 border-bottom border-secondary">
+                <img src="\${authorAvatar}" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;" onerror="this.src='https://api.dicebear.com/7.x/bottts/svg?seed=cmt'" />
+                <div>
+                  <div class="fw-bold text-white">\${authorName}</div>
+                  <div class="text-muted font-mono small">\${authorUsername} &bull; ID: \${r.target_id.substring(0, 8)}</div>
+                </div>
+              </div>
+              <div class="text-light text-break" style="white-space: pre-wrap; font-size: 14px;">\${commentText}</div>
+            </div>
+          \`;
+        }
+      } else {
+        // User
+        if (r.is_deleted || !r.target_data) {
+          contentSection = \`
+            <div class="alert alert-warning text-start mb-3">
+              <i class="fas fa-exclamation-triangle me-2"></i><strong>Tài khoản không tồn tại.</strong>
+              <div class="small text-muted font-mono mt-1">UID: \${r.target_id}</div>
+            </div>
+          \`;
+        } else {
+          const targetName = escapeHtml(r.target_data.display_name || 'Tài khoản');
+          const targetUsername = escapeHtml(r.target_data.username || '-');
+          const targetAvatar = r.target_data.avatar_url || ('https://api.dicebear.com/7.x/bottts/svg?seed=' + r.target_id);
+          const bio = escapeHtml(r.target_data.bio || '(Chưa có tiểu sử)');
+
+          contentSection = \`
+            <div class="card bg-dark border-secondary p-3 text-start mb-3">
+              <div class="d-flex align-items-center gap-3">
+                <img src="\${targetAvatar}" style="width: 48px; height: 48px; border-radius: 50%; object-fit: cover;" onerror="this.src='https://api.dicebear.com/7.x/bottts/svg?seed=usr'" />
+                <div>
+                  <h6 class="text-white mb-0">\${targetName}</h6>
+                  <div class="text-muted font-mono small">@\${targetUsername} &bull; UID: \${r.target_id}</div>
+                </div>
+              </div>
+              <div class="text-secondary small mt-2">Tiểu sử: \${bio}</div>
+            </div>
+          \`;
+        }
+      }
+
+      Swal.fire({
+        title: '<i class="fas fa-shield-halved text-warning me-2"></i>Hồ sơ Báo cáo Vi phạm',
+        html: \`
+          <div class="text-start" style="font-size: 13px;">
+            <div class="mb-3 p-2.5 rounded bg-black bg-opacity-25 border border-secondary border-opacity-25 d-flex align-items-center gap-2">
+              <img src="\${reporterAvatar}" style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover;" onerror="this.src='https://api.dicebear.com/7.x/bottts/svg?seed=rep'" />
+              <div>
+                <span class="text-muted">Người báo cáo:</span> <strong class="text-white">\${reporterName}</strong> <span class="text-muted font-mono">(\${reporterUsername})</span>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label text-warning fw-bold mb-1"><i class="fas fa-flag me-1"></i>LÝ DO BÁO CÁO:</label>
+              <div class="p-2 rounded bg-warning bg-opacity-10 border border-warning border-opacity-25 text-warning fw-bold">
+                \${escapeHtml(r.reason || 'Không rõ lý do')}
+              </div>
+            </div>
+
+            <label class="form-label text-info fw-bold mb-1"><i class="fas fa-crosshairs me-1"></i>ĐỐI TƯỢNG BỊ TỐ CÁO (\${r.target_type.toUpperCase()}):</label>
+            \${contentSection}
+          </div>
+        \`,
+        width: 600,
+        showCloseButton: true,
+        showCancelButton: true,
+        cancelButtonText: 'Đóng',
+        confirmButtonText: r.status === 'pending' ? '<i class="fas fa-gavel me-1"></i>Xử phạt vi phạm' : 'Đã xử lý',
+        confirmButtonColor: '#ef4444',
+        showConfirmButton: r.status === 'pending'
+      }).then(res => {
+        if (res.isConfirmed && r.status === 'pending') {
+          const action = r.target_type === 'user' ? 'ban_user' : 'delete_content';
+          resolveReport(r.id, action);
+        }
+      });
     }
 
     async function resolveReport(reportId, action) {

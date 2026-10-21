@@ -547,7 +547,15 @@ router.get('/posts', async (req, res) => {
     const { data, error } = await query.limit(80);
     if (error) throw error;
 
-    return res.json({ success: true, posts: data || [] });
+    const posts = (data || []).map((p: any) => {
+      const prof = Array.isArray(p.profiles) ? p.profiles[0] : p.profiles;
+      return {
+        ...p,
+        author: prof || null,
+      };
+    });
+
+    return res.json({ success: true, posts });
   } catch (err: any) {
     return res.status(500).json({ error: err.message });
   }
@@ -616,7 +624,16 @@ router.get('/comments', async (req, res) => {
     const { data, error } = await query.limit(100);
     if (error) throw error;
 
-    return res.json({ success: true, comments: data || [] });
+    const comments = (data || []).map((c: any) => {
+      const prof = Array.isArray(c.profiles) ? c.profiles[0] : c.profiles;
+      return {
+        ...c,
+        user: prof || null,
+        post: c.posts || null,
+      };
+    });
+
+    return res.json({ success: true, comments });
   } catch (err: any) {
     return res.status(500).json({ error: err.message });
   }
@@ -695,42 +712,62 @@ router.get('/reports', async (req, res) => {
 
     const reports = violationReports.map((r: any) => {
       let target_data: any = null;
+      let is_deleted = false;
+
       if (r.target_type === 'post') {
         const post: any = postDict.get(r.target_id);
         if (post) {
+          const prof = Array.isArray(post.profiles) ? post.profiles[0] : post.profiles;
           target_data = {
+            id: post.id,
+            author_id: post.author_id,
             content: post.content || '',
             media_urls: post.media_urls || [],
-            author: post.profiles || null,
+            author: prof || null,
           };
+        } else {
+          is_deleted = true;
         }
       } else if (r.target_type === 'comment') {
         const comment: any = commentDict.get(r.target_id);
         if (comment) {
+          const prof = Array.isArray(comment.profiles) ? comment.profiles[0] : comment.profiles;
           target_data = {
+            id: comment.id,
+            user_id: comment.user_id,
+            post_id: comment.post_id,
             content: comment.content || '',
-            author: comment.profiles || null,
+            author: prof || null,
           };
+        } else {
+          is_deleted = true;
         }
       } else if (r.target_type === 'user') {
         const usr: any = userDict.get(r.target_id);
         if (usr) {
           target_data = {
+            id: usr.id,
             display_name: usr.display_name,
             username: usr.username,
             avatar_url: usr.avatar_url,
+            bio: usr.bio,
             is_banned: usr.is_banned,
           };
+        } else {
+          is_deleted = true;
         }
       }
+
+      const repProf = Array.isArray(r.profiles) ? r.profiles[0] : r.profiles;
 
       return {
         id: r.id,
         reporter_id: r.reporter_id,
-        reporter: r.profiles || null,
+        reporter: repProf || null,
         target_type: r.target_type,
         target_id: r.target_id,
         target_data,
+        is_deleted,
         reason: r.reason,
         status: r.status,
         created_at: r.created_at,
