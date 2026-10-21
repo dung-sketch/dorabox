@@ -686,7 +686,7 @@ router.get('/reports', async (req, res) => {
 });
 
 // Xử lý báo cáo vi phạm
-router.post('/reports/:id/action', async (req, res) => {
+router.post(['/reports/:id/action', '/reports/:id/resolve'], async (req, res) => {
   try {
     const { id } = req.params;
     const { action } = req.body; // 'dismiss' hoặc 'delete_target'
@@ -1003,7 +1003,7 @@ router.post('/broadcast', async (req, res) => {
 // 7. SECURITY AUDIT LOGS & ANTI-SPAM CLEANUP
 // -------------------------------------------------------------
 
-router.get('/security-logs', async (req, res) => {
+router.get(['/security-logs', '/system/audit-logs'], async (req, res) => {
   try {
     return res.json({
       success: true,
@@ -1021,7 +1021,7 @@ router.get('/security-logs', async (req, res) => {
 });
 
 // Quét & dọn sạch phản ứng spam trùng lặp, đồng bộ lượt thích chuẩn xác
-router.post('/clean-spam-reactions', async (req, res) => {
+router.post(['/clean-spam-reactions', '/system/clean-spam'], async (req, res) => {
   try {
     // 1. Quét bảng post_reactions
     const { data: reactions, error: rErr } = await supabaseAdmin
@@ -1098,7 +1098,7 @@ router.post('/clean-spam-reactions', async (req, res) => {
 // 7. SYSTEM HEALTH & CLOUD SERVICES METRICS
 // -------------------------------------------------------------
 
-router.get('/system-health', async (req, res) => {
+router.get(['/system-health', '/system/health'], async (req, res) => {
   try {
     const startTime = Date.now();
     const { error: dbErr } = await supabaseAdmin.from('profiles').select('id', { count: 'exact', head: true }).limit(1);
@@ -1135,6 +1135,14 @@ router.get('/system-health', async (req, res) => {
   } catch (err: any) {
     return res.status(500).json({ error: err.message });
   }
+});
+
+// Catch-all 404 cho API Admin: Đảm bảo LUÔN trả về JSON, không bao giờ trả về HTML
+router.use((req, res) => {
+  return res.status(404).json({
+    success: false,
+    error: `Admin endpoint không tồn tại: ${req.method} ${req.baseUrl}${req.path}`
+  });
 });
 
 export default router;

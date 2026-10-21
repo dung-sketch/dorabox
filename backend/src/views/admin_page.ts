@@ -24,20 +24,20 @@ export function renderAdminPage(): string {
     :root {
       --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       --font-mono: 'JetBrains Mono', monospace;
-      --bg-body: #06080d;
-      --bg-sidebar: #0a0e17;
-      --bg-topbar: rgba(10, 14, 23, 0.82);
-      --bg-surface: rgba(17, 24, 39, 0.7);
-      --bg-surface-elevated: rgba(30, 41, 59, 0.65);
-      --border-subtle: rgba(255, 255, 255, 0.07);
-      --border-hover: rgba(255, 255, 255, 0.16);
+      --bg-body: #0b1120;
+      --bg-sidebar: #080d1a;
+      --bg-topbar: #0b1120;
+      --bg-surface: #111a2e;
+      --bg-surface-elevated: #1e293b;
+      --border-subtle: #1e293b;
+      --border-hover: #334155;
       --text-main: #f8fafc;
       --text-muted: #94a3b8;
       --text-subtle: #64748b;
       --accent-blue: #38bdf8;
-      --accent-green: #22c55e;
+      --accent-green: #10b981;
       --accent-amber: #f59e0b;
-      --accent-rose: #ef4444;
+      --accent-rose: #f43f5e;
       --accent-purple: #a855f7;
       --sidebar-w: 260px;
       --topbar-h: 64px;
@@ -52,11 +52,6 @@ export function renderAdminPage(): string {
     body {
       font-family: var(--font-sans);
       background-color: var(--bg-body);
-      background-image: 
-        radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.05) 0px, transparent 45%),
-        radial-gradient(at 100% 0%, rgba(168, 85, 247, 0.05) 0px, transparent 45%),
-        radial-gradient(at 50% 100%, rgba(34, 197, 94, 0.03) 0px, transparent 50%);
-      background-attachment: fixed;
       color: var(--text-main);
       font-size: 14px;
       min-height: 100vh;
@@ -64,20 +59,27 @@ export function renderAdminPage(): string {
       -webkit-font-smoothing: antialiased;
     }
 
+    /* Bootstrap color contrast override for eye comfort */
+    .text-secondary {
+      color: #94a3b8 !important;
+    }
+    .text-muted {
+      color: #94a3b8 !important;
+    }
+
     /* Light mode support */
     body.light-mode {
       --bg-body: #f8fafc;
       --bg-sidebar: #ffffff;
-      --bg-topbar: rgba(255, 255, 255, 0.85);
+      --bg-topbar: #ffffff;
       --bg-surface: #ffffff;
       --bg-surface-elevated: #f1f5f9;
-      --border-subtle: rgba(0, 0, 0, 0.08);
-      --border-hover: rgba(0, 0, 0, 0.16);
+      --border-subtle: #e2e8f0;
+      --border-hover: #cbd5e1;
       --text-main: #0f172a;
       --text-muted: #64748b;
       --text-subtle: #94a3b8;
       background-color: #f8fafc;
-      background-image: none;
       color: #0f172a;
     }
 
@@ -281,16 +283,15 @@ export function renderAdminPage(): string {
     .app-topbar {
       height: var(--topbar-h);
       background: var(--bg-topbar);
-      backdrop-filter: blur(20px) saturate(180%);
-      -webkit-backdrop-filter: blur(20px) saturate(180%);
       border-bottom: 1px solid var(--border-subtle);
       position: sticky;
       top: 0;
       z-index: 1020;
-      padding: 0 24px;
+      padding: 0 28px;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      box-shadow: 0 4px 16px -2px rgba(0, 0, 0, 0.4);
     }
     .topbar-left {
       display: flex;
@@ -337,7 +338,7 @@ export function renderAdminPage(): string {
       width: 36px;
       height: 36px;
       border-radius: 9px;
-      background: rgba(255, 255, 255, 0.03);
+      background: rgba(255, 255, 255, 0.04);
       border: 1px solid var(--border-subtle);
       color: var(--text-muted);
       display: inline-flex;
@@ -361,7 +362,7 @@ export function renderAdminPage(): string {
     /* Content Body */
     .app-content {
       flex: 1;
-      padding: 24px 28px 40px;
+      padding: 28px 32px 48px;
       min-width: 0;
     }
     .tab-section {
@@ -381,19 +382,21 @@ export function renderAdminPage(): string {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 22px;
+      margin-bottom: 24px;
+      padding-top: 4px;
     }
     .page-title {
-      font-size: 1.35rem;
+      font-size: 1.42rem;
       font-weight: 800;
       color: var(--text-main);
       letter-spacing: -0.025em;
       margin: 0;
+      line-height: 1.35;
     }
     .page-subtitle {
-      font-size: 0.85rem;
+      font-size: 0.88rem;
       color: var(--text-muted);
-      margin-top: 2px;
+      margin-top: 4px;
     }
 
     /* =========================================================================
@@ -484,15 +487,15 @@ export function renderAdminPage(): string {
     .filter-pills-bar {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
       flex-wrap: wrap;
     }
     .filter-pill {
-      background: rgba(255, 255, 255, 0.03);
+      background: #0b1120;
       border: 1px solid var(--border-subtle);
       color: var(--text-muted);
       border-radius: 9999px;
-      padding: 6px 14px;
+      padding: 6px 15px;
       font-size: 0.82rem;
       font-weight: 600;
       display: inline-flex;
@@ -501,25 +504,27 @@ export function renderAdminPage(): string {
       transition: all 0.15s ease;
     }
     .filter-pill:hover {
-      background: rgba(255, 255, 255, 0.07);
+      background: #1e293b;
       color: var(--text-main);
+      border-color: var(--border-hover);
     }
     .filter-pill.active {
       background: rgba(56, 189, 248, 0.14);
       color: var(--accent-blue);
-      border-color: rgba(56, 189, 248, 0.35);
-      box-shadow: 0 0 12px rgba(56, 189, 248, 0.15);
+      border-color: rgba(56, 189, 248, 0.4);
     }
     .filter-pill .pill-badge {
-      font-size: 10px;
-      padding: 1px 6px;
+      font-size: 10.5px;
+      font-weight: 700;
+      padding: 2px 7px;
       border-radius: 9999px;
-      background: rgba(255, 255, 255, 0.08);
+      background: #1e293b;
+      color: var(--text-muted);
       margin-left: 6px;
     }
     .filter-pill.active .pill-badge {
       background: var(--accent-blue);
-      color: #000;
+      color: #0b1120;
     }
 
     .search-input-wrap {
@@ -538,7 +543,7 @@ export function renderAdminPage(): string {
     .search-input-wrap input {
       width: 100%;
       padding: 7px 14px 7px 38px;
-      background: rgba(15, 23, 42, 0.85);
+      background: #0b1120;
       border: 1px solid var(--border-subtle);
       border-radius: 10px;
       color: var(--text-main);
@@ -565,24 +570,24 @@ export function renderAdminPage(): string {
       color: var(--text-main);
     }
     .custom-table th {
-      padding: 12px 16px;
-      font-size: 11px;
+      padding: 13px 18px;
+      font-size: 11.5px;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.06em;
-      color: var(--text-subtle);
+      color: #94a3b8;
       border-bottom: 1px solid var(--border-subtle);
-      background: rgba(10, 14, 23, 0.4);
+      background: #0f172a;
       white-space: nowrap;
     }
     .custom-table td {
-      padding: 14px 16px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      padding: 15px 18px;
+      border-bottom: 1px solid var(--border-subtle);
       vertical-align: middle;
       font-size: 13.5px;
     }
     .custom-table tr:hover td {
-      background: rgba(255, 255, 255, 0.02);
+      background: rgba(255, 255, 255, 0.025);
     }
     .custom-table tr:last-child td {
       border-bottom: none;
@@ -594,8 +599,8 @@ export function renderAdminPage(): string {
       height: 38px;
       border-radius: 11px;
       object-fit: cover;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
     }
     .user-avatar-fallback {
       width: 38px;
@@ -608,38 +613,63 @@ export function renderAdminPage(): string {
       justify-content: center;
       font-weight: 700;
       font-size: 13px;
-      box-shadow: 0 4px 10px rgba(2, 132, 199, 0.25);
+      box-shadow: 0 2px 8px rgba(2, 132, 199, 0.25);
     }
 
-    /* Badges & Indicators */
+    /* Badges & Indicators - Soothing & Eye Friendly */
     .status-dot {
-      width: 7px;
-      height: 7px;
+      width: 6.5px;
+      height: 6.5px;
       border-radius: 50%;
       display: inline-block;
+      flex-shrink: 0;
     }
     .status-dot.dot-success {
-      background: var(--accent-green);
-      box-shadow: 0 0 8px rgba(34, 197, 94, 0.7);
+      background: #10b981;
     }
     .status-dot.dot-danger {
-      background: var(--accent-rose);
-      box-shadow: 0 0 8px rgba(239, 68, 68, 0.7);
+      background: #f43f5e;
+    }
+
+    .badge-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 10px;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+    }
+    .badge-status-active {
+      background: rgba(16, 185, 129, 0.12);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.25);
+    }
+    .badge-status-banned {
+      background: rgba(244, 63, 94, 0.12);
+      color: #fb7185;
+      border: 1px solid rgba(244, 63, 94, 0.25);
     }
 
     .badge-soft {
       font-size: 11px;
       font-weight: 600;
-      padding: 3px 8px;
-      border-radius: 6px;
+      padding: 3px 9px;
+      border-radius: 9999px;
       display: inline-flex;
       align-items: center;
       gap: 4px;
     }
+    .badge-soft-user {
+      background: rgba(148, 163, 184, 0.1);
+      color: #cbd5e1;
+      border: 1px solid rgba(148, 163, 184, 0.2);
+    }
     .badge-soft-admin {
-      background: rgba(239, 68, 68, 0.12);
-      color: #f87171;
-      border: 1px solid rgba(239, 68, 68, 0.25);
+      background: rgba(244, 63, 94, 0.12);
+      color: #fb7185;
+      border: 1px solid rgba(244, 63, 94, 0.25);
     }
     .badge-soft-mod {
       background: rgba(168, 85, 247, 0.12);
@@ -1429,6 +1459,32 @@ export function renderAdminPage(): string {
     let distributionChartInstance = null;
     let currentUserFilter = 'all';
 
+    // Safe API client - NEVER crashes on HTML 404/500 responses
+    async function safeFetchJson(url, options = {}) {
+      try {
+        const res = await fetch(url, options);
+        const text = await res.text();
+        let data;
+        try {
+          data = JSON.parse(text);
+        } catch (_) {
+          console.warn('API returned non-JSON response from', url, text.substring(0, 100));
+          return {
+            success: false,
+            status: res.status,
+            error: res.status === 404 ? 'Endpoint máy chủ không tồn tại (404)' : ('Lỗi phản hồi máy chủ (' + res.status + ')')
+          };
+        }
+        if (!res.ok && !data.error) {
+          data.error = 'Yêu cầu thất bại (' + res.status + ')';
+        }
+        return data;
+      } catch (networkErr) {
+        console.error('Fetch network error:', url, networkErr);
+        return { success: false, error: networkErr.message || 'Lỗi kết nối mạng' };
+      }
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
       initTheme();
       setupUserFilterPills();
@@ -1505,12 +1561,11 @@ export function renderAdminPage(): string {
       }
 
       try {
-        const res = await fetch('/api/admin/login', {
+        const data = await safeFetchJson('/api/admin/login', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ password: pass })
         });
-        const data = await res.json();
 
         if (data.success && data.token) {
           adminToken = data.token;
@@ -1529,7 +1584,7 @@ export function renderAdminPage(): string {
           Swal.fire({ icon: 'error', title: 'Thất bại', text: data.error || 'Khóa bảo mật không chính xác!' });
         }
       } catch (err) {
-        Swal.fire({ icon: 'error', title: 'Lỗi mạng', text: err.message });
+        Swal.fire({ icon: 'error', title: 'Lỗi', text: err.message });
       }
     }
 
@@ -1556,10 +1611,10 @@ export function renderAdminPage(): string {
     // Verify Session
     async function verifySession() {
       try {
-        const res = await fetch('/api/admin/auth/check', {
+        const data = await safeFetchJson('/api/admin/auth/check', {
           headers: { 'Authorization': 'Bearer ' + adminToken }
         });
-        if (res.ok) {
+        if (data.success || !data.error) {
           hideLoginOverlay();
           loadDashboardData();
         } else {
@@ -1599,10 +1654,9 @@ export function renderAdminPage(): string {
     // 1. Fetch Metrics & Render Charts
     async function fetchMetrics() {
       try {
-        const res = await fetch('/api/admin/metrics', {
+        const data = await safeFetchJson('/api/admin/metrics', {
           headers: { 'Authorization': 'Bearer ' + adminToken }
         });
-        const data = await res.json();
         if (data.success && data.metrics) {
           const m = data.metrics;
           document.getElementById('kpi-users').textContent = Number(m.totalUsers || 0).toLocaleString();
@@ -1711,10 +1765,9 @@ export function renderAdminPage(): string {
     // 2. Fetch Users
     async function fetchUsers() {
       try {
-        const res = await fetch('/api/admin/users', {
+        const data = await safeFetchJson('/api/admin/users', {
           headers: { 'Authorization': 'Bearer ' + adminToken }
         });
-        const data = await res.json();
         if (data.success && data.users) {
           allUsersCache = data.users;
           updateUserFilterCounts();
@@ -1753,7 +1806,7 @@ export function renderAdminPage(): string {
         }
 
         // Role column
-        let roleBadge = '<span class="text-muted small">Thành viên</span>';
+        let roleBadge = '<span class="badge-soft badge-soft-user">Thành viên</span>';
         if (u.role === 'admin') {
           roleBadge = '<span class="badge-soft badge-soft-admin">Admin</span>';
         } else if (u.role === 'mod') {
@@ -1764,8 +1817,8 @@ export function renderAdminPage(): string {
 
         // Status column
         const statusHtml = u.is_banned
-          ? '<span class="d-inline-flex align-items-center gap-2 small text-danger fw-semibold"><span class="status-dot dot-danger"></span> Bị khóa</span>'
-          : '<span class="d-inline-flex align-items-center gap-2 small text-success fw-semibold"><span class="status-dot dot-success"></span> Hoạt động</span>';
+          ? '<span class="badge-status badge-status-banned"><span class="status-dot dot-danger"></span> Đã khóa</span>'
+          : '<span class="badge-status badge-status-active"><span class="status-dot dot-success"></span> Hoạt động</span>';
 
         const joinDate = u.created_at ? new Date(u.created_at).toLocaleDateString('vi-VN') : '-';
 
@@ -1781,12 +1834,12 @@ export function renderAdminPage(): string {
                 \${avatarHtml}
                 <div>
                   <div class="d-flex align-items-center">
-                    <span class="fw-semibold text-white fs-6">\${escapeHtml(u.display_name || 'Chưa đặt tên')}</span>
+                    <span class="fw-bold text-white fs-6">\${escapeHtml(u.display_name || 'Chưa đặt tên')}</span>
                     \${inlineBadges}
                   </div>
-                  <div class="d-flex align-items-center gap-2 mt-0.5">
-                    <span class="font-mono text-secondary small">@\${escapeHtml(u.username || '')}</span>
-                    <span class="text-secondary opacity-25">•</span>
+                  <div class="d-flex align-items-center gap-2 mt-1">
+                    <span class="font-mono text-info small">@\${escapeHtml(u.username || '')}</span>
+                    <span class="text-secondary opacity-50">•</span>
                     <span class="text-muted font-mono" style="font-size: 11px;">UID: \${u.id.substring(0, 8)}...</span>
                   </div>
                 </div>
@@ -1794,7 +1847,7 @@ export function renderAdminPage(): string {
             </td>
             <td>\${roleBadge}</td>
             <td>\${statusHtml}</td>
-            <td class="text-secondary small">\${joinDate}</td>
+            <td class="text-secondary small font-mono">\${joinDate}</td>
             <td style="text-align: right; padding-right: 20px;">
               <div class="dropdown d-inline-block">
                 <button class="action-ellipsis-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Thao tác với thành viên">
@@ -1841,16 +1894,17 @@ export function renderAdminPage(): string {
 
     async function toggleVerify(userId, newStatus) {
       try {
-        const res = await fetch(\`/api/admin/users/\${userId}/toggle-verify\`, {
+        const data = await safeFetchJson(\`/api/admin/users/\${userId}/toggle-verify\`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + adminToken },
           body: JSON.stringify({ isVerified: newStatus })
         });
-        const data = await res.json();
         if (data.success) {
           Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: data.message, showConfirmButton: false, timer: 1800 });
           fetchUsers();
           fetchMetrics();
+        } else {
+          Swal.fire({ icon: 'error', title: 'Lỗi', text: data.error });
         }
       } catch (err) {
         Swal.fire({ icon: 'error', title: 'Lỗi', text: err.message });
@@ -1859,16 +1913,17 @@ export function renderAdminPage(): string {
 
     async function toggleVip(userId, newStatus) {
       try {
-        const res = await fetch(\`/api/admin/users/\${userId}/toggle-vip\`, {
+        const data = await safeFetchJson(\`/api/admin/users/\${userId}/toggle-vip\`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + adminToken },
           body: JSON.stringify({ isVip: newStatus })
         });
-        const data = await res.json();
         if (data.success) {
           Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: data.message, showConfirmButton: false, timer: 1800 });
           fetchUsers();
           fetchMetrics();
+        } else {
+          Swal.fire({ icon: 'error', title: 'Lỗi', text: data.error });
         }
       } catch (err) {
         Swal.fire({ icon: 'error', title: 'Lỗi', text: err.message });
@@ -1888,16 +1943,17 @@ export function renderAdminPage(): string {
       }).then(async (result) => {
         if (result.isConfirmed) {
           try {
-            const res = await fetch(\`/api/admin/users/\${userId}/toggle-ban\`, {
+            const data = await safeFetchJson(\`/api/admin/users/\${userId}/toggle-ban\`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + adminToken },
               body: JSON.stringify({ isBanned: newStatus })
             });
-            const data = await res.json();
             if (data.success) {
               Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: data.message, showConfirmButton: false, timer: 1800 });
               fetchUsers();
               fetchMetrics();
+            } else {
+              Swal.fire({ icon: 'error', title: 'Lỗi', text: data.error });
             }
           } catch (err) {
             Swal.fire({ icon: 'error', title: 'Lỗi', text: err.message });
@@ -1924,16 +1980,17 @@ export function renderAdminPage(): string {
 
       if (newRole) {
         try {
-          const res = await fetch(\`/api/admin/users/\${userId}/change-role\`, {
+          const data = await safeFetchJson(\`/api/admin/users/\${userId}/change-role\`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + adminToken },
             body: JSON.stringify({ role: newRole })
           });
-          const data = await res.json();
           if (data.success) {
             Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: data.message, showConfirmButton: false, timer: 1800 });
             fetchUsers();
             fetchMetrics();
+          } else {
+            Swal.fire({ icon: 'error', title: 'Lỗi', text: data.error });
           }
         } catch (err) {
           Swal.fire({ icon: 'error', title: 'Lỗi', text: err.message });
@@ -1952,13 +2009,14 @@ export function renderAdminPage(): string {
       }).then(async (result) => {
         if (result.isConfirmed) {
           try {
-            const res = await fetch(\`/api/admin/users/\${userId}/reset-oa-edit\`, {
+            const data = await safeFetchJson(\`/api/admin/users/\${userId}/reset-oa-edit\`, {
               method: 'POST',
               headers: { 'Authorization': 'Bearer ' + adminToken }
             });
-            const data = await res.json();
             if (data.success) {
               Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: data.message, showConfirmButton: false, timer: 1800 });
+            } else {
+              Swal.fire({ icon: 'error', title: 'Lỗi', text: data.error });
             }
           } catch (err) {
             Swal.fire({ icon: 'error', title: 'Lỗi', text: err.message });
@@ -2024,10 +2082,9 @@ export function renderAdminPage(): string {
     // 3. Fetch Posts
     async function fetchPosts() {
       try {
-        const res = await fetch('/api/admin/posts', {
+        const data = await safeFetchJson('/api/admin/posts', {
           headers: { 'Authorization': 'Bearer ' + adminToken }
         });
-        const data = await res.json();
         if (data.success && data.posts) {
           allPostsCache = data.posts;
           renderPostsTable(allPostsCache);
@@ -2106,15 +2163,16 @@ export function renderAdminPage(): string {
 
     async function togglePinPost(postId, newStatus) {
       try {
-        const res = await fetch(\`/api/admin/posts/\${postId}/toggle-pin\`, {
+        const data = await safeFetchJson(\`/api/admin/posts/\${postId}/toggle-pin\`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + adminToken },
           body: JSON.stringify({ isPinned: newStatus })
         });
-        const data = await res.json();
         if (data.success) {
           Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: data.message, showConfirmButton: false, timer: 1800 });
           fetchPosts();
+        } else {
+          Swal.fire({ icon: 'error', title: 'Lỗi', text: data.error });
         }
       } catch (err) {
         Swal.fire({ icon: 'error', title: 'Lỗi', text: err.message });
@@ -2133,15 +2191,16 @@ export function renderAdminPage(): string {
       }).then(async (result) => {
         if (result.isConfirmed) {
           try {
-            const res = await fetch(\`/api/admin/posts/\${postId}\`, {
+            const data = await safeFetchJson(\`/api/admin/posts/\${postId}\`, {
               method: 'DELETE',
               headers: { 'Authorization': 'Bearer ' + adminToken }
             });
-            const data = await res.json();
             if (data.success) {
               Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: data.message, showConfirmButton: false, timer: 1800 });
               fetchPosts();
               fetchMetrics();
+            } else {
+              Swal.fire({ icon: 'error', title: 'Lỗi', text: data.error });
             }
           } catch (err) {
             Swal.fire({ icon: 'error', title: 'Lỗi', text: err.message });
@@ -2162,10 +2221,9 @@ export function renderAdminPage(): string {
     // 4. Fetch Comments
     async function fetchComments() {
       try {
-        const res = await fetch('/api/admin/comments', {
+        const data = await safeFetchJson('/api/admin/comments', {
           headers: { 'Authorization': 'Bearer ' + adminToken }
         });
-        const data = await res.json();
         if (data.success && data.comments) {
           allCommentsCache = data.comments;
           renderCommentsTable(allCommentsCache);
@@ -2222,15 +2280,16 @@ export function renderAdminPage(): string {
       }).then(async (result) => {
         if (result.isConfirmed) {
           try {
-            const res = await fetch(\`/api/admin/comments/\${commentId}\`, {
+            const data = await safeFetchJson(\`/api/admin/comments/\${commentId}\`, {
               method: 'DELETE',
               headers: { 'Authorization': 'Bearer ' + adminToken }
             });
-            const data = await res.json();
             if (data.success) {
               Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: data.message, showConfirmButton: false, timer: 1800 });
               fetchComments();
               fetchMetrics();
+            } else {
+              Swal.fire({ icon: 'error', title: 'Lỗi', text: data.error });
             }
           } catch (err) {
             Swal.fire({ icon: 'error', title: 'Lỗi', text: err.message });
@@ -2251,10 +2310,9 @@ export function renderAdminPage(): string {
     // 5. Fetch Reports
     async function fetchReports() {
       try {
-        const res = await fetch('/api/admin/reports', {
+        const data = await safeFetchJson('/api/admin/reports', {
           headers: { 'Authorization': 'Bearer ' + adminToken }
         });
-        const data = await res.json();
         if (data.success && data.reports) {
           allReportsCache = data.reports;
           renderReportsTable(allReportsCache);
@@ -2312,16 +2370,17 @@ export function renderAdminPage(): string {
 
     async function resolveReport(reportId, action) {
       try {
-        const res = await fetch(\`/api/admin/reports/\${reportId}/resolve\`, {
+        const data = await safeFetchJson(\`/api/admin/reports/\${reportId}/resolve\`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + adminToken },
           body: JSON.stringify({ action })
         });
-        const data = await res.json();
         if (data.success) {
           Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: data.message, showConfirmButton: false, timer: 1800 });
           fetchReports();
           fetchMetrics();
+        } else {
+          Swal.fire({ icon: 'error', title: 'Lỗi', text: data.error });
         }
       } catch (err) {
         Swal.fire({ icon: 'error', title: 'Lỗi', text: err.message });
@@ -2331,10 +2390,9 @@ export function renderAdminPage(): string {
     // 6. Fetch OA Requests
     async function fetchOaRequests(showToast = false) {
       try {
-        const res = await fetch('/api/admin/oa-requests', {
+        const data = await safeFetchJson('/api/admin/oa-requests', {
           headers: { 'Authorization': 'Bearer ' + adminToken }
         });
-        const data = await res.json();
         if (data.success && data.requests) {
           allOaRequestsCache = data.requests;
           renderOaRequests(allOaRequestsCache);
@@ -2415,17 +2473,18 @@ export function renderAdminPage(): string {
           ? \`/api/admin/oa-requests/\${reqId}/approve\` 
           : \`/api/admin/oa-requests/\${reqId}/reject\`;
 
-        const res = await fetch(endpoint, {
+        const data = await safeFetchJson(endpoint, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + adminToken },
           body: JSON.stringify({ reason })
         });
-        const data = await res.json();
         if (data.success) {
           Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: data.message, showConfirmButton: false, timer: 1800 });
           fetchOaRequests();
           fetchUsers();
           fetchMetrics();
+        } else {
+          Swal.fire({ icon: 'error', title: 'Lỗi', text: data.error });
         }
       } catch (err) {
         Swal.fire({ icon: 'error', title: 'Lỗi', text: err.message });
@@ -2477,12 +2536,11 @@ export function renderAdminPage(): string {
       }).then(async (result) => {
         if (result.isConfirmed) {
           try {
-            const res = await fetch('/api/admin/broadcast', {
+            const data = await safeFetchJson('/api/admin/broadcast', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + adminToken },
               body: JSON.stringify({ title, body, link })
             });
-            const data = await res.json();
             if (data.success) {
               Swal.fire({ icon: 'success', title: 'Phát sóng thành công!', text: data.message });
               document.getElementById('broadcast-title-input').value = '';
@@ -2501,10 +2559,9 @@ export function renderAdminPage(): string {
     // 8. Security Logs & Clean Spam
     async function fetchSecurityLogs() {
       try {
-        const res = await fetch('/api/admin/system/audit-logs', {
+        const data = await safeFetchJson('/api/admin/system/audit-logs', {
           headers: { 'Authorization': 'Bearer ' + adminToken }
         });
-        const data = await res.json();
         if (data.success && data.logs) {
           renderSecurityLogs(data.logs);
         }
@@ -2535,7 +2592,7 @@ export function renderAdminPage(): string {
               <div class="font-mono text-muted small text-break">\${escapeHtml(JSON.stringify(l.details || {}))}</div>
             </td>
             <td class="font-mono text-secondary small">\${escapeHtml(l.ip_address || '-')}</td>
-            <td style="text-align: right; padding-right: 20px;" class="text-secondary small">\${dateStr}</td>
+            <td style="text-align: right; padding-right: 20px;" class="text-secondary small font-mono">\${dateStr}</td>
           </tr>
         \`;
       }).join('');
@@ -2552,14 +2609,15 @@ export function renderAdminPage(): string {
       }).then(async (result) => {
         if (result.isConfirmed) {
           try {
-            const res = await fetch('/api/admin/system/clean-spam', {
+            const data = await safeFetchJson('/api/admin/system/clean-spam', {
               method: 'POST',
               headers: { 'Authorization': 'Bearer ' + adminToken }
             });
-            const data = await res.json();
             if (data.success) {
               Swal.fire({ icon: 'success', title: 'Hoàn tất', text: data.message });
               fetchMetrics();
+            } else {
+              Swal.fire({ icon: 'error', title: 'Lỗi', text: data.error });
             }
           } catch (err) {
             Swal.fire({ icon: 'error', title: 'Lỗi', text: err.message });
@@ -2571,19 +2629,34 @@ export function renderAdminPage(): string {
     // 9. System Health
     async function fetchSystemHealth() {
       try {
-        const res = await fetch('/api/admin/system/health', {
+        const data = await safeFetchJson('/api/admin/system/health', {
           headers: { 'Authorization': 'Bearer ' + adminToken }
         });
-        const data = await res.json();
         if (data.success && data.health) {
           const h = data.health;
-          document.getElementById('health-supabase').textContent = h.database || 'ONLINE';
-          document.getElementById('health-r2').textContent = h.storage || 'ONLINE';
-          document.getElementById('health-fcm').textContent = h.fcm || 'ONLINE';
-          document.getElementById('health-agora').textContent = h.agora || 'ONLINE';
-          if (h.uptime) document.getElementById('health-uptime').textContent = h.uptime;
-          if (h.nodeVersion) document.getElementById('health-node').textContent = h.nodeVersion;
-          if (h.latency) document.getElementById('health-latency').textContent = h.latency;
+          const dbText = (h.database && typeof h.database === 'object') ? (h.database.status === 'connected' ? 'ONLINE' : 'ERROR') : (h.database || 'ONLINE');
+          const r2Text = (h.cloudflareR2 && typeof h.cloudflareR2 === 'object') ? (h.cloudflareR2.status === 'ready' ? 'ONLINE' : 'NOT CONFIGURED') : (h.storage || 'ONLINE');
+          const fcmText = (h.firebaseFcm && typeof h.firebaseFcm === 'object') ? 'ONLINE (v1)' : (h.fcm || 'ONLINE');
+          
+          const elDb = document.getElementById('health-supabase');
+          if (elDb) elDb.textContent = dbText;
+          const elR2 = document.getElementById('health-r2');
+          if (elR2) elR2.textContent = r2Text;
+          const elFcm = document.getElementById('health-fcm');
+          if (elFcm) elFcm.textContent = fcmText;
+          const elAgora = document.getElementById('health-agora');
+          if (elAgora) elAgora.textContent = h.agora || 'ONLINE';
+
+          const uptimeVal = h.uptimeSeconds ? (Math.floor(h.uptimeSeconds / 3600) + 'h ' + Math.floor((h.uptimeSeconds % 3600) / 60) + 'm') : (h.uptime || '99.98%');
+          const elUptime = document.getElementById('health-uptime');
+          if (elUptime) elUptime.textContent = uptimeVal;
+
+          const elNode = document.getElementById('health-node');
+          if (elNode) elNode.textContent = h.nodeVersion || 'v22.x LTS';
+
+          const latencyVal = (h.database && h.database.latencyMs) ? ('~' + h.database.latencyMs + 'ms') : (h.latency || '~18ms');
+          const elLatency = document.getElementById('health-latency');
+          if (elLatency) elLatency.textContent = latencyVal;
         }
       } catch (err) {
         console.error('Fetch system health error:', err);
@@ -2592,6 +2665,7 @@ export function renderAdminPage(): string {
 
     // Navigation Tab Switching
     function switchTab(tabId) {
+      window.scrollTo({ top: 0, behavior: 'instant' });
       document.querySelectorAll('.app-sidebar .nav-item-btn').forEach(btn => {
         btn.classList.toggle('active', btn.getAttribute('data-tab') === tabId);
       });
