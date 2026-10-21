@@ -317,7 +317,7 @@ app.delete('/api/user/comments/:id', async (req, res) => {
  * Endpoint xóa cuộc trò chuyện an toàn cho User (Xóa tin nhắn + cuộc trò chuyện)
  */
 /**
- * Lấy danh sách cuộc trò chuyện của người dùng hiện tại
+ * Lấy danh sách cuộc trò chuyện của người dùng hiện tại (Hỗ trợ cả 1-1 và Nhóm)
  */
 app.get('/api/user/conversations', async (req, res) => {
   try {
@@ -330,14 +330,34 @@ app.get('/api/user/conversations', async (req, res) => {
       return res.status(401).json({ error: 'Phiên đăng nhập không hợp lệ' });
     }
 
-    const { data, error } = await supabaseAdmin
+    // 1. Lấy hội thoại cá nhân hoặc nhóm mà user tạo
+    const { data: convs, error } = await supabaseAdmin
       .from('conversations')
       .select('*')
-      .or(`user_a.eq.${user.id},user_b.eq.${user.id}`)
+      .or(`user_a.eq.${user.id},user_b.eq.${user.id},created_by.eq.${user.id}`)
       .order('last_message_at', { ascending: false });
 
     if (error) throw error;
-    return res.json({ success: true, conversations: data || [] });
+
+    // 2. Lấy thêm các nhóm mà user là thành viên trong member_ids
+    const { data: groupConvs } = await supabaseAdmin
+      .from('conversations')
+      .select('*')
+      .eq('is_group', true)
+      .contains('member_ids', JSON.stringify([user.id]))
+      .order('last_message_at', { ascending: false });
+
+    const map = new Map<string, any>();
+    for (const c of (convs || [])) map.set(c.id, c);
+    for (const g of (groupConvs || [])) map.set(g.id, g);
+
+    const combined = Array.from(map.values()).sort((a, b) => {
+      const timeA = new Date(a.last_message_at || a.created_at || 0).getTime();
+      const timeB = new Date(b.last_message_at || b.created_at || 0).getTime();
+      return timeB - timeA;
+    });
+
+    return res.json({ success: true, conversations: combined });
   } catch (err: any) {
     return res.status(500).json({ error: err.message });
   }
@@ -391,13 +411,151 @@ app.post('/api/user/conversations', async (req, res) => {
   }
 });
 
+/**
+ * Tạo nhóm trò chuyện mới
+ */
+app.post('/api/user/groups', async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+    const token = authHeader?.replace(/^Bearer\s+/i, '');
+    if (!token) return res.status(401).json({ error: 'Missing Bearer token' });
+
+    const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(token);
+    if (authError || !user) return res.status(401).json({ error: 'Phiên đăng nhập không hợp lệ' });
+
+    const { name, memberIds, avatarUrl } = req.body;
+    if (!name || typeof name !== 'string' || !name.trim()) {
+      return res.status(400).json({ error: 'Tên nhóm không được để trống' });
+    }
+
+    const initialMembers = Array.isArray(memberIds) ? memberIds : [];
+    const membersSet = new Set<string>([user.id, ...initialMembers]);
+    const finalMemberIds = Array.from(membersSet);
+
+    const { data: inserted, error: insErr } = await supabaseAdmin
+      .from('conversations')
+      .insert({
+        is_group: true,
+        name: name.trim(),
+        avatar_url: avatarUrl || null,
+        created_by: user.id,
+        member_ids: finalMemberIds,
+        nicknames: {},
+        last_message: `Đã tạo nhóm trò chuyện "${name.trim()}"`,
+        last_message_at: new Date().toISOString(),
+      })
+      .select()
+      .single();
+
+    if (insErr) throw insErr;
+    return res.json({ success: true, conversation: inserted });
+  } catch (err: any) {
+    return res.status(500).json({ error: err.message });
+  }
+});
+
+/**
+ * Cập nhật thông tin nhóm (Tên nhóm, Avatar nhóm, Thành viên, Biệt danh)
+ */
+app.put('/api/user/groups/:id', async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+    const token = authHeader?.replace(/^Bearer\s+/i, '');
+    if (!token) return res.status(401).json({ error: 'Missing Bearer token' });
+
+    const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(token);
+    if (authError || !user) return res.status(401).json({ error: 'Phiên đăng nhập không hợp lệ' });
+
+    const groupId = req.params.id;
+    const { data: conv, error: fetchErr } = await supabaseAdmin
+      .from('conversations')
+      .select('*')
+      .eq('id', groupId)
+      .maybeSingle();
+
+    if (fetchErr || !conv || !conv.is_group) {
+      return res.status(404).json({ error: 'Không tìm thấy nhóm trò chuyện' });
+    }
+
+    const memberList: string[] = Array.isArray(conv.member_ids) ? conv.member_ids : [];
+    const isMember = memberList.includes(user.id) || conv.created_by === user.id;
+    if (!isMember) {
+      return res.status(403).json({ error: 'Bạn không phải thành viên của nhóm này' });
+    }
+
+    const updateData: any = {};
+    const { name, avatarUrl, memberIds, nicknames } = req.body;
+    if (name !== undefined) updateData.name = name.trim();
+    if (avatarUrl !== undefined) updateData.avatar_url = avatarUrl;
+    if (memberIds !== undefined && Array.isArray(memberIds)) {
+      updateData.member_ids = memberIds;
+    }
+    if (nicknames !== undefined && typeof nicknames === 'object') {
+      updateData.nicknames = nicknames;
+    }
+
+    const { data: updated, error: updateErr } = await supabaseAdmin
+      .from('conversations')
+      .update(updateData)
+      .eq('id', groupId)
+      .select()
+      .single();
+
+    if (updateErr) throw updateErr;
+    return res.json({ success: true, conversation: updated });
+  } catch (err: any) {
+    return res.status(500).json({ error: err.message });
+  }
+});
+
+/**
+ * Rời nhóm hoặc Giải tán / Xóa nhóm trò chuyện
+ */
+app.delete('/api/user/groups/:id', async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+    const token = authHeader?.replace(/^Bearer\s+/i, '');
+    if (!token) return res.status(401).json({ error: 'Missing Bearer token' });
+
+    const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(token);
+    if (authError || !user) return res.status(401).json({ error: 'Phiên đăng nhập không hợp lệ' });
+
+    const groupId = req.params.id;
+    const { data: conv, error: fetchErr } = await supabaseAdmin
+      .from('conversations')
+      .select('*')
+      .eq('id', groupId)
+      .maybeSingle();
+
+    if (fetchErr || !conv || !conv.is_group) {
+      return res.status(404).json({ error: 'Không tìm thấy nhóm trò chuyện' });
+    }
+
+    // Nếu người dùng là người tạo nhóm: Xóa vĩnh viễn toàn bộ nhóm và tin nhắn
+    if (conv.created_by === user.id) {
+      await supabaseAdmin.from('messages').delete().eq('conversation_id', groupId);
+      await supabaseAdmin.from('conversations').delete().eq('id', groupId);
+      return res.json({ success: true, action: 'deleted', message: 'Đã xóa và giải tán nhóm trò chuyện thành công' });
+    }
+
+    // Nếu là thành viên: Rời nhóm (gỡ user.id ra khỏi member_ids)
+    const memberList: string[] = Array.isArray(conv.member_ids) ? conv.member_ids : [];
+    const newMembers = memberList.filter(id => id !== user.id);
+    await supabaseAdmin.from('conversations').update({ member_ids: newMembers }).eq('id', groupId);
+    return res.json({ success: true, action: 'left', message: 'Bạn đã rời khỏi nhóm trò chuyện thành công' });
+  } catch (err: any) {
+    return res.status(500).json({ error: err.message });
+  }
+});
+
+/**
+ * Xóa cuộc trò chuyện cá nhân hoặc nhóm
+ */
 app.delete('/api/user/conversations/:id', async (req, res) => {
   try {
     const authHeader = req.headers.authorization;
     const token = authHeader?.replace(/^Bearer\s+/i, '');
-    if (!token) {
-      return res.status(401).json({ error: 'Missing Bearer token' });
-    }
+    if (!token) return res.status(401).json({ error: 'Missing Bearer token' });
 
     const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(token);
     if (authError || !user) {
@@ -407,12 +565,25 @@ app.delete('/api/user/conversations/:id', async (req, res) => {
     const convId = req.params.id;
     const { data: conv, error: fetchErr } = await supabaseAdmin
       .from('conversations')
-      .select('id, user_a, user_b')
+      .select('*')
       .eq('id', convId)
       .maybeSingle();
 
     if (fetchErr || !conv) {
       return res.status(404).json({ error: 'Không tìm thấy cuộc trò chuyện' });
+    }
+
+    if (conv.is_group) {
+      if (conv.created_by === user.id) {
+        await supabaseAdmin.from('messages').delete().eq('conversation_id', convId);
+        await supabaseAdmin.from('conversations').delete().eq('id', convId);
+        return res.json({ success: true, message: 'Đã giải tán nhóm thành công' });
+      } else {
+        const memberList: string[] = Array.isArray(conv.member_ids) ? conv.member_ids : [];
+        const newMembers = memberList.filter(id => id !== user.id);
+        await supabaseAdmin.from('conversations').update({ member_ids: newMembers }).eq('id', convId);
+        return res.json({ success: true, message: 'Đã rời khỏi nhóm thành công' });
+      }
     }
 
     if (conv.user_a !== user.id && conv.user_b !== user.id) {
