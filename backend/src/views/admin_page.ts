@@ -2344,7 +2344,6 @@ export function renderAdminPage(): string {
     }
 
     // 5. Fetch Reports (Kiểm duyệt Báo cáo Vi phạm Tiêu chuẩn Cộng đồng)
-    let allReportsCache = [];
     let currentReportFilter = 'all';
 
     async function fetchReports(showToast = false) {
