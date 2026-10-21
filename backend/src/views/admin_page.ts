@@ -831,7 +831,7 @@ export function renderAdminPage(): string {
         </div>
         <div>
           <div class="brand-title">Dorabox Admin</div>
-          <div class="brand-version">Bảng Điều Khiển v1.2</div>
+          <div class="brand-version">Bảng Điều Khiển v1.1.2</div>
         </div>
       </div>
 
