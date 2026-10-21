@@ -316,6 +316,81 @@ app.delete('/api/user/comments/:id', async (req, res) => {
 /**
  * Endpoint xóa cuộc trò chuyện an toàn cho User (Xóa tin nhắn + cuộc trò chuyện)
  */
+/**
+ * Lấy danh sách cuộc trò chuyện của người dùng hiện tại
+ */
+app.get('/api/user/conversations', async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+    const token = authHeader?.replace(/^Bearer\s+/i, '');
+    if (!token) return res.status(401).json({ error: 'Missing Bearer token' });
+
+    const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(token);
+    if (authError || !user) {
+      return res.status(401).json({ error: 'Phiên đăng nhập không hợp lệ' });
+    }
+
+    const { data, error } = await supabaseAdmin
+      .from('conversations')
+      .select('*')
+      .or(`user_a.eq.${user.id},user_b.eq.${user.id}`)
+      .order('last_message_at', { ascending: false });
+
+    if (error) throw error;
+    return res.json({ success: true, conversations: data || [] });
+  } catch (err: any) {
+    return res.status(500).json({ error: err.message });
+  }
+});
+
+/**
+ * Tìm hoặc tạo cuộc trò chuyện giữa 2 người dùng
+ */
+app.post('/api/user/conversations', async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+    const token = authHeader?.replace(/^Bearer\s+/i, '');
+    if (!token) return res.status(401).json({ error: 'Missing Bearer token' });
+
+    const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(token);
+    if (authError || !user) {
+      return res.status(401).json({ error: 'Phiên đăng nhập không hợp lệ' });
+    }
+
+    const { peerId } = req.body;
+    if (!peerId) return res.status(400).json({ error: 'Missing peerId' });
+
+    const idA = user.id.localeCompare(peerId) < 0 ? user.id : peerId;
+    const idB = user.id.localeCompare(peerId) < 0 ? peerId : user.id;
+
+    const { data: existing } = await supabaseAdmin
+      .from('conversations')
+      .select('*')
+      .or(`and(user_a.eq.${idA},user_b.eq.${idB}),and(user_a.eq.${idB},user_b.eq.${idA})`)
+      .maybeSingle();
+
+    if (existing) {
+      return res.json({ success: true, conversation: existing });
+    }
+
+    const { data: inserted, error: insErr } = await supabaseAdmin
+      .from('conversations')
+      .insert({
+        user_a: idA,
+        user_b: idB,
+        last_message: 'Đã bắt đầu cuộc trò chuyện',
+        last_message_at: new Date().toISOString(),
+      })
+      .select()
+      .single();
+
+    if (insErr) throw insErr;
+    return res.json({ success: true, conversation: inserted });
+  } catch (err: any) {
+    return res.status(500).json({ error: err.message });
+  }
+});
+
 app.delete('/api/user/conversations/:id', async (req, res) => {
   try {
     const authHeader = req.headers.authorization;
