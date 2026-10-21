@@ -253,289 +253,57 @@ export function renderAdminPage(): string {
     }
 
     /* =========================================================================
-       LUXURY KPI METRIC CARD (.metric-card)
-       Replaces ugly solid flat small-box & clunky info-box
+       MINIMAL EXECUTIVE STAT CARD (.stat-card)
+       Clean, spacious, no-clutter KPI widgets
        ========================================================================= */
-    .metric-card {
-      position: relative;
-      border-radius: 20px;
-      background: linear-gradient(145deg, rgba(18, 26, 43, 0.75) 0%, rgba(12, 18, 30, 0.85) 100%);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
+    .stat-card {
+      background: rgba(15, 23, 42, 0.72);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       border: 1px solid var(--dora-border);
-      box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05);
-      padding: 22px 22px 18px 22px;
-      overflow: hidden;
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      border-radius: 16px;
+      padding: 18px 20px;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      cursor: pointer;
+      height: 100%;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      min-height: 172px;
-      margin-bottom: 20px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
     }
-    .metric-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 20px 42px -12px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.12);
-      border-color: var(--dora-border-hover);
+    .stat-card:hover {
+      background: rgba(22, 33, 58, 0.85);
+      border-color: rgba(255, 255, 255, 0.16);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 24px -6px rgba(0, 0, 0, 0.45);
     }
-    /* Top Accent Hairline Glow */
-    .metric-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 2.5px;
-      background: var(--card-accent, #38bdf8);
-      box-shadow: 0 0 16px var(--card-accent, #38bdf8);
-    }
-    /* Ambient Glow Spot inside Card */
-    .metric-card::after {
-      content: '';
-      position: absolute;
-      top: -35px;
-      right: -35px;
-      width: 130px;
-      height: 130px;
-      border-radius: 50%;
-      background: var(--card-glow, rgba(56, 189, 248, 0.14));
-      filter: blur(35px);
-      pointer-events: none;
-    }
-
-    .metric-card .metric-header {
+    .stat-card .stat-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 12px;
-      position: relative;
-      z-index: 2;
+      margin-bottom: 8px;
     }
-    .metric-card .metric-title {
-      font-size: 0.74rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
+    .stat-card .stat-label {
+      font-size: 0.82rem;
+      font-weight: 600;
       color: #94a3b8;
-      margin: 0;
+      letter-spacing: 0.01em;
     }
-    .metric-card .metric-icon-box {
-      width: 44px;
-      height: 44px;
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 19px;
-      background: var(--icon-bg, rgba(56, 189, 248, 0.12));
-      color: var(--icon-color, #38bdf8);
-      border: 1px solid var(--icon-border, rgba(56, 189, 248, 0.25));
-      box-shadow: 0 4px 15px var(--icon-shadow, rgba(56, 189, 248, 0.15));
-      transition: transform 0.25s ease;
+    .stat-card .stat-icon {
+      font-size: 15px;
+      opacity: 0.85;
     }
-    .metric-card:hover .metric-icon-box {
-      transform: scale(1.08);
-    }
-
-    .metric-card .metric-body {
-      position: relative;
-      z-index: 2;
-    }
-    .metric-card .metric-value {
-      font-size: 2.25rem;
+    .stat-card .stat-value {
+      font-size: 2.2rem;
       font-weight: 800;
       color: #ffffff;
-      letter-spacing: -0.035em;
       line-height: 1.1;
       margin-bottom: 6px;
-      font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+      letter-spacing: -0.025em;
     }
-
-    .metric-card .metric-meta {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 0.74rem;
+    .stat-card .stat-subtext {
+      font-size: 0.78rem;
       color: #94a3b8;
-      font-weight: 600;
-    }
-    .metric-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      padding: 3px 8px;
-      border-radius: 9999px;
-      font-size: 0.7rem;
-      font-weight: 700;
-    }
-    .metric-badge.live {
-      background: rgba(34, 197, 94, 0.15);
-      color: #4ade80;
-      border: 1px solid rgba(34, 197, 94, 0.3);
-    }
-    .metric-badge.gold {
-      background: rgba(245, 158, 11, 0.15);
-      color: #fbbf24;
-      border: 1px solid rgba(245, 158, 11, 0.3);
-    }
-    .metric-badge.cyan {
-      background: rgba(56, 189, 248, 0.15);
-      color: #38bdf8;
-      border: 1px solid rgba(56, 189, 248, 0.3);
-    }
-    .metric-badge.rose {
-      background: rgba(244, 63, 94, 0.15);
-      color: #fb7185;
-      border: 1px solid rgba(244, 63, 94, 0.3);
-    }
-
-    .metric-card .metric-footer {
-      margin-top: 14px;
-      padding-top: 10px;
-      border-top: 1px solid rgba(255, 255, 255, 0.05);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      position: relative;
-      z-index: 2;
-    }
-    .metric-card .metric-link {
-      font-size: 0.8rem;
-      font-weight: 600;
-      color: #94a3b8;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      transition: all 0.2s ease;
-    }
-    .metric-card .metric-link:hover {
-      color: #ffffff;
-      transform: translateX(4px);
-    }
-    .metric-card .metric-link i {
-      font-size: 0.75rem;
-      transition: transform 0.2s ease;
-    }
-    .metric-card .metric-link:hover i {
-      transform: translateX(3px);
-    }
-
-    /* Specific Card Themes */
-    .metric-card.theme-blue {
-      --card-accent: #38bdf8;
-      --card-glow: rgba(56, 189, 248, 0.16);
-      --icon-bg: rgba(56, 189, 248, 0.12);
-      --icon-color: #38bdf8;
-      --icon-border: rgba(56, 189, 248, 0.25);
-      --icon-shadow: rgba(56, 189, 248, 0.15);
-    }
-    .metric-card.theme-amber {
-      --card-accent: #f59e0b;
-      --card-glow: rgba(245, 158, 11, 0.16);
-      --icon-bg: rgba(245, 158, 11, 0.12);
-      --icon-color: #fbbf24;
-      --icon-border: rgba(245, 158, 11, 0.25);
-      --icon-shadow: rgba(245, 158, 11, 0.15);
-    }
-    .metric-card.theme-emerald {
-      --card-accent: #10b981;
-      --card-glow: rgba(16, 185, 129, 0.16);
-      --icon-bg: rgba(16, 185, 129, 0.12);
-      --icon-color: #34d399;
-      --icon-border: rgba(16, 185, 129, 0.25);
-      --icon-shadow: rgba(16, 185, 129, 0.15);
-    }
-    .metric-card.theme-rose {
-      --card-accent: #f43f5e;
-      --card-glow: rgba(244, 63, 94, 0.16);
-      --icon-bg: rgba(244, 63, 94, 0.12);
-      --icon-color: #fb7185;
-      --icon-border: rgba(244, 63, 94, 0.25);
-      --icon-shadow: rgba(244, 63, 94, 0.15);
-    }
-    .metric-card.theme-cyan {
-      --card-accent: #06b6d4;
-      --card-glow: rgba(6, 182, 212, 0.16);
-      --icon-bg: rgba(6, 182, 212, 0.12);
-      --icon-color: #22d3ee;
-      --icon-border: rgba(6, 182, 212, 0.25);
-      --icon-shadow: rgba(6, 182, 212, 0.15);
-    }
-    .metric-card.theme-purple {
-      --card-accent: #8b5cf6;
-      --card-glow: rgba(139, 92, 246, 0.16);
-      --icon-bg: rgba(139, 92, 246, 0.12);
-      --icon-color: #a78bfa;
-      --icon-border: rgba(139, 92, 246, 0.25);
-      --icon-shadow: rgba(139, 92, 246, 0.15);
-    }
-    .metric-card.theme-yellow {
-      --card-accent: #eab308;
-      --card-glow: rgba(234, 179, 8, 0.16);
-      --icon-bg: rgba(234, 179, 8, 0.12);
-      --icon-color: #facc15;
-      --icon-border: rgba(234, 179, 8, 0.25);
-      --icon-shadow: rgba(234, 179, 8, 0.15);
-    }
-    .metric-card.theme-teal {
-      --card-accent: #14b8a6;
-      --card-glow: rgba(20, 184, 166, 0.16);
-      --icon-bg: rgba(20, 184, 166, 0.12);
-      --icon-color: #2dd4bf;
-      --icon-border: rgba(20, 184, 166, 0.25);
-      --icon-shadow: rgba(20, 184, 166, 0.15);
-    }
-
-    /* =========================================================================
-       QUICK ACTION TILES
-       ========================================================================= */
-    .quick-action-tile {
-      background: linear-gradient(145deg, rgba(20, 28, 48, 0.72) 0%, rgba(13, 19, 32, 0.82) 100%);
-      border: 1px solid var(--dora-border);
-      border-radius: 18px;
-      padding: 20px 20px;
-      text-align: left;
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-      cursor: pointer;
-      position: relative;
-      overflow: hidden;
-      width: 100%;
-      outline: none;
-    }
-    .quick-action-tile:hover {
-      transform: translateY(-3px);
-      border-color: rgba(255, 255, 255, 0.2);
-      box-shadow: 0 14px 30px -10px rgba(0, 0, 0, 0.6);
-      background: linear-gradient(145deg, rgba(28, 38, 64, 0.85) 0%, rgba(17, 25, 42, 0.95) 100%);
-    }
-    .quick-action-tile .action-icon {
-      width: 48px;
-      height: 48px;
-      border-radius: 14px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 21px;
-      flex-shrink: 0;
-      transition: transform 0.25s ease;
-    }
-    .quick-action-tile:hover .action-icon {
-      transform: scale(1.1);
-    }
-    .quick-action-tile .action-title {
-      font-size: 0.94rem;
-      font-weight: 700;
-      color: #ffffff;
-      margin-bottom: 3px;
-    }
-    .quick-action-tile .action-desc {
-      font-size: 0.76rem;
-      color: #94a3b8;
-      margin: 0;
     }
 
     /* Tables Enhancement */
@@ -770,14 +538,6 @@ export function renderAdminPage(): string {
 
       <!-- Right navbar links -->
       <ul class="navbar-nav ms-auto align-items-center gap-2">
-        <!-- Live System Radar Chip -->
-        <li class="nav-item d-none d-sm-inline-flex">
-          <div class="live-radar-chip">
-            <span class="live-radar-dot"></span>
-            <span>Cloud 120Hz Realtime</span>
-          </div>
-        </li>
-
         <!-- Quick Refresh -->
         <li class="nav-item">
           <a class="navbar-action-btn" href="javascript:void(0)" id="btn-refresh-data" title="Làm mới toàn bộ dữ liệu">
@@ -857,8 +617,8 @@ export function renderAdminPage(): string {
           <div class="image">
             <div class="avatar-fallback-sm">AD</div>
           </div>
-          <div class="info ms-2">
-            <div class="fw-bold text-white" style="font-size: 0.88rem;">SuperAdministrator</div>
+          <div class="info ms-2 overflow-hidden">
+            <div class="fw-bold text-white text-truncate" style="font-size: 0.88rem; max-width: 145px;">SuperAdministrator</div>
             <div class="d-flex align-items-center gap-1 mt-1">
               <span style="width: 7px; height: 7px; border-radius: 50%; background: #22c55e; display: inline-block; box-shadow: 0 0 8px #22c55e;"></span>
               <span class="text-success small fw-semibold" style="font-size: 10.5px;">Trực Tuyến Root</span>
@@ -964,25 +724,17 @@ export function renderAdminPage(): string {
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper p-3 p-md-4">
       <!-- Content Header (Page header) -->
-      <div class="content-header pb-3 mb-2">
+      <div class="content-header pb-2 mb-2">
         <div class="container-fluid">
-          <div class="row align-items-center">
-            <div class="col-sm-7">
-              <div class="d-flex align-items-center gap-2">
-                <h3 class="m-0 fw-bold text-white" id="topbar-title" style="letter-spacing: -0.02em;">Tổng Quan Hệ Thống</h3>
-                <span class="badge bg-primary-subtle text-info border border-info-subtle px-2 py-1">Live Engine</span>
-              </div>
-              <p class="text-muted small mb-0 mt-1" id="topbar-subtitle">Chỉ số vận hành thời gian thực & trung tâm điều phối cộng đồng Dorabox</p>
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h4 class="m-0 fw-bold text-white" id="topbar-title" style="letter-spacing: -0.02em;">Tổng Quan Hệ Thống</h4>
+              <p class="text-muted small mb-0" id="topbar-subtitle">Chỉ số vận hành mạng xã hội Dorabox</p>
             </div>
-            <div class="col-sm-5 text-sm-end mt-3 mt-sm-0">
-              <div class="d-inline-flex align-items-center gap-2">
-                <span class="badge bg-dark border border-secondary text-light px-3 py-2 fw-semibold">
-                  <i class="fas fa-bolt text-warning me-1"></i> Tối Ưu Tần Số Quét 120Hz
-                </span>
-                <button class="btn btn-sm btn-outline-info" onclick="loadDashboardData()" title="Đồng bộ lại">
-                  <i class="fas fa-rotate"></i>
-                </button>
-              </div>
+            <div>
+              <button class="btn btn-sm btn-outline-secondary text-light px-3 py-1 rounded-pill" onclick="loadDashboardData()" title="Làm mới dữ liệu">
+                <i class="fas fa-rotate me-1 text-info"></i> Làm mới
+              </button>
             </div>
           </div>
         </div>
@@ -993,324 +745,118 @@ export function renderAdminPage(): string {
         <div class="container-fluid">
 
           <!-- =========================================================================
-               TAB 1: TỔNG QUAN (DASHBOARD) - LUXURY EXECUTIVE GLASSMORPHISM
+               TAB 1: TỔNG QUAN (DASHBOARD) - CLEAN, MINIMAL & SPACIOUS
                ========================================================================= -->
           <div id="tab-tong-quan" class="tab-section active">
             
-            <!-- ROW 1: 4 PRIMARY EXECUTIVE KPI CARDS -->
-            <div class="row g-3">
+            <!-- 4 CLEAN KPI STAT CARDS (SINGLE ROW) -->
+            <div class="row g-3 mb-3">
               <!-- KPI 1: Tổng Thành Viên -->
               <div class="col-xl-3 col-md-6 col-12">
-                <div class="metric-card theme-blue">
-                  <div class="metric-header">
-                    <span class="metric-title">Tổng Thành Viên</span>
-                    <div class="metric-icon-box">
-                      <i class="fas fa-users"></i>
-                    </div>
+                <div class="stat-card" onclick="switchTab('thanh-vien')">
+                  <div class="stat-header">
+                    <span class="stat-label">Tổng Thành Viên</span>
+                    <i class="fas fa-users stat-icon text-info"></i>
                   </div>
-                  <div class="metric-body">
-                    <div class="metric-value" id="kpi-users">0</div>
-                    <div class="metric-meta">
-                      <span class="metric-badge live">
-                        <i class="fas fa-circle" style="font-size: 6px;"></i> Trực tuyến
-                      </span>
-                      <span>Tài khoản mạng xã hội</span>
-                    </div>
-                  </div>
-                  <div class="metric-footer">
-                    <a href="javascript:void(0)" onclick="switchTab('thanh-vien')" class="metric-link">
-                      <span>Quản lý thành viên</span>
-                      <i class="fas fa-arrow-right"></i>
-                    </a>
+                  <div class="stat-value" id="kpi-users">0</div>
+                  <div class="stat-subtext">
+                    <span class="text-info fw-semibold" id="kpi-verified">0</span> đã xác minh
                   </div>
                 </div>
               </div>
 
-              <!-- KPI 2: Tài Khoản Tích Vàng / OA -->
+              <!-- KPI 2: Bài Viết Bảng Tin -->
               <div class="col-xl-3 col-md-6 col-12">
-                <div class="metric-card theme-amber">
-                  <div class="metric-header">
-                    <span class="metric-title">Tài Khoản Tích Vàng / OA</span>
-                    <div class="metric-icon-box">
-                      <i class="fas fa-certificate"></i>
-                    </div>
+                <div class="stat-card" onclick="switchTab('bai-viet')">
+                  <div class="stat-header">
+                    <span class="stat-label">Bài Viết Bảng Tin</span>
+                    <i class="fas fa-newspaper stat-icon text-success"></i>
                   </div>
-                  <div class="metric-body">
-                    <div class="metric-value" id="kpi-vip">0</div>
-                    <div class="metric-meta">
-                      <span class="metric-badge gold">
-                        <i class="fas fa-star" style="font-size: 7px;"></i> Chính thức
-                      </span>
-                      <span>Doanh nghiệp & VIP</span>
-                    </div>
-                  </div>
-                  <div class="metric-footer">
-                    <a href="javascript:void(0)" onclick="switchTab('duyet-oa')" class="metric-link">
-                      <span>Hàng đợi xét duyệt OA</span>
-                      <i class="fas fa-arrow-right"></i>
-                    </a>
+                  <div class="stat-value" id="kpi-posts">0</div>
+                  <div class="stat-subtext">
+                    <span class="text-success fw-semibold" id="kpi-comments">0</span> bình luận
                   </div>
                 </div>
               </div>
 
-              <!-- KPI 3: Bài Viết Bảng Tin -->
+              <!-- KPI 3: Tài Khoản Tích Vàng / OA -->
               <div class="col-xl-3 col-md-6 col-12">
-                <div class="metric-card theme-emerald">
-                  <div class="metric-header">
-                    <span class="metric-title">Bài Viết Bảng Tin</span>
-                    <div class="metric-icon-box">
-                      <i class="fas fa-newspaper"></i>
-                    </div>
+                <div class="stat-card" onclick="switchTab('duyet-oa')">
+                  <div class="stat-header">
+                    <span class="stat-label">Tài Khoản Tích Vàng / OA</span>
+                    <i class="fas fa-certificate stat-icon text-warning"></i>
                   </div>
-                  <div class="metric-body">
-                    <div class="metric-value" id="kpi-posts">0</div>
-                    <div class="metric-meta">
-                      <span class="metric-badge live">
-                        <i class="fas fa-chart-line" style="font-size: 8px;"></i> Tương tác cao
-                      </span>
-                      <span>Nội dung đã xuất bản</span>
-                    </div>
-                  </div>
-                  <div class="metric-footer">
-                    <a href="javascript:void(0)" onclick="switchTab('bai-viet')" class="metric-link">
-                      <span>Kiểm duyệt bài viết</span>
-                      <i class="fas fa-arrow-right"></i>
-                    </a>
+                  <div class="stat-value" id="kpi-vip">0</div>
+                  <div class="stat-subtext">
+                    <span class="text-warning fw-semibold" id="kpi-oa-pending">0</span> yêu cầu chờ duyệt
                   </div>
                 </div>
               </div>
 
-              <!-- KPI 4: Báo Cáo & Khóa Vi Phạm -->
+              <!-- KPI 4: Báo Cáo Vi Phạm -->
               <div class="col-xl-3 col-md-6 col-12">
-                <div class="metric-card theme-rose">
-                  <div class="metric-header">
-                    <span class="metric-title">Báo Cáo & Khóa Vi Phạm</span>
-                    <div class="metric-icon-box">
-                      <i class="fas fa-shield-virus"></i>
-                    </div>
+                <div class="stat-card" onclick="switchTab('bao-cao')">
+                  <div class="stat-header">
+                    <span class="stat-label">Báo Cáo Vi Phạm</span>
+                    <i class="fas fa-shield-halved stat-icon text-danger"></i>
                   </div>
-                  <div class="metric-body">
-                    <div class="metric-value" id="kpi-banned">0</div>
-                    <div class="metric-meta">
-                      <span class="metric-badge rose">
-                        <i class="fas fa-lock" style="font-size: 7px;"></i> Kiểm soát
-                      </span>
-                      <span>Xử phạt & vi phạm</span>
-                    </div>
-                  </div>
-                  <div class="metric-footer">
-                    <a href="javascript:void(0)" onclick="switchTab('bao-cao')" class="metric-link">
-                      <span>Xử lý báo cáo vi phạm</span>
-                      <i class="fas fa-arrow-right"></i>
-                    </a>
+                  <div class="stat-value text-danger" id="kpi-banned">0</div>
+                  <div class="stat-subtext">
+                    <span class="text-danger fw-semibold" id="reports-pending-count">0</span> chờ xử lý
                   </div>
                 </div>
               </div>
             </div>
 
-            <!-- ROW 2: 4 SECONDARY METRIC CARDS -->
-            <div class="row g-3 mt-1">
-              <!-- Sub 1: Đã Xác Minh -->
-              <div class="col-xl-3 col-md-6 col-12">
-                <div class="metric-card theme-cyan" style="min-height: 150px;">
-                  <div class="metric-header">
-                    <span class="metric-title">Đã Xác Minh (Tích Xanh)</span>
-                    <div class="metric-icon-box" style="width: 38px; height: 38px; font-size: 16px;">
-                      <i class="fas fa-check-double"></i>
-                    </div>
-                  </div>
-                  <div class="metric-body">
-                    <div class="metric-value" id="kpi-verified" style="font-size: 1.9rem;">0</div>
-                    <div class="metric-meta">
-                      <span class="metric-badge cyan">Độ tin cậy cao</span>
-                    </div>
-                  </div>
-                  <div class="metric-footer" style="margin-top: 10px; padding-top: 8px;">
-                    <a href="javascript:void(0)" onclick="switchTab('thanh-vien')" class="metric-link">
-                      <span>Lọc thành viên tích xanh</span>
-                      <i class="fas fa-arrow-right"></i>
-                    </a>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Sub 2: Tổng Bình Luận -->
-              <div class="col-xl-3 col-md-6 col-12">
-                <div class="metric-card theme-purple" style="min-height: 150px;">
-                  <div class="metric-header">
-                    <span class="metric-title">Tổng Bình Luận Thảo Luận</span>
-                    <div class="metric-icon-box" style="width: 38px; height: 38px; font-size: 16px;">
-                      <i class="fas fa-comments"></i>
-                    </div>
-                  </div>
-                  <div class="metric-body">
-                    <div class="metric-value" id="kpi-comments" style="font-size: 1.9rem;">0</div>
-                    <div class="metric-meta">
-                      <span class="text-muted small">Cộng đồng thảo luận sôi nổi</span>
-                    </div>
-                  </div>
-                  <div class="metric-footer" style="margin-top: 10px; padding-top: 8px;">
-                    <a href="javascript:void(0)" onclick="switchTab('binh-luan')" class="metric-link">
-                      <span>Quản lý thảo luận</span>
-                      <i class="fas fa-arrow-right"></i>
-                    </a>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Sub 3: OA Chờ Phê Duyệt -->
-              <div class="col-xl-3 col-md-6 col-12">
-                <div class="metric-card theme-yellow" style="min-height: 150px;">
-                  <div class="metric-header">
-                    <span class="metric-title">Hàng Đợi Chờ Duyệt OA</span>
-                    <div class="metric-icon-box" style="width: 38px; height: 38px; font-size: 16px;">
-                      <i class="fas fa-hourglass-half"></i>
-                    </div>
-                  </div>
-                  <div class="metric-body">
-                    <div class="metric-value" id="kpi-oa-pending" style="font-size: 1.9rem;">0</div>
-                    <div class="metric-meta">
-                      <span class="metric-badge gold">Cần thẩm định</span>
-                    </div>
-                  </div>
-                  <div class="metric-footer" style="margin-top: 10px; padding-top: 8px;">
-                    <a href="javascript:void(0)" onclick="switchTab('duyet-oa')" class="metric-link">
-                      <span>Duyệt hồ sơ ngay</span>
-                      <i class="fas fa-arrow-right"></i>
-                    </a>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Sub 4: Sức Khỏe Hệ Thống -->
-              <div class="col-xl-3 col-md-6 col-12">
-                <div class="metric-card theme-teal" style="min-height: 150px;">
-                  <div class="metric-header">
-                    <span class="metric-title">Sức Khỏe Hạ Tầng Cloud</span>
-                    <div class="metric-icon-box" style="width: 38px; height: 38px; font-size: 16px;">
-                      <i class="fas fa-heart-pulse"></i>
-                    </div>
-                  </div>
-                  <div class="metric-body">
-                    <div class="metric-value text-teal" style="font-size: 1.6rem; color: #2dd4bf;">100% Khỏe Mạnh</div>
-                    <div class="metric-meta">
-                      <span class="metric-badge live">Supabase & Cloudflare R2</span>
-                    </div>
-                  </div>
-                  <div class="metric-footer" style="margin-top: 10px; padding-top: 8px;">
-                    <a href="javascript:void(0)" onclick="switchTab('he-thong')" class="metric-link">
-                      <span>Kiểm tra hạ tầng</span>
-                      <i class="fas fa-arrow-right"></i>
-                    </a>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- CHARTS & DISTRIBUTION SECTION -->
-            <div class="row g-3 mt-1">
+            <!-- CHARTS SECTION - IMMEDIATELY VISIBLE & SPACIOUS -->
+            <div class="row g-3">
               <div class="col-lg-8">
                 <div class="card h-100">
-                  <div class="card-header d-flex justify-content-between align-items-center">
-                    <div class="d-flex align-items-center gap-2">
-                      <div class="avatar-fallback-sm" style="width: 32px; height: 32px; font-size: 12px; background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3);">
-                        <i class="fas fa-chart-line"></i>
-                      </div>
-                      <h5 class="card-title fw-bold m-0 text-white fs-6">Xu Hướng Hoạt Động & Tăng Trưởng</h5>
-                    </div>
-                    <div class="card-tools d-flex align-items-center gap-2">
-                      <span class="live-radar-chip" style="font-size: 0.72rem; padding: 4px 10px;">
-                        <span class="live-radar-dot" style="width: 6px; height: 6px;"></span>
-                        <span>Dữ liệu thực</span>
-                      </span>
-                    </div>
+                  <div class="card-header border-0 d-flex justify-content-between align-items-center">
+                    <h6 class="fw-bold m-0 text-white">
+                      <i class="fas fa-chart-line text-info me-2"></i> Xu Hướng Hoạt Động & Tăng Trưởng
+                    </h6>
+                    <span class="text-muted small">Thời gian thực</span>
                   </div>
-                  <div class="card-body">
-                    <canvas id="growthChart" style="min-height: 270px; height: 270px; max-height: 270px; max-width: 100%;"></canvas>
+                  <div class="card-body pt-0">
+                    <canvas id="growthChart" style="min-height: 280px; height: 280px; max-height: 280px; max-width: 100%;"></canvas>
                   </div>
                 </div>
               </div>
 
               <div class="col-lg-4">
                 <div class="card h-100">
-                  <div class="card-header d-flex justify-content-between align-items-center">
-                    <div class="d-flex align-items-center gap-2">
-                      <div class="avatar-fallback-sm" style="width: 32px; height: 32px; font-size: 12px; background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3);">
-                        <i class="fas fa-chart-pie"></i>
-                      </div>
-                      <h5 class="card-title fw-bold m-0 text-white fs-6">Phân Bổ Dữ Liệu</h5>
-                    </div>
-                    <span class="text-muted small">Cộng đồng</span>
+                  <div class="card-header border-0 d-flex justify-content-between align-items-center">
+                    <h6 class="fw-bold m-0 text-white">
+                      <i class="fas fa-chart-pie text-warning me-2"></i> Phân Bổ Dữ Liệu
+                    </h6>
                   </div>
-                  <div class="card-body d-flex flex-column align-items-center justify-content-center">
-                    <canvas id="distributionChart" style="min-height: 270px; height: 270px; max-height: 270px; max-width: 100%;"></canvas>
+                  <div class="card-body pt-0 d-flex align-items-center justify-content-center">
+                    <canvas id="distributionChart" style="min-height: 280px; height: 280px; max-height: 280px; max-width: 100%;"></canvas>
                   </div>
                 </div>
               </div>
             </div>
 
-            <!-- QUICK ACTION CENTER - 4 LUXURY INTERACTIVE TILES -->
+            <!-- QUICK ACTION TOOLBAR - COMPACT & CLEAN -->
             <div class="card mt-3">
-              <div class="card-header d-flex align-items-center justify-content-between">
-                <div class="d-flex align-items-center gap-2">
-                  <div class="avatar-fallback-sm" style="width: 32px; height: 32px; font-size: 12px; background: rgba(234, 179, 8, 0.15); color: #facc15; border: 1px solid rgba(234, 179, 8, 0.3);">
-                    <i class="fas fa-bolt"></i>
+              <div class="card-body p-3">
+                <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+                  <div class="text-muted small fw-semibold text-uppercase" style="letter-spacing: 0.05em;">
+                    <i class="fas fa-bolt text-warning me-1"></i> Thao tác nhanh:
                   </div>
-                  <h5 class="card-title fw-bold m-0 text-white fs-6">Trung Tâm Thao Tác Nhanh Quản Trị Viên</h5>
-                </div>
-                <span class="badge bg-secondary-subtle text-muted">Điều khiển một chạm</span>
-              </div>
-              <div class="card-body">
-                <div class="row g-3">
-                  <!-- Action 1 -->
-                  <div class="col-xl-3 col-md-6 col-12">
-                    <button class="quick-action-tile" onclick="switchTab('phat-thong-bao')">
-                      <div class="action-icon" style="background: rgba(168, 85, 247, 0.15); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.3); box-shadow: 0 4px 15px rgba(168, 85, 247, 0.2);">
-                        <i class="fas fa-bullhorn"></i>
-                      </div>
-                      <div>
-                        <div class="action-title">Phát Sóng Push FCM</div>
-                        <p class="action-desc">Gửi thông báo đẩy toàn mạng xã hội</p>
-                      </div>
+                  <div class="d-flex flex-wrap gap-2">
+                    <button class="btn btn-sm btn-dark border-secondary text-light px-3 py-2" onclick="switchTab('phat-thong-bao')">
+                      <i class="fas fa-bullhorn text-purple me-1" style="color: #c084fc;"></i> Phát Push FCM
                     </button>
-                  </div>
-
-                  <!-- Action 2 -->
-                  <div class="col-xl-3 col-md-6 col-12">
-                    <button class="quick-action-tile" onclick="cleanSpamReactions()">
-                      <div class="action-icon" style="background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); box-shadow: 0 4px 15px rgba(245, 158, 11, 0.2);">
-                        <i class="fas fa-broom"></i>
-                      </div>
-                      <div>
-                        <div class="action-title">Dọn Dẹp Spam 120Hz</div>
-                        <p class="action-desc">Tối ưu hóa dữ liệu & thanh lọc feed</p>
-                      </div>
+                    <button class="btn btn-sm btn-dark border-secondary text-light px-3 py-2" onclick="cleanSpamReactions()">
+                      <i class="fas fa-broom text-warning me-1"></i> Dọn Rác Spam
                     </button>
-                  </div>
-
-                  <!-- Action 3 -->
-                  <div class="col-xl-3 col-md-6 col-12">
-                    <button class="quick-action-tile" onclick="switchTab('duyet-oa')">
-                      <div class="action-icon" style="background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);">
-                        <i class="fas fa-building-circle-check"></i>
-                      </div>
-                      <div>
-                        <div class="action-title">Xét Duyệt Hồ Sơ OA</div>
-                        <p class="action-desc">Phê duyệt tích vàng & thương hiệu</p>
-                      </div>
+                    <button class="btn btn-sm btn-dark border-secondary text-light px-3 py-2" onclick="switchTab('duyet-oa')">
+                      <i class="fas fa-certificate text-warning me-1"></i> Xét Duyệt OA
                     </button>
-                  </div>
-
-                  <!-- Action 4 -->
-                  <div class="col-xl-3 col-md-6 col-12">
-                    <button class="quick-action-tile" onclick="switchTab('he-thong')">
-                      <div class="action-icon" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); box-shadow: 0 4px 15px rgba(56, 189, 248, 0.2);">
-                        <i class="fas fa-shield-heart"></i>
-                      </div>
-                      <div>
-                        <div class="action-title">Kiểm Tra Hạ Tầng Cloud</div>
-                        <p class="action-desc">Cloudflare R2, Supabase & Uptime</p>
-                      </div>
+                    <button class="btn btn-sm btn-dark border-secondary text-light px-3 py-2" onclick="switchTab('he-thong')">
+                      <i class="fas fa-server text-teal me-1" style="color: #2dd4bf;"></i> Kiểm Tra Máy Chủ
                     </button>
                   </div>
                 </div>
