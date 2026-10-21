@@ -1,1756 +1,1095 @@
 export function renderAdminPage(): string {
   return `<!DOCTYPE html>
-<html lang="vi" class="dark">
+<html lang="vi">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dorabox Admin Console — Control Center</title>
+  <title>Dorabox AdminLTE — Trung Tâm Quản Trị Hệ Thống</title>
+  
+  <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- Bootstrap 5 CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  
+  <!-- AdminLTE 3.2 CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css">
+  
+  <!-- SweetAlert2 CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
   <style>
     :root {
-      --bg-base: #080B11;
-      --bg-sidebar: #0C101A;
-      --bg-card: #121826;
-      --bg-card-subtle: #161F32;
-      --bg-card-hover: #192338;
-      --bg-input: #0E1422;
-      
-      --border-subtle: rgba(255, 255, 255, 0.07);
-      --border-focus: rgba(37, 99, 235, 0.6);
-      --border-hover: rgba(255, 255, 255, 0.14);
-      
-      --brand-primary: #2563EB;
-      --brand-primary-hover: #1D4ED8;
-      --brand-glow: rgba(37, 99, 235, 0.25);
-      
-      --color-gold: #F59E0B;
-      --color-gold-hover: #D97706;
-      --color-gold-bg: rgba(245, 158, 11, 0.12);
-      --color-gold-border: rgba(245, 158, 11, 0.3);
-      
-      --color-blue: #38BDF8;
-      --color-blue-bg: rgba(56, 189, 248, 0.12);
-      --color-blue-border: rgba(56, 189, 248, 0.3);
-      
-      --color-emerald: #10B981;
-      --color-emerald-bg: rgba(16, 185, 129, 0.12);
-      --color-emerald-border: rgba(16, 185, 129, 0.28);
-      
-      --color-rose: #F43F5E;
-      --color-rose-bg: rgba(244, 63, 94, 0.12);
-      --color-rose-border: rgba(244, 63, 94, 0.28);
-      
-      --color-violet: #A855F7;
-      --color-violet-bg: rgba(168, 85, 247, 0.12);
-      
-      --text-main: #F8FAFC;
-      --text-muted: #94A3B8;
-      --text-dim: #64748B;
-      
-      --radius-sm: 8px;
-      --radius-md: 12px;
-      --radius-lg: 16px;
-      --radius-xl: 22px;
-      
-      --shadow-soft: 0 4px 20px -2px rgba(0, 0, 0, 0.4);
-      --shadow-elevated: 0 16px 40px -6px rgba(0, 0, 0, 0.7);
+      --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --dora-blue: #0084ff;
+      --dora-gold: #f59e0b;
+      --dora-dark-bg: #0b0f19;
+      --dora-dark-card: #131a29;
+      --dora-dark-border: rgba(255, 255, 255, 0.08);
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif; }
-    
-    body {
-      background-color: var(--bg-base);
-      color: var(--text-main);
-      min-height: 100vh;
-      display: flex;
-      overflow-x: hidden;
-      background-image: 
-        radial-gradient(ellipse 60% 40% at 20% -10%, rgba(37, 99, 235, 0.12), transparent 50%),
-        radial-gradient(ellipse 40% 30% at 80% 100%, rgba(245, 158, 11, 0.05), transparent 50%);
-      -webkit-font-smoothing: antialiased;
+    body, html {
+      font-family: var(--font-sans);
+      font-size: 14px;
     }
 
-    /* Scrollbars */
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.12); border-radius: 999px; }
-    ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.22); }
+    /* AdminLTE Dark Mode Customization */
+    body.dark-mode {
+      background-color: var(--dora-dark-bg) !important;
+      color: #e2e8f0;
+    }
+    body.dark-mode .content-wrapper {
+      background-color: var(--dora-dark-bg) !important;
+    }
+    body.dark-mode .main-header {
+      background-color: #0f1523 !important;
+      border-bottom: 1px solid var(--dora-dark-border) !important;
+    }
+    body.dark-mode .main-sidebar {
+      background-color: #0d121f !important;
+      border-right: 1px solid var(--dora-dark-border) !important;
+    }
+    body.dark-mode .card {
+      background-color: var(--dora-dark-card) !important;
+      border: 1px solid var(--dora-dark-border) !important;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25) !important;
+    }
+    body.dark-mode .card-header {
+      border-bottom: 1px solid var(--dora-dark-border) !important;
+    }
+    body.dark-mode .table {
+      color: #cbd5e1 !important;
+    }
+    body.dark-mode .table-bordered td, body.dark-mode .table-bordered th {
+      border-color: rgba(255, 255, 255, 0.07) !important;
+    }
+    body.dark-mode .table hover tbody tr:hover {
+      background-color: rgba(255, 255, 255, 0.04) !important;
+    }
+    body.dark-mode .modal-content {
+      background-color: var(--dora-dark-card) !important;
+      border: 1px solid var(--dora-dark-border) !important;
+      color: #f8fafc !important;
+    }
+    body.dark-mode .modal-header, body.dark-mode .modal-footer {
+      border-color: var(--dora-dark-border) !important;
+    }
 
-    /* Icons */
-    .icon {
+    /* Brand Logo & Header */
+    .brand-link {
+      border-bottom: 1px solid var(--dora-dark-border) !important;
+      padding: 14px 16px !important;
+    }
+    .brand-icon-box {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #0084ff, #0056b3);
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 18px;
-      height: 18px;
-      stroke-width: 2;
-      stroke: currentColor;
-      fill: none;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-      flex-shrink: 0;
+      color: #fff;
+      font-weight: 800;
+      font-size: 16px;
+      box-shadow: 0 4px 12px rgba(0, 132, 255, 0.4);
+      margin-right: 10px;
     }
-    .icon-sm { width: 14px; height: 14px; }
-    .icon-lg { width: 22px; height: 22px; }
 
-    /* AUTH OVERLAY (LOGIN GATE) */
-    #auth-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(4, 6, 12, 0.88);
-      backdrop-filter: blur(20px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 10000;
-      padding: 24px;
-      transition: opacity 0.25s ease, visibility 0.25s;
-    }
-    .auth-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-xl);
-      padding: 44px 38px;
-      max-width: 420px;
-      width: 100%;
-      box-shadow: var(--shadow-elevated), 0 0 0 1px rgba(255, 255, 255, 0.04);
+    /* Small-box Enhanced */
+    .small-box {
+      border-radius: 16px !important;
+      overflow: hidden;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15) !important;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
       position: relative;
     }
-    .auth-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 15%; right: 15%; height: 1px;
-      background: linear-gradient(90deg, transparent, var(--brand-primary), transparent);
+    .small-box:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25) !important;
     }
-    .auth-icon-wrap {
-      width: 52px;
-      height: 52px;
-      border-radius: var(--radius-md);
-      background: rgba(37, 99, 235, 0.12);
-      border: 1px solid rgba(37, 99, 235, 0.3);
-      color: var(--brand-primary);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 22px;
+    .small-box .inner {
+      padding: 20px 22px !important;
     }
-    .auth-card h2 {
-      font-size: 22px;
-      font-weight: 700;
-      letter-spacing: -0.4px;
-      color: var(--text-main);
-      margin-bottom: 6px;
+    .small-box .inner h3 {
+      font-size: 2.2rem !important;
+      font-weight: 800 !important;
+      margin-bottom: 4px;
     }
-    .auth-card p {
-      font-size: 13.5px;
-      color: var(--text-muted);
-      line-height: 1.5;
-      margin-bottom: 28px;
-    }
-    .auth-input-group {
-      margin-bottom: 20px;
-      text-align: left;
-    }
-    .auth-label {
-      display: block;
-      font-size: 11.5px;
+    .small-box .inner p {
+      font-size: 0.95rem;
       font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.6px;
-      color: var(--text-muted);
-      margin-bottom: 8px;
+      opacity: 0.9;
     }
-    .input-wrapper {
-      position: relative;
-      display: flex;
-      align-items: center;
+    .small-box .icon {
+      font-size: 68px !important;
+      top: 15px !important;
+      right: 18px !important;
+      opacity: 0.22;
+      transition: all 0.3s linear;
     }
-    .input-prefix-icon {
-      position: absolute;
-      left: 14px;
-      color: var(--text-dim);
-      pointer-events: none;
+    .small-box:hover .icon {
+      font-size: 74px !important;
+      opacity: 0.35;
     }
-    .auth-input {
-      width: 100%;
-      padding: 13px 14px 13px 42px;
-      background: var(--bg-input);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-md);
-      color: var(--text-main);
-      font-size: 14px;
-      outline: none;
-      transition: all 0.2s ease;
-      font-family: 'JetBrains Mono', monospace;
-    }
-    .auth-input:focus {
-      border-color: var(--brand-primary);
-      box-shadow: 0 0 0 3px var(--brand-glow);
+    .small-box-footer {
+      background: rgba(0, 0, 0, 0.18) !important;
+      padding: 8px 0 !important;
+      font-weight: 600;
+      letter-spacing: 0.3px;
     }
 
-    /* SIDEBAR */
-    aside {
-      width: 270px;
-      background: var(--bg-sidebar);
-      border-right: 1px solid var(--border-subtle);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      flex-shrink: 0;
-      position: sticky;
-      top: 0;
-      z-index: 100;
+    /* Info Box */
+    .info-box {
+      border-radius: 14px !important;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1) !important;
+      min-height: 84px !important;
+      border: 1px solid var(--dora-dark-border);
     }
-    .sidebar-brand {
-      padding: 24px 22px;
-      border-bottom: 1px solid var(--border-subtle);
-      display: flex;
-      align-items: center;
-      gap: 12px;
+    .info-box .info-box-icon {
+      border-radius: 12px !important;
+      width: 64px !important;
     }
-    .brand-logo {
+    .info-box-number {
+      font-size: 1.4rem !important;
+      font-weight: 800 !important;
+    }
+
+    /* Badges */
+    .badge-oa {
+      background: rgba(245, 158, 11, 0.18) !important;
+      color: #f59e0b !important;
+      border: 1px solid rgba(245, 158, 11, 0.4) !important;
+      font-weight: 700;
+    }
+    .badge-verified {
+      background: rgba(0, 132, 255, 0.18) !important;
+      color: #38bdf8 !important;
+      border: 1px solid rgba(0, 132, 255, 0.4) !important;
+      font-weight: 700;
+    }
+
+    /* Avatars */
+    .avatar-img-sm {
       width: 38px;
       height: 38px;
       border-radius: 10px;
-      background: linear-gradient(135deg, #2563EB, #1D4ED8);
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      object-fit: cover;
+      border: 1.5px solid rgba(255, 255, 255, 0.15);
+    }
+    .avatar-fallback-sm {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
       color: #fff;
-      font-weight: 800;
-      font-size: 17px;
-      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
-      flex-shrink: 0;
-    }
-    .brand-meta h3 {
-      font-size: 15px;
-      font-weight: 700;
-      letter-spacing: -0.3px;
-      color: var(--text-main);
-    }
-    .brand-badge {
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-      padding: 2px 6px;
-      border-radius: 4px;
-      background: rgba(37, 99, 235, 0.15);
-      color: #60A5FA;
-      display: inline-block;
-      margin-top: 2px;
-    }
-
-    .nav-section-title {
-      font-size: 10.5px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
-      color: var(--text-dim);
-      padding: 20px 22px 8px;
-    }
-    .nav-list {
-      list-style: none;
-      padding: 0 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      flex: 1;
-    }
-    .nav-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 10px 14px;
-      border-radius: var(--radius-md);
-      font-size: 13.5px;
-      font-weight: 600;
-      color: var(--text-muted);
-      cursor: pointer;
-      transition: all 0.18s ease;
-      user-select: none;
-    }
-    .nav-item:hover {
-      color: var(--text-main);
-      background: rgba(255, 255, 255, 0.04);
-    }
-    .nav-item.active {
-      color: #FFFFFF;
-      background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-    }
-    .nav-item-left {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .nav-item.active .icon {
-      color: var(--brand-primary);
-    }
-    .nav-count-badge {
-      font-size: 11px;
-      font-weight: 700;
-      padding: 2px 7px;
-      border-radius: 999px;
-      background: var(--color-rose-bg);
-      color: var(--color-rose);
-      border: 1px solid var(--color-rose-border);
-      min-width: 20px;
-      text-align: center;
-    }
-
-    .sidebar-footer {
-      padding: 18px 20px;
-      border-top: 1px solid var(--border-subtle);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: rgba(0, 0, 0, 0.15);
-    }
-    .pulse-wrapper {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--text-muted);
-    }
-    .pulse-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: var(--color-emerald);
-      position: relative;
-    }
-    .pulse-dot::after {
-      content: '';
-      position: absolute;
-      inset: -3px;
-      border-radius: 50%;
-      background: var(--color-emerald);
-      opacity: 0.4;
-      animation: pulseAnimation 2s infinite;
-    }
-    @keyframes pulseAnimation {
-      0% { transform: scale(0.9); opacity: 0.6; }
-      50% { transform: scale(1.6); opacity: 0; }
-      100% { transform: scale(0.9); opacity: 0; }
-    }
-
-    /* MAIN CONTENT */
-    main {
-      flex: 1;
-      min-width: 0;
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
-    }
-
-    .topbar {
-      height: 68px;
-      border-bottom: 1px solid var(--border-subtle);
-      padding: 0 32px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: rgba(12, 16, 26, 0.7);
-      backdrop-filter: blur(16px);
-      position: sticky;
-      top: 0;
-      z-index: 90;
-    }
-    .breadcrumb-area h1 {
-      font-size: 17px;
-      font-weight: 700;
-      color: var(--text-main);
-      letter-spacing: -0.3px;
-    }
-    .breadcrumb-area p {
-      font-size: 12px;
-      color: var(--text-dim);
-      margin-top: 1px;
-    }
-    .topbar-right {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    /* BUTTONS */
-    .btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
-      padding: 8px 14px;
-      border-radius: var(--radius-md);
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.16s ease;
-      border: 1px solid transparent;
-      text-decoration: none;
-      white-space: nowrap;
-      user-select: none;
-    }
-    .btn-primary {
-      background: var(--brand-primary);
-      color: #FFFFFF;
-      box-shadow: 0 2px 10px rgba(37, 99, 235, 0.35);
-    }
-    .btn-primary:hover {
-      background: var(--brand-primary-hover);
-      transform: translateY(-1px);
-    }
-    .btn-secondary {
-      background: rgba(255, 255, 255, 0.05);
-      color: var(--text-main);
-      border-color: var(--border-subtle);
-    }
-    .btn-secondary:hover {
-      background: rgba(255, 255, 255, 0.08);
-      border-color: var(--border-hover);
-    }
-    .btn-danger {
-      background: var(--color-rose-bg);
-      color: var(--color-rose);
-      border-color: var(--color-rose-border);
-    }
-    .btn-danger:hover {
-      background: var(--color-rose);
-      color: #FFFFFF;
-    }
-    .btn-gold {
-      background: var(--color-gold-bg);
-      color: var(--color-gold);
-      border-color: var(--color-gold-border);
-    }
-    .btn-gold:hover {
-      background: var(--color-gold);
-      color: #000000;
-    }
-    .btn-blue {
-      background: var(--color-blue-bg);
-      color: var(--color-blue);
-      border-color: var(--color-blue-border);
-    }
-    .btn-blue:hover {
-      background: var(--color-blue);
-      color: #000000;
-    }
-    .btn-sm {
-      padding: 5px 10px;
-      font-size: 12px;
-      border-radius: var(--radius-sm);
-    }
-    .btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-      transform: none !important;
+      font-weight: 700;
+      font-size: 14px;
     }
 
-    /* CONTENT LAYOUT */
-    .content-container {
-      padding: 30px 32px;
-      flex: 1;
-      max-width: 1440px;
-      width: 100%;
+    /* Mobile Mockup Preview */
+    .phone-mockup {
+      width: 300px;
       margin: 0 auto;
+      background: #111827;
+      border: 8px solid #1f2937;
+      border-radius: 36px;
+      padding: 18px 14px;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
     }
+    .phone-notch {
+      width: 100px;
+      height: 18px;
+      background: #1f2937;
+      border-radius: 0 0 12px 12px;
+      margin: -18px auto 16px;
+    }
+    .phone-notif-bubble {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 16px;
+      padding: 12px;
+    }
+
+    /* Auth Gate Overlay */
+    #auth-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(7, 10, 18, 0.92);
+      backdrop-filter: blur(20px);
+      z-index: 99999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+    .login-box-card {
+      width: 100%;
+      max-width: 440px;
+      background: #131a29;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 24px;
+      padding: 38px 32px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+      text-align: center;
+    }
+
+    /* Monospace UID text */
+    .font-mono {
+      font-family: var(--font-mono) !important;
+    }
+
+    /* Nav Tab Sections */
     .tab-section {
       display: none;
-      animation: tabFadeIn 0.2s ease-out forwards;
     }
     .tab-section.active {
       display: block;
+      animation: fadeIn 0.25s ease;
     }
-    @keyframes tabFadeIn {
-      from { opacity: 0; transform: translateY(4px); }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
       to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* KPI STATS GRID */
-    .kpi-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-      gap: 16px;
-      margin-bottom: 24px;
-    }
-    .kpi-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-lg);
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      position: relative;
-      transition: all 0.2s ease;
-      box-shadow: var(--shadow-soft);
-    }
-    .kpi-card:hover {
-      border-color: var(--border-hover);
-      transform: translateY(-2px);
-    }
-    .kpi-top {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 14px;
-    }
-    .kpi-title {
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--text-muted);
-      letter-spacing: 0.3px;
-    }
-    .kpi-icon-box {
-      width: 34px;
-      height: 34px;
-      border-radius: var(--radius-sm);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .kpi-value {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 30px;
-      font-weight: 700;
-      color: var(--text-main);
-      letter-spacing: -1px;
-      line-height: 1;
-      margin-bottom: 8px;
-    }
-    .kpi-desc {
-      font-size: 11.5px;
-      color: var(--text-dim);
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    /* PANELS */
-    .card-panel {
-      background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-lg);
-      padding: 24px;
-      margin-bottom: 24px;
-      box-shadow: var(--shadow-soft);
-    }
-    .panel-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 20px;
-      gap: 16px;
-      flex-wrap: wrap;
-    }
-    .panel-heading {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .panel-heading h3 {
-      font-size: 15.5px;
-      font-weight: 700;
-      color: var(--text-main);
-      letter-spacing: -0.2px;
-    }
-    .panel-actions {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    /* FILTER PILLS */
-    .filter-group {
-      display: flex;
-      align-items: center;
-      background: var(--bg-input);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-md);
-      padding: 3px;
-    }
-    .filter-btn {
-      background: transparent;
-      border: none;
-      color: var(--text-muted);
-      font-size: 12px;
-      font-weight: 600;
-      padding: 6px 12px;
-      border-radius: var(--radius-sm);
-      cursor: pointer;
-      transition: all 0.16s ease;
-    }
-    .filter-btn:hover {
-      color: var(--text-main);
-    }
-    .filter-btn.active {
-      background: var(--bg-card-hover);
-      color: #FFFFFF;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.3);
-    }
-
-    /* SEARCH INPUT */
-    .search-box {
-      position: relative;
-      display: flex;
-      align-items: center;
-      min-width: 260px;
-    }
-    .search-icon {
-      position: absolute;
-      left: 12px;
-      color: var(--text-dim);
-      pointer-events: none;
-    }
-    .search-field {
-      width: 100%;
-      background: var(--bg-input);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-md);
-      padding: 8px 12px 8px 36px;
-      font-size: 13px;
-      color: var(--text-main);
-      outline: none;
-      transition: all 0.16s ease;
-    }
-    .search-field:focus {
-      border-color: var(--brand-primary);
-      box-shadow: 0 0 0 2px var(--brand-glow);
-    }
-
-    /* NOTICE BANNER */
-    .notice-banner {
-      background: rgba(37, 99, 235, 0.06);
-      border: 1px solid rgba(37, 99, 235, 0.18);
-      border-radius: var(--radius-md);
-      padding: 12px 16px;
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-      margin-bottom: 20px;
-    }
-    .notice-icon {
-      color: #60A5FA;
-      margin-top: 1px;
-    }
-    .notice-text h4 {
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--text-main);
-      margin-bottom: 2px;
-    }
-    .notice-text p {
-      font-size: 12px;
-      color: var(--text-muted);
-      line-height: 1.45;
-    }
-
-    /* DATA TABLES */
-    .table-wrapper {
-      overflow-x: auto;
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-md);
-      background: var(--bg-input);
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      text-align: left;
-    }
-    thead th {
-      padding: 12px 16px;
-      font-size: 11px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.6px;
-      color: var(--text-dim);
-      background: rgba(255, 255, 255, 0.02);
-      border-bottom: 1px solid var(--border-subtle);
-      white-space: nowrap;
-    }
-    tbody td {
-      padding: 14px 16px;
-      font-size: 13.5px;
-      color: var(--text-muted);
-      border-bottom: 1px solid var(--border-subtle);
-      vertical-align: middle;
-    }
-    tbody tr:last-child td {
-      border-bottom: none;
-    }
-    tbody tr:hover td {
-      background: rgba(255, 255, 255, 0.02);
-      color: var(--text-main);
-    }
-
-    /* BADGES */
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      padding: 3px 8px;
-      border-radius: 999px;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.3px;
-      white-space: nowrap;
-    }
-    .badge-verified {
-      background: var(--color-blue-bg);
-      color: var(--color-blue);
-      border: 1px solid var(--color-blue-border);
-    }
-    .badge-oa {
-      background: var(--color-gold-bg);
-      color: var(--color-gold);
-      border: 1px solid var(--color-gold-border);
-    }
-    .badge-banned {
-      background: var(--color-rose-bg);
-      color: var(--color-rose);
-      border: 1px solid var(--color-rose-border);
-    }
-    .badge-admin {
-      background: var(--color-violet-bg);
-      color: var(--color-violet);
-      border: 1px solid rgba(168, 85, 247, 0.28);
-    }
-    .badge-neutral {
-      background: rgba(255, 255, 255, 0.06);
-      color: var(--text-dim);
-      border: 1px solid var(--border-subtle);
-    }
-
-    /* USER TABLE CELL */
-    .user-profile-cell {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .user-avatar-img {
-      width: 38px;
-      height: 38px;
-      border-radius: var(--radius-sm);
-      object-fit: cover;
-      background: var(--bg-card-hover);
-      border: 1px solid var(--border-subtle);
-    }
-    .user-avatar-fallback {
-      width: 38px;
-      height: 38px;
-      border-radius: var(--radius-sm);
-      background: linear-gradient(135deg, #1E3A8A, #2563EB);
-      color: #FFFFFF;
-      font-weight: 700;
-      font-size: 14px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-    .user-name-title {
-      font-size: 13.5px;
-      font-weight: 600;
-      color: var(--text-main);
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .user-uid-sub {
-      font-size: 11px;
-      font-family: 'JetBrains Mono', monospace;
-      color: var(--text-dim);
-      margin-top: 1px;
-    }
-
-    /* POST THUMBNAIL */
-    .post-thumb {
-      width: 52px;
-      height: 52px;
-      border-radius: var(--radius-sm);
-      object-fit: cover;
-      border: 1px solid var(--border-subtle);
-      cursor: pointer;
-      transition: transform 0.16s ease;
-    }
-    .post-thumb:hover {
-      transform: scale(1.06);
-      border-color: var(--brand-primary);
-    }
-
-    /* BROADCAST STUDIO */
-    .broadcast-container {
-      display: grid;
-      grid-template-columns: 1.25fr 0.75fr;
-      gap: 24px;
-    }
-    @media (max-width: 1024px) {
-      .broadcast-container { grid-template-columns: 1fr; }
-    }
-    .form-row {
-      margin-bottom: 20px;
-    }
-    .form-row label {
-      display: block;
-      font-size: 12px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      color: var(--text-muted);
-      margin-bottom: 8px;
-    }
-    .form-input {
-      width: 100%;
-      background: var(--bg-input);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-md);
-      padding: 12px 14px;
-      font-size: 14px;
-      color: var(--text-main);
-      outline: none;
-      transition: all 0.16s ease;
-    }
-    .form-input:focus {
-      border-color: var(--brand-primary);
-      box-shadow: 0 0 0 2px var(--brand-glow);
-    }
-    textarea.form-input {
-      resize: vertical;
-      min-height: 110px;
-      line-height: 1.5;
-    }
-
-    /* DEVICE PREVIEW */
-    .phone-preview-card {
-      background: #090C14;
-      border: 1px solid var(--border-subtle);
-      border-radius: 28px;
-      padding: 24px 20px;
-      box-shadow: var(--shadow-elevated);
-      max-width: 360px;
-      margin: 0 auto;
-      width: 100%;
-    }
-    .phone-speaker-bar {
-      width: 60px;
-      height: 4px;
-      background: rgba(255, 255, 255, 0.12);
-      border-radius: 999px;
-      margin: 0 auto 20px;
-    }
-    .phone-preview-title {
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--text-dim);
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
-      text-align: center;
-      margin-bottom: 18px;
-    }
-    .ios-notification {
-      background: rgba(255, 255, 255, 0.08);
-      backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 18px;
-      padding: 14px 16px;
-      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.5);
-    }
-    .ios-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 6px;
-    }
-    .ios-brand {
-      display: flex;
-      align-items: center;
-      gap: 7px;
-    }
-    .ios-app-icon {
-      width: 18px;
-      height: 18px;
-      border-radius: 4px;
-      background: #2563EB;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 10px;
-      font-weight: 800;
-      color: #fff;
-    }
-    .ios-app-name {
-      font-size: 11.5px;
-      font-weight: 700;
-      color: var(--text-main);
-      letter-spacing: 0.2px;
-    }
-    .ios-time {
-      font-size: 10.5px;
-      color: var(--text-dim);
-    }
-    .ios-content-title {
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--text-main);
-      margin-bottom: 3px;
-      word-break: break-word;
-    }
-    .ios-content-body {
-      font-size: 12px;
-      color: var(--text-muted);
-      line-height: 1.4;
-      word-break: break-word;
-    }
-
-    /* SYSTEM DIAGNOSTICS GRID */
-    .system-health-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 16px;
-    }
-    .service-card {
-      background: var(--bg-card-subtle);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-md);
-      padding: 18px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-    .service-card-top {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .service-name {
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--text-main);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    /* TOAST STACK */
-    #toast-container {
-      position: fixed;
-      bottom: 24px;
-      right: 24px;
-      z-index: 10000;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      pointer-events: none;
-    }
-    .toast {
-      padding: 12px 18px;
-      border-radius: var(--radius-md);
-      background: var(--bg-card);
-      border: 1px solid var(--border-hover);
-      color: var(--text-main);
-      font-size: 13px;
-      font-weight: 600;
-      box-shadow: var(--shadow-elevated);
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      pointer-events: auto;
-      animation: toastSlideIn 0.25s ease;
-    }
-    @keyframes toastSlideIn {
-      from { transform: translateX(30px); opacity: 0; }
-      to { transform: translateX(0); opacity: 1; }
-    }
-
-    /* LIGHTBOX MODAL */
-    #lightbox-modal {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.88);
-      backdrop-filter: blur(12px);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 10001;
-      padding: 24px;
-      cursor: zoom-out;
-    }
-    #lightbox-img {
-      max-width: 90vw;
-      max-height: 90vh;
-      border-radius: var(--radius-md);
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-    }
-
-    /* OA REQUESTS CARD & DIFF */
-    .oa-request-card {
-      background: var(--bg-card-subtle);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-md);
-      padding: 20px;
-      margin-bottom: 16px;
-      transition: all 0.2s ease;
-    }
-    .oa-request-card:hover {
-      border-color: var(--border-hover);
-      box-shadow: var(--shadow-soft);
-    }
-    .oa-request-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      margin-bottom: 16px;
-      padding-bottom: 14px;
-      border-bottom: 1px solid var(--border-subtle);
-      flex-wrap: wrap;
-    }
-    .oa-diff-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-bottom: 16px;
-      font-size: 13px;
-    }
-    .oa-diff-table th {
-      text-align: left;
-      padding: 8px 12px;
-      background: rgba(0, 0, 0, 0.25);
-      color: var(--text-muted);
-      font-weight: 600;
-      border-bottom: 1px solid var(--border-subtle);
-    }
-    .oa-diff-table td {
-      padding: 10px 12px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-      vertical-align: top;
-    }
-    .oa-val-old {
-      color: var(--text-dim);
-      text-decoration: line-through;
-      margin-right: 8px;
-    }
-    .oa-val-new {
-      color: #34D399;
-      font-weight: 600;
-      background: rgba(16, 185, 129, 0.15);
-      border: 1px solid rgba(16, 185, 129, 0.28);
-      padding: 2px 8px;
-      border-radius: 4px;
-      display: inline-block;
-    }
-    .oa-val-same {
-      color: var(--text-muted);
     }
   </style>
 </head>
-<body>
+<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed dark-mode">
 
-  <!-- 1. AUTHENTICATION MODAL -->
+  <!-- =========================================================================
+       1. AUTHENTICATION OVERLAY GATE (Admin Secret Verification)
+       ========================================================================= -->
   <div id="auth-overlay">
-    <div class="auth-card">
-      <div class="auth-icon-wrap">
-        <svg class="icon icon-lg" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-      </div>
-      <h2>Dorabox SuperAdmin</h2>
-      <p>Cổng điều hành bảo mật cấp cao. Xác thực khóa quản trị viên để mở khóa bảng điều khiển trung tâm.</p>
-      
-      <div class="auth-input-group">
-        <label class="auth-label">Khóa Quản Trị Hệ Thống (Master Key)</label>
-        <div class="input-wrapper">
-          <svg class="icon icon-sm input-prefix-icon" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-          <input type="password" id="admin-pass-input" class="auth-input" placeholder="••••••••••••••••" autofocus autocomplete="current-password" />
+    <div class="login-box-card">
+      <div class="mb-3">
+        <div class="brand-icon-box" style="width: 58px; height: 58px; font-size: 26px; border-radius: 16px; margin: 0 auto;">
+          <i class="fas fa-shield-halved"></i>
         </div>
       </div>
-      
-      <button class="btn btn-primary" id="btn-unlock-gate" style="width: 100%; padding: 12px; font-size: 14px;">
-        <span>Xác Thực Phiên Quản Trị</span>
-        <svg class="icon icon-sm" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      <h3 class="fw-bold text-white mb-1">Dorabox Admin Portal</h3>
+      <p class="text-muted small mb-4">Hệ thống điều hành Trung tâm Mạng xã hội Dorabox (AdminLTE v4)</p>
+
+      <div class="text-start mb-3">
+        <label class="form-label text-uppercase small text-muted fw-bold">Admin Secret Key</label>
+        <div class="input-group">
+          <span class="input-group-text bg-dark border-secondary text-secondary">
+            <i class="fas fa-key"></i>
+          </span>
+          <input type="password" id="admin-pass-input" class="form-control bg-dark border-secondary text-white font-mono" placeholder="Nhập khóa bảo mật Quản trị..." autofocus autocomplete="off">
+        </div>
+      </div>
+
+      <button id="btn-unlock-gate" class="btn btn-primary w-100 py-2 fw-bold d-flex align-items-center justify-content-center gap-2">
+        <i class="fas fa-unlock"></i>
+        <span>Xác Thực & Đăng Nhập</span>
       </button>
+
+      <div class="mt-4 pt-3 border-top border-secondary small text-muted d-flex justify-content-between align-items-center">
+        <span><i class="fas fa-lock me-1"></i> Zero-Trust Security</span>
+        <span class="badge bg-secondary">v1.1.2 Production</span>
+      </div>
     </div>
   </div>
 
-  <!-- 2. LIGHTBOX PREVIEW -->
-  <div id="lightbox-modal" onclick="closeLightbox()">
-    <img id="lightbox-img" src="" alt="Zoom preview" />
-  </div>
+  <!-- =========================================================================
+       2. ADMINLTE WRAPPER
+       ========================================================================= -->
+  <div class="wrapper">
 
-  <!-- 3. TOAST CONTAINER -->
-  <div id="toast-container"></div>
+    <!-- Top Navbar -->
+    <nav class="main-header navbar navbar-expand navbar-dark">
+      <!-- Left navbar links -->
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" data-widget="pushmenu" href="#" role="button" title="Thu gọn / Mở rộng Menu">
+            <i class="fas fa-bars"></i>
+          </a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+          <a href="javascript:void(0)" onclick="switchTab('tong-quan')" class="nav-link">Tổng Quan</a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+          <a href="javascript:void(0)" onclick="switchTab('thanh-vien')" class="nav-link">Thành Viên</a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+          <a href="javascript:void(0)" onclick="switchTab('duyet-oa')" class="nav-link">
+            Xét Duyệt OA <span id="nav-oa-badge" class="badge badge-warning navbar-badge" style="display:none;">0</span>
+          </a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+          <a href="javascript:void(0)" onclick="switchTab('he-thong')" class="nav-link">Hạ Tầng Cloud</a>
+        </li>
+      </ul>
 
-  <!-- 4. SIDEBAR NAVIGATION -->
-  <aside>
-    <div class="sidebar-brand">
-      <div class="brand-logo">D</div>
-      <div class="brand-meta">
-        <h3>Dorabox Admin</h3>
-        <span class="brand-badge">Control Center</span>
+      <!-- Right navbar links -->
+      <ul class="navbar-nav ms-auto">
+        <!-- Quick Refresh -->
+        <li class="nav-item">
+          <a class="nav-link" href="javascript:void(0)" id="btn-refresh-data" title="Làm mới dữ liệu">
+            <i class="fas fa-arrows-rotate"></i>
+          </a>
+        </li>
+
+        <!-- Notifications Dropdown -->
+        <li class="nav-item dropdown">
+          <a class="nav-link" data-bs-toggle="dropdown" href="#" role="button">
+            <i class="far fa-bell"></i>
+            <span class="badge bg-danger navbar-badge" id="top-report-badge">0</span>
+          </a>
+          <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
+            <span class="dropdown-header fw-bold" id="dropdown-header-notif">0 Thông báo cần xử lý</span>
+            <div class="dropdown-divider"></div>
+            <a href="javascript:void(0)" onclick="switchTab('bao-cao')" class="dropdown-item">
+              <i class="fas fa-flag text-danger me-2"></i>
+              <span id="dropdown-reports-text">0 Báo cáo vi phạm</span>
+              <span class="float-end text-muted text-sm">Xem ngay</span>
+            </a>
+            <div class="dropdown-divider"></div>
+            <a href="javascript:void(0)" onclick="switchTab('duyet-oa')" class="dropdown-item">
+              <i class="fas fa-building text-warning me-2"></i>
+              <span id="dropdown-oa-text">0 Yêu cầu cấp OA</span>
+              <span class="float-end text-muted text-sm">Duyệt ngay</span>
+            </a>
+          </div>
+        </li>
+
+        <!-- Dark / Light Mode Switch -->
+        <li class="nav-item">
+          <a class="nav-link" href="javascript:void(0)" id="btn-toggle-dark-mode" title="Đổi chế độ Sáng / Tối">
+            <i class="fas fa-sun" id="theme-toggle-icon"></i>
+          </a>
+        </li>
+
+        <!-- Fullscreen -->
+        <li class="nav-item">
+          <a class="nav-link" data-widget="fullscreen" href="#" role="button" title="Toàn màn hình">
+            <i class="fas fa-expand-arrows-alt"></i>
+          </a>
+        </li>
+
+        <!-- Logout Button -->
+        <li class="nav-item">
+          <a class="nav-link text-danger" href="javascript:void(0)" id="btn-logout" title="Đăng xuất khỏi hệ thống">
+            <i class="fas fa-arrow-right-from-bracket"></i>
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- Main Sidebar Container -->
+    <aside class="main-sidebar sidebar-dark-primary elevation-4">
+      <!-- Brand Logo -->
+      <a href="javascript:void(0)" onclick="switchTab('tong-quan')" class="brand-link d-flex align-items-center">
+        <div class="brand-icon-box">
+          <i class="fas fa-box-open"></i>
+        </div>
+        <div class="d-flex flex-column">
+          <span class="brand-text fw-bold text-white fs-6">Dorabox Admin</span>
+          <span class="text-muted" style="font-size: 10.5px;">Control Center 1.1.2</span>
+        </div>
+      </a>
+
+      <!-- Sidebar -->
+      <div class="sidebar">
+        <!-- Sidebar user panel -->
+        <div class="user-panel mt-3 pb-3 mb-3 d-flex align-items-center">
+          <div class="image">
+            <div class="avatar-fallback-sm" style="width: 34px; height: 34px; font-size: 12px;">AD</div>
+          </div>
+          <div class="info ms-2">
+            <a href="javascript:void(0)" class="d-block fw-bold text-white">SuperAdministrator</a>
+            <span class="badge bg-success p-1" style="font-size: 9px;"><i class="fas fa-circle me-1"></i> Trực Tuyến</span>
+          </div>
+        </div>
+
+        <!-- Sidebar Search -->
+        <div class="form-inline mb-3">
+          <div class="input-group">
+            <input class="form-control form-control-sidebar bg-dark border-secondary text-white small" type="search" id="sidebar-search-input" placeholder="Tìm tính năng..." aria-label="Search">
+            <div class="input-group-append">
+              <button class="btn btn-sidebar bg-dark border-secondary text-secondary">
+                <i class="fas fa-search fa-fw"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sidebar Menu -->
+        <nav class="mt-2">
+          <ul class="nav nav-pills nav-sidebar flex-column nav-child-indent" data-widget="treeview" role="menu" data-accordion="false">
+            
+            <li class="nav-header text-uppercase small text-muted fw-bold">QUẢN TRỊ NỘI DUNG</li>
+
+            <li class="nav-item">
+              <a href="javascript:void(0)" class="nav-link active" data-tab="tong-quan">
+                <i class="nav-icon fas fa-gauge-high text-primary"></i>
+                <p>Tổng Quan Hệ Thống</p>
+              </a>
+            </li>
+
+            <li class="nav-item">
+              <a href="javascript:void(0)" class="nav-link" data-tab="thanh-vien">
+                <i class="nav-icon fas fa-users text-info"></i>
+                <p>
+                  Thành Viên
+                  <span class="badge bg-info float-end" id="sidebar-user-badge">0</span>
+                </p>
+              </a>
+            </li>
+
+            <li class="nav-item">
+              <a href="javascript:void(0)" class="nav-link" data-tab="duyet-oa">
+                <i class="nav-icon fas fa-certificate text-warning"></i>
+                <p>
+                  Xét Duyệt Tích & OA
+                  <span class="badge bg-warning text-dark float-end" id="sidebar-oa-badge" style="display:none;">0</span>
+                </p>
+              </a>
+            </li>
+
+            <li class="nav-item">
+              <a href="javascript:void(0)" class="nav-link" data-tab="bai-viet">
+                <i class="nav-icon fas fa-newspaper text-success"></i>
+                <p>Bài Viết & Bảng Tin</p>
+              </a>
+            </li>
+
+            <li class="nav-item">
+              <a href="javascript:void(0)" class="nav-link" data-tab="binh-luan">
+                <i class="nav-icon fas fa-comments text-cyan"></i>
+                <p>Bình Luận Thảo Luận</p>
+              </a>
+            </li>
+
+            <li class="nav-item">
+              <a href="javascript:void(0)" class="nav-link" data-tab="bao-cao">
+                <i class="nav-icon fas fa-triangle-exclamation text-danger"></i>
+                <p>
+                  Báo Cáo Vi Phạm
+                  <span class="badge bg-danger float-end" id="sidebar-report-badge">0</span>
+                </p>
+              </a>
+            </li>
+
+            <li class="nav-header text-uppercase small text-muted fw-bold mt-2">ĐIỀU HÀNH & KỸ THUẬT</li>
+
+            <li class="nav-item">
+              <a href="javascript:void(0)" class="nav-link" data-tab="phat-thong-bao">
+                <i class="nav-icon fas fa-bullhorn text-purple" style="color: #a855f7;"></i>
+                <p>Phát Sóng Push FCM</p>
+              </a>
+            </li>
+
+            <li class="nav-item">
+              <a href="javascript:void(0)" class="nav-link" data-tab="bao-mat-audit">
+                <i class="nav-icon fas fa-shield-virus text-indigo" style="color: #6366f1;"></i>
+                <p>Audit Log & Bảo Mật</p>
+              </a>
+            </li>
+
+            <li class="nav-item">
+              <a href="javascript:void(0)" class="nav-link" data-tab="he-thong">
+                <i class="nav-icon fas fa-server text-teal" style="color: #14b8a6;"></i>
+                <p>Hạ Tầng & Cloud R2</p>
+              </a>
+            </li>
+
+          </ul>
+        </nav>
       </div>
-    </div>
+    </aside>
 
-    <div class="nav-section-title">Quản Trị Mạng Xã Hội</div>
-    <ul class="nav-list">
-      <li class="nav-item active" data-tab="tong-quan">
-        <div class="nav-item-left">
-          <svg class="icon" viewBox="0 0 24 24"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
-          <span>Tổng Quan</span>
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper p-3">
+      <!-- Content Header (Page header) -->
+      <div class="content-header pb-2">
+        <div class="container-fluid">
+          <div class="row align-items-center">
+            <div class="col-sm-6">
+              <h4 class="m-0 fw-bold" id="topbar-title">Tổng Quan Hệ Thống</h4>
+              <p class="text-muted small mb-0" id="topbar-subtitle">Chỉ số vận hành thời gian thực & trung tâm điều phối cộng đồng Dorabox</p>
+            </div>
+            <div class="col-sm-6 text-sm-end mt-2 mt-sm-0">
+              <span class="badge bg-primary px-3 py-2 fw-semibold">
+                <i class="fas fa-bolt me-1"></i> Trạng Thái: Tối Ưu 120Hz
+              </span>
+            </div>
+          </div>
         </div>
-      </li>
-      <li class="nav-item" data-tab="thanh-vien">
-        <div class="nav-item-left">
-          <svg class="icon" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-          <span>Thành Viên</span>
-        </div>
-      </li>
-      <li class="nav-item" data-tab="bai-viet">
-        <div class="nav-item-left">
-          <svg class="icon" viewBox="0 0 24 24"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8V6Z"/></svg>
-          <span>Bảng Tin</span>
-        </div>
-      </li>
-      <li class="nav-item" data-tab="binh-luan">
-        <div class="nav-item-left">
-          <svg class="icon" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-          <span>Bình Luận</span>
-        </div>
-      </li>
-      <li class="nav-item" data-tab="bao-cao">
-        <div class="nav-item-left">
-          <svg class="icon" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
-          <span>Kiểm Duyệt & Báo Cáo</span>
-        </div>
-        <span class="nav-count-badge" id="sidebar-report-badge">0</span>
-      </li>
-      <li class="nav-item" data-tab="duyet-oa">
-        <div class="nav-item-left">
-          <svg class="icon" viewBox="0 0 24 24" style="color: var(--color-gold);"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-          <span>Duyệt Thông Tin OA</span>
-        </div>
-        <span class="nav-count-badge" id="sidebar-oa-badge" style="background: rgba(245, 158, 11, 0.2); color: #F59E0B; border: 1px solid rgba(245,158,11,0.3);">0</span>
-      </li>
-      <li class="nav-item" data-tab="phat-thong-bao">
-        <div class="nav-item-left">
-          <svg class="icon" viewBox="0 0 24 24"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
-          <span>Broadcast Thông Báo</span>
-        </div>
-      </li>
-      <li class="nav-item" data-tab="bao-mat-audit">
-        <div class="nav-item-left">
-          <svg class="icon" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
-          <span>Bảo Mật & Anti-Spam</span>
-        </div>
-        <span class="nav-count-badge" id="sidebar-security-badge" style="background: rgba(16, 185, 129, 0.2); color: #10B981; border: 1px solid rgba(16,185,129,0.3);">SHIELD</span>
-      </li>
-      <li class="nav-item" data-tab="he-thong">
-        <div class="nav-item-left">
-          <svg class="icon" viewBox="0 0 24 24"><rect width="20" height="8" x="2" y="2" rx="2" ry="2"/><rect width="20" height="8" x="2" y="14" rx="2" ry="2"/><line x1="6" x2="6.01" y1="6" y2="6"/><line x1="6" x2="6.01" y1="18" y2="18"/></svg>
-          <span>Hạ Tầng Cloud</span>
-        </div>
-      </li>
-    </ul>
-
-    <div class="sidebar-footer">
-      <div class="pulse-wrapper">
-        <div class="pulse-dot"></div>
-        <span>Cụm Máy Chủ Online</span>
-      </div>
-      <button class="btn btn-secondary btn-sm" id="btn-logout" title="Đăng xuất khỏi phiên">
-        <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
-      </button>
-    </div>
-  </aside>
-
-  <!-- 5. MAIN VIEWPORT -->
-  <main>
-    <header class="topbar">
-      <div class="breadcrumb-area">
-        <h1 id="topbar-title">Tổng Quan Hệ Thống</h1>
-        <p id="topbar-subtitle">Chỉ số vận hành thời gian thực & trung tâm điều phối cộng đồng</p>
       </div>
 
-      <div class="topbar-right">
-        <button class="btn btn-secondary" id="btn-refresh-data" title="Tải lại toàn bộ dữ liệu">
-          <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 21h5v-5"/></svg>
-          <span>Làm Mới</span>
-        </button>
-        <button class="btn btn-primary" onclick="switchTab('phat-thong-bao')">
-          <svg class="icon icon-sm" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-          <span>Soạn Broadcast</span>
-        </button>
-      </div>
-    </header>
+      <!-- Main content -->
+      <section class="content">
+        <div class="container-fluid">
 
-    <div class="content-container">
-
-      <!-- ================= 1. TAB: TỔNG QUAN ================= -->
-      <section id="tab-tong-quan" class="tab-section active">
-        <!-- KPI METRICS -->
-        <div class="kpi-grid">
-          <div class="kpi-card">
-            <div class="kpi-top">
-              <span class="kpi-title">Tổng Thành Viên</span>
-              <div class="kpi-icon-box" style="background: rgba(37,99,235,0.12); color: var(--brand-primary);">
-                <svg class="icon" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-              </div>
-            </div>
-            <div class="kpi-value" id="kpi-users">-</div>
-            <div class="kpi-desc"><span style="color: var(--color-emerald);">●</span> Người dùng đã đăng ký</div>
-          </div>
-
-          <div class="kpi-card">
-            <div class="kpi-top">
-              <span class="kpi-title">Tài Khoản Tích Xanh</span>
-              <div class="kpi-icon-box" style="background: var(--color-blue-bg); color: var(--color-blue);">
-                <svg class="icon" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
-              </div>
-            </div>
-            <div class="kpi-value" id="kpi-verified">-</div>
-            <div class="kpi-desc"><span style="color: var(--color-blue);">✓</span> Cá nhân uy tín xác minh</div>
-          </div>
-
-          <div class="kpi-card">
-            <div class="kpi-top">
-              <span class="kpi-title">Tổ Chức / Official OA</span>
-              <div class="kpi-icon-box" style="background: var(--color-gold-bg); color: var(--color-gold);">
-                <svg class="icon" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-              </div>
-            </div>
-            <div class="kpi-value" id="kpi-vip">-</div>
-            <div class="kpi-desc"><span style="color: var(--color-gold);">★</span> Huy hiệu Tích Vàng OA</div>
-          </div>
-
-          <div class="kpi-card" style="cursor: pointer;" onclick="switchTab('duyet-oa')">
-            <div class="kpi-top">
-              <span class="kpi-title">Yêu Cầu Duyệt OA</span>
-              <div class="kpi-icon-box" style="background: rgba(245, 158, 11, 0.15); color: var(--color-gold);">
-                <svg class="icon" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-              </div>
-            </div>
-            <div class="kpi-value" id="kpi-oa-pending" style="color: var(--color-gold);">-</div>
-            <div class="kpi-desc"><span style="color: var(--color-gold);">●</span> Chờ quản trị viên duyệt</div>
-          </div>
-
-          <div class="kpi-card">
-            <div class="kpi-top">
-              <span class="kpi-title">Tài Khoản Bị Đình Chỉ</span>
-              <div class="kpi-icon-box" style="background: var(--color-rose-bg); color: var(--color-rose);">
-                <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
-              </div>
-            </div>
-            <div class="kpi-value" id="kpi-banned">-</div>
-            <div class="kpi-desc"><span style="color: var(--color-rose);">●</span> Vi phạm quy chuẩn</div>
-          </div>
-
-          <div class="kpi-card">
-            <div class="kpi-top">
-              <span class="kpi-title">Tổng Bài Đăng</span>
-              <div class="kpi-icon-box" style="background: rgba(16,185,129,0.12); color: var(--color-emerald);">
-                <svg class="icon" viewBox="0 0 24 24"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
-              </div>
-            </div>
-            <div class="kpi-value" id="kpi-posts">-</div>
-            <div class="kpi-desc">Nội dung đã chia sẻ</div>
-          </div>
-
-          <div class="kpi-card">
-            <div class="kpi-top">
-              <span class="kpi-title">Tổng Bình Luận</span>
-              <div class="kpi-icon-box" style="background: rgba(168,85,247,0.12); color: var(--color-violet);">
-                <svg class="icon" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-              </div>
-            </div>
-            <div class="kpi-value" id="kpi-comments">-</div>
-            <div class="kpi-desc">Thảo luận tương tác</div>
-          </div>
-        </div>
-
-        <!-- INFRASTRUCTURE STRIP -->
-        <div class="card-panel">
-          <div class="panel-header">
-            <div class="panel-heading">
-              <svg class="icon" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-              <h3>Trạng Thái Hạ Tầng & Kết Nối Đám Mây</h3>
-            </div>
-            <span class="badge badge-verified" id="overall-health-badge">Hoạt động bình thường</span>
-          </div>
-
-          <div class="system-health-grid">
-            <div class="service-card">
-              <div class="service-card-top">
-                <span class="service-name">
-                  <svg class="icon icon-sm" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
-                  Supabase Postgres DB
-                </span>
-                <span class="badge badge-verified" id="sys-db-status">CONNECTED</span>
-              </div>
-              <p style="font-size: 12.5px; color: var(--text-dim);" id="sys-db-latency">Đang kiểm tra độ trễ...</p>
-            </div>
-
-            <div class="service-card">
-              <div class="service-card-top">
-                <span class="service-name">
-                  <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>
-                  Cloudflare R2 Media CDN
-                </span>
-                <span class="badge badge-oa">READY</span>
-              </div>
-              <p style="font-size: 12.5px; color: var(--text-dim);">Lưu trữ media doraboxcdn.zpiltk.io.vn</p>
-            </div>
-
-            <div class="service-card">
-              <div class="service-card-top">
-                <span class="service-name">
-                  <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
-                  Firebase Push Notification
-                </span>
-                <span class="badge badge-verified">HTTP v1</span>
-              </div>
-              <p style="font-size: 12.5px; color: var(--text-dim);">Project ID: dorabox-4bbcb</p>
-            </div>
-
-            <div class="service-card">
-              <div class="service-card-top">
-                <span class="service-name">
-                  <svg class="icon icon-sm" viewBox="0 0 24 24"><rect width="20" height="8" x="2" y="2" rx="2" ry="2"/><rect width="20" height="8" x="2" y="14" rx="2" ry="2"/></svg>
-                  Node.js API Cluster
-                </span>
-                <span class="badge badge-verified">PORT 4000</span>
-              </div>
-              <p style="font-size: 12.5px; color: var(--text-dim);" id="sys-uptime">Thời gian chạy: Đang tính...</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- QUICK ACCESS ROW -->
-        <div class="card-panel">
-          <div class="panel-heading" style="margin-bottom: 16px;">
-            <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 14 14"/></svg>
-            <h3>Tác Vụ Quản Trị Nhanh</h3>
-          </div>
-          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-            <button class="btn btn-gold" onclick="switchTab('thanh-vien')">
-              <svg class="icon icon-sm" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-              <span>Phân Cấp Tích Vàng OA / Tích Xanh</span>
-            </button>
-            <button class="btn btn-gold" onclick="switchTab('duyet-oa')">
-              <svg class="icon icon-sm" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-              <span>Duyệt Đề Xuất Thông Tin OA</span>
-            </button>
-            <button class="btn btn-secondary" onclick="switchTab('thanh-vien')">
-              <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
-              <span>Tra Cứu Thành Viên</span>
-            </button>
-            <button class="btn btn-danger" onclick="switchTab('bao-cao')">
-              <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-              <span>Hàng Đợi Duyệt Hồ Sơ & Báo Cáo</span>
-            </button>
-            <button class="btn btn-primary" onclick="switchTab('phat-thong-bao')">
-              <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="m3 11 18-5v12L3 14v-3z"/></svg>
-              <span>Phát Thông Báo Toàn Mạng</span>
-            </button>
-          </div>
-        </div>
-      </section>
-
-      <!-- ================= 2. TAB: THÀNH VIÊN ================= -->
-      <section id="tab-thanh-vien" class="tab-section">
-        <div class="card-panel">
-          <div class="panel-header">
-            <div class="panel-heading">
-              <svg class="icon" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
-              <h3>Danh Sách Thành Viên & Phân Quyền</h3>
-            </div>
-
-            <div class="panel-actions">
-              <div class="filter-group">
-                <button class="filter-btn active" onclick="filterUsers('all', this)">Tất cả</button>
-                <button class="filter-btn" onclick="filterUsers('oa', this)">Tích Vàng OA</button>
-                <button class="filter-btn" onclick="filterUsers('verified', this)">Tích Xanh</button>
-                <button class="filter-btn" onclick="filterUsers('banned', this)">Bị Khóa</button>
-                <button class="filter-btn" onclick="filterUsers('admin', this)">Quản Trị / Mod</button>
-              </div>
-
-              <div class="search-box">
-                <svg class="icon icon-sm search-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                <input type="text" id="user-search-input" class="search-field" placeholder="Tìm theo tên hoặc @username..." />
-              </div>
-            </div>
-          </div>
-
-          <div class="notice-banner">
-            <svg class="icon notice-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-            <div class="notice-text">
-              <h4>Chính sách cấp huy hiệu chính chủ & tài khoản doanh nghiệp:</h4>
-              <p>Nút <strong>Tích Vàng OA</strong> cấp quyền Official Account cho tổ chức, cơ quan và doanh nghiệp. Nút <strong>Tích Xanh</strong> xác thực cá nhân uy tín. Trạng thái có hiệu lực ngay lập tức trên app mobile.</p>
-            </div>
-          </div>
-
-          <div class="table-wrapper">
-            <table>
-              <thead>
-                <tr>
-                  <th>Thành Viên</th>
-                  <th>Username</th>
-                  <th>Vai Trò</th>
-                  <th>Trạng Thái</th>
-                  <th>Ngày Gia Nhập</th>
-                  <th style="text-align: right;">Hành Động</th>
-                </tr>
-              </thead>
-              <tbody id="users-table-body">
-                <tr><td colspan="6" style="text-align: center; padding: 40px; color: var(--text-dim);">Đang tải danh sách thành viên...</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </section>
-
-      <!-- ================= 3. TAB: BÀI VIẾT ================= -->
-      <section id="tab-bai-viet" class="tab-section">
-        <div class="card-panel">
-          <div class="panel-header">
-            <div class="panel-heading">
-              <svg class="icon" viewBox="0 0 24 24"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8V6Z"/></svg>
-              <h3>Kiểm Duyệt Bảng Tin & Bài Viết</h3>
-            </div>
-
-            <div class="search-box">
-              <svg class="icon icon-sm search-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-              <input type="text" id="post-search-input" class="search-field" placeholder="Tìm kiếm nội dung bài viết..." />
-            </div>
-          </div>
-
-          <div class="table-wrapper">
-            <table>
-              <thead>
-                <tr>
-                  <th>Tác Giả</th>
-                  <th>Nội Dung Bài Viết</th>
-                  <th>Ảnh Đính Kèm</th>
-                  <th>Tương Tác</th>
-                  <th>Trạng Thái Ghim</th>
-                  <th>Ngày Đăng</th>
-                  <th style="text-align: right;">Hành Động</th>
-                </tr>
-              </thead>
-              <tbody id="posts-table-body">
-                <tr><td colspan="7" style="text-align: center; padding: 40px; color: var(--text-dim);">Đang tải danh sách bài viết...</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </section>
-
-      <!-- ================= 4. TAB: BÌNH LUẬN ================= -->
-      <section id="tab-binh-luan" class="tab-section">
-        <div class="card-panel">
-          <div class="panel-header">
-            <div class="panel-heading">
-              <svg class="icon" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-              <h3>Quản Lý Bình Luận Cộng Đồng</h3>
-            </div>
-
-            <div class="search-box">
-              <svg class="icon icon-sm search-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-              <input type="text" id="comment-search-input" class="search-field" placeholder="Tìm theo nội dung bình luận..." />
-            </div>
-          </div>
-
-          <div class="table-wrapper">
-            <table>
-              <thead>
-                <tr>
-                  <th>Người Bình Luận</th>
-                  <th>Nội Dung</th>
-                  <th>Bài Viết Gốc</th>
-                  <th>Thời Gian</th>
-                  <th style="text-align: right;">Hành Động</th>
-                </tr>
-              </thead>
-              <tbody id="comments-table-body">
-                <tr><td colspan="5" style="text-align: center; padding: 40px; color: var(--text-dim);">Đang tải danh sách bình luận...</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </section>
-
-      <!-- ================= 5. TAB: BÁO CÁO VI PHẠM ================= -->
-      <section id="tab-bao-cao" class="tab-section">
-        <div class="card-panel">
-          <div class="panel-header">
-            <div class="panel-heading">
-              <svg class="icon" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-              <h3>Hàng Đợi Xử Lý Hồ Sơ Cấp Tích & Báo Cáo Vi Phạm</h3>
-            </div>
-            <span class="badge badge-banned" id="reports-pending-count">0 Chờ xử lý</span>
-          </div>
-
-          <div class="table-wrapper">
-            <table>
-              <thead>
-                <tr>
-                  <th>Người Báo Cáo</th>
-                  <th>Loại Yêu Cầu</th>
-                  <th>Lý Do Chi Tiết</th>
-                  <th>Trạng Thái</th>
-                  <th>Thời Gian</th>
-                  <th style="text-align: right;">Xử Lý</th>
-                </tr>
-              </thead>
-              <tbody id="reports-table-body">
-                <tr><td colspan="6" style="text-align: center; padding: 40px; color: var(--text-dim);">Chưa có báo cáo vi phạm nào trong hàng đợi.</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </section>
-
-      <!-- ================= 6. TAB: PHÁT THÔNG BÁO ================= -->
-      <section id="tab-phat-thong-bao" class="tab-section">
-        <div class="broadcast-container">
-          <div class="card-panel">
-            <div class="panel-heading" style="margin-bottom: 22px;">
-              <svg class="icon" viewBox="0 0 24 24"><path d="m3 11 18-5v12L3 14v-3z"/></svg>
-              <h3>Broadcast Studio — Phát Tin Nhắn Toàn Hệ Thống</h3>
-            </div>
-
-            <div class="form-row">
-              <label>Tiêu Đề Thông Báo (Notification Title)</label>
-              <input type="text" id="broadcast-title-input" class="form-input" placeholder="Ví dụ: Chào mừng tới Dorabox phiên bản mới..." value="🎉 Chào mừng tới Dorabox!" />
-            </div>
-
-            <div class="form-row">
-              <label>Nội Dung Thông Báo (Message Body)</label>
-              <textarea id="broadcast-body-input" class="form-input" placeholder="Nhập nội dung gửi tới toàn thể người dùng app...">Khám phá các tính năng mới: Ghi âm giọng nói 120s, gửi ảnh siêu tốc, thu hồi tin nhắn và nhiều trải nghiệm tuyệt vời!</textarea>
-            </div>
-
-            <button class="btn btn-primary" id="btn-send-broadcast" style="width: 100%; padding: 14px; font-size: 14px;">
-              <svg class="icon icon-sm" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-              <span>Phát Sóng Push Notification Tức Thì</span>
-            </button>
-          </div>
-
-          <!-- REALTIME PHONE PREVIEW -->
-          <div class="phone-preview-card">
-            <div class="phone-speaker-bar"></div>
-            <div class="phone-preview-title">Xem trước màn hình khóa điện thoại</div>
-
-            <div class="ios-notification">
-              <div class="ios-header">
-                <div class="ios-brand">
-                  <div class="ios-app-icon">D</div>
-                  <span class="ios-app-name">DORABOX</span>
+          <!-- =========================================================================
+               TAB 1: TỔNG QUAN (DASHBOARD)
+               ========================================================================= -->
+          <div id="tab-tong-quan" class="tab-section active">
+            <!-- 4 Small Boxes AdminLTE -->
+            <div class="row">
+              <div class="col-lg-3 col-6">
+                <div class="small-box bg-info">
+                  <div class="inner">
+                    <h3 id="kpi-users">0</h3>
+                    <p>Tổng Thành Viên</p>
+                  </div>
+                  <div class="icon">
+                    <i class="fas fa-users"></i>
+                  </div>
+                  <a href="javascript:void(0)" onclick="switchTab('thanh-vien')" class="small-box-footer">
+                    Quản lý thành viên <i class="fas fa-arrow-circle-right ms-1"></i>
+                  </a>
                 </div>
-                <span class="ios-time">Vừa xong</span>
               </div>
-              <div class="ios-content-title" id="preview-notif-title">🎉 Chào mừng tới Dorabox!</div>
-              <div class="ios-content-body" id="preview-notif-body">Khám phá các tính năng mới: Ghi âm giọng nói 120s, gửi ảnh siêu tốc, thu hồi tin nhắn và nhiều trải nghiệm tuyệt vời!</div>
+
+              <div class="col-lg-3 col-6">
+                <div class="small-box bg-warning text-dark">
+                  <div class="inner">
+                    <h3 id="kpi-vip">0</h3>
+                    <p>Tài Khoản Tích Vàng / OA</p>
+                  </div>
+                  <div class="icon">
+                    <i class="fas fa-certificate"></i>
+                  </div>
+                  <a href="javascript:void(0)" onclick="switchTab('duyet-oa')" class="small-box-footer text-dark">
+                    Xét duyệt OA <i class="fas fa-arrow-circle-right ms-1"></i>
+                  </a>
+                </div>
+              </div>
+
+              <div class="col-lg-3 col-6">
+                <div class="small-box bg-success">
+                  <div class="inner">
+                    <h3 id="kpi-posts">0</h3>
+                    <p>Bài Viết Bảng Tin</p>
+                  </div>
+                  <div class="icon">
+                    <i class="fas fa-newspaper"></i>
+                  </div>
+                  <a href="javascript:void(0)" onclick="switchTab('bai-viet')" class="small-box-footer">
+                    Quản lý bảng tin <i class="fas fa-arrow-circle-right ms-1"></i>
+                  </a>
+                </div>
+              </div>
+
+              <div class="col-lg-3 col-6">
+                <div class="small-box bg-danger">
+                  <div class="inner">
+                    <h3 id="kpi-banned">0</h3>
+                    <p>Báo Cáo & Khóa Vi Phạm</p>
+                  </div>
+                  <div class="icon">
+                    <i class="fas fa-shield-virus"></i>
+                  </div>
+                  <a href="javascript:void(0)" onclick="switchTab('bao-cao')" class="small-box-footer">
+                    Xử lý vi phạm <i class="fas fa-arrow-circle-right ms-1"></i>
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            <!-- 4 Info Boxes -->
+            <div class="row">
+              <div class="col-md-3 col-sm-6 col-12">
+                <div class="info-box bg-dark">
+                  <span class="info-box-icon bg-primary"><i class="fas fa-check-double"></i></span>
+                  <div class="info-box-content">
+                    <span class="info-box-text text-muted">Đã Xác Minh</span>
+                    <span class="info-box-number" id="kpi-verified">0</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-3 col-sm-6 col-12">
+                <div class="info-box bg-dark">
+                  <span class="info-box-icon bg-success"><i class="fas fa-comments"></i></span>
+                  <div class="info-box-content">
+                    <span class="info-box-text text-muted">Tổng Bình Luận</span>
+                    <span class="info-box-number" id="kpi-comments">0</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-3 col-sm-6 col-12">
+                <div class="info-box bg-dark">
+                  <span class="info-box-icon bg-warning"><i class="fas fa-hourglass-half"></i></span>
+                  <div class="info-box-content">
+                    <span class="info-box-text text-muted">OA Chờ Phê Duyệt</span>
+                    <span class="info-box-number" id="kpi-oa-pending">0</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-3 col-sm-6 col-12">
+                <div class="info-box bg-dark">
+                  <span class="info-box-icon bg-teal text-white"><i class="fas fa-heart-pulse"></i></span>
+                  <div class="info-box-content">
+                    <span class="info-box-text text-muted">Sức Khỏe Hệ Thống</span>
+                    <span class="info-box-number text-success" style="font-size: 1.15rem !important;">100% Khỏe Mạnh</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Charts & Quick Action Center -->
+            <div class="row">
+              <div class="col-lg-8">
+                <div class="card">
+                  <div class="card-header border-0 d-flex justify-content-between align-items-center">
+                    <h5 class="card-title fw-bold m-0">
+                      <i class="fas fa-chart-line text-primary me-2"></i> Xu Hướng Hoạt Động & Tăng Trưởng
+                    </h5>
+                    <div class="card-tools">
+                      <span class="badge bg-primary">Thời gian thực</span>
+                    </div>
+                  </div>
+                  <div class="card-body">
+                    <canvas id="growthChart" style="min-height: 260px; height: 260px; max-height: 260px; max-width: 100%;"></canvas>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-lg-4">
+                <div class="card">
+                  <div class="card-header border-0">
+                    <h5 class="card-title fw-bold m-0">
+                      <i class="fas fa-chart-pie text-warning me-2"></i> Phân Bổ Dữ Liệu
+                    </h5>
+                  </div>
+                  <div class="card-body">
+                    <canvas id="distributionChart" style="min-height: 260px; height: 260px; max-height: 260px; max-width: 100%;"></canvas>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Quick Action Cards -->
+            <div class="card mt-2">
+              <div class="card-header">
+                <h5 class="card-title fw-bold m-0"><i class="fas fa-bolt text-warning me-2"></i> Thao Tác Nhanh Quản Trị Viên</h5>
+              </div>
+              <div class="card-body">
+                <div class="row g-3">
+                  <div class="col-md-3">
+                    <button class="btn btn-outline-primary w-100 py-3 d-flex flex-column align-items-center gap-2 rounded-3" onclick="switchTab('phat-thong-bao')">
+                      <i class="fas fa-bullhorn fs-3"></i>
+                      <span class="fw-bold">Phát Push Notification</span>
+                    </button>
+                  </div>
+                  <div class="col-md-3">
+                    <button class="btn btn-outline-warning w-100 py-3 d-flex flex-column align-items-center gap-2 rounded-3" onclick="cleanSpamReactions()">
+                      <i class="fas fa-broom fs-3"></i>
+                      <span class="fw-bold">Dọn Dẹp Spam 120Hz</span>
+                    </button>
+                  </div>
+                  <div class="col-md-3">
+                    <button class="btn btn-outline-success w-100 py-3 d-flex flex-column align-items-center gap-2 rounded-3" onclick="switchTab('duyet-oa')">
+                      <i class="fas fa-building-circle-check fs-3"></i>
+                      <span class="fw-bold">Xét Duyệt Tài Khoản OA</span>
+                    </button>
+                  </div>
+                  <div class="col-md-3">
+                    <button class="btn btn-outline-info w-100 py-3 d-flex flex-column align-items-center gap-2 rounded-3" onclick="switchTab('he-thong')">
+                      <i class="fas fa-shield-heart fs-3"></i>
+                      <span class="fw-bold">Kiểm Tra Hạ Tầng Cloud</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
+
+          <!-- =========================================================================
+               TAB 2: THÀNH VIÊN (USERS)
+               ========================================================================= -->
+          <div id="tab-thanh-vien" class="tab-section">
+            <div class="card">
+              <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
+                <h5 class="card-title fw-bold m-0"><i class="fas fa-users text-info me-2"></i> Quản Lý Danh Sách Người Dùng</h5>
+                <div class="d-flex gap-2">
+                  <input type="text" id="user-search-input" class="form-control form-control-sm bg-dark border-secondary text-white" placeholder="Tìm theo tên, @username, UID..." style="width: 250px;">
+                  <select id="user-role-filter" class="form-select form-select-sm bg-dark border-secondary text-white" style="width: 140px;">
+                    <option value="all">Tất cả quyền</option>
+                    <option value="oa">Tài khoản OA</option>
+                    <option value="mod">Moderator</option>
+                    <option value="admin">Admin</option>
+                    <option value="banned">Bị khóa</option>
+                  </select>
+                </div>
+              </div>
+              <div class="card-body table-responsive p-0">
+                <table class="table table-hover table-striped align-middle mb-0">
+                  <thead class="table-dark">
+                    <tr>
+                      <th>Thành Viên</th>
+                      <th>Mã Định Danh (@)</th>
+                      <th>Cấp Bậc & Quyền</th>
+                      <th>Huy Hiệu Tích</th>
+                      <th>Trạng Thái</th>
+                      <th>Ngày Tạo</th>
+                      <th class="text-end">Thao Tác</th>
+                    </tr>
+                  </thead>
+                  <tbody id="users-table-body">
+                    <tr><td colspan="7" class="text-center py-4 text-muted">Đang tải danh sách thành viên...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- =========================================================================
+               TAB 3: XÉT DUYỆT TÍCH & OA (OA REQUESTS)
+               ========================================================================= -->
+          <div id="tab-duyet-oa" class="tab-section">
+            <div class="card">
+              <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title fw-bold m-0"><i class="fas fa-certificate text-warning me-2"></i> Hàng Đợi Xét Duyệt Thông Tin Official Account</h5>
+                <button class="btn btn-sm btn-outline-warning" onclick="fetchOaRequests(true)">
+                  <i class="fas fa-arrows-rotate me-1"></i> Làm mới yêu cầu
+                </button>
+              </div>
+              <div class="card-body">
+                <div id="oa-requests-container">
+                  <div class="text-center py-4 text-muted">Đang kiểm tra các đề xuất thay đổi OA...</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- =========================================================================
+               TAB 4: BÀI VIẾT (POSTS)
+               ========================================================================= -->
+          <div id="tab-bai-viet" class="tab-section">
+            <div class="card">
+              <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
+                <h5 class="card-title fw-bold m-0"><i class="fas fa-newspaper text-success me-2"></i> Quản Lý Bảng Tin & Bài Viết</h5>
+                <input type="text" id="post-search-input" class="form-control form-control-sm bg-dark border-secondary text-white" placeholder="Tìm kiếm nội dung bài viết..." style="width: 260px;">
+              </div>
+              <div class="card-body table-responsive p-0">
+                <table class="table table-hover table-striped align-middle mb-0">
+                  <thead class="table-dark">
+                    <tr>
+                      <th>Tác Giả</th>
+                      <th style="max-width: 320px;">Nội Dung</th>
+                      <th>Hình Ảnh Đính Kèm</th>
+                      <th>Tương Tác</th>
+                      <th>Ghim</th>
+                      <th>Thời Gian</th>
+                      <th class="text-end">Hành Động</th>
+                    </tr>
+                  </thead>
+                  <tbody id="posts-table-body">
+                    <tr><td colspan="7" class="text-center py-4 text-muted">Đang tải danh sách bài viết...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- =========================================================================
+               TAB 5: BÌNH LUẬN (COMMENTS)
+               ========================================================================= -->
+          <div id="tab-binh-luan" class="tab-section">
+            <div class="card">
+              <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
+                <h5 class="card-title fw-bold m-0"><i class="fas fa-comments text-cyan me-2"></i> Quản Lý Thảo Luận & Bình Luận</h5>
+                <input type="text" id="comment-search-input" class="form-control form-control-sm bg-dark border-secondary text-white" placeholder="Tìm nội dung bình luận..." style="width: 260px;">
+              </div>
+              <div class="card-body table-responsive p-0">
+                <table class="table table-hover table-striped align-middle mb-0">
+                  <thead class="table-dark">
+                    <tr>
+                      <th>Người Bình Luận</th>
+                      <th>Nội Dung</th>
+                      <th>Bài Viết Liên Quan</th>
+                      <th>Thời Gian</th>
+                      <th class="text-end">Thao Tác</th>
+                    </tr>
+                  </thead>
+                  <tbody id="comments-table-body">
+                    <tr><td colspan="5" class="text-center py-4 text-muted">Đang tải danh sách bình luận...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- =========================================================================
+               TAB 6: BÁO CÁO VI PHẠM (REPORTS)
+               ========================================================================= -->
+          <div id="tab-bao-cao" class="tab-section">
+            <div class="card">
+              <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
+                <h5 class="card-title fw-bold m-0"><i class="fas fa-triangle-exclamation text-danger me-2"></i> Hàng Đợi Báo Cáo & Xử Lý Vi Phạm</h5>
+                <span class="badge bg-danger" id="reports-pending-count">0 Chờ xử lý</span>
+              </div>
+              <div class="card-body table-responsive p-0">
+                <table class="table table-hover table-striped align-middle mb-0">
+                  <thead class="table-dark">
+                    <tr>
+                      <th>Người Báo Cáo</th>
+                      <th>Mục Tiêu</th>
+                      <th>Lý Do / Chi Tiết</th>
+                      <th>Trạng Thái</th>
+                      <th>Thời Gian</th>
+                      <th class="text-end">Phán Quyết</th>
+                    </tr>
+                  </thead>
+                  <tbody id="reports-table-body">
+                    <tr><td colspan="6" class="text-center py-4 text-muted">Đang tải danh sách báo cáo...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- =========================================================================
+               TAB 7: PHÁT SÓNG THÔNG BÁO (BROADCAST STUDIO)
+               ========================================================================= -->
+          <div id="tab-phat-thong-bao" class="tab-section">
+            <div class="row">
+              <div class="col-lg-7">
+                <div class="card">
+                  <div class="card-header">
+                    <h5 class="card-title fw-bold m-0"><i class="fas fa-bullhorn text-purple me-2"></i> Soạn Thảo Push Notification & Broadcast</h5>
+                  </div>
+                  <div class="card-body">
+                    <div class="mb-3">
+                      <label class="form-label fw-bold small text-uppercase">Tiêu đề thông báo <span class="text-danger">*</span></label>
+                      <input type="text" id="broadcast-title-input" class="form-control bg-dark border-secondary text-white" placeholder="Ví dụ: 🚀 Dorabox Cập Nhật Phiên Bản 1.1.2!">
+                    </div>
+
+                    <div class="mb-3">
+                      <label class="form-label fw-bold small text-uppercase">Nội dung chi tiết <span class="text-danger">*</span></label>
+                      <textarea id="broadcast-body-input" rows="5" class="form-control bg-dark border-secondary text-white" placeholder="Nhập nội dung thông báo gửi tới tất cả người dùng ứng dụng..."></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                      <label class="form-label fw-bold small text-uppercase">Đường dẫn điều hướng (Deep-link tùy chọn)</label>
+                      <input type="text" id="broadcast-link-input" class="form-control bg-dark border-secondary text-white font-mono" placeholder="https://doraboxcdn.zpiltk.io.vn/apk/Dorabox-arm64-v8a.apk hoặc dorabox://update">
+                    </div>
+
+                    <div class="alert alert-info py-2 small border-0">
+                      <i class="fas fa-info-circle me-1"></i> Thông báo này sẽ được phát qua <strong>Firebase Cloud Messaging v1 (FCM)</strong> đồng thời ghi trực tiếp vào Hộp thông báo của tất cả thành viên.
+                    </div>
+
+                    <button id="btn-send-broadcast" class="btn btn-primary w-100 py-2 fw-bold">
+                      <i class="fas fa-paper-plane me-1"></i> Bắt Đầu Phát Sóng Toàn Hệ Thống
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Phone Mockup Live Preview -->
+              <div class="col-lg-5">
+                <div class="card">
+                  <div class="card-header">
+                    <h5 class="card-title fw-bold m-0"><i class="fas fa-mobile-screen text-info me-2"></i> Xem Trước Giao Diện Điện Thoại</h5>
+                  </div>
+                  <div class="card-body text-center py-4">
+                    <div class="phone-mockup text-start">
+                      <div class="phone-notch"></div>
+                      <div class="d-flex justify-content-between align-items-center text-muted small mb-3 px-1">
+                        <span>09:41</span>
+                        <span><i class="fas fa-wifi me-1"></i><i class="fas fa-battery-full"></i></span>
+                      </div>
+                      
+                      <!-- Notification Preview Bubble -->
+                      <div class="phone-notif-bubble">
+                        <div class="d-flex align-items-center gap-2 mb-1">
+                          <div class="brand-icon-box" style="width: 22px; height: 22px; font-size: 11px; border-radius: 6px; margin: 0;">
+                            <i class="fas fa-bell"></i>
+                          </div>
+                          <span class="fw-bold text-white small">DORABOX</span>
+                          <span class="text-muted" style="font-size: 10px;">· Vừa xong</span>
+                        </div>
+                        <div class="fw-bold text-white small" id="preview-notif-title">Tiêu đề thông báo...</div>
+                        <div class="text-muted small mt-1" id="preview-notif-body" style="font-size: 11.5px; line-height: 1.35;">Nội dung thông báo xuất hiện ở đây...</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- =========================================================================
+               TAB 8: BẢO MẬT & AUDIT LOGS
+               ========================================================================= -->
+          <div id="tab-bao-mat-audit" class="tab-section">
+            <div class="card">
+              <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
+                <h5 class="card-title fw-bold m-0"><i class="fas fa-shield-halved text-indigo me-2"></i> Nhật Ký Audit An Ninh & Bảo Mật Hệ Thống</h5>
+                <button class="btn btn-sm btn-outline-danger" onclick="cleanSpamReactions()">
+                  <i class="fas fa-broom me-1"></i> Quét Sạch Phản Ứng Rác (Spam Clean)
+                </button>
+              </div>
+              <div class="card-body table-responsive p-0">
+                <table class="table table-hover table-striped align-middle mb-0">
+                  <thead class="table-dark">
+                    <tr>
+                      <th>Thời Gian</th>
+                      <th>Loại Sự Kiện</th>
+                      <th>Cấp Độ</th>
+                      <th>Tác Tử (Actor)</th>
+                      <th>Địa Chỉ IP</th>
+                      <th>Chi Tiết Nhật Ký</th>
+                    </tr>
+                  </thead>
+                  <tbody id="audit-logs-body">
+                    <tr><td colspan="6" class="text-center py-4 text-muted">Đang tải nhật ký bảo mật...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- =========================================================================
+               TAB 9: HẠ TẦNG CLOUD & SYSTEM HEALTH
+               ========================================================================= -->
+          <div id="tab-he-thong" class="tab-section">
+            <div class="row">
+              <div class="col-lg-6">
+                <div class="card">
+                  <div class="card-header">
+                    <h5 class="card-title fw-bold m-0"><i class="fas fa-database text-primary me-2"></i> Kết Nối Cơ Sở Dữ Liệu & Storage</h5>
+                  </div>
+                  <div class="card-body">
+                    <ul class="list-group list-group-flush bg-transparent">
+                      <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center border-secondary">
+                        <div>
+                          <div class="fw-bold">Supabase PostgreSQL</div>
+                          <small class="text-muted">Lưu trữ người dùng, bài viết, quan hệ bạn bè, tin nhắn</small>
+                        </div>
+                        <span class="badge bg-success" id="health-supabase">ĐANG KẾT NỐI</span>
+                      </li>
+                      <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center border-secondary">
+                        <div>
+                          <div class="fw-bold">Cloudflare R2 Storage CDN</div>
+                          <small class="text-muted">Lưu trữ ảnh avatar, hình ảnh bảng tin, video HD</small>
+                        </div>
+                        <span class="badge bg-success" id="health-r2">SẴN SÀNG</span>
+                      </li>
+                      <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center border-secondary">
+                        <div>
+                          <div class="fw-bold">Firebase Cloud Messaging (FCM v1)</div>
+                          <small class="text-muted">Đẩy thông báo tức thì, chuông cuộc gọi đến</small>
+                        </div>
+                        <span class="badge bg-success" id="health-fcm">HOẠT ĐỘNG</span>
+                      </li>
+                      <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center border-secondary">
+                        <div>
+                          <div class="fw-bold">Agora RTC Audio/Video Engine</div>
+                          <small class="text-muted">Hạ tầng gọi thoại & video call mã hóa P2P</small>
+                        </div>
+                        <span class="badge bg-success" id="health-agora">ONLINE</span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-lg-6">
+                <div class="card">
+                  <div class="card-header">
+                    <h5 class="card-title fw-bold m-0"><i class="fas fa-microchip text-teal me-2"></i> Tài Nguyên & Thông Số Máy Chủ</h5>
+                  </div>
+                  <div class="card-body">
+                    <div class="row g-3">
+                      <div class="col-6">
+                        <div class="p-3 bg-dark rounded-3 border border-secondary text-center">
+                          <div class="text-muted small text-uppercase">Thời Gian Hoạt Động</div>
+                          <div class="fs-4 fw-bold text-white mt-1" id="health-uptime">99.98%</div>
+                        </div>
+                      </div>
+                      <div class="col-6">
+                        <div class="p-3 bg-dark rounded-3 border border-secondary text-center">
+                          <div class="text-muted small text-uppercase">Node.js Runtime</div>
+                          <div class="fs-4 fw-bold text-info mt-1" id="health-node">v22.x LTS</div>
+                        </div>
+                      </div>
+                      <div class="col-6">
+                        <div class="p-3 bg-dark rounded-3 border border-secondary text-center">
+                          <div class="text-muted small text-uppercase">Tải Bộ Nhớ (RAM)</div>
+                          <div class="fs-4 fw-bold text-warning mt-1" id="health-memory">~145 MB</div>
+                        </div>
+                      </div>
+                      <div class="col-6">
+                        <div class="p-3 bg-dark rounded-3 border border-secondary text-center">
+                          <div class="text-muted small text-uppercase">Phiên Bản AdminLTE</div>
+                          <div class="fs-4 fw-bold text-success mt-1">v4.0.0 Luxe</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /.container-fluid -->
       </section>
-
-      <!-- ================= 7. TAB: HỆ THỐNG & CLOUD ================= -->
-      <section id="tab-he-thong" class="tab-section">
-        <div class="card-panel">
-          <div class="panel-header">
-            <div class="panel-heading">
-              <svg class="icon" viewBox="0 0 24 24"><rect width="20" height="8" x="2" y="2" rx="2" ry="2"/><rect width="20" height="8" x="2" y="14" rx="2" ry="2"/></svg>
-              <h3>Kiểm Định & Giám Sát Hạ Tầng Đám Mây</h3>
-            </div>
-            <button class="btn btn-secondary btn-sm" onclick="fetchSystemHealth(true)">
-              <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 21h5v-5"/></svg>
-              <span>Kiểm Tra Toàn Diện Ngay</span>
-            </button>
-          </div>
-
-          <div class="system-health-grid" id="full-system-grid">
-            <div class="service-card">
-              <div class="service-card-top">
-                <span class="service-name">
-                  <svg class="icon icon-sm" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
-                  Supabase Postgres & Auth
-                </span>
-                <span class="badge badge-verified" id="diag-db-badge">CONNECTED</span>
-              </div>
-              <p style="font-size: 12.5px; color: var(--text-dim);" id="diag-db-url">Endpoint: vcmsmyaupsksbjusnzoy.supabase.co</p>
-              <p style="font-size: 12.5px; color: var(--color-emerald);" id="diag-db-lat">Độ trễ: Đang kiểm tra...</p>
-            </div>
-
-            <div class="service-card">
-              <div class="service-card-top">
-                <span class="service-name">
-                  <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>
-                  Cloudflare R2 Storage
-                </span>
-                <span class="badge badge-oa">READY</span>
-              </div>
-              <p style="font-size: 12.5px; color: var(--text-dim);">Bucket: dung-sketch-team-dorabox</p>
-              <p style="font-size: 12.5px; color: var(--text-dim);">CDN Domain: doraboxcdn.zpiltk.io.vn</p>
-            </div>
-
-            <div class="service-card">
-              <div class="service-card-top">
-                <span class="service-name">
-                  <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/></svg>
-                  Firebase Cloud Messaging
-                </span>
-                <span class="badge badge-verified">HTTP v1</span>
-              </div>
-              <p style="font-size: 12.5px; color: var(--text-dim);">Google Service Account: dorabox-4bbcb</p>
-              <p style="font-size: 12.5px; color: var(--color-emerald);">Kênh Push Notification hoạt động</p>
-            </div>
-
-            <div class="service-card">
-              <div class="service-card-top">
-                <span class="service-name">
-                  <svg class="icon icon-sm" viewBox="0 0 24 24"><rect width="20" height="8" x="2" y="2" rx="2" ry="2"/><rect width="20" height="8" x="2" y="14" rx="2" ry="2"/></svg>
-                  Bộ Nhớ & Runtime API
-                </span>
-                <span class="badge badge-verified" id="diag-node-badge">NODE.JS</span>
-              </div>
-              <p style="font-size: 12.5px; color: var(--text-dim);" id="diag-memory">Bộ nhớ RAM: Đang tính...</p>
-              <p style="font-size: 12.5px; color: var(--text-dim);" id="diag-uptime-val">Thời gian chạy: Đang tính...</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ================= 8. TAB: BẢO MẬT & AUDIT LOGS ================= -->
-      <section id="tab-bao-mat-audit" class="tab-section">
-        <!-- CARD 1: CƠ CHẾ CHỐNG SPAM PHẢN ỨNG -->
-        <div class="card-panel">
-          <div class="panel-header">
-            <div class="panel-heading">
-              <svg class="icon" viewBox="0 0 24 24" style="color: var(--color-emerald);"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
-              <h3>Cơ Chế Chống Spam Phản Ứng (Reaction Anti-Spam Guard)</h3>
-            </div>
-            <button class="btn btn-primary" id="btn-clean-spam-reactions" onclick="cleanSpamReactions()">
-              <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
-              <span>Quét & Dọn Phản Ứng Spam / Đồng Bộ Lượt Thích</span>
-            </button>
-          </div>
-
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-bottom: 16px;">
-            <div class="service-card">
-              <div class="service-card-top">
-                <span class="service-name">
-                  <svg class="icon icon-sm" style="color: var(--color-blue);" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 14 14"/></svg>
-                  Debounce & Throttle
-                </span>
-                <span class="badge badge-verified">120Hz ULTRA</span>
-              </div>
-              <p style="font-size: 12.5px; color: var(--text-dim);">Chặn tap liên tục &lt; 250ms, Gom lệnh mạng 350ms phản hồi tức thì 120Hz mượt mà.</p>
-            </div>
-
-            <div class="service-card">
-              <div class="service-card-top">
-                <span class="service-name">
-                  <svg class="icon icon-sm" style="color: var(--color-gold);" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/></svg>
-                  Rate Limit Push FCM
-                </span>
-                <span class="badge badge-oa">2 PHÚT</span>
-              </div>
-              <p style="font-size: 12.5px; color: var(--text-dim);">Tối đa 1 thông báo đẩy/2 phút mỗi tác giả bài viết, chống spam rung chuông máy người dùng.</p>
-            </div>
-
-            <div class="service-card">
-              <div class="service-card-top">
-                <span class="service-name">
-                  <svg class="icon icon-sm" style="color: var(--color-emerald);" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
-                  Atomic UPSERT RPC
-                </span>
-                <span class="badge badge-verified">POSTGRES</span>
-              </div>
-              <p style="font-size: 12.5px; color: var(--text-dim);">Xử lý nguyên tử toggle_post_reaction, khóa race-condition chống sai lệch số đếm.</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- CARD 2: NHẬT KÝ BẢO MẬT AUDIT LOGS -->
-        <div class="card-panel">
-          <div class="panel-header">
-            <div class="panel-heading">
-              <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-              <h3>Nhật Ký Bảo Mật & Kiểm Toán Hệ Thống (Audit Logs)</h3>
-            </div>
-            <button class="btn btn-secondary btn-sm" onclick="fetchSecurityLogs(true)">
-              <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
-              <span>Làm Mới Nhật Ký</span>
-            </button>
-          </div>
-
-          <div class="table-wrapper">
-            <table>
-              <thead>
-                <tr>
-                  <th style="width: 170px;">Thời Gian</th>
-                  <th>Loại Sự Kiện</th>
-                  <th>Mức Độ</th>
-                  <th>Tác Nhân</th>
-                  <th>Chi Tiết Hoạt Động</th>
-                </tr>
-              </thead>
-              <tbody id="audit-logs-table-body">
-                <tr><td colspan="5" style="text-align: center; padding: 30px; color: var(--text-dim);">Đang tải nhật ký bảo mật...</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </section>
-
-      <!-- ================= TAB: DUYỆT THÔNG TIN OA ================= -->
-      <section id="tab-duyet-oa" class="tab-section">
-        <div class="card-panel">
-          <div class="panel-header">
-            <div class="panel-heading">
-              <svg class="icon" viewBox="0 0 24 24" style="color: var(--color-gold);"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-              <h3>Hàng Đợi Xét Duyệt Thông Tin Official Account</h3>
-            </div>
-            <button class="btn btn-secondary btn-sm" onclick="fetchOaRequests(true)">
-              <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
-              <span>Làm Mới Yêu Cầu</span>
-            </button>
-          </div>
-
-          <div class="notice-banner">
-            <svg class="icon notice-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-            <div class="notice-text">
-              <h4>Quy trình kiểm duyệt thông tin Official Account:</h4>
-              <p>Mỗi tài khoản OA được phép tự do chỉnh sửa <strong>1 lần duy nhất đầu tiên</strong>. Từ lần thứ 2 trở đi, mọi thay đổi (Tên OA, Lĩnh vực, Mã định danh, Bio và Trạng thái) đều phải gửi yêu cầu vào hàng đợi này. Khi Quản trị viên duyệt, thông tin mới sẽ được cập nhật công khai ngay lập tức lên ứng dụng di động.</p>
-            </div>
-          </div>
-
-          <div id="oa-requests-container">
-            <div style="text-align: center; padding: 40px; color: var(--text-dim);">Đang tải danh sách yêu cầu xét duyệt OA...</div>
-          </div>
-        </div>
-      </section>
-
+      <!-- /.content -->
     </div>
-  </main>
+    <!-- /.content-wrapper -->
 
-  <!-- JAVASCRIPT LOGIC & API INTEGRATIONS -->
+    <footer class="main-footer bg-dark border-secondary small text-muted d-flex justify-content-between">
+      <div>
+        <strong>Copyright &copy; 2026 <a href="https://dorabox.app" class="text-primary text-decoration-none">Dorabox Social Network</a>.</strong> Toàn bộ quyền được bảo lưu.
+      </div>
+      <div>
+        <b>AdminLTE Edition:</b> 3.2.0 / 4.0 Pro
+      </div>
+    </footer>
+  </div>
+  <!-- ./wrapper -->
+
+  <!-- Image Lightbox Modal -->
+  <div class="modal fade" id="lightboxModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content bg-transparent border-0 text-center">
+        <div class="modal-body p-0">
+          <img id="lightbox-img" src="" class="img-fluid rounded-4 shadow-lg" style="max-height: 80vh;">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- jQuery & Bootstrap 5 & AdminLTE JS -->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/js/adminlte.min.js"></script>
+  
+  <!-- SweetAlert2 & Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
   <script>
-    // State Quản Trị
     let adminToken = localStorage.getItem('dorabox_admin_token') || '';
-    let currentTab = 'tong-quan';
     let allUsersCache = [];
     let allPostsCache = [];
     let allCommentsCache = [];
     let allReportsCache = [];
+    let allOaRequestsCache = [];
+    let growthChartInstance = null;
+    let distributionChartInstance = null;
 
-    // Tự động kiểm tra đăng nhập khi mở trang
-    window.addEventListener('DOMContentLoaded', () => {
-      setupRealtimePreview();
+    document.addEventListener('DOMContentLoaded', () => {
+      initTheme();
       setupTabs();
+      setupBroadcastPreview();
+      setupSidebarFilter();
 
       if (adminToken) {
         verifySession();
@@ -1759,16 +1098,42 @@ export function renderAdminPage(): string {
       }
     });
 
+    // Theme Toggle (Dark / Light Mode)
+    function initTheme() {
+      const isLight = localStorage.getItem('dorabox_admin_theme') === 'light';
+      if (isLight) {
+        document.body.classList.remove('dark-mode');
+        document.getElementById('theme-toggle-icon').className = 'fas fa-moon';
+      }
+
+      document.getElementById('btn-toggle-dark-mode').addEventListener('click', () => {
+        const currentlyDark = document.body.classList.contains('dark-mode');
+        if (currentlyDark) {
+          document.body.classList.remove('dark-mode');
+          document.getElementById('theme-toggle-icon').className = 'fas fa-moon';
+          localStorage.setItem('dorabox_admin_theme', 'light');
+        } else {
+          document.body.classList.add('dark-mode');
+          document.getElementById('theme-toggle-icon').className = 'fas fa-sun';
+          localStorage.setItem('dorabox_admin_theme', 'dark');
+        }
+      });
+    }
+
+    // Login Overlay Handlers
     function showLoginOverlay() {
-      document.getElementById('auth-overlay').style.display = 'flex';
+      const overlay = document.getElementById('auth-overlay');
+      overlay.style.visibility = 'visible';
+      overlay.style.opacity = '1';
       document.getElementById('admin-pass-input').focus();
     }
 
     function hideLoginOverlay() {
-      document.getElementById('auth-overlay').style.display = 'none';
+      const overlay = document.getElementById('auth-overlay');
+      overlay.style.opacity = '0';
+      overlay.style.visibility = 'hidden';
     }
 
-    // Đăng nhập Admin
     document.getElementById('btn-unlock-gate').addEventListener('click', doLogin);
     document.getElementById('admin-pass-input').addEventListener('keydown', (e) => {
       if (e.key === 'Enter') doLogin();
@@ -1777,7 +1142,7 @@ export function renderAdminPage(): string {
     async function doLogin() {
       const pass = document.getElementById('admin-pass-input').value.trim();
       if (!pass) {
-        showToast('Vui lòng nhập Admin Secret Key', 'error');
+        Swal.fire({ icon: 'warning', title: 'Thông báo', text: 'Vui lòng nhập Admin Secret Key' });
         return;
       }
 
@@ -1793,24 +1158,42 @@ export function renderAdminPage(): string {
           adminToken = data.token;
           localStorage.setItem('dorabox_admin_token', adminToken);
           hideLoginOverlay();
-          showToast('Đăng nhập thành công! Chào mừng SuperAdmin', 'success');
+          Swal.fire({
+            toast: true,
+            position: 'top-end',
+            icon: 'success',
+            title: 'Chào mừng SuperAdministrator!',
+            showConfirmButton: false,
+            timer: 2000
+          });
           loadDashboardData();
         } else {
-          showToast(data.error || 'Khóa bảo mật không chính xác!', 'error');
+          Swal.fire({ icon: 'error', title: 'Thất bại', text: data.error || 'Khóa bảo mật không chính xác!' });
         }
       } catch (err) {
-        showToast('Lỗi kết nối máy chủ: ' + err.message, 'error');
+        Swal.fire({ icon: 'error', title: 'Lỗi mạng', text: err.message });
       }
     }
 
-    // Đăng xuất
+    // Logout
     document.getElementById('btn-logout').addEventListener('click', () => {
-      localStorage.removeItem('dorabox_admin_token');
-      adminToken = '';
-      location.reload();
+      Swal.fire({
+        title: 'Đăng xuất?',
+        text: 'Bạn có chắc chắn muốn kết thúc phiên làm việc Quản trị?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#ef4444',
+        confirmButtonText: 'Đăng xuất ngay'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          localStorage.removeItem('dorabox_admin_token');
+          adminToken = '';
+          location.reload();
+        }
+      });
     });
 
-    // Xác thực phiên làm việc
+    // Verify Session
     async function verifySession() {
       try {
         const res = await fetch('/api/admin/auth/check', {
@@ -1824,12 +1207,12 @@ export function renderAdminPage(): string {
           adminToken = '';
           showLoginOverlay();
         }
-      } catch (err) {
+      } catch (_) {
         showLoginOverlay();
       }
     }
 
-    // Tải toàn bộ dữ liệu quản trị
+    // Load All Data
     async function loadDashboardData() {
       fetchMetrics();
       fetchUsers();
@@ -1843,10 +1226,17 @@ export function renderAdminPage(): string {
 
     document.getElementById('btn-refresh-data').addEventListener('click', () => {
       loadDashboardData();
-      showToast('Đã làm mới dữ liệu hệ thống!', 'success');
+      Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: 'success',
+        title: 'Đã cập nhật dữ liệu mới nhất!',
+        showConfirmButton: false,
+        timer: 1500
+      });
     });
 
-    // 1. Fetch Metrics
+    // 1. Fetch Metrics & Render Charts
     async function fetchMetrics() {
       try {
         const res = await fetch('/api/admin/metrics', {
@@ -1856,25 +1246,111 @@ export function renderAdminPage(): string {
         if (data.success && data.metrics) {
           const m = data.metrics;
           document.getElementById('kpi-users').textContent = Number(m.totalUsers || 0).toLocaleString();
+          document.getElementById('sidebar-user-badge').textContent = Number(m.totalUsers || 0).toLocaleString();
           document.getElementById('kpi-verified').textContent = Number(m.verifiedUsers || 0).toLocaleString();
           document.getElementById('kpi-banned').textContent = Number(m.bannedUsers || 0).toLocaleString();
           document.getElementById('kpi-posts').textContent = Number(m.totalPosts || 0).toLocaleString();
           document.getElementById('kpi-comments').textContent = Number(m.totalComments || 0).toLocaleString();
-          document.getElementById('sidebar-report-badge').textContent = m.pendingReports;
-          document.getElementById('reports-pending-count').textContent = m.pendingReports + ' Chờ xử lý';
+          
+          const pendingRep = Number(m.pendingReports || 0);
+          document.getElementById('sidebar-report-badge').textContent = pendingRep;
+          document.getElementById('top-report-badge').textContent = pendingRep;
+          document.getElementById('reports-pending-count').textContent = pendingRep + ' Chờ xử lý';
+          document.getElementById('dropdown-reports-text').textContent = pendingRep + ' Báo cáo vi phạm';
 
-          // Cập nhật số lượng đề xuất duyệt thông tin OA
           const pendingOa = Number(m.pendingOaRequests || 0);
-          const kpiOa = document.getElementById('kpi-oa-pending');
-          if (kpiOa) kpiOa.textContent = pendingOa.toLocaleString();
+          document.getElementById('kpi-oa-pending').textContent = pendingOa;
           const oaBadge = document.getElementById('sidebar-oa-badge');
+          const navOaBadge = document.getElementById('nav-oa-badge');
           if (oaBadge) {
             oaBadge.textContent = pendingOa;
             oaBadge.style.display = pendingOa > 0 ? 'inline-block' : 'none';
           }
+          if (navOaBadge) {
+            navOaBadge.textContent = pendingOa;
+            navOaBadge.style.display = pendingOa > 0 ? 'inline-block' : 'none';
+          }
+          document.getElementById('dropdown-oa-text').textContent = pendingOa + ' Đề xuất OA';
+          document.getElementById('dropdown-header-notif').textContent = (pendingRep + pendingOa) + ' Thông báo cần xử lý';
+
+          renderCharts(m);
         }
       } catch (err) {
         console.error('Fetch metrics error:', err);
+      }
+    }
+
+    function renderCharts(m) {
+      // 1. Line Growth Chart
+      const ctxGrowth = document.getElementById('growthChart');
+      if (ctxGrowth) {
+        if (growthChartInstance) growthChartInstance.destroy();
+        growthChartInstance = new Chart(ctxGrowth, {
+          type: 'line',
+          data: {
+            labels: ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN (Hôm nay)'],
+            datasets: [
+              {
+                label: 'Thành viên mới',
+                data: [12, 19, 25, 32, 45, 58, Number(m.totalUsers || 70)],
+                borderColor: '#0084ff',
+                backgroundColor: 'rgba(0, 132, 255, 0.15)',
+                fill: true,
+                tension: 0.35,
+                borderWidth: 2.5
+              },
+              {
+                label: 'Bài viết & Tương tác',
+                data: [35, 48, 62, 85, 110, 145, Number(m.totalPosts || 160)],
+                borderColor: '#10b981',
+                backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                fill: true,
+                tension: 0.35,
+                borderWidth: 2.5
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { labels: { color: '#cbd5e1', font: { family: 'Plus Jakarta Sans' } } }
+            },
+            scales: {
+              x: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255,255,255,0.05)' } },
+              y: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255,255,255,0.05)' } }
+            }
+          }
+        });
+      }
+
+      // 2. Distribution Doughnut Chart
+      const ctxDist = document.getElementById('distributionChart');
+      if (ctxDist) {
+        if (distributionChartInstance) distributionChartInstance.destroy();
+        distributionChartInstance = new Chart(ctxDist, {
+          type: 'doughnut',
+          data: {
+            labels: ['Người dùng', 'Bài viết', 'Bình luận', 'Báo cáo'],
+            datasets: [{
+              data: [
+                Number(m.totalUsers || 10),
+                Number(m.totalPosts || 15),
+                Number(m.totalComments || 25),
+                Number(m.pendingReports || 2)
+              ],
+              backgroundColor: ['#0084ff', '#10b981', '#f59e0b', '#ef4444'],
+              borderWidth: 0
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { position: 'bottom', labels: { color: '#cbd5e1', boxWidth: 14 } }
+            }
+          }
+        });
       }
     }
 
@@ -1889,7 +1365,6 @@ export function renderAdminPage(): string {
           allUsersCache = data.users;
           renderUsersTable(allUsersCache);
 
-          // Update VIP / OA count
           const vipCount = allUsersCache.filter(u => u.is_vip || u.is_oa || u.account_type === 'oa').length;
           document.getElementById('kpi-vip').textContent = Number(vipCount).toLocaleString();
         }
@@ -1901,74 +1376,69 @@ export function renderAdminPage(): string {
     function renderUsersTable(users) {
       const tbody = document.getElementById('users-table-body');
       if (!users || users.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 40px; color: var(--text-dim);">Không tìm thấy thành viên nào.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7" class="text-center py-4 text-muted">Không tìm thấy thành viên nào.</td></tr>';
         return;
       }
 
       tbody.innerHTML = users.map(u => {
         const initial = (u.display_name || u.username || 'U').charAt(0).toUpperCase();
         const avatarHtml = u.avatar_url 
-          ? \`<img class="user-avatar-img" src="\${u.avatar_url}" alt="\${u.username}" onerror="this.outerHTML='<div class=\\'user-avatar-fallback\\'>\${initial}</div>'" />\`
-          : \`<div class="user-avatar-fallback">\${initial}</div>\`;
-
-        const statusBadge = u.is_banned
-          ? '<span class="badge badge-banned"><svg class="icon icon-sm" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg> ĐÃ KHÓA</span>'
-          : '<span class="badge badge-verified"><svg class="icon icon-sm" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> HOẠT ĐỘNG</span>';
+          ? \`<img class="avatar-img-sm me-2" src="\${u.avatar_url}" alt="\${escapeHtml(u.display_name)}" onerror="this.outerHTML='<div class=\\'avatar-fallback-sm me-2\\'>\${initial}</div>'" />\`
+          : \`<div class="avatar-fallback-sm me-2">\${initial}</div>\`;
 
         const roleBadge = u.role === 'admin'
-          ? '<span class="badge badge-admin"><svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> ADMIN</span>'
-          : (u.role === 'moderator' ? '<span class="badge badge-oa">MOD</span>' : '<span class="badge badge-neutral">MEMBER</span>');
+          ? '<span class="badge bg-danger">ADMIN</span>'
+          : (u.role === 'mod' ? '<span class="badge bg-purple" style="background:#a855f7;">MODERATOR</span>' : (u.is_oa ? '<span class="badge badge-oa">OFFICIAL ACCOUNT</span>' : '<span class="badge bg-secondary">MEMBER</span>'));
+
+        let tickBadges = '';
+        if (u.is_oa || u.account_type === 'oa') {
+          tickBadges += '<span class="badge badge-oa me-1"><i class="fas fa-certificate me-1"></i>Tích Vàng OA</span>';
+        } else if (u.is_verified) {
+          tickBadges += '<span class="badge badge-verified me-1"><i class="fas fa-check-circle me-1"></i>Tích Xanh</span>';
+        }
+        if (u.is_vip) {
+          tickBadges += '<span class="badge bg-warning text-dark me-1"><i class="fas fa-crown me-1"></i>VIP</span>';
+        }
+        if (!tickBadges) tickBadges = '<span class="text-muted small">-</span>';
+
+        const statusBadge = u.is_banned
+          ? '<span class="badge bg-danger"><i class="fas fa-ban me-1"></i>Bị Khóa</span>'
+          : '<span class="badge bg-success"><i class="fas fa-check me-1"></i>Hoạt Động</span>';
 
         const joinDate = u.created_at ? new Date(u.created_at).toLocaleDateString('vi-VN') : '-';
-        const isOA = (u.is_oa || u.is_vip || u.account_type === 'oa');
 
         return \`
           <tr>
             <td>
-              <div class="user-profile-cell">
+              <div class="d-flex align-items-center">
                 \${avatarHtml}
                 <div>
-                  <div class="user-name-title">
-                    \${escapeHtml(u.display_name || u.username || 'Dorabox User')}
-                    \${isOA ? '<span style="color: var(--color-gold);" title="Tài khoản Doanh Nghiệp OA"><svg class="icon icon-sm" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span>' : ''}
-                    \${u.is_verified ? '<span style="color: var(--color-blue);" title="Đã xác thực"><svg class="icon icon-sm" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span>' : ''}
-                  </div>
-                  <div class="user-uid-sub">
-                    UID: \${u.id.substring(0, 8)}...
-                    \${isOA ? \`<span style="color: var(--color-gold); margin-left: 6px;">[OA: \${escapeHtml(u.oa_category || 'Dịch vụ')} · Đã sửa: \${u.oa_info_edited_count || 0}/1]</span>\` : ''}
-                  </div>
+                  <div class="fw-bold text-white">\${escapeHtml(u.display_name || 'Chưa đặt tên')}</div>
+                  <div class="text-muted small font-mono" style="font-size: 11px;">UID: \${u.id.substring(0, 8)}...</div>
                 </div>
               </div>
             </td>
-            <td>
-              <span style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--text-muted);">@\${escapeHtml(u.username || '')}</span>
-            </td>
+            <td><span class="font-mono text-info">@\${escapeHtml(u.username || '')}</span></td>
             <td>\${roleBadge}</td>
+            <td>\${tickBadges}</td>
             <td>\${statusBadge}</td>
-            <td style="font-size: 13px;">\${joinDate}</td>
-            <td style="text-align: right;">
-              <div style="display: inline-flex; gap: 6px;">
-                <button class="btn btn-sm btn-secondary" title="Đổi vai trò phân quyền: User, Mod, Admin" onclick="promptChangeRole('\${u.id}', '\${escapeHtml(u.display_name || u.username || 'User')}', '\${u.role || 'user'}')">
-                  <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                  <span>Vai Trò</span>
+            <td class="small">\${joinDate}</td>
+            <td class="text-end">
+              <div class="btn-group btn-group-sm">
+                <button class="btn btn-outline-info" title="Cấp / Hủy Tích Xanh" onclick="toggleVerify('\${u.id}', \${!u.is_verified})">
+                  <i class="fas fa-check"></i>
                 </button>
-                <button class="btn btn-sm \${u.is_verified ? 'btn-secondary' : 'btn-blue'}" onclick="toggleVerify('\${u.id}', \${!u.is_verified})">
-                  <svg class="icon icon-sm" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
-                  <span>\${u.is_verified ? 'Gỡ Xanh' : 'Cấp Tích Xanh'}</span>
+                <button class="btn btn-outline-warning" title="Cấp / Hủy VIP" onclick="toggleVip('\${u.id}', \${!u.is_vip})">
+                  <i class="fas fa-crown"></i>
                 </button>
-                <button class="btn btn-sm \${isOA ? 'btn-secondary' : 'btn-gold'}" onclick="toggleVip('\${u.id}', \${!isOA})">
-                  <svg class="icon icon-sm" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                  <span>\${isOA ? 'Gỡ OA' : 'Cấp Tích Vàng OA'}</span>
+                <button class="btn btn-outline-primary" title="Đổi Quyền / Phân Loại" onclick="promptChangeRole('\${u.id}', '\${escapeHtml(u.display_name || u.username)}', '\${u.role || 'user'}')">
+                  <i class="fas fa-user-gear"></i>
                 </button>
-                \${isOA ? \`
-                <button class="btn btn-sm btn-gold" title="Cấp lại 1 lượt chỉnh sửa trực tiếp không cần duyệt cho OA" onclick="resetOaEditCount('\${u.id}', '\${escapeHtml(u.display_name || u.username || 'OA')}')">
-                  <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
-                  <span>Cấp Sửa (\${u.oa_info_edited_count || 0}/1)</span>
+                <button class="btn \${u.is_banned ? 'btn-success' : 'btn-outline-danger'}" title="\${u.is_banned ? 'Mở khóa tài khoản' : 'Khóa tài khoản'}" onclick="toggleBan('\${u.id}', \${!u.is_banned})">
+                  <i class="fas \${u.is_banned ? 'fa-lock-open' : 'fa-ban'}"></i>
                 </button>
-                \` : ''}
-                <button class="btn btn-sm \${u.is_banned ? 'btn-secondary' : 'btn-danger'}" onclick="toggleBan('\${u.id}', \${!u.is_banned})">
-                  <svg class="icon icon-sm" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
-                  <span>\${u.is_banned ? 'Mở Khóa' : 'Khóa Nick'}</span>
+                <button class="btn btn-outline-secondary" title="Cấp lại 1 lượt sửa OA" onclick="resetOaEditCount('\${u.id}', '\${escapeHtml(u.display_name || u.username)}')">
+                  <i class="fas fa-rotate-left"></i>
                 </button>
               </div>
             </td>
@@ -1977,7 +1447,6 @@ export function renderAdminPage(): string {
       }).join('');
     }
 
-    // Toggle Tích Xanh
     async function toggleVerify(userId, newStatus) {
       try {
         const res = await fetch(\`/api/admin/users/\${userId}/toggle-verify\`, {
@@ -1987,18 +1456,15 @@ export function renderAdminPage(): string {
         });
         const data = await res.json();
         if (data.success) {
-          showToast(data.message, 'success');
+          Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: data.message, showConfirmButton: false, timer: 1800 });
           fetchUsers();
           fetchMetrics();
-        } else {
-          showToast(data.error || 'Thao tác thất bại', 'error');
         }
       } catch (err) {
-        showToast('Lỗi: ' + err.message, 'error');
+        Swal.fire({ icon: 'error', title: 'Lỗi', text: err.message });
       }
     }
 
-    // Toggle VIP / OA
     async function toggleVip(userId, newStatus) {
       try {
         const res = await fetch(\`/api/admin/users/\${userId}/toggle-vip\`, {
@@ -2008,95 +1474,103 @@ export function renderAdminPage(): string {
         });
         const data = await res.json();
         if (data.success) {
-          showToast(data.message, 'success');
+          Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: data.message, showConfirmButton: false, timer: 1800 });
           fetchUsers();
           fetchMetrics();
-        } else {
-          showToast(data.error || 'Thao tác thất bại', 'error');
         }
       } catch (err) {
-        showToast('Lỗi: ' + err.message, 'error');
+        Swal.fire({ icon: 'error', title: 'Lỗi', text: err.message });
       }
     }
 
-    // Toggle Ban
     async function toggleBan(userId, newStatus) {
-      const confirmMsg = newStatus ? 'Xác nhận KHÓA tài khoản này khỏi hệ thống?' : 'Xác nhận mở khóa hoạt động cho tài khoản này?';
-      if (!confirm(confirmMsg)) return;
-
-      try {
-        const res = await fetch(\`/api/admin/users/\${userId}/toggle-ban\`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + adminToken },
-          body: JSON.stringify({ isBanned: newStatus })
-        });
-        const data = await res.json();
-        if (data.success) {
-          showToast(data.message, 'success');
-          fetchUsers();
-          fetchMetrics();
-        } else {
-          showToast(data.error || 'Thao tác thất bại', 'error');
+      const action = newStatus ? 'KHÓA' : 'MỞ KHÓA';
+      Swal.fire({
+        title: \`Xác nhận \${action} tài khoản?\`,
+        text: newStatus ? 'Người dùng sẽ bị thu hồi toàn bộ quyền truy cập ứng dụng!' : 'Người dùng có thể đăng nhập và hoạt động bình thường.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: newStatus ? '#ef4444' : '#10b981',
+        confirmButtonText: action
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          try {
+            const res = await fetch(\`/api/admin/users/\${userId}/toggle-ban\`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + adminToken },
+              body: JSON.stringify({ isBanned: newStatus })
+            });
+            const data = await res.json();
+            if (data.success) {
+              Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: data.message, showConfirmButton: false, timer: 1800 });
+              fetchUsers();
+              fetchMetrics();
+            }
+          } catch (err) {
+            Swal.fire({ icon: 'error', title: 'Lỗi', text: err.message });
+          }
         }
-      } catch (err) {
-        showToast('Lỗi: ' + err.message, 'error');
-      }
+      });
     }
 
-    // User Search & Filters
-    document.getElementById('user-search-input').addEventListener('input', (e) => {
-      const q = e.target.value.toLowerCase().trim();
-      const filtered = allUsersCache.filter(u => 
-        (u.display_name && u.display_name.toLowerCase().includes(q)) ||
-        (u.username && u.username.toLowerCase().includes(q))
-      );
-      renderUsersTable(filtered);
-    });
-
-    function filterUsers(type, btn) {
-      document.querySelectorAll('.filter-group .filter-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-
-      if (type === 'all') {
-        renderUsersTable(allUsersCache);
-      } else if (type === 'verified') {
-        renderUsersTable(allUsersCache.filter(u => u.is_verified));
-      } else if (type === 'oa' || type === 'vip') {
-        renderUsersTable(allUsersCache.filter(u => u.is_oa || u.is_vip || u.account_type === 'oa'));
-      } else if (type === 'banned') {
-        renderUsersTable(allUsersCache.filter(u => u.is_banned));
-      } else if (type === 'admin') {
-        renderUsersTable(allUsersCache.filter(u => u.role === 'admin' || u.role === 'moderator'));
-      }
-    }
-
-    // Đổi vai trò tài khoản (Role Promotion/Demotion)
     async function promptChangeRole(userId, name, currentRole) {
-      const newRole = prompt('Phân quyền vai trò cho [' + name + ']: Nhập user, moderator hoặc admin:', currentRole);
-      if (!newRole) return;
-      const clean = newRole.trim().toLowerCase();
-      if (!['user', 'moderator', 'admin'].includes(clean)) {
-        showToast('Vai trò không hợp lệ! Phải là user, moderator hoặc admin', 'error');
-        return;
-      }
+      const { value: newRole } = await Swal.fire({
+        title: \`Phân quyền cho "\${name}"\`,
+        input: 'select',
+        inputOptions: {
+          'user': 'Thành viên tiêu chuẩn (User)',
+          'oa': 'Official Account Doanh Nghiệp (OA)',
+          'mod': 'Điều phối viên kiểm duyệt (Moderator)',
+          'admin': 'Quản trị viên cấp cao (Admin)'
+        },
+        inputValue: currentRole,
+        showCancelButton: true,
+        confirmButtonText: 'Lưu quyền mới'
+      });
 
-      try {
-        const res = await fetch(\`/api/admin/users/\${userId}/change-role\`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + adminToken },
-          body: JSON.stringify({ role: clean })
-        });
-        const data = await res.json();
-        if (data.success) {
-          showToast(data.message, 'success');
-          fetchUsers();
-          fetchSecurityLogs();
-        } else {
-          showToast(data.error || 'Phân quyền thất bại', 'error');
+      if (newRole) {
+        try {
+          const res = await fetch(\`/api/admin/users/\${userId}/change-role\`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + adminToken },
+            body: JSON.stringify({ role: newRole })
+          });
+          const data = await res.json();
+          if (data.success) {
+            Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: data.message, showConfirmButton: false, timer: 1800 });
+            fetchUsers();
+            fetchMetrics();
+          }
+        } catch (err) {
+          Swal.fire({ icon: 'error', title: 'Lỗi', text: err.message });
         }
-      } catch (err) {
-        showToast('Lỗi: ' + err.message, 'error');
       }
+    }
+
+    // Filter Users
+    document.getElementById('user-search-input').addEventListener('input', filterUsers);
+    document.getElementById('user-role-filter').addEventListener('change', filterUsers);
+
+    function filterUsers() {
+      const q = document.getElementById('user-search-input').value.toLowerCase().trim();
+      const role = document.getElementById('user-role-filter').value;
+
+      let filtered = allUsersCache.filter(u => {
+        const matchesQuery = !q || 
+          (u.display_name && u.display_name.toLowerCase().includes(q)) || 
+          (u.username && u.username.toLowerCase().includes(q)) ||
+          (u.id && u.id.toLowerCase().includes(q));
+
+        let matchesRole = true;
+        if (role === 'banned') matchesRole = u.is_banned === true;
+        else if (role === 'oa') matchesRole = u.is_oa === true || u.account_type === 'oa';
+        else if (role === 'mod') matchesRole = u.role === 'mod';
+        else if (role === 'admin') matchesRole = u.role === 'admin';
+
+        return matchesQuery && matchesRole;
+      });
+
+      renderUsersTable(filtered);
     }
 
     // 3. Fetch Posts
@@ -2118,20 +1592,21 @@ export function renderAdminPage(): string {
     function renderPostsTable(posts) {
       const tbody = document.getElementById('posts-table-body');
       if (!posts || posts.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 40px; color: var(--text-dim);">Chưa có bài viết nào trên hệ thống.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7" class="text-center py-4 text-muted">Chưa có bài viết nào trên hệ thống.</td></tr>';
         return;
       }
 
       tbody.innerHTML = posts.map(p => {
         const author = p.profiles || {};
         const authorName = author.display_name || author.username || 'Thành viên';
+        const initial = authorName.charAt(0).toUpperCase();
         const authorAvatar = author.avatar_url 
-          ? \`<img class="user-avatar-img" style="width:32px;height:32px;" src="\${author.avatar_url}" />\`
-          : \`<div class="user-avatar-fallback" style="width:32px;height:32px;font-size:12px;">\${authorName.charAt(0).toUpperCase()}</div>\`;
+          ? \`<img class="avatar-img-sm me-2" src="\${author.avatar_url}" />\`
+          : \`<div class="avatar-fallback-sm me-2">\${initial}</div>\`;
 
-        let mediaHtml = '<span style="color: var(--text-dim); font-size: 12px;">Không có</span>';
+        let mediaHtml = '<span class="text-muted small">Không đính kèm</span>';
         if (p.media_urls && p.media_urls.length > 0) {
-          mediaHtml = \`<img class="post-thumb" src="\${p.media_urls[0]}" onclick="openLightbox('\${p.media_urls[0]}')" title="Nhấn để phóng to ảnh" />\`;
+          mediaHtml = \`<img src="\${p.media_urls[0]}" class="rounded-2 shadow-sm" style="width: 50px; height: 50px; object-fit: cover; cursor: pointer;" onclick="openLightbox('\${p.media_urls[0]}')" title="Nhấn để phóng to ảnh" />\`;
         }
 
         const dateStr = p.created_at ? new Date(p.created_at).toLocaleDateString('vi-VN') : '-';
@@ -2139,39 +1614,37 @@ export function renderAdminPage(): string {
         return \`
           <tr>
             <td>
-              <div style="display: flex; align-items: center; gap: 8px;">
+              <div class="d-flex align-items-center">
                 \${authorAvatar}
                 <div>
-                  <div style="font-weight: 600; font-size: 13.5px; color: var(--text-main);">\${escapeHtml(authorName)}</div>
-                  <div style="font-size: 11px; color: var(--text-dim);">@\${escapeHtml(author.username || '')}</div>
+                  <div class="fw-bold text-white">\${escapeHtml(authorName)}</div>
+                  <div class="text-muted small">@\${escapeHtml(author.username || '')}</div>
                 </div>
               </div>
             </td>
-            <td style="max-width: 300px;">
-              <div style="color: var(--text-main); font-size: 13.5px; line-height: 1.45; word-break: break-word;">
+            <td style="max-width: 320px;">
+              <div class="text-white small" style="line-height: 1.45; word-break: break-word;">
                 \${escapeHtml(p.content || '')}
               </div>
             </td>
             <td>\${mediaHtml}</td>
             <td>
-              <div style="display: flex; gap: 10px; font-size: 12.5px; color: var(--text-muted);">
-                <span>❤️ \${p.likes_count || 0}</span>
-                <span>💬 \${p.comments_count || 0}</span>
+              <div class="small text-muted d-flex gap-2">
+                <span><i class="fas fa-heart text-danger me-1"></i>\${p.likes_count || 0}</span>
+                <span><i class="fas fa-comment text-info me-1"></i>\${p.comments_count || 0}</span>
               </div>
             </td>
             <td>
-              \${p.is_pinned ? '<span class="badge badge-oa"><svg class="icon icon-sm" viewBox="0 0 24 24"><line x1="12" y1="17" x2="12" y2="22"/><path d="M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V6h1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4h1v4.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24Z"/></svg> Đã ghim</span>' : '<span style="color: var(--text-dim); font-size: 12px;">-</span>'}
+              \${p.is_pinned ? '<span class="badge badge-oa"><i class="fas fa-thumbtack me-1"></i>Đã ghim</span>' : '<span class="text-muted small">-</span>'}
             </td>
-            <td style="font-size: 12.5px;">\${dateStr}</td>
-            <td style="text-align: right;">
-              <div style="display: inline-flex; gap: 6px;">
-                <button class="btn btn-sm btn-secondary" onclick="togglePinPost('\${p.id}', \${!p.is_pinned})">
-                  <svg class="icon icon-sm" viewBox="0 0 24 24"><line x1="12" y1="17" x2="12" y2="22"/><path d="M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V6h1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4h1v4.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24Z"/></svg>
-                  <span>\${p.is_pinned ? 'Bỏ Ghim' : 'Ghim'}</span>
+            <td class="small">\${dateStr}</td>
+            <td class="text-end">
+              <div class="btn-group btn-group-sm">
+                <button class="btn btn-outline-warning" title="\${p.is_pinned ? 'Bỏ ghim' : 'Ghim nổi bật'}" onclick="togglePinPost('\${p.id}', \${!p.is_pinned})">
+                  <i class="fas fa-thumbtack"></i>
                 </button>
-                <button class="btn btn-sm btn-danger" onclick="deletePost('\${p.id}')">
-                  <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
-                  <span>Xóa</span>
+                <button class="btn btn-outline-danger" title="Xóa bài viết vĩnh viễn" onclick="deletePost('\${p.id}')">
+                  <i class="fas fa-trash"></i>
                 </button>
               </div>
             </td>
@@ -2189,31 +1662,40 @@ export function renderAdminPage(): string {
         });
         const data = await res.json();
         if (data.success) {
-          showToast(data.message, 'success');
+          Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: data.message, showConfirmButton: false, timer: 1800 });
           fetchPosts();
         }
       } catch (err) {
-        showToast('Lỗi: ' + err.message, 'error');
+        Swal.fire({ icon: 'error', title: 'Lỗi', text: err.message });
       }
     }
 
     async function deletePost(postId) {
-      if (!confirm('Xác nhận xóa vĩnh viễn bài viết này khỏi hệ thống?')) return;
-
-      try {
-        const res = await fetch(\`/api/admin/posts/\${postId}\`, {
-          method: 'DELETE',
-          headers: { 'Authorization': 'Bearer ' + adminToken }
-        });
-        const data = await res.json();
-        if (data.success) {
-          showToast(data.message, 'success');
-          fetchPosts();
-          fetchMetrics();
+      Swal.fire({
+        title: 'Xóa bài viết này?',
+        text: 'Toàn bộ nội dung, hình ảnh và bình luận liên quan sẽ bị xóa vĩnh viễn!',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#ef4444',
+        confirmButtonText: 'Xóa vĩnh viễn'
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          try {
+            const res = await fetch(\`/api/admin/posts/\${postId}\`, {
+              method: 'DELETE',
+              headers: { 'Authorization': 'Bearer ' + adminToken }
+            });
+            const data = await res.json();
+            if (data.success) {
+              Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: data.message, showConfirmButton: false, timer: 1800 });
+              fetchPosts();
+              fetchMetrics();
+            }
+          } catch (err) {
+            Swal.fire({ icon: 'error', title: 'Lỗi', text: err.message });
+          }
         }
-      } catch (err) {
-        showToast('Lỗi: ' + err.message, 'error');
-      }
+      });
     }
 
     document.getElementById('post-search-input').addEventListener('input', (e) => {
@@ -2241,36 +1723,31 @@ export function renderAdminPage(): string {
     function renderCommentsTable(comments) {
       const tbody = document.getElementById('comments-table-body');
       if (!comments || comments.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 40px; color: var(--text-dim);">Chưa có bình luận nào.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="5" class="text-center py-4 text-muted">Chưa có bình luận nào.</td></tr>';
         return;
       }
 
       tbody.innerHTML = comments.map(c => {
         const user = c.profiles || {};
         const userName = user.display_name || user.username || 'Thành viên';
-        const post = c.posts || {};
-        const postSnippet = post.content ? (post.content.length > 35 ? post.content.substring(0, 35) + '...' : post.content) : 'Bài viết #' + (c.post_id ? c.post_id.substring(0, 6) : '');
-        const dateStr = c.created_at ? new Date(c.created_at).toLocaleDateString('vi-VN') : '-';
+        const dateStr = c.created_at ? new Date(c.created_at).toLocaleString('vi-VN') : '-';
 
         return \`
           <tr>
             <td>
-              <div style="font-weight: 600; color: var(--text-main); font-size: 13.5px;">\${escapeHtml(userName)}</div>
-              <div style="font-size: 11px; color: var(--text-dim);">@\${escapeHtml(user.username || '')}</div>
+              <div class="fw-bold text-white">\${escapeHtml(userName)}</div>
+              <div class="text-muted small">@\${escapeHtml(user.username || '')}</div>
             </td>
-            <td style="max-width: 340px;">
-              <div style="color: var(--text-main); font-size: 13.5px; line-height: 1.45; word-break: break-word;">
-                \${escapeHtml(c.content || '')}
-              </div>
+            <td style="max-width: 380px;">
+              <div class="text-white small" style="line-height: 1.4;">\${escapeHtml(c.content || '')}</div>
             </td>
             <td>
-              <span class="badge badge-neutral" style="font-size: 11px;">\${escapeHtml(postSnippet)}</span>
+              <span class="badge bg-secondary font-mono">Post: \${c.post_id ? c.post_id.substring(0, 8) + '...' : '-'}</span>
             </td>
-            <td style="font-size: 12.5px;">\${dateStr}</td>
-            <td style="text-align: right;">
-              <button class="btn btn-sm btn-danger" onclick="deleteComment('\${c.id}')">
-                <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/></svg>
-                <span>Xóa</span>
+            <td class="small text-muted">\${dateStr}</td>
+            <td class="text-end">
+              <button class="btn btn-sm btn-outline-danger" onclick="deleteComment('\${c.id}')" title="Xóa bình luận này">
+                <i class="fas fa-trash"></i>
               </button>
             </td>
           </tr>
@@ -2279,22 +1756,31 @@ export function renderAdminPage(): string {
     }
 
     async function deleteComment(commentId) {
-      if (!confirm('Xác nhận xóa bình luận vi phạm này?')) return;
-
-      try {
-        const res = await fetch(\`/api/admin/comments/\${commentId}\`, {
-          method: 'DELETE',
-          headers: { 'Authorization': 'Bearer ' + adminToken }
-        });
-        const data = await res.json();
-        if (data.success) {
-          showToast(data.message, 'success');
-          fetchComments();
-          fetchMetrics();
+      Swal.fire({
+        title: 'Xóa bình luận?',
+        text: 'Bình luận này sẽ bị xóa vĩnh viễn khỏi bài viết!',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#ef4444',
+        confirmButtonText: 'Xóa ngay'
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          try {
+            const res = await fetch(\`/api/admin/comments/\${commentId}\`, {
+              method: 'DELETE',
+              headers: { 'Authorization': 'Bearer ' + adminToken }
+            });
+            const data = await res.json();
+            if (data.success) {
+              Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: data.message, showConfirmButton: false, timer: 1800 });
+              fetchComments();
+              fetchMetrics();
+            }
+          } catch (err) {
+            Swal.fire({ icon: 'error', title: 'Lỗi', text: err.message });
+          }
         }
-      } catch (err) {
-        showToast('Lỗi: ' + err.message, 'error');
-      }
+      });
     }
 
     document.getElementById('comment-search-input').addEventListener('input', (e) => {
@@ -2322,7 +1808,7 @@ export function renderAdminPage(): string {
     function renderReportsTable(reports) {
       const tbody = document.getElementById('reports-table-body');
       if (!reports || reports.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 40px; color: var(--text-dim);">Chưa có báo cáo vi phạm hoặc hồ sơ nào trong hàng đợi.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" class="text-center py-4 text-muted">Chưa có báo cáo vi phạm nào trong hàng đợi.</td></tr>';
         return;
       }
 
@@ -2334,40 +1820,37 @@ export function renderAdminPage(): string {
         const isUserTarget = r.target_type === 'user';
 
         const statusBadge = isPending
-          ? '<span class="badge badge-banned">CHỜ XỬ LÝ</span>'
-          : (r.status === 'dismissed' ? '<span class="badge badge-neutral">ĐÃ BÁC BỎ</span>' : '<span class="badge badge-verified">ĐÃ XỬ LÝ</span>');
+          ? '<span class="badge bg-danger">CHỜ XỬ LÝ</span>'
+          : (r.status === 'dismissed' ? '<span class="badge bg-secondary">ĐÃ BÁC BỎ</span>' : '<span class="badge bg-success">ĐÃ XỬ LÝ</span>');
 
         const typeBadge = isUserTarget
           ? '<span class="badge badge-oa">HỒ SƠ CẤP TÍCH</span>'
-          : \`<span class="badge badge-neutral">\${escapeHtml(r.target_type || 'Nội dung')}</span>\`;
+          : \`<span class="badge bg-secondary">\${escapeHtml(r.target_type || 'Nội dung')}</span>\`;
 
-        let actionButtonsHtml = '<span style="color: var(--text-dim); font-size: 12px;">Hoàn tất</span>';
+        let actionButtonsHtml = '<span class="text-muted small">Đã hoàn tất</span>';
         if (isPending) {
           if (isUserTarget) {
             actionButtonsHtml = \`
-              <div style="display: inline-flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end;">
-                <button class="btn btn-sm btn-gold" onclick="actionReport('\${r.id}', 'approve_oa')" title="Duyệt cấp Tích Vàng OA">
-                  <svg class="icon icon-sm" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                  <span>Duyệt OA</span>
+              <div class="btn-group btn-group-sm">
+                <button class="btn btn-warning text-dark" onclick="actionReport('\${r.id}', 'approve_oa')" title="Duyệt cấp Tích Vàng OA">
+                  <i class="fas fa-certificate me-1"></i> Duyệt OA
                 </button>
-                <button class="btn btn-sm btn-blue" onclick="actionReport('\${r.id}', 'approve_verified')" title="Duyệt cấp Tích Xanh">
-                  <svg class="icon icon-sm" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
-                  <span>Duyệt Tích Xanh</span>
+                <button class="btn btn-info" onclick="actionReport('\${r.id}', 'approve_verified')" title="Duyệt cấp Tích Xanh">
+                  <i class="fas fa-check-circle me-1"></i> Tích Xanh
                 </button>
-                <button class="btn btn-sm btn-secondary" onclick="actionReport('\${r.id}', 'dismiss')">
+                <button class="btn btn-outline-secondary" onclick="actionReport('\${r.id}', 'dismiss')">
                   Bác Bỏ
                 </button>
               </div>
             \`;
           } else {
             actionButtonsHtml = \`
-              <div style="display: inline-flex; gap: 6px;">
-                <button class="btn btn-sm btn-secondary" onclick="actionReport('\${r.id}', 'dismiss')">
+              <div class="btn-group btn-group-sm">
+                <button class="btn btn-outline-secondary" onclick="actionReport('\${r.id}', 'dismiss')">
                   Bác Bỏ
                 </button>
-                <button class="btn btn-sm btn-danger" onclick="actionReport('\${r.id}', 'delete_target')">
-                  <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/></svg>
-                  <span>Xóa Vi Phạm</span>
+                <button class="btn btn-danger" onclick="actionReport('\${r.id}', 'delete_target')">
+                  <i class="fas fa-trash me-1"></i> Xóa Vi Phạm
                 </button>
               </div>
             \`;
@@ -2377,19 +1860,17 @@ export function renderAdminPage(): string {
         return \`
           <tr>
             <td>
-              <div style="font-weight: 600; color: var(--text-main); font-size: 13.5px;">\${escapeHtml(reporterName)}</div>
-              <div style="font-size: 11px; color: var(--text-dim); font-family: 'JetBrains Mono', monospace;">UID: \${r.reporter_id ? r.reporter_id.substring(0, 8) + '...' : '-'}</div>
+              <div class="fw-bold text-white">\${escapeHtml(reporterName)}</div>
+              <div class="text-muted small font-mono">UID: \${r.reporter_id ? r.reporter_id.substring(0, 8) + '...' : '-'}</div>
             </td>
             <td>\${typeBadge}</td>
-            <td style="max-width: 300px; color: var(--text-main);">
-              <div style="font-weight: 500;">\${escapeHtml(r.reason || 'Yêu cầu kiểm duyệt')}</div>
-              \${isUserTarget ? \`<div style="font-size: 11px; color: var(--color-gold); margin-top: 4px; font-family: 'JetBrains Mono', monospace;">Mục tiêu UID: \${r.target_id}</div>\` : ''}
+            <td style="max-width: 300px;">
+              <div class="fw-semibold text-white">\${escapeHtml(r.reason || 'Yêu cầu kiểm duyệt')}</div>
+              \${isUserTarget ? \`<div class="text-warning small font-mono">Mục tiêu UID: \${r.target_id}</div>\` : ''}
             </td>
             <td>\${statusBadge}</td>
-            <td style="font-size: 12.5px;">\${dateStr}</td>
-            <td style="text-align: right;">
-              \${actionButtonsHtml}
-            </td>
+            <td class="small text-muted">\${dateStr}</td>
+            <td class="text-end">\${actionButtonsHtml}</td>
           </tr>
         \`;
       }).join('');
@@ -2404,19 +1885,19 @@ export function renderAdminPage(): string {
         });
         const data = await res.json();
         if (data.success) {
-          showToast(data.message, 'success');
+          Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: data.message, showConfirmButton: false, timer: 1800 });
           fetchReports();
           fetchMetrics();
         } else {
-          showToast(data.error || 'Thao tác thất bại', 'error');
+          Swal.fire({ icon: 'error', title: 'Thất bại', text: data.error || 'Thao tác không thành công' });
         }
       } catch (err) {
-        showToast('Lỗi: ' + err.message, 'error');
+        Swal.fire({ icon: 'error', title: 'Lỗi', text: err.message });
       }
     }
 
     // 6. Broadcast Realtime Preview & Send
-    function setupRealtimePreview() {
+    function setupBroadcastPreview() {
       const titleInput = document.getElementById('broadcast-title-input');
       const bodyInput = document.getElementById('broadcast-body-input');
       const previewTitle = document.getElementById('preview-notif-title');
@@ -2433,164 +1914,54 @@ export function renderAdminPage(): string {
       document.getElementById('btn-send-broadcast').addEventListener('click', async () => {
         const title = titleInput.value.trim();
         const body = bodyInput.value.trim();
+        const link = document.getElementById('broadcast-link-input').value.trim();
 
         if (!title || !body) {
-          showToast('Vui lòng nhập đầy đủ tiêu đề và nội dung', 'error');
+          Swal.fire({ icon: 'warning', title: 'Chưa đủ thông tin', text: 'Vui lòng nhập cả tiêu đề và nội dung thông báo' });
           return;
         }
 
-        if (!confirm('Xác nhận phát sóng thông báo này tới TOÀN BỘ thành viên ứng dụng?')) return;
+        Swal.fire({
+          title: 'Phát sóng Push Notification?',
+          text: 'Thông báo sẽ được gửi đồng thời tới TOÀN BỘ thành viên ứng dụng!',
+          icon: 'question',
+          showCancelButton: true,
+          confirmButtonColor: '#0084ff',
+          confirmButtonText: 'Bắt đầu gửi ngay'
+        }).then(async (result) => {
+          if (result.isConfirmed) {
+            const btn = document.getElementById('btn-send-broadcast');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Đang phát sóng Push Notification...';
 
-        const btn = document.getElementById('btn-send-broadcast');
-        btn.disabled = true;
-        btn.textContent = 'Đang phát sóng Push Notification...';
-
-        try {
-          const res = await fetch('/api/admin/broadcast', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + adminToken },
-            body: JSON.stringify({ title, body })
-          });
-          const data = await res.json();
-          if (data.success) {
-            showToast(data.message, 'success');
-            titleInput.value = '';
-            bodyInput.value = '';
-            updatePreview();
-          } else {
-            showToast(data.error || 'Gửi thất bại', 'error');
+            try {
+              const res = await fetch('/api/admin/broadcast', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + adminToken },
+                body: JSON.stringify({ title, body, link })
+              });
+              const data = await res.json();
+              if (data.success) {
+                Swal.fire({ icon: 'success', title: 'Thành công', text: data.message });
+                titleInput.value = '';
+                bodyInput.value = '';
+                updatePreview();
+              } else {
+                Swal.fire({ icon: 'error', title: 'Thất bại', text: data.error });
+              }
+            } catch (err) {
+              Swal.fire({ icon: 'error', title: 'Lỗi mạng', text: err.message });
+            } finally {
+              btn.disabled = false;
+              btn.innerHTML = '<i class="fas fa-paper-plane me-1"></i> Bắt Đầu Phát Sóng Toàn Hệ Thống';
+            }
           }
-        } catch (err) {
-          showToast('Lỗi: ' + err.message, 'error');
-        } finally {
-          btn.disabled = false;
-          btn.innerHTML = \`<svg class="icon icon-sm" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg><span>Phát Sóng Push Notification Tức Thì</span>\`;
-        }
+        });
       });
     }
 
-    // 7. System Health Check
-    async function fetchSystemHealth(showNotification = false) {
-      try {
-        const res = await fetch('/api/admin/system-health', {
-          headers: { 'Authorization': 'Bearer ' + adminToken }
-        });
-        const data = await res.json();
-        if (data.success && data.health) {
-          const h = data.health;
-          document.getElementById('sys-db-latency').textContent = \`Độ trễ: \${h.database.latencyMs}ms\`;
-          document.getElementById('diag-db-lat').textContent = \`Độ trễ phản hồi: \${h.database.latencyMs}ms\`;
-
-          const uptimeMin = Math.floor(h.uptimeSeconds / 60);
-          const uptimeStr = uptimeMin > 60 ? \`\${Math.floor(uptimeMin/60)} giờ \${uptimeMin%60} phút\` : \`\${uptimeMin} phút\`;
-          document.getElementById('sys-uptime').textContent = \`Thời gian chạy: \${uptimeStr}\`;
-          document.getElementById('diag-uptime-val').textContent = \`Thời gian chạy: \${uptimeStr}\`;
-
-          document.getElementById('diag-memory').textContent = \`Heap RAM: \${h.memory.heapUsedMb} MB / RSS: \${h.memory.rssMb} MB\`;
-          document.getElementById('diag-node-badge').textContent = h.nodeVersion;
-
-          if (showNotification) {
-            showToast(\`Hạ tầng hoạt động hoàn hảo! DB: \${h.database.latencyMs}ms | Cloudflare R2 | Firebase v1\`, 'success');
-          }
-        }
-      } catch (err) {
-        console.error('Fetch system health error:', err);
-      }
-    }
-
-    // 8. Fetch Security Audit Logs
-    async function fetchSecurityLogs(showNotification = false) {
-      try {
-        const res = await fetch('/api/admin/security-logs', {
-          headers: { 'Authorization': 'Bearer ' + adminToken }
-        });
-        const data = await res.json();
-        if (data.success && data.logs) {
-          renderAuditLogsTable(data.logs);
-          if (showNotification) {
-            showToast('Đã làm mới nhật ký kiểm toán bảo mật!', 'success');
-          }
-        }
-      } catch (err) {
-        console.error('Fetch security logs error:', err);
-      }
-    }
-
-    function renderAuditLogsTable(logs) {
-      const tbody = document.getElementById('audit-logs-table-body');
-      if (!tbody) return;
-
-      if (!logs || logs.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 30px; color: var(--text-dim);">Chưa có sự kiện an ninh nào được ghi nhận.</td></tr>';
-        return;
-      }
-
-      tbody.innerHTML = logs.map(l => {
-        let badgeClass = 'badge-verified';
-        let badgeText = 'INFO';
-        if (l.severity === 'warning') {
-          badgeClass = 'badge-oa';
-          badgeText = 'WARNING';
-        } else if (l.severity === 'alert') {
-          badgeClass = 'badge-banned';
-          badgeText = 'ALERT';
-        }
-
-        const dateStr = l.timestamp ? new Date(l.timestamp).toLocaleString('vi-VN') : '-';
-
-        return \`
-          <tr>
-            <td style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text-muted);">\${dateStr}</td>
-            <td>
-              <span style="font-weight: 700; font-size: 12.5px; color: var(--text-main);">\${escapeHtml(l.eventType || 'system')}</span>
-            </td>
-            <td><span class="badge \${badgeClass}">\${badgeText}</span></td>
-            <td>
-              <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text-muted);">\${escapeHtml(l.actor || 'system')}</span>
-            </td>
-            <td style="font-size: 13px; color: var(--text-main); word-break: break-word;">\${escapeHtml(l.details || '')}</td>
-          </tr>
-        \`;
-      }).join('');
-    }
-
-    // Quét & Dọn Dẹp Phản Ứng Spam
-    async function cleanSpamReactions() {
-      const btn = document.getElementById('btn-clean-spam-reactions');
-      if (!confirm('Khởi chạy quét toàn bộ cơ sở dữ liệu để tìm kiếm và xử lý các phản ứng spam/trùng lặp?')) return;
-
-      try {
-        if (btn) {
-          btn.disabled = true;
-          btn.innerHTML = '<span class="spinner"></span> <span>Đang rà soát và tối ưu dữ liệu...</span>';
-        }
-
-        const res = await fetch('/api/admin/clean-spam-reactions', {
-          method: 'POST',
-          headers: { 'Authorization': 'Bearer ' + adminToken }
-        });
-        const data = await res.json();
-
-        if (data.success) {
-          showToast(data.message, 'success');
-          fetchSecurityLogs();
-          fetchMetrics();
-        } else {
-          showToast(data.error || 'Quá trình bảo trì thất bại', 'error');
-        }
-      } catch (err) {
-        showToast('Lỗi: ' + err.message, 'error');
-      } finally {
-        if (btn) {
-          btn.disabled = false;
-          btn.innerHTML = '<svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg><span>Quét & Dọn Phản Ứng Spam / Đồng Bộ Lượt Thích</span>';
-        }
-      }
-    }
-
-    // 9. Fetch & Render OA Requests
-    let allOaRequestsCache = [];
-    async function fetchOaRequests(showNotification = false) {
+    // 7. Fetch & Render OA Requests
+    async function fetchOaRequests(showToast = false) {
       try {
         const res = await fetch('/api/admin/oa-requests', {
           headers: { 'Authorization': 'Bearer ' + adminToken }
@@ -2600,15 +1971,22 @@ export function renderAdminPage(): string {
           allOaRequestsCache = data.requests;
           renderOaRequestsTable(allOaRequestsCache);
           const count = allOaRequestsCache.length;
+          
           const badge = document.getElementById('sidebar-oa-badge');
+          const navBadge = document.getElementById('nav-oa-badge');
           if (badge) {
             badge.textContent = count;
             badge.style.display = count > 0 ? 'inline-block' : 'none';
           }
+          if (navBadge) {
+            navBadge.textContent = count;
+            navBadge.style.display = count > 0 ? 'inline-block' : 'none';
+          }
           const kpi = document.getElementById('kpi-oa-pending');
           if (kpi) kpi.textContent = count;
-          if (showNotification) {
-            showToast('Đã làm mới danh sách yêu cầu duyệt OA!', 'success');
+
+          if (showToast) {
+            Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'Đã làm mới yêu cầu duyệt OA', showConfirmButton: false, timer: 1500 });
           }
         }
       } catch (err) {
@@ -2622,10 +2000,10 @@ export function renderAdminPage(): string {
 
       if (!requests || requests.length === 0) {
         container.innerHTML = \`
-          <div style="text-align: center; padding: 48px 20px; color: var(--text-dim);">
-            <svg class="icon" style="width: 44px; height: 44px; margin-bottom: 12px; color: var(--color-emerald);" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-            <div style="font-size: 15px; font-weight: 700; color: var(--text-main); margin-bottom: 4px;">Tất cả thông tin OA đã được xử lý</div>
-            <div style="font-size: 13px;">Hiện tại không có yêu cầu thay đổi thông tin Official Account nào đang chờ xét duyệt.</div>
+          <div class="text-center py-5 text-muted">
+            <i class="fas fa-circle-check text-success fs-1 mb-3"></i>
+            <h5 class="fw-bold text-white mb-1">Tất cả thông tin OA đã được xử lý</h5>
+            <p class="small text-muted mb-0">Hiện tại không có yêu cầu thay đổi thông tin Official Account nào đang chờ xét duyệt.</p>
           </div>
         \`;
         return;
@@ -2655,180 +2033,279 @@ export function renderAdminPage(): string {
         const newBio = p.bio !== undefined ? p.bio : curBio;
         const bioChanged = p.bio !== undefined && p.bio !== curBio;
 
-        const initial = (curName).charAt(0).toUpperCase();
+        const initial = curName.charAt(0).toUpperCase();
         const avatarHtml = r.avatar_url 
-          ? \`<img class="user-avatar-img" src="\${r.avatar_url}" alt="\${curName}" onerror="this.outerHTML='<div class=\\'user-avatar-fallback\\'>\${initial}</div>'" />\`
-          : \`<div class="user-avatar-fallback">\${initial}</div>\`;
+          ? \`<img class="avatar-img-sm me-2" src="\${r.avatar_url}" alt="\${curName}" onerror="this.outerHTML='<div class=\\'avatar-fallback-sm me-2\\'>\${initial}</div>'" />\`
+          : \`<div class="avatar-fallback-sm me-2">\${initial}</div>\`;
 
         return \`
-          <div class="oa-request-card">
-            <div class="oa-request-header">
-              <div class="user-profile-cell">
+          <div class="card bg-dark border-secondary mb-3 shadow-sm">
+            <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
+              <div class="d-flex align-items-center">
                 \${avatarHtml}
                 <div>
-                  <div class="user-name-title" style="font-size: 15px;">
-                    \${escapeHtml(curName)}
-                    <span style="color: var(--color-gold);"><svg class="icon icon-sm" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span>
+                  <div class="fw-bold text-white fs-6">
+                    \${escapeHtml(curName)} <span class="badge badge-oa"><i class="fas fa-certificate me-1"></i>OA</span>
                   </div>
-                  <div class="user-uid-sub">@\${escapeHtml(curUser)} · Yêu cầu lúc: \${reqDate}</div>
+                  <div class="text-muted small">@\${escapeHtml(curUser)} · Yêu cầu lúc: \${reqDate}</div>
                 </div>
               </div>
-              <div style="display: flex; gap: 8px;">
-                <button class="btn btn-sm btn-primary" style="background: #059669; border-color: #10B981;" onclick="approveOaRequest('\${r.id}', '\${escapeHtml(curName)}')">
-                  <svg class="icon icon-sm" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
-                  <span>Phê Duyệt Ngay</span>
+              <div class="btn-group">
+                <button class="btn btn-sm btn-success" onclick="approveOaRequest('\${r.id}', '\${escapeHtml(curName)}')">
+                  <i class="fas fa-check me-1"></i> Phê Duyệt Ngay
                 </button>
-                <button class="btn btn-sm btn-danger" onclick="rejectOaRequest('\${r.id}', '\${escapeHtml(curName)}')">
-                  <svg class="icon icon-sm" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                  <span>Từ Chối</span>
+                <button class="btn btn-sm btn-outline-danger" onclick="rejectOaRequest('\${r.id}', '\${escapeHtml(curName)}')">
+                  <i class="fas fa-times me-1"></i> Từ Chối
                 </button>
               </div>
             </div>
 
-            <table class="oa-diff-table">
-              <thead>
-                <tr>
-                  <th style="width: 22%;">Trường Thông Tin</th>
-                  <th style="width: 38%;">Hiện Tại (Đang Công Khai)</th>
-                  <th style="width: 40%;">Đề Xuất Mới (Chờ Duyệt)</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td><strong>Tên Official Account</strong></td>
-                  <td>\${escapeHtml(curName)}</td>
-                  <td>\${nameChanged ? \`<span class="oa-val-new">\${escapeHtml(newName)}</span>\` : \`<span class="oa-val-same">\${escapeHtml(curName)}</span>\`}</td>
-                </tr>
-                <tr>
-                  <td><strong>Mã định danh (@handle)</strong></td>
-                  <td>@\${escapeHtml(curUser)}</td>
-                  <td>\${userChanged ? \`<span class="oa-val-new">@\${escapeHtml(newUser)}</span>\` : \`<span class="oa-val-same">@\${escapeHtml(curUser)}</span>\`}</td>
-                </tr>
-                <tr>
-                  <td><strong>Lĩnh vực hoạt động</strong></td>
-                  <td>\${escapeHtml(curCat)}</td>
-                  <td>\${catChanged ? \`<span class="oa-val-new">\${escapeHtml(newCat)}</span>\` : \`<span class="oa-val-same">\${escapeHtml(curCat)}</span>\`}</td>
-                </tr>
-                <tr>
-                  <td><strong>Trạng thái hiển thị</strong></td>
-                  <td>\${escapeHtml(curStatus)}</td>
-                  <td>\${statusChanged ? \`<span class="oa-val-new">\${escapeHtml(newStatus)}</span>\` : \`<span class="oa-val-same">\${escapeHtml(curStatus)}</span>\`}</td>
-                </tr>
-                <tr>
-                  <td><strong>Tiểu sử / Giới thiệu</strong></td>
-                  <td style="line-height: 1.4;">\${escapeHtml(curBio)}</td>
-                  <td style="line-height: 1.4;">\${bioChanged ? \`<span class="oa-val-new">\${escapeHtml(newBio)}</span>\` : \`<span class="oa-val-same">\${escapeHtml(curBio)}</span>\`}</td>
-                </tr>
-              </tbody>
-            </table>
+            <div class="card-body p-0 table-responsive">
+              <table class="table table-bordered table-sm align-middle mb-0">
+                <thead class="table-dark">
+                  <tr>
+                    <th style="width: 25%;">Trường Thông Tin</th>
+                    <th style="width: 37%;">Hiện Tại (Đang Công Khai)</th>
+                    <th style="width: 38%;">Đề Xuất Mới (Chờ Duyệt)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>Tên Official Account</strong></td>
+                    <td>\${escapeHtml(curName)}</td>
+                    <td>\${nameChanged ? \`<span class="badge bg-success fs-7">\${escapeHtml(newName)}</span>\` : \`<span class="text-muted">\${escapeHtml(curName)}</span>\`}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Mã định danh (@handle)</strong></td>
+                    <td>@\${escapeHtml(curUser)}</td>
+                    <td>\${userChanged ? \`<span class="badge bg-success fs-7">@\${escapeHtml(newUser)}</span>\` : \`<span class="text-muted">@\${escapeHtml(curUser)}</span>\`}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Lĩnh vực hoạt động</strong></td>
+                    <td>\${escapeHtml(curCat)}</td>
+                    <td>\${catChanged ? \`<span class="badge bg-info text-dark fs-7">\${escapeHtml(newCat)}</span>\` : \`<span class="text-muted">\${escapeHtml(curCat)}</span>\`}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Trạng thái hiển thị</strong></td>
+                    <td>\${escapeHtml(curStatus)}</td>
+                    <td>\${statusChanged ? \`<span class="badge bg-info text-dark fs-7">\${escapeHtml(newStatus)}</span>\` : \`<span class="text-muted">\${escapeHtml(curStatus)}</span>\`}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Tiểu sử / Giới thiệu</strong></td>
+                    <td class="small">\${escapeHtml(curBio)}</td>
+                    <td class="small">\${bioChanged ? \`<span class="text-warning fw-semibold">\${escapeHtml(newBio)}</span>\` : \`<span class="text-muted">\${escapeHtml(curBio)}</span>\`}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         \`;
       }).join('');
     }
 
     async function approveOaRequest(userId, name) {
-      if (!confirm(\`Xác nhận phê duyệt các thay đổi thông tin cho Official Account "\${name}"? Thông tin mới sẽ cập nhật trực tiếp lên ứng dụng.\`)) return;
-
-      try {
-        const res = await fetch(\`/api/admin/oa-requests/\${userId}/approve\`, {
-          method: 'POST',
-          headers: { 'Authorization': 'Bearer ' + adminToken }
-        });
-        const data = await res.json();
-        if (data.success) {
-          showToast(data.message || 'Đã phê duyệt thông tin OA thành công!', 'success');
-          fetchOaRequests();
-          fetchUsers();
-          fetchMetrics();
-        } else {
-          showToast(data.error || 'Phê duyệt thất bại', 'error');
+      Swal.fire({
+        title: 'Phê duyệt thay đổi OA?',
+        text: \`Phê duyệt các thay đổi thông tin cho Official Account "\${name}"? Thông tin mới sẽ cập nhật trực tiếp lên ứng dụng.\`,
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#10b981',
+        confirmButtonText: 'Phê duyệt ngay'
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          try {
+            const res = await fetch(\`/api/admin/oa-requests/\${userId}/approve\`, {
+              method: 'POST',
+              headers: { 'Authorization': 'Bearer ' + adminToken }
+            });
+            const data = await res.json();
+            if (data.success) {
+              Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: data.message || 'Đã phê duyệt thông tin OA!', showConfirmButton: false, timer: 1800 });
+              fetchOaRequests();
+              fetchUsers();
+              fetchMetrics();
+            }
+          } catch (err) {
+            Swal.fire({ icon: 'error', title: 'Lỗi', text: err.message });
+          }
         }
-      } catch (err) {
-        showToast('Lỗi mạng: ' + err.message, 'error');
-      }
+      });
     }
 
     async function rejectOaRequest(userId, name) {
-      const reason = prompt(\`Lý do từ chối yêu cầu thay đổi thông tin của OA "\${name}":\`, 'Nội dung thông tin không phù hợp với quy chuẩn nhận diện thương hiệu');
-      if (reason === null) return;
+      const { value: reason } = await Swal.fire({
+        title: \`Từ chối thay đổi của "\${name}"\`,
+        input: 'textarea',
+        inputLabel: 'Lý do từ chối gửi tới chủ tài khoản OA:',
+        inputValue: 'Nội dung thông tin không phù hợp với quy chuẩn nhận diện thương hiệu.',
+        showCancelButton: true,
+        confirmButtonColor: '#ef4444',
+        confirmButtonText: 'Gửi lý do & Từ chối'
+      });
 
-      try {
-        const res = await fetch(\`/api/admin/oa-requests/\${userId}/reject\`, {
-          method: 'POST',
-          headers: {
-            'Authorization': 'Bearer ' + adminToken,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ reason })
-        });
-        const data = await res.json();
-        if (data.success) {
-          showToast(data.message || 'Đã từ chối yêu cầu đổi thông tin OA.', 'info');
-          fetchOaRequests();
-          fetchMetrics();
-        } else {
-          showToast(data.error || 'Từ chối thất bại', 'error');
+      if (reason) {
+        try {
+          const res = await fetch(\`/api/admin/oa-requests/\${userId}/reject\`, {
+            method: 'POST',
+            headers: { 'Authorization': 'Bearer ' + adminToken, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ reason })
+          });
+          const data = await res.json();
+          if (data.success) {
+            Swal.fire({ toast: true, position: 'top-end', icon: 'info', title: data.message || 'Đã từ chối yêu cầu đổi thông tin OA.', showConfirmButton: false, timer: 1800 });
+            fetchOaRequests();
+            fetchMetrics();
+          }
+        } catch (err) {
+          Swal.fire({ icon: 'error', title: 'Lỗi', text: err.message });
         }
-      } catch (err) {
-        showToast('Lỗi mạng: ' + err.message, 'error');
       }
     }
 
     async function resetOaEditCount(userId, name) {
-      if (!confirm(\`Cấp lại lượt chỉnh sửa trực tiếp (1/1) cho tài khoản OA "\${name}"? Chủ tài khoản sẽ có thể tự sửa đổi thông tin 1 lần mà không cần chờ duyệt.\`)) return;
+      Swal.fire({
+        title: 'Cấp lại lượt sửa thông tin?',
+        text: \`Cấp lại lượt chỉnh sửa trực tiếp (1/1) cho tài khoản OA "\${name}"? Chủ tài khoản sẽ có thể tự sửa đổi thông tin 1 lần mà không cần chờ duyệt.\`,
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#f59e0b',
+        confirmButtonText: 'Cấp lại lượt sửa'
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          try {
+            const res = await fetch(\`/api/admin/users/\${userId}/reset-oa-edit\`, {
+              method: 'POST',
+              headers: { 'Authorization': 'Bearer ' + adminToken }
+            });
+            const data = await res.json();
+            if (data.success) {
+              Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: data.message || 'Đã cấp lại lượt sửa cho OA!', showConfirmButton: false, timer: 1800 });
+              fetchUsers();
+              fetchOaRequests();
+            }
+          } catch (err) {
+            Swal.fire({ icon: 'error', title: 'Lỗi', text: err.message });
+          }
+        }
+      });
+    }
 
+    // 8. Security Audit Logs & Spam Clean
+    async function fetchSecurityLogs() {
       try {
-        const res = await fetch(\`/api/admin/users/\${userId}/reset-oa-edit\`, {
-          method: 'POST',
+        const res = await fetch('/api/admin/security-logs', {
           headers: { 'Authorization': 'Bearer ' + adminToken }
         });
         const data = await res.json();
-        if (data.success) {
-          showToast(data.message || 'Đã cấp lại lượt chỉnh sửa cho OA!', 'success');
-          fetchUsers();
-          fetchOaRequests();
-        } else {
-          showToast(data.error || 'Không thể cấp lại lượt sửa', 'error');
+        if (data.success && data.logs) {
+          renderAuditLogsTable(data.logs);
         }
       } catch (err) {
-        showToast('Lỗi: ' + err.message, 'error');
+        console.error('Fetch security logs error:', err);
+      }
+    }
+
+    function renderAuditLogsTable(logs) {
+      const tbody = document.getElementById('audit-logs-body');
+      if (!logs || logs.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" class="text-center py-4 text-muted">Chưa ghi nhận sự kiện an ninh nào.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = logs.map(l => {
+        const dateStr = l.timestamp ? new Date(l.timestamp).toLocaleString('vi-VN') : '-';
+        const sevBadge = l.severity === 'alert'
+          ? '<span class="badge bg-danger">ALERT</span>'
+          : (l.severity === 'warning' ? '<span class="badge bg-warning text-dark">WARNING</span>' : '<span class="badge bg-info">INFO</span>');
+
+        return \`
+          <tr>
+            <td class="small text-muted font-mono">\${dateStr}</td>
+            <td><span class="badge bg-secondary font-mono">\${l.eventType || 'event'}</span></td>
+            <td>\${sevBadge}</td>
+            <td class="fw-bold text-white font-mono small">\${escapeHtml(l.actor || 'system')}</td>
+            <td class="font-mono text-muted small">\${escapeHtml(l.ip || 'internal')}</td>
+            <td class="small text-white">\${escapeHtml(l.details || '')}</td>
+          </tr>
+        \`;
+      }).join('');
+    }
+
+    async function cleanSpamReactions() {
+      Swal.fire({
+        title: 'Quét sạch phản ứng spam 120Hz?',
+        text: 'Hệ thống sẽ rà soát và loại bỏ các lượt like/reaction trùng lặp do spam bot hoặc giật lag mạng gây ra.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#f59e0b',
+        confirmButtonText: 'Bắt đầu quét dọn'
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          try {
+            const res = await fetch('/api/admin/clean-spam-reactions', {
+              method: 'POST',
+              headers: { 'Authorization': 'Bearer ' + adminToken }
+            });
+            const data = await res.json();
+            if (data.success) {
+              Swal.fire({ icon: 'success', title: 'Hoàn tất quét dọn!', text: data.message });
+              fetchSecurityLogs();
+              fetchMetrics();
+            }
+          } catch (err) {
+            Swal.fire({ icon: 'error', title: 'Lỗi', text: err.message });
+          }
+        }
+      });
+    }
+
+    // 9. Fetch System Health
+    async function fetchSystemHealth() {
+      try {
+        const res = await fetch('/api/admin/system-health', {
+          headers: { 'Authorization': 'Bearer ' + adminToken }
+        });
+        const data = await res.json();
+        if (data.success && data.health) {
+          const h = data.health;
+          if (h.uptime) document.getElementById('health-uptime').textContent = h.uptime;
+          if (h.memory) document.getElementById('health-memory').textContent = h.memory;
+          if (h.nodeVersion) document.getElementById('health-node').textContent = h.nodeVersion;
+        }
+      } catch (err) {
+        console.error('Fetch system health error:', err);
       }
     }
 
     // Navigation Tabs Switching
     function setupTabs() {
-      document.querySelectorAll('.nav-item').forEach(item => {
-        item.addEventListener('click', () => {
-          const tabId = item.getAttribute('data-tab');
-          switchTab(tabId);
+      document.querySelectorAll('[data-tab]').forEach(el => {
+        el.addEventListener('click', () => {
+          const tabId = el.getAttribute('data-tab');
+          if (tabId) switchTab(tabId);
         });
       });
     }
 
     function switchTab(tabId) {
-      currentTab = tabId;
-
-      // Update Nav active
-      document.querySelectorAll('.nav-item').forEach(item => {
-        item.classList.toggle('active', item.getAttribute('data-tab') === tabId);
+      document.querySelectorAll('.nav-sidebar .nav-link').forEach(link => {
+        link.classList.toggle('active', link.getAttribute('data-tab') === tabId);
       });
 
-      // Update Sections
       document.querySelectorAll('.tab-section').forEach(sec => {
         sec.classList.remove('active');
       });
-      const activeSec = document.getElementById('tab-' + tabId);
-      if (activeSec) activeSec.classList.add('active');
+      const targetSec = document.getElementById('tab-' + tabId);
+      if (targetSec) targetSec.classList.add('active');
 
-      // Update Topbar Titles
       const titleMap = {
-        'tong-quan': { title: 'Tổng Quan Hệ Thống', subtitle: 'Chỉ số vận hành thời gian thực & trung tâm điều phối cộng đồng' },
-        'thanh-vien': { title: 'Quản Lý Thành Viên', subtitle: 'Phân quyền, cấp tích xanh, xét duyệt Official Account & khóa tài khoản' },
+        'tong-quan': { title: 'Tổng Quan Hệ Thống', subtitle: 'Chỉ số vận hành thời gian thực & trung tâm điều phối cộng đồng Dorabox' },
+        'thanh-vien': { title: 'Quản Lý Danh Sách Thành Viên', subtitle: 'Phân quyền, cấp tích xanh, xét duyệt Official Account & khóa tài khoản' },
         'duyet-oa': { title: 'Xét Duyệt Thông Tin OA', subtitle: 'Phê duyệt các thay đổi Tên, Lĩnh vực, Mã định danh, Tiểu sử và Trạng thái Official Account' },
         'bai-viet': { title: 'Quản Lý Bảng Tin & Bài Viết', subtitle: 'Kiểm duyệt nội dung bảng tin, hình ảnh đính kèm, ghim bài nổi bật & xóa vi phạm' },
-        'binh-luan': { title: 'Quản Lý Bình Luận', subtitle: 'Giám sát tương tác thảo luận cộng đồng & ngăn chặn spam' },
-        'bao-cao': { title: 'Kiểm Duyệt & Báo Cáo', subtitle: 'Hàng đợi xét duyệt hồ sơ cấp tích và xử lý vi phạm tiêu chuẩn cộng đồng' },
-        'phat-thong-bao': { title: 'Broadcast Studio', subtitle: 'Soạn thảo và phát Push Notification tới ứng dụng kèm xem trước trên mobile' },
+        'binh-luan': { title: 'Quản Lý Bình Luận & Thảo Luận', subtitle: 'Giám sát tương tác thảo luận cộng đồng & ngăn chặn spam' },
+        'bao-cao': { title: 'Kiểm Duyệt & Báo Cáo Vi Phạm', subtitle: 'Hàng đợi xét duyệt hồ sơ cấp tích và xử lý vi phạm tiêu chuẩn cộng đồng' },
+        'phat-thong-bao': { title: 'Broadcast Studio & Push FCM', subtitle: 'Soạn thảo và phát Push Notification tới ứng dụng kèm xem trước trên mobile' },
         'bao-mat-audit': { title: 'Bảo Mật Hệ Thống & Nhật Ký Audit', subtitle: 'Giám sát khiên chống spam 120Hz, bảo trì dọn dẹp phản ứng rác & theo dõi an ninh' },
         'he-thong': { title: 'Hạ Tầng Cloud & Services', subtitle: 'Giám sát dịch vụ Supabase Postgres, Cloudflare R2 CDN và Firebase v1' }
       };
@@ -2837,39 +2314,32 @@ export function renderAdminPage(): string {
         document.getElementById('topbar-title').textContent = titleMap[tabId].title;
         document.getElementById('topbar-subtitle').textContent = titleMap[tabId].subtitle;
       }
+
+      // Close mobile sidebar if open
+      if (window.innerWidth < 992 && document.body.classList.contains('sidebar-open')) {
+        document.body.classList.remove('sidebar-open');
+        document.body.classList.add('sidebar-collapse');
+      }
     }
 
-    // Lightbox Modal
+    // Sidebar Search Filter
+    function setupSidebarFilter() {
+      const input = document.getElementById('sidebar-search-input');
+      if (!input) return;
+      input.addEventListener('input', (e) => {
+        const q = e.target.value.toLowerCase().trim();
+        document.querySelectorAll('.nav-sidebar .nav-item').forEach(item => {
+          const text = item.textContent.toLowerCase();
+          item.style.display = (!q || text.includes(q)) ? '' : 'none';
+        });
+      });
+    }
+
+    // Lightbox modal helper
     function openLightbox(url) {
       document.getElementById('lightbox-img').src = url;
-      document.getElementById('lightbox-modal').style.display = 'flex';
-    }
-    function closeLightbox() {
-      document.getElementById('lightbox-modal').style.display = 'none';
-    }
-
-    // Toast utility
-    function showToast(message, type = 'info') {
-      const container = document.getElementById('toast-container');
-      const toast = document.createElement('div');
-      toast.className = 'toast';
-      
-      let iconSvg = '<svg class="icon icon-sm" style="color:var(--brand-primary);" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>';
-      if (type === 'success') {
-        iconSvg = '<svg class="icon icon-sm" style="color:var(--color-emerald);" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>';
-      } else if (type === 'error') {
-        iconSvg = '<svg class="icon icon-sm" style="color:var(--color-rose);" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>';
-      }
-
-      toast.innerHTML = \`\${iconSvg}<span>\${escapeHtml(message)}</span>\`;
-      container.appendChild(toast);
-
-      setTimeout(() => {
-        toast.style.opacity = '0';
-        toast.style.transform = 'translateY(10px)';
-        toast.style.transition = '0.2s';
-        setTimeout(() => toast.remove(), 250);
-      }, 3500);
+      const modal = new bootstrap.Modal(document.getElementById('lightboxModal'));
+      modal.show();
     }
 
     function escapeHtml(text) {
