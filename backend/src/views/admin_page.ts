@@ -867,7 +867,7 @@ export function renderAdminPage(): string {
 
       <!-- Navigation -->
       <nav class="sidebar-menu">
-        <div class="menu-group-label">Quản Trị Nội Dung</div>
+        <div class="menu-group-label">Quản Trị & Kiểm Duyệt</div>
         <button class="nav-item-btn active" data-tab="tong-quan" onclick="switchTab('tong-quan')">
           <span class="nav-left"><i class="fas fa-chart-pie text-info"></i> Tổng Quan</span>
         </button>
@@ -875,19 +875,19 @@ export function renderAdminPage(): string {
           <span class="nav-left"><i class="fas fa-users text-primary"></i> Thành Viên</span>
           <span class="nav-counter" id="sidebar-user-badge">0</span>
         </button>
-        <button class="nav-item-btn" data-tab="duyet-oa" onclick="switchTab('duyet-oa')">
-          <span class="nav-left"><i class="fas fa-certificate text-warning"></i> Xét Duyệt OA</span>
-          <span class="nav-counter counter-danger" id="sidebar-oa-badge" style="display:none;">0</span>
+        <button class="nav-item-btn" data-tab="xet-duyet" onclick="switchTab('xet-duyet')">
+          <span class="nav-left"><i class="fas fa-certificate text-warning"></i> Xét Duyệt & Yêu Cầu</span>
+          <span class="nav-counter" id="sidebar-request-badge" style="background: rgba(245, 158, 11, 0.2); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.4); display:none;">0</span>
+        </button>
+        <button class="nav-item-btn" data-tab="bao-cao" onclick="switchTab('bao-cao')">
+          <span class="nav-left"><i class="fas fa-triangle-exclamation text-danger"></i> Báo Cáo Vi Phạm</span>
+          <span class="nav-counter counter-danger" id="sidebar-report-badge">0</span>
         </button>
         <button class="nav-item-btn" data-tab="bai-viet" onclick="switchTab('bai-viet')">
           <span class="nav-left"><i class="fas fa-newspaper text-success"></i> Bài Viết & Tin</span>
         </button>
         <button class="nav-item-btn" data-tab="binh-luan" onclick="switchTab('binh-luan')">
           <span class="nav-left"><i class="fas fa-comments text-cyan" style="color:#06b6d4;"></i> Bình Luận</span>
-        </button>
-        <button class="nav-item-btn" data-tab="bao-cao" onclick="switchTab('bao-cao')">
-          <span class="nav-left"><i class="fas fa-triangle-exclamation text-danger"></i> Báo Cáo Vi Phạm</span>
-          <span class="nav-counter counter-danger" id="sidebar-report-badge">0</span>
         </button>
 
         <div class="menu-group-label mt-3">Điều Hành & Kỹ Thuật</div>
@@ -1002,16 +1002,16 @@ export function renderAdminPage(): string {
             </div>
 
             <div class="col-xl-3 col-md-6 col-12">
-              <div class="stat-card" onclick="switchTab('duyet-oa')">
+              <div class="stat-card" onclick="switchTab('xet-duyet')">
                 <div class="stat-card-header">
-                  <span class="stat-label">Official Account & VIP</span>
+                  <span class="stat-label">Xét Duyệt & Yêu Cầu</span>
                   <div class="stat-icon-wrap" style="background: rgba(245, 158, 11, 0.12); color: #f59e0b;">
                     <i class="fas fa-certificate"></i>
                   </div>
                 </div>
-                <div class="stat-number" id="kpi-vip">0</div>
+                <div class="stat-number" id="kpi-requests-pending">0</div>
                 <div class="stat-footnote">
-                  <span class="text-warning fw-semibold" id="kpi-oa-pending">0</span> đề xuất chờ xét duyệt
+                  <span class="text-warning fw-semibold" id="kpi-oa-pending">0</span> hồ sơ cấp tích / thay đổi OA
                 </div>
               </div>
             </div>
@@ -1021,12 +1021,12 @@ export function renderAdminPage(): string {
                 <div class="stat-card-header">
                   <span class="stat-label">Báo Cáo Vi Phạm</span>
                   <div class="stat-icon-wrap" style="background: rgba(239, 68, 68, 0.12); color: #ef4444;">
-                    <i class="fas fa-shield-halved"></i>
+                    <i class="fas fa-triangle-exclamation"></i>
                   </div>
                 </div>
-                <div class="stat-number" id="kpi-banned">0</div>
+                <div class="stat-number" id="kpi-reports-pending">0</div>
                 <div class="stat-footnote">
-                  <span class="text-danger fw-semibold" id="sidebar-report-badge-kpi">0</span> báo cáo cần xử lý
+                  <span class="text-danger fw-semibold" id="sidebar-report-badge-kpi">0</span> vi phạm cần xử phạt
                 </div>
               </div>
             </div>
@@ -1135,19 +1135,30 @@ export function renderAdminPage(): string {
         </div>
 
         <!-- =========================================================================
-             TAB 3: XÉT DUYỆT TÍCH & OA
+             TAB 3: XÉT DUYỆT & YÊU CẦU (TÍCH XANH, TÍCH VÀNG OA, CẬP NHẬT OA)
              ========================================================================= -->
-        <div id="tab-duyet-oa" class="tab-section">
+        <div id="tab-xet-duyet" class="tab-section">
           <div class="glass-panel">
-            <div class="panel-header">
-              <div class="panel-title"><i class="fas fa-certificate text-warning"></i> Hàng Đợi Xét Duyệt Official Account</div>
-              <button class="btn btn-sm btn-outline-warning" onclick="fetchOaRequests(true)">
-                <i class="fas fa-arrows-rotate me-1"></i> Làm mới yêu cầu
-              </button>
+            <div class="panel-header flex-wrap gap-2">
+              <div class="d-flex align-items-center gap-2">
+                <div class="panel-title"><i class="fas fa-certificate text-warning"></i> Hàng Đợi Xét Duyệt & Yêu Cầu Người Dùng</div>
+                <span class="badge bg-warning text-dark fw-bold" id="requests-pending-count">0 Chờ duyệt</span>
+              </div>
+              <div class="d-flex align-items-center gap-2">
+                <div class="btn-group btn-group-sm" role="group" id="request-filter-group">
+                  <button type="button" class="btn btn-outline-warning active" onclick="filterRequests('all')">Tất cả</button>
+                  <button type="button" class="btn btn-outline-warning" onclick="filterRequests('verified')">Tích Xanh ✓</button>
+                  <button type="button" class="btn btn-outline-warning" onclick="filterRequests('oa')">Tích Vàng OA ⭐</button>
+                  <button type="button" class="btn btn-outline-warning" onclick="filterRequests('oa_update')">Đổi thông tin OA</button>
+                </div>
+                <button class="btn btn-sm btn-outline-light" onclick="fetchRequests(true)">
+                  <i class="fas fa-arrows-rotate me-1"></i> Làm mới
+                </button>
+              </div>
             </div>
             <div class="p-3">
-              <div id="oa-requests-container">
-                <div class="text-center py-5 text-muted">Đang kiểm tra đề xuất thay đổi OA...</div>
+              <div id="requests-container">
+                <div class="text-center py-5 text-muted">Đang tải danh sách hồ sơ xét duyệt...</div>
               </div>
             </div>
           </div>
@@ -1218,28 +1229,41 @@ export function renderAdminPage(): string {
         </div>
 
         <!-- =========================================================================
-             TAB 6: BÁO CÁO VI PHẠM
+             TAB 6: BÁO CÁO VI PHẠM TIÊU CHUẨN CỘNG ĐỒNG
              ========================================================================= -->
         <div id="tab-bao-cao" class="tab-section">
           <div class="glass-panel">
-            <div class="panel-header">
-              <div class="panel-title"><i class="fas fa-triangle-exclamation text-danger"></i> Hàng Đợi Báo Cáo Vi Phạm</div>
-              <span class="badge bg-danger" id="reports-pending-count">0 Chờ xử lý</span>
+            <div class="panel-header flex-wrap gap-2">
+              <div class="d-flex align-items-center gap-2">
+                <div class="panel-title"><i class="fas fa-triangle-exclamation text-danger"></i> Kiểm Duyệt & Báo Cáo Vi Phạm Tiêu Chuẩn Cộng Đồng</div>
+                <span class="badge bg-danger" id="reports-pending-count">0 Chờ xử lý</span>
+              </div>
+              <div class="d-flex align-items-center gap-2">
+                <div class="btn-group btn-group-sm" role="group" id="report-filter-group">
+                  <button type="button" class="btn btn-outline-danger active" onclick="filterReports('all')">Tất cả</button>
+                  <button type="button" class="btn btn-outline-danger" onclick="filterReports('post')">Bài viết</button>
+                  <button type="button" class="btn btn-outline-danger" onclick="filterReports('comment')">Bình luận</button>
+                  <button type="button" class="btn btn-outline-danger" onclick="filterReports('user')">Tài khoản</button>
+                </div>
+                <button class="btn btn-sm btn-outline-light" onclick="fetchReports(true)">
+                  <i class="fas fa-arrows-rotate me-1"></i> Làm mới
+                </button>
+              </div>
             </div>
             <div class="table-container">
               <table class="custom-table">
                 <thead>
                   <tr>
                     <th style="padding-left: 20px;">Người Báo Cáo</th>
-                    <th>Mục Tiêu</th>
-                    <th>Lý Do / Chi Tiết</th>
+                    <th style="min-width: 280px;">Đối Tượng & Nội Dung Bị Tố Cáo</th>
+                    <th>Lý Do Vi Phạm</th>
                     <th>Trạng Thái</th>
                     <th>Thời Gian</th>
                     <th style="text-align: right; padding-right: 20px;">Phán Quyết</th>
                   </tr>
                 </thead>
                 <tbody id="reports-table-body">
-                  <tr><td colspan="6" class="text-center py-5 text-muted">Đang tải danh sách báo cáo...</td></tr>
+                  <tr><td colspan="6" class="text-center py-5 text-muted">Đang tải danh sách báo cáo vi phạm...</td></tr>
                 </tbody>
               </table>
             </div>
@@ -1631,7 +1655,7 @@ export function renderAdminPage(): string {
     async function loadDashboardData() {
       fetchMetrics();
       fetchUsers();
-      fetchOaRequests();
+      fetchRequests();
       fetchPosts();
       fetchComments();
       fetchReports();
@@ -1666,18 +1690,30 @@ export function renderAdminPage(): string {
           document.getElementById('kpi-posts').textContent = Number(m.totalPosts || 0).toLocaleString();
           document.getElementById('kpi-comments').textContent = Number(m.totalComments || 0).toLocaleString();
           
+          // Báo cáo vi phạm tiêu chuẩn cộng đồng thuần túy
           const pendingRep = Number(m.pendingReports || 0);
-          document.getElementById('sidebar-report-badge').textContent = pendingRep;
-          document.getElementById('sidebar-report-badge-kpi').textContent = pendingRep;
-          document.getElementById('reports-pending-count').textContent = pendingRep + ' Chờ xử lý';
+          const repBadge = document.getElementById('sidebar-report-badge');
+          if (repBadge) repBadge.textContent = pendingRep;
+          const repKpi = document.getElementById('sidebar-report-badge-kpi');
+          if (repKpi) repKpi.textContent = pendingRep;
+          const kpiRepPending = document.getElementById('kpi-reports-pending');
+          if (kpiRepPending) kpiRepPending.textContent = pendingRep;
+          const repPendingCount = document.getElementById('reports-pending-count');
+          if (repPendingCount) repPendingCount.textContent = pendingRep + ' Chờ xử lý';
 
-          const pendingOa = Number(m.pendingOaRequests || 0);
-          document.getElementById('kpi-oa-pending').textContent = pendingOa;
-          const oaBadge = document.getElementById('sidebar-oa-badge');
-          if (oaBadge) {
-            oaBadge.textContent = pendingOa;
-            oaBadge.style.display = pendingOa > 0 ? 'inline-block' : 'none';
+          // Yêu cầu xét duyệt & đề xuất OA
+          const pendingReq = Number(m.pendingRequests || 0);
+          const reqBadge = document.getElementById('sidebar-request-badge');
+          if (reqBadge) {
+            reqBadge.textContent = pendingReq;
+            reqBadge.style.display = pendingReq > 0 ? 'inline-block' : 'none';
           }
+          const kpiReq = document.getElementById('kpi-requests-pending');
+          if (kpiReq) kpiReq.textContent = pendingReq;
+          const reqCount = document.getElementById('requests-pending-count');
+          if (reqCount) reqCount.textContent = pendingReq + ' Chờ duyệt';
+          const kpiOa = document.getElementById('kpi-oa-pending');
+          if (kpiOa) kpiOa.textContent = (m.pendingBadgeRequests || 0) + ' tích / ' + (m.pendingOaRequests || 0) + ' OA';
 
           renderCharts(m);
         }
@@ -2307,8 +2343,11 @@ export function renderAdminPage(): string {
       });
     }
 
-    // 5. Fetch Reports
-    async function fetchReports() {
+    // 5. Fetch Reports (Kiểm duyệt Báo cáo Vi phạm Tiêu chuẩn Cộng đồng)
+    let allReportsCache = [];
+    let currentReportFilter = 'all';
+
+    async function fetchReports(showToast = false) {
       try {
         const data = await safeFetchJson('/api/admin/reports', {
           headers: { 'Authorization': 'Bearer ' + adminToken }
@@ -2316,61 +2355,148 @@ export function renderAdminPage(): string {
         if (data.success && data.reports) {
           allReportsCache = data.reports;
           renderReportsTable(allReportsCache);
+          if (showToast) {
+            Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'Đã tải danh sách báo cáo vi phạm', showConfirmButton: false, timer: 1500 });
+          }
         }
       } catch (err) {
         console.error('Fetch reports error:', err);
       }
     }
 
+    function filterReports(type) {
+      currentReportFilter = type;
+      document.querySelectorAll('#report-filter-group button').forEach(btn => btn.classList.remove('active'));
+      const activeBtn = event.target;
+      if (activeBtn) activeBtn.classList.add('active');
+
+      if (type === 'all') {
+        renderReportsTable(allReportsCache);
+      } else {
+        renderReportsTable(allReportsCache.filter(r => r.target_type === type));
+      }
+    }
+
     function renderReportsTable(reports) {
       const tbody = document.getElementById('reports-table-body');
       if (!reports || reports.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" class="text-center py-5 text-muted">Không có báo cáo vi phạm nào cần xử lý.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" class="text-center py-5 text-muted"><i class="fas fa-shield-check fs-2 text-success mb-2 d-block"></i>Tuyệt vời! Không có báo cáo vi phạm nào cần xử lý.</td></tr>';
         return;
       }
 
       tbody.innerHTML = reports.map(r => {
         const reporterName = escapeHtml(r.reporter?.display_name || r.reporter?.username || 'Ẩn danh');
-        const targetTypeBadge = r.target_type === 'post' 
-          ? '<span class="badge bg-primary">BÀI VIẾT</span>' 
-          : (r.target_type === 'comment' ? '<span class="badge bg-info">BÌNH LUẬN</span>' : '<span class="badge bg-secondary">NGƯỜI DÙNG</span>');
+        const reporterAvatar = r.reporter?.avatar_url || 'https://api.dicebear.com/7.x/bottts/svg?seed=' + (r.reporter_id || 'rep');
 
-        const statusBadge = r.status === 'resolved' 
+        let targetHtml = '';
+        if (r.target_type === 'post') {
+          const authorName = escapeHtml(r.target_data?.author?.display_name || r.target_data?.author?.username || 'Tác giả');
+          const snippet = escapeHtml(r.target_data?.content || 'Bài viết hình ảnh / không có văn bản');
+          targetHtml = \`
+            <div>
+              <span class="badge bg-primary mb-1"><i class="fas fa-newspaper me-1"></i>BÀI VIẾT</span>
+              <div class="p-2 rounded mt-1" style="background: rgba(255,255,255,0.03); border-left: 3px solid #38bdf8;">
+                <div class="text-white small fw-medium" style="max-height: 48px; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">\${snippet}</div>
+                <div class="text-muted small mt-1 font-mono" style="font-size: 11px;">Đăng bởi: \${authorName} (ID: \${r.target_id.substring(0, 8)})</div>
+              </div>
+            </div>
+          \`;
+        } else if (r.target_type === 'comment') {
+          const commenterName = escapeHtml(r.target_data?.author?.display_name || r.target_data?.author?.username || 'Người bình luận');
+          const snippet = escapeHtml(r.target_data?.content || 'Nội dung bình luận');
+          targetHtml = \`
+            <div>
+              <span class="badge bg-info mb-1"><i class="fas fa-comment me-1"></i>BÌNH LUẬN</span>
+              <div class="p-2 rounded mt-1" style="background: rgba(255,255,255,0.03); border-left: 3px solid #06b6d4;">
+                <div class="text-white small fw-medium">\${snippet}</div>
+                <div class="text-muted small mt-1 font-mono" style="font-size: 11px;">Bình luận bởi: \${commenterName}</div>
+              </div>
+            </div>
+          \`;
+        } else {
+          const targetName = escapeHtml(r.target_data?.display_name || 'Tài khoản');
+          const targetUsername = escapeHtml(r.target_data?.username || '-');
+          const isBanned = r.target_data?.is_banned ? '<span class="text-danger fw-bold ms-1">(Đang bị khóa)</span>' : '';
+          targetHtml = \`
+            <div>
+              <span class="badge bg-danger mb-1"><i class="fas fa-user-slash me-1"></i>TÀI KHOẢN</span>
+              <div class="p-2 rounded mt-1" style="background: rgba(255,255,255,0.03); border-left: 3px solid #ef4444;">
+                <div class="text-white small fw-bold">\${targetName} <span class="text-muted font-mono fw-normal">@\${targetUsername}</span> \${isBanned}</div>
+                <div class="text-muted small mt-1 font-mono" style="font-size: 11px;">UID: \${r.target_id.substring(0, 8)}</div>
+              </div>
+            </div>
+          \`;
+        }
+
+        const statusBadge = r.status === 'reviewed' 
           ? '<span class="badge bg-success">Đã xử lý</span>' 
-          : (r.status === 'rejected' ? '<span class="badge bg-secondary">Đã bác bỏ</span>' : '<span class="badge bg-danger">Chờ xử lý</span>');
+          : (r.status === 'dismissed' ? '<span class="badge bg-secondary">Đã bác bỏ</span>' : '<span class="badge bg-danger">Chờ xử lý</span>');
 
         const dateStr = r.created_at ? new Date(r.created_at).toLocaleString('vi-VN') : '-';
+
+        let actionButtons = '<span class="text-muted small">Hoàn tất</span>';
+        if (r.status === 'pending') {
+          if (r.target_type === 'user') {
+            actionButtons = \`
+              <button class="btn btn-sm btn-danger me-1" onclick="resolveReport('\${r.id}', 'ban_user')">
+                <i class="fas fa-ban me-1"></i>Khóa tài khoản
+              </button>
+              <button class="btn btn-sm btn-outline-secondary" onclick="resolveReport('\${r.id}', 'dismiss')">
+                <i class="fas fa-times me-1"></i>Bác bỏ
+              </button>
+            \`;
+          } else {
+            actionButtons = \`
+              <button class="btn btn-sm btn-outline-danger me-1" onclick="resolveReport('\${r.id}', 'delete_content')">
+                <i class="fas fa-trash-can me-1"></i>Xóa nội dung
+              </button>
+              <button class="btn btn-sm btn-outline-secondary" onclick="resolveReport('\${r.id}', 'dismiss')">
+                <i class="fas fa-times me-1"></i>Bác bỏ
+              </button>
+            \`;
+          }
+        }
 
         return \`
           <tr>
             <td style="padding-left: 20px;">
-              <div class="fw-bold text-white">\${reporterName}</div>
-              <div class="text-muted font-mono" style="font-size: 11px;">ID: \${r.reporter_id ? r.reporter_id.substring(0, 8) : '-'}</div>
+              <div class="d-flex align-items-center gap-2">
+                <img src="\${reporterAvatar}" style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover;">
+                <div>
+                  <div class="fw-bold text-white">\${reporterName}</div>
+                  <div class="text-muted font-mono" style="font-size: 11px;">UID: \${r.reporter_id ? r.reporter_id.substring(0, 8) : '-'}</div>
+                </div>
+              </div>
             </td>
-            <td>
-              \${targetTypeBadge}
-              <div class="font-mono text-muted small mt-1">#\${r.target_id ? r.target_id.substring(0, 8) : '-'}</div>
-            </td>
+            <td>\${targetHtml}</td>
             <td>
               <div class="fw-bold text-warning small">\${escapeHtml(r.reason || 'Không rõ lý do')}</div>
-              <div class="text-muted small">\${escapeHtml(r.details || '')}</div>
             </td>
             <td>\${statusBadge}</td>
             <td class="text-secondary small">\${dateStr}</td>
-            <td style="text-align: right; padding-right: 20px;">
-              \${r.status === 'pending' ? \`
-                <button class="btn btn-sm btn-outline-danger me-1" onclick="resolveReport('\${r.id}', 'delete_target')">Xử phạt</button>
-                <button class="btn btn-sm btn-outline-secondary" onclick="resolveReport('\${r.id}', 'dismiss')">Bác bỏ</button>
-              \` : '<span class="text-muted small">Hoàn tất</span>'}
-            </td>
+            <td style="text-align: right; padding-right: 20px;">\${actionButtons}</td>
           </tr>
         \`;
       }).join('');
     }
 
     async function resolveReport(reportId, action) {
+      if (action === 'delete_content' || action === 'ban_user') {
+        const confirmMsg = action === 'ban_user' ? 'Bạn có chắc chắn muốn khóa tài khoản bị tố cáo này?' : 'Bạn có chắc chắn muốn xóa vĩnh viễn nội dung vi phạm này?';
+        const { isConfirmed } = await Swal.fire({
+          title: 'Xác nhận xử phạt?',
+          text: confirmMsg,
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#ef4444',
+          confirmButtonText: 'Đồng ý xử phạt',
+          cancelButtonText: 'Hủy'
+        });
+        if (!isConfirmed) return;
+      }
+
       try {
-        const data = await safeFetchJson(\`/api/admin/reports/\${reportId}/resolve\`, {
+        const data = await safeFetchJson(\`/api/admin/reports/\${reportId}/action\`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + adminToken },
           body: JSON.stringify({ action })
@@ -2387,81 +2513,145 @@ export function renderAdminPage(): string {
       }
     }
 
-    // 6. Fetch OA Requests
-    async function fetchOaRequests(showToast = false) {
+    // 6. Fetch Requests (Hàng đợi Xét duyệt Hồ sơ & Đề xuất OA)
+    let allRequestsCache = [];
+    let currentRequestFilter = 'all';
+
+    async function fetchRequests(showToast = false) {
       try {
-        const data = await safeFetchJson('/api/admin/oa-requests', {
+        const data = await safeFetchJson('/api/admin/requests', {
           headers: { 'Authorization': 'Bearer ' + adminToken }
         });
         if (data.success && data.requests) {
-          allOaRequestsCache = data.requests;
-          renderOaRequests(allOaRequestsCache);
+          allRequestsCache = data.requests;
+          renderRequests(allRequestsCache);
           if (showToast) {
-            Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'Đã tải danh sách đề xuất OA', showConfirmButton: false, timer: 1500 });
+            Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'Đã tải danh sách xét duyệt & yêu cầu', showConfirmButton: false, timer: 1500 });
           }
         }
       } catch (err) {
-        console.error('Fetch OA requests error:', err);
+        console.error('Fetch requests error:', err);
       }
     }
 
-    function renderOaRequests(requests) {
-      const container = document.getElementById('oa-requests-container');
+    function filterRequests(type) {
+      currentRequestFilter = type;
+      document.querySelectorAll('#request-filter-group button').forEach(btn => btn.classList.remove('active'));
+      const activeBtn = event.target;
+      if (activeBtn) activeBtn.classList.add('active');
+
+      if (type === 'all') {
+        renderRequests(allRequestsCache);
+      } else if (type === 'verified') {
+        renderRequests(allRequestsCache.filter(r => r.badge_type === 'verified' || r.badge_type === 'reverify'));
+      } else if (type === 'oa') {
+        renderRequests(allRequestsCache.filter(r => r.badge_type === 'oa'));
+      } else if (type === 'oa_update') {
+        renderRequests(allRequestsCache.filter(r => r.badge_type === 'oa_update'));
+      }
+    }
+
+    function renderRequests(requests) {
+      const container = document.getElementById('requests-container');
       if (!requests || requests.length === 0) {
-        container.innerHTML = '<div class="text-center py-5 text-muted"><i class="fas fa-circle-check fs-2 text-success mb-2 d-block"></i>Không có đề xuất thay đổi OA nào đang chờ xét duyệt.</div>';
+        container.innerHTML = '<div class="text-center py-5 text-muted"><i class="fas fa-circle-check fs-2 text-success mb-2 d-block"></i>Tuyệt vời! Không có hồ sơ hoặc yêu cầu nào đang chờ xét duyệt.</div>';
         return;
       }
 
       container.innerHTML = requests.map(req => {
-        const changes = req.proposed_changes || {};
-        const oldInfo = req.current_info || {};
+        const app = req.applicant || {};
+        const avatarUrl = app.avatar_url || 'https://api.dicebear.com/7.x/bottts/svg?seed=' + (app.id || 'usr');
+        const displayName = escapeHtml(app.display_name || app.username || 'Người dùng');
+        const username = escapeHtml(app.username || '-');
         const dateStr = req.created_at ? new Date(req.created_at).toLocaleString('vi-VN') : '-';
+
+        let badgePill = '';
+        if (req.badge_type === 'oa') {
+          badgePill = '<span class="badge bg-warning text-dark fw-bold"><i class="fas fa-certificate me-1"></i>XIN CẤP TÍCH VÀNG OA ⭐</span>';
+        } else if (req.badge_type === 'verified') {
+          badgePill = '<span class="badge bg-primary fw-bold"><i class="fas fa-check-circle me-1"></i>XIN CẤP TÍCH XANH ✓</span>';
+        } else if (req.badge_type === 'reverify') {
+          badgePill = '<span class="badge bg-info fw-bold"><i class="fas fa-arrows-rotate me-1"></i>XÉT DUYỆT LẠI HUY HIỆU</span>';
+        } else {
+          badgePill = '<span class="badge bg-secondary fw-bold"><i class="fas fa-pen-to-square me-1"></i>ĐỀ XUẤT ĐỔI THÔNG TIN OA</span>';
+        }
+
+        let detailSection = '';
+        if (req.badge_type === 'oa_update') {
+          const ch = req.proposed_changes || {};
+          const old = req.current_info || {};
+          detailSection = \`
+            <div class="row g-2 small p-2 rounded-2 mb-3 mt-1" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);">
+              <div class="col-md-6">
+                <span class="text-muted">Tên thương hiệu:</span> <span class="text-secondary text-decoration-line-through me-1">\${escapeHtml(old.display_name || '-')}</span> <strong class="text-info">\${escapeHtml(ch.display_name || old.display_name || '-')}</strong>
+              </div>
+              <div class="col-md-6">
+                <span class="text-muted">Lĩnh vực OA:</span> <span class="text-secondary text-decoration-line-through me-1">\${escapeHtml(old.oa_category || '-')}</span> <strong class="text-warning">\${escapeHtml(ch.oa_category || old.oa_category || '-')}</strong>
+              </div>
+              <div class="col-12 mt-1">
+                <span class="text-muted">Tiểu sử:</span> <span class="text-light">\${escapeHtml(ch.bio || old.bio || '-')}</span>
+              </div>
+            </div>
+          \`;
+        } else {
+          detailSection = \`
+            <div class="p-2 rounded-2 mb-3 mt-2" style="background: rgba(255,255,255,0.03); border-left: 3px solid #38bdf8;">
+              <div class="text-warning small fw-bold mb-1"><i class="fas fa-circle-info me-1"></i>\${escapeHtml(req.reason || 'Yêu cầu cấp huy hiệu xác thực danh tính')}</div>
+              <div class="text-muted small">\${app.bio ? 'Tiểu sử: ' + escapeHtml(app.bio) : 'Tài khoản thành viên hoạt động'}</div>
+            </div>
+          \`;
+        }
+
+        let actions = '';
+        if (req.status === 'pending') {
+          actions = \`
+            <div class="d-flex justify-content-end gap-2">
+              <button class="btn btn-sm btn-outline-danger" onclick="reviewRequest('\${req.id}', 'reject')">
+                <i class="fas fa-times me-1"></i> Từ chối
+              </button>
+              <button class="btn btn-sm btn-success fw-bold" onclick="reviewRequest('\${req.id}', 'approve')">
+                <i class="fas fa-check me-1"></i> Phê duyệt ngay
+              </button>
+            </div>
+          \`;
+        } else if (req.status === 'reviewed' || req.status === 'approved') {
+          actions = '<div class="text-end text-success small fw-bold"><i class="fas fa-check-circle me-1"></i>Đã phê duyệt</div>';
+        } else {
+          actions = '<div class="text-end text-muted small"><i class="fas fa-ban me-1"></i>Đã từ chối</div>';
+        }
 
         return \`
           <div class="glass-panel p-3 mb-3">
-            <div class="d-flex align-items-center justify-content-between mb-2">
+            <div class="d-flex align-items-center justify-content-between mb-1">
               <div class="d-flex align-items-center gap-2">
-                <span class="badge bg-warning text-dark fw-bold"><i class="fas fa-certificate me-1"></i>Official Account</span>
-                <span class="text-white fw-bold">\${escapeHtml(req.user?.display_name || req.user?.username || 'Doanh nghiệp')}</span>
-                <span class="font-mono text-muted small">@\${escapeHtml(req.user?.username || '')}</span>
+                <img src="\${avatarUrl}" style="width: 34px; height: 34px; border-radius: 50%; object-fit: cover;">
+                <div>
+                  <div class="d-flex align-items-center gap-2">
+                    <span class="text-white fw-bold">\${displayName}</span>
+                    <span class="font-mono text-muted small">@\${username}</span>
+                    \${badgePill}
+                  </div>
+                </div>
               </div>
               <span class="text-secondary small">\${dateStr}</span>
             </div>
 
-            <div class="row g-2 small p-2 rounded-2 mb-3" style="background: rgba(255,255,255,0.02);">
-              <div class="col-md-6">
-                <span class="text-muted">Tên đề xuất:</span> <strong class="text-info">\${escapeHtml(changes.display_name || oldInfo.display_name || '-')}</strong>
-              </div>
-              <div class="col-md-6">
-                <span class="text-muted">Lĩnh vực:</span> <strong class="text-warning">\${escapeHtml(changes.category || oldInfo.category || '-')}</strong>
-              </div>
-              <div class="col-12 mt-1">
-                <span class="text-muted">Tiểu sử:</span> <span class="text-light">\${escapeHtml(changes.bio || oldInfo.bio || '-')}</span>
-              </div>
-            </div>
-
-            <div class="d-flex justify-content-end gap-2">
-              <button class="btn btn-sm btn-outline-danger" onclick="reviewOaRequest('\${req.id}', 'reject')">
-                <i class="fas fa-times me-1"></i> Bác bỏ
-              </button>
-              <button class="btn btn-sm btn-success" onclick="reviewOaRequest('\${req.id}', 'approve')">
-                <i class="fas fa-check me-1"></i> Phê duyệt đề xuất
-              </button>
-            </div>
+            \${detailSection}
+            \${actions}
           </div>
         \`;
       }).join('');
     }
 
-    async function reviewOaRequest(reqId, action) {
+    async function reviewRequest(reqId, action) {
       let reason = '';
       if (action === 'reject') {
         const { value } = await Swal.fire({
-          title: 'Lý do bác bỏ đề xuất OA?',
+          title: 'Lý do từ chối yêu cầu?',
           input: 'text',
-          inputPlaceholder: 'Nhập lý do gửi về cho chủ sở hữu OA...',
+          inputPlaceholder: 'Nhập lý do gửi thông báo giải thích cho người dùng...',
           showCancelButton: true,
-          confirmButtonText: 'Bác bỏ',
+          confirmButtonText: 'Xác nhận từ chối',
           cancelButtonText: 'Hủy'
         });
         if (value === undefined) return;
@@ -2469,18 +2659,14 @@ export function renderAdminPage(): string {
       }
 
       try {
-        const endpoint = action === 'approve' 
-          ? \`/api/admin/oa-requests/\${reqId}/approve\` 
-          : \`/api/admin/oa-requests/\${reqId}/reject\`;
-
-        const data = await safeFetchJson(endpoint, {
+        const data = await safeFetchJson(\`/api/admin/requests/\${reqId}/\${action}\`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + adminToken },
           body: JSON.stringify({ reason })
         });
         if (data.success) {
           Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: data.message, showConfirmButton: false, timer: 1800 });
-          fetchOaRequests();
+          fetchRequests();
           fetchUsers();
           fetchMetrics();
         } else {
@@ -2490,6 +2676,10 @@ export function renderAdminPage(): string {
         Swal.fire({ icon: 'error', title: 'Lỗi', text: err.message });
       }
     }
+
+    // Aliases cho tương thích ngược
+    const fetchOaRequests = fetchRequests;
+    const reviewOaRequest = reviewRequest;
 
     // 7. Broadcast Preview & Send
     function setupBroadcastPreview() {
@@ -2665,6 +2855,8 @@ export function renderAdminPage(): string {
 
     // Navigation Tab Switching
     function switchTab(tabId) {
+      if (tabId === 'duyet-oa') tabId = 'xet-duyet';
+
       window.scrollTo({ top: 0, behavior: 'instant' });
       document.querySelectorAll('.app-sidebar .nav-item-btn').forEach(btn => {
         btn.classList.toggle('active', btn.getAttribute('data-tab') === tabId);
@@ -2679,10 +2871,11 @@ export function renderAdminPage(): string {
       const titleMap = {
         'tong-quan': { short: 'Tổng Quan', title: 'Tổng Quan Hệ Thống', subtitle: 'Chỉ số vận hành mạng xã hội Dorabox theo thời gian thực' },
         'thanh-vien': { short: 'Thành Viên', title: 'Quản Lý Danh Sách Thành Viên', subtitle: 'Phân quyền, cấp tích xanh, xét duyệt Official Account & khóa tài khoản' },
-        'duyet-oa': { short: 'Xét Duyệt OA', title: 'Xét Duyệt Thông Tin OA', subtitle: 'Phê duyệt các thay đổi Tên, Lĩnh vực, Mã định danh, Tiểu sử và Trạng thái Official Account' },
+        'xet-duyet': { short: 'Xét Duyệt & Yêu Cầu', title: 'Hàng Đợi Xét Duyệt & Yêu Cầu Người Dùng', subtitle: 'Phê duyệt hồ sơ cấp Tích Xanh cá nhân, Tích Vàng OA và đề xuất cập nhật thông tin thương hiệu' },
+        'duyet-oa': { short: 'Xét Duyệt & Yêu Cầu', title: 'Hàng Đợi Xét Duyệt & Yêu Cầu Người Dùng', subtitle: 'Phê duyệt hồ sơ cấp Tích Xanh cá nhân, Tích Vàng OA và đề xuất cập nhật thông tin thương hiệu' },
+        'bao-cao': { short: 'Báo Cáo Vi Phạm', title: 'Kiểm Duyệt Báo Cáo Vi Phạm Tiêu Chuẩn Cộng Đồng', subtitle: 'Hàng đợi xử phạt bài viết, bình luận và tài khoản bị người dùng tố cáo vi phạm' },
         'bai-viet': { short: 'Bài Viết', title: 'Quản Lý Bảng Tin & Bài Viết', subtitle: 'Kiểm duyệt nội dung bảng tin, hình ảnh đính kèm, ghim bài nổi bật & xóa vi phạm' },
         'binh-luan': { short: 'Bình Luận', title: 'Quản Lý Bình Luận & Thảo Luận', subtitle: 'Giám sát tương tác thảo luận cộng đồng & ngăn chặn spam' },
-        'bao-cao': { short: 'Báo Cáo', title: 'Kiểm Duyệt & Báo Cáo Vi Phạm', subtitle: 'Hàng đợi xét duyệt hồ sơ cấp tích và xử lý vi phạm tiêu chuẩn cộng đồng' },
         'phat-thong-bao': { short: 'Push FCM', title: 'Broadcast Studio & Push FCM', subtitle: 'Soạn thảo và phát Push Notification tới ứng dụng kèm xem trước trên mobile' },
         'bao-mat-audit': { short: 'Bảo Mật & Audit', title: 'Bảo Mật Hệ Thống & Nhật Ký Audit', subtitle: 'Giám sát khiên chống spam 120Hz, bảo trì dọn dẹp phản ứng rác & theo dõi an ninh' },
         'he-thong': { short: 'Hạ Tầng Cloud', title: 'Hạ Tầng Cloud & Services', subtitle: 'Giám sát dịch vụ Supabase Postgres, Cloudflare R2 CDN và Firebase v1' }

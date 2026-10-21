@@ -241,10 +241,29 @@ router.get('/metrics', async (req, res) => {
       supabaseAdmin.from('profiles').select('id', { count: 'exact', head: true }).eq('is_banned', true),
       supabaseAdmin.from('posts').select('id', { count: 'exact', head: true }),
       supabaseAdmin.from('comments').select('id', { count: 'exact', head: true }),
-      supabaseAdmin.from('reports').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
+      supabaseAdmin.from('reports').select('id, target_type, target_id, reporter_id, reason').eq('status', 'pending'),
       supabaseAdmin.from('reports').select('id', { count: 'exact', head: true }).neq('status', 'pending'),
       supabaseAdmin.from('profiles').select('id', { count: 'exact', head: true }).eq('oa_pending_status', 'pending_approval'),
     ]);
+
+    let pendingViolationsCount = 0;
+    let pendingBadgeRequestsCount = 0;
+
+    const pendingReportRows = (pendingReportsRes.data || []) as any[];
+    pendingReportRows.forEach(r => {
+      const isReq = r.target_type === 'user' && (
+        r.reporter_id === r.target_id ||
+        (r.reason && (r.reason.includes('yêu cầu') || r.reason.includes('xét duyệt') || r.reason.includes('Tích') || r.reason.includes('tích')))
+      );
+      if (isReq) {
+        pendingBadgeRequestsCount++;
+      } else {
+        pendingViolationsCount++;
+      }
+    });
+
+    const pendingOaCount = pendingOaRes.count || 0;
+    const totalPendingRequests = pendingBadgeRequestsCount + pendingOaCount;
 
     return res.json({
       success: true,
@@ -254,9 +273,11 @@ router.get('/metrics', async (req, res) => {
         bannedUsers: bannedRes.count || 0,
         totalPosts: postsRes.count || 0,
         totalComments: commentsRes.count || 0,
-        pendingReports: pendingReportsRes.count || 0,
+        pendingReports: pendingViolationsCount,
         resolvedReports: resolvedReportsRes.count || 0,
-        pendingOaRequests: pendingOaRes.count || 0,
+        pendingOaRequests: pendingOaCount,
+        pendingBadgeRequests: pendingBadgeRequestsCount,
+        pendingRequests: totalPendingRequests,
       }
     });
   } catch (err: any) {
@@ -450,61 +471,28 @@ export async function wipeUserAccountCompletely(userId: string): Promise<{ succe
       }
     } catch (_) {}
 
-    // 1. Xóa tất cả reactions của user và reactions trên bài viết của user
-    try {
-      await supabaseAdmin.from('post_reactions').delete().eq('user_id', userId);
-    } catch (e: any) {
-      console.warn('post_reactions clean error:', e.message);
-    }
+    // Chạy song song tất cả các tác vụ dọn dẹp dữ liệu phụ thuộc để phản hồi nhanh chóng, không gây delay
+    const deleteTasks = [
+      Promise.resolve(supabaseAdmin.from('post_reactions').delete().eq('user_id', userId)),
+      Promise.resolve(supabaseAdmin.from('comments').delete().eq('user_id', userId)),
+      Promise.resolve(supabaseAdmin.from('posts').delete().eq('author_id', userId)),
+      Promise.resolve(supabaseAdmin.from('messages').delete().eq('sender_id', userId)),
+      Promise.resolve(supabaseAdmin.from('conversations').delete().or(`user_a.eq.${userId},user_b.eq.${userId}`)),
+      Promise.resolve(supabaseAdmin.from('notifications').delete().or(`recipient_id.eq.${userId},actor_id.eq.${userId}`)),
+      Promise.resolve(supabaseAdmin.from('reports').delete().or(`reporter_id.eq.${userId},target_id.eq.${userId}`)),
+      Promise.resolve(supabaseAdmin.from('user_blocks').delete().or(`blocker_id.eq.${userId},blocked_id.eq.${userId}`)),
+    ];
 
-    const { data: userPosts } = await supabaseAdmin.from('posts').select('id').eq('author_id', userId);
-    if (userPosts && userPosts.length > 0) {
-      const postIds = userPosts.map(p => p.id);
-      try {
-        await supabaseAdmin.from('post_reactions').delete().in('post_id', postIds);
-        await supabaseAdmin.from('comments').delete().in('post_id', postIds);
-      } catch (_) {}
-    }
+    await Promise.allSettled(deleteTasks);
 
-    // 2. Xóa các bình luận do user viết
-    try {
-      await supabaseAdmin.from('comments').delete().eq('user_id', userId);
-    } catch (_) {}
-
-    // 3. Xóa các bài viết do user đăng
-    try {
-      await supabaseAdmin.from('posts').delete().eq('author_id', userId);
-    } catch (_) {}
-
-    // 4. Xóa tin nhắn do user gửi
-    try {
-      await supabaseAdmin.from('messages').delete().eq('sender_id', userId);
-    } catch (_) {}
-
-    // 5. Xóa các cuộc trò chuyện của user
-    try {
-      await supabaseAdmin.from('conversations').delete().or(`user_a.eq.${userId},user_b.eq.${userId}`);
-    } catch (_) {}
-
-    // 6. Xóa thông báo liên quan
-    try {
-      await supabaseAdmin.from('notifications').delete().or(`recipient_id.eq.${userId},actor_id.eq.${userId}`);
-    } catch (_) {}
-
-    // 7. Xóa báo cáo và chặn liên quan
-    try {
-      await supabaseAdmin.from('reports').delete().or(`reporter_id.eq.${userId},target_id.eq.${userId}`);
-      await supabaseAdmin.from('user_blocks').delete().or(`blocker_id.eq.${userId},blocked_id.eq.${userId}`);
-    } catch (_) {}
-
-    // 8. Xóa hồ sơ trong bảng profiles
+    // Xóa hồ sơ trong bảng profiles
     try {
       await supabaseAdmin.from('profiles').delete().eq('id', userId);
     } catch (e: any) {
       console.warn('profiles delete warning:', e.message);
     }
 
-    // 9. Xóa tài khoản Supabase Auth (auth.users)
+    // Xóa tài khoản Supabase Auth (auth.users)
     try {
       await supabaseAdmin.auth.admin.deleteUser(userId);
     } catch (authErr: any) {
@@ -668,18 +656,88 @@ router.delete('/comments/:id', async (req, res) => {
 });
 
 // -------------------------------------------------------------
-// 5. REPORTS MODERATION (Kiểm duyệt Báo cáo Vi phạm)
+// 5. REPORTS MODERATION (Kiểm duyệt Báo cáo Vi phạm Tiêu chuẩn Cộng đồng)
 // -------------------------------------------------------------
 
 router.get('/reports', async (req, res) => {
   try {
-    const { data, error } = await supabaseAdmin
+    const { data: rawReports, error } = await supabaseAdmin
       .from('reports')
-      .select('id, reporter_id, target_type, target_id, reason, status, created_at, profiles:reporter_id(display_name, username, avatar_url)')
-      .order('created_at', { ascending: false });
+      .select('id, reporter_id, target_type, target_id, reason, status, created_at, profiles:reporter_id(id, display_name, username, avatar_url)')
+      .order('created_at', { ascending: false })
+      .limit(100);
 
     if (error) throw error;
-    return res.json({ success: true, reports: data || [] });
+
+    // LỌC BỎ các yêu cầu cấp tích hoặc yêu cầu người dùng (không phải vi phạm)
+    const violationReports = (rawReports || []).filter(r => {
+      const isReq = r.target_type === 'user' && (
+        r.reporter_id === r.target_id ||
+        (r.reason && (r.reason.includes('yêu cầu') || r.reason.includes('xét duyệt') || r.reason.includes('Tích') || r.reason.includes('tích')))
+      );
+      return !isReq;
+    });
+
+    // Gom target_id theo loại để truy vấn chi tiết nội dung bị tố cáo
+    const postIds = violationReports.filter(r => r.target_type === 'post').map(r => r.target_id);
+    const commentIds = violationReports.filter(r => r.target_type === 'comment').map(r => r.target_id);
+    const userIds = violationReports.filter(r => r.target_type === 'user').map(r => r.target_id);
+
+    const [postsMap, commentsMap, usersMap] = await Promise.all([
+      postIds.length ? supabaseAdmin.from('posts').select('id, content, media_urls, author_id, profiles:author_id(display_name, username, avatar_url)').in('id', postIds) : { data: [] },
+      commentIds.length ? supabaseAdmin.from('comments').select('id, content, user_id, post_id, profiles:user_id(display_name, username, avatar_url)').in('id', commentIds) : { data: [] },
+      userIds.length ? supabaseAdmin.from('profiles').select('id, display_name, username, avatar_url, bio, is_banned').in('id', userIds) : { data: [] },
+    ]);
+
+    const postDict = new Map((postsMap.data || []).map((p: any) => [p.id, p]));
+    const commentDict = new Map((commentsMap.data || []).map((c: any) => [c.id, c]));
+    const userDict = new Map((usersMap.data || []).map((u: any) => [u.id, u]));
+
+    const reports = violationReports.map((r: any) => {
+      let target_data: any = null;
+      if (r.target_type === 'post') {
+        const post: any = postDict.get(r.target_id);
+        if (post) {
+          target_data = {
+            content: post.content || '',
+            media_urls: post.media_urls || [],
+            author: post.profiles || null,
+          };
+        }
+      } else if (r.target_type === 'comment') {
+        const comment: any = commentDict.get(r.target_id);
+        if (comment) {
+          target_data = {
+            content: comment.content || '',
+            author: comment.profiles || null,
+          };
+        }
+      } else if (r.target_type === 'user') {
+        const usr: any = userDict.get(r.target_id);
+        if (usr) {
+          target_data = {
+            display_name: usr.display_name,
+            username: usr.username,
+            avatar_url: usr.avatar_url,
+            is_banned: usr.is_banned,
+          };
+        }
+      }
+
+      return {
+        id: r.id,
+        reporter_id: r.reporter_id,
+        reporter: r.profiles || null,
+        target_type: r.target_type,
+        target_id: r.target_id,
+        target_data,
+        reason: r.reason,
+        status: r.status,
+        created_at: r.created_at,
+      };
+    });
+
+    return res.json({ success: true, reports });
   } catch (err: any) {
     return res.status(500).json({ error: err.message });
   }
@@ -689,7 +747,7 @@ router.get('/reports', async (req, res) => {
 router.post(['/reports/:id/action', '/reports/:id/resolve'], async (req, res) => {
   try {
     const { id } = req.params;
-    const { action } = req.body; // 'dismiss' hoặc 'delete_target'
+    const { action } = req.body; // 'dismiss', 'delete_target', 'delete_content', 'ban_user'
 
     const { data: report, error: repErr } = await supabaseAdmin
       .from('reports')
@@ -707,10 +765,10 @@ router.post(['/reports/:id/action', '/reports/:id/resolve'], async (req, res) =>
         .update({ status: 'dismissed' })
         .eq('id', id);
 
-      return res.json({ success: true, message: 'Đã bác bỏ báo cáo.' });
+      return res.json({ success: true, message: 'Đã bác bỏ báo cáo vi phạm.' });
     }
 
-    if (action === 'delete_target') {
+    if (action === 'delete_target' || action === 'delete_content') {
       if (report.target_type === 'post') {
         await supabaseAdmin.from('posts').delete().eq('id', report.target_id);
       } else if (report.target_type === 'comment') {
@@ -727,35 +785,24 @@ router.post(['/reports/:id/action', '/reports/:id/resolve'], async (req, res) =>
         .update({ status: 'reviewed' })
         .eq('id', id);
 
-      return res.json({ success: true, message: 'Đã xử lý và dọn dẹp nội dung vi phạm thành công.' });
+      return res.json({ success: true, message: 'Đã xóa nội dung vi phạm thành công.' });
     }
 
-    if (action === 'approve_oa') {
-      await supabaseAdmin
-        .from('profiles')
-        .update({ is_oa: true, is_vip: true, account_type: 'oa' })
-        .eq('id', report.target_id);
+    if (action === 'ban_user') {
+      const targetUserId = report.target_type === 'user' ? report.target_id : null;
+      if (targetUserId) {
+        await supabaseAdmin.from('profiles').update({ is_banned: true }).eq('id', targetUserId);
+        try {
+          await supabaseAdmin.auth.admin.updateUserById(targetUserId, { ban_duration: '876000h' });
+        } catch (_) {}
+      }
 
       await supabaseAdmin
         .from('reports')
         .update({ status: 'reviewed' })
         .eq('id', id);
 
-      return res.json({ success: true, message: 'Đã duyệt và cấp Tích Vàng OA ⭐ cho tài khoản!' });
-    }
-
-    if (action === 'approve_verified') {
-      await supabaseAdmin
-        .from('profiles')
-        .update({ is_verified: true })
-        .eq('id', report.target_id);
-
-      await supabaseAdmin
-        .from('reports')
-        .update({ status: 'reviewed' })
-        .eq('id', id);
-
-      return res.json({ success: true, message: 'Đã duyệt và cấp Tích Xanh ✓ cho tài khoản!' });
+      return res.json({ success: true, message: 'Đã khóa tài khoản người dùng vi phạm!' });
     }
 
     return res.status(400).json({ error: 'Hành động không hợp lệ.' });
@@ -765,10 +812,306 @@ router.post(['/reports/:id/action', '/reports/:id/resolve'], async (req, res) =>
 });
 
 // -------------------------------------------------------------
-// 5.1. OA PENDING INFO APPROVALS (Xét Duyệt Thay Đổi Thông Tin OA)
+// 5.1. USER REQUESTS & VERIFICATIONS (Hàng đợi Xét duyệt Hồ sơ & Đề xuất OA)
 // -------------------------------------------------------------
 
-// Danh sách yêu cầu thay đổi thông tin OA đang chờ duyệt
+router.get('/requests', async (req, res) => {
+  try {
+    // 1. Lấy các yêu cầu cấp tích / xét duyệt lại từ bảng reports
+    const { data: badgeReports, error: repErr } = await supabaseAdmin
+      .from('reports')
+      .select('id, reporter_id, target_type, target_id, reason, status, created_at, profiles:reporter_id(id, display_name, username, avatar_url, bio, is_verified, is_oa, account_type, created_at)')
+      .order('created_at', { ascending: false });
+
+    if (repErr) throw repErr;
+
+    const badgeRequests = (badgeReports || []).filter(r => {
+      return r.target_type === 'user' && (
+        r.reporter_id === r.target_id ||
+        (r.reason && (r.reason.includes('yêu cầu') || r.reason.includes('xét duyệt') || r.reason.includes('Tích') || r.reason.includes('tích')))
+      );
+    }).map((r: any) => {
+      let request_type = 'verified_badge';
+      let title = 'Hồ sơ xin cấp Tích Xanh ✓';
+      let badge_type = 'verified';
+
+      if (r.reason && (r.reason.includes('Tích Vàng') || r.reason.includes('OA') || r.reason.includes('oa'))) {
+        request_type = 'oa_badge';
+        title = 'Hồ sơ xin cấp Tích Vàng OA ⭐';
+        badge_type = 'oa';
+      } else if (r.reason && r.reason.includes('đổi tên')) {
+        request_type = 'reverify_badge';
+        title = 'Xét duyệt lại huy hiệu sau khi đổi tên';
+        badge_type = 'reverify';
+      }
+
+      return {
+        id: r.id,
+        source: 'report',
+        request_type,
+        badge_type,
+        title,
+        applicant: r.profiles || { id: r.reporter_id, display_name: 'Người dùng', username: '' },
+        reason: r.reason,
+        status: r.status,
+        created_at: r.created_at,
+        current_info: r.profiles || {},
+        proposed_changes: null,
+      };
+    });
+
+    // 2. Lấy các đề xuất thay đổi thông tin OA từ bảng profiles
+    const { data: oaProfiles, error: oaErr } = await supabaseAdmin
+      .from('profiles')
+      .select('id, username, display_name, avatar_url, bio, oa_category, oa_status, oa_info_edited_count, oa_pending_update, oa_pending_status, updated_at')
+      .eq('oa_pending_status', 'pending_approval')
+      .order('updated_at', { ascending: false });
+
+    if (oaErr) throw oaErr;
+
+    const oaUpdateRequests = (oaProfiles || []).map((p: any) => {
+      return {
+        id: p.id,
+        source: 'profile_oa',
+        request_type: 'oa_info_update',
+        badge_type: 'oa_update',
+        title: 'Đề xuất cập nhật thông tin Official Account',
+        applicant: {
+          id: p.id,
+          display_name: p.display_name,
+          username: p.username,
+          avatar_url: p.avatar_url,
+          bio: p.bio,
+          oa_category: p.oa_category,
+        },
+        reason: 'Chủ sở hữu Official Account đề xuất thay đổi thông tin nhận diện thương hiệu.',
+        status: 'pending',
+        created_at: p.updated_at,
+        current_info: {
+          display_name: p.display_name,
+          username: p.username,
+          bio: p.bio,
+          oa_category: p.oa_category,
+        },
+        proposed_changes: p.oa_pending_update || {},
+      };
+    });
+
+    // Gom chung và sắp xếp thời gian mới nhất lên đầu
+    const allRequests = [...badgeRequests, ...oaUpdateRequests].sort((a, b) => {
+      return new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime();
+    });
+
+    return res.json({ success: true, requests: allRequests });
+  } catch (err: any) {
+    return res.status(500).json({ error: err.message });
+  }
+});
+
+// Phê duyệt yêu cầu (Tích xanh / Tích vàng OA / Cập nhật OA)
+router.post(['/requests/:id/approve', '/oa-requests/:id/approve'], async (req, res) => {
+  try {
+    const id = String(req.params.id);
+
+    // 1. Kiểm tra đề xuất thay đổi thông tin OA trong profiles
+    const { data: profile } = await supabaseAdmin
+      .from('profiles')
+      .select('id, display_name, username, bio, oa_category, oa_status, oa_pending_update, oa_pending_status')
+      .eq('id', id)
+      .maybeSingle();
+
+    if (profile && profile.oa_pending_status === 'pending_approval') {
+      const pending = profile.oa_pending_update as any;
+      const newDisplayName = pending?.display_name?.trim() || profile.display_name;
+      const newUsername = pending?.username?.trim() || profile.username;
+      const newBio = pending?.bio !== undefined ? pending.bio : profile.bio;
+      const newCategory = pending?.oa_category?.trim() || profile.oa_category;
+      const newStatus = pending?.oa_status?.trim() || profile.oa_status;
+
+      await supabaseAdmin
+        .from('profiles')
+        .update({
+          display_name: newDisplayName,
+          username: newUsername,
+          bio: newBio,
+          oa_category: newCategory,
+          oa_status: newStatus,
+          oa_pending_status: 'approved',
+          oa_pending_update: null,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', id);
+
+      try {
+        await supabaseAdmin.auth.admin.updateUserById(id, {
+          user_metadata: {
+            display_name: newDisplayName,
+            username: newUsername,
+          }
+        });
+      } catch (_) {}
+
+      try {
+        await supabaseAdmin.from('notifications').insert({
+          recipient_id: id,
+          actor_id: id,
+          type: 'system',
+          content: `🎉 Chúc mừng! Đề xuất thay đổi thông tin Official Account "${newDisplayName}" đã được phê duyệt!`,
+        });
+      } catch (_) {}
+
+      logSecurityEvent(
+        'verify_toggle',
+        `Phê duyệt thay đổi thông tin Official Account: "${newDisplayName}" (@${newUsername})`,
+        'info'
+      );
+
+      return res.json({
+        success: true,
+        message: `Đã phê duyệt cập nhật thông tin Official Account "${newDisplayName}"!`
+      });
+    }
+
+    // 2. Kiểm tra yêu cầu cấp tích trong reports
+    const { data: report } = await supabaseAdmin
+      .from('reports')
+      .select('*')
+      .eq('id', id)
+      .maybeSingle();
+
+    if (report) {
+      const targetUserId = report.target_id || report.reporter_id;
+      const isOA = report.reason && (report.reason.includes('Tích Vàng') || report.reason.includes('OA') || report.reason.includes('oa'));
+
+      if (isOA) {
+        await supabaseAdmin
+          .from('profiles')
+          .update({ is_oa: true, is_vip: true, account_type: 'oa', updated_at: new Date().toISOString() })
+          .eq('id', targetUserId);
+
+        await supabaseAdmin
+          .from('reports')
+          .update({ status: 'reviewed' })
+          .eq('id', id);
+
+        try {
+          await supabaseAdmin.from('notifications').insert({
+            recipient_id: targetUserId,
+            actor_id: targetUserId,
+            type: 'system',
+            content: '⭐ Chúc mừng! Tài khoản của bạn đã được phê duyệt và trao tặng huy hiệu Tích Vàng Official Account!',
+          });
+        } catch (_) {}
+
+        logSecurityEvent('verify_toggle', `Cấp Tích Vàng OA cho User ID ${targetUserId}`, 'info');
+
+        return res.json({
+          success: true,
+          message: 'Đã phê duyệt và cấp Tích Vàng OA ⭐ cho người dùng thành công!'
+        });
+      } else {
+        await supabaseAdmin
+          .from('profiles')
+          .update({ is_verified: true, updated_at: new Date().toISOString() })
+          .eq('id', targetUserId);
+
+        await supabaseAdmin
+          .from('reports')
+          .update({ status: 'reviewed' })
+          .eq('id', id);
+
+        try {
+          await supabaseAdmin.from('notifications').insert({
+            recipient_id: targetUserId,
+            actor_id: targetUserId,
+            type: 'system',
+            content: '✓ Chúc mừng! Tài khoản của bạn đã được phê duyệt và trao tặng huy hiệu Tích Xanh chính thức!',
+          });
+        } catch (_) {}
+
+        logSecurityEvent('verify_toggle', `Cấp Tích Xanh cho User ID ${targetUserId}`, 'info');
+
+        return res.json({
+          success: true,
+          message: 'Đã phê duyệt và cấp Tích Xanh ✓ cho người dùng thành công!'
+        });
+      }
+    }
+
+    return res.status(404).json({ error: 'Không tìm thấy yêu cầu xét duyệt tương ứng.' });
+  } catch (err: any) {
+    return res.status(500).json({ error: err.message });
+  }
+});
+
+// Từ chối yêu cầu (Tích xanh / Tích vàng OA / Cập nhật OA)
+router.post(['/requests/:id/reject', '/oa-requests/:id/reject'], async (req, res) => {
+  try {
+    const id = String(req.params.id);
+    const { reason } = req.body;
+
+    // 1. Kiểm tra OA profile
+    const { data: profile } = await supabaseAdmin
+      .from('profiles')
+      .select('id, oa_pending_status')
+      .eq('id', id)
+      .maybeSingle();
+
+    if (profile && profile.oa_pending_status === 'pending_approval') {
+      await supabaseAdmin
+        .from('profiles')
+        .update({
+          oa_pending_status: 'rejected',
+          oa_pending_update: null,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', id);
+
+      try {
+        await supabaseAdmin.from('notifications').insert({
+          recipient_id: id,
+          actor_id: id,
+          type: 'system',
+          content: `⚠️ Đề xuất thay đổi thông tin OA của bạn chưa được phê duyệt. Lý do: ${reason || 'Thông tin không đạt tiêu chuẩn xét duyệt.'}`,
+        });
+      } catch (_) {}
+
+      return res.json({ success: true, message: 'Đã từ chối đề xuất cập nhật thông tin OA.' });
+    }
+
+    // 2. Kiểm tra report badge request
+    const { data: report } = await supabaseAdmin
+      .from('reports')
+      .select('*')
+      .eq('id', id)
+      .maybeSingle();
+
+    if (report) {
+      await supabaseAdmin
+        .from('reports')
+        .update({ status: 'dismissed' })
+        .eq('id', id);
+
+      const targetUserId = report.target_id || report.reporter_id;
+      try {
+        await supabaseAdmin.from('notifications').insert({
+          recipient_id: targetUserId,
+          actor_id: targetUserId,
+          type: 'system',
+          content: `⚠️ Yêu cầu xét duyệt cấp huy hiệu của bạn chưa được phê duyệt. Lý do: ${reason || 'Chưa đáp ứng đủ tiêu chuẩn cộng đồng.'}`,
+        });
+      } catch (_) {}
+
+      return res.json({ success: true, message: 'Đã từ chối yêu cầu xét duyệt cấp huy hiệu.' });
+    }
+
+    return res.status(404).json({ error: 'Không tìm thấy yêu cầu xét duyệt.' });
+  } catch (err: any) {
+    return res.status(500).json({ error: err.message });
+  }
+});
+
+// Backward compatibility cho các route oa-requests cũ
 router.get('/oa-requests', async (req, res) => {
   try {
     const { data, error } = await supabaseAdmin
@@ -784,111 +1127,7 @@ router.get('/oa-requests', async (req, res) => {
   }
 });
 
-// Phê duyệt yêu cầu thay đổi thông tin OA
-router.post('/oa-requests/:id/approve', async (req, res) => {
-  try {
-    const { id } = req.params;
 
-    const { data: profile, error: getErr } = await supabaseAdmin
-      .from('profiles')
-      .select('id, display_name, username, bio, oa_category, oa_status, oa_pending_update')
-      .eq('id', id)
-      .single();
-
-    if (getErr || !profile) {
-      return res.status(404).json({ error: 'Không tìm thấy hồ sơ OA tương ứng.' });
-    }
-
-    const pending = profile.oa_pending_update as any;
-    if (!pending) {
-      return res.status(400).json({ error: 'Hồ sơ không có dữ liệu thay đổi nào đang chờ xét duyệt.' });
-    }
-
-    const newDisplayName = pending.display_name?.trim() || profile.display_name;
-    const newUsername = pending.username?.trim() || profile.username;
-    const newBio = pending.bio !== undefined ? pending.bio : profile.bio;
-    const newCategory = pending.oa_category?.trim() || profile.oa_category;
-    const newStatus = pending.oa_status?.trim() || profile.oa_status;
-
-    // Cập nhật bảng profiles
-    const { data: updated, error: updErr } = await supabaseAdmin
-      .from('profiles')
-      .update({
-        display_name: newDisplayName,
-        username: newUsername,
-        bio: newBio,
-        oa_category: newCategory,
-        oa_status: newStatus,
-        oa_pending_status: 'approved',
-        oa_pending_update: null,
-        updated_at: new Date().toISOString(),
-      })
-      .eq('id', id)
-      .select()
-      .single();
-
-    if (updErr) throw updErr;
-
-    // Đồng bộ user_metadata
-    try {
-      await supabaseAdmin.auth.admin.updateUserById(id, {
-        user_metadata: {
-          display_name: newDisplayName,
-          username: newUsername,
-        }
-      });
-    } catch (_) {}
-
-    logSecurityEvent(
-      'verify_toggle',
-      `Phê duyệt thay đổi thông tin Official Account: "${newDisplayName}" (@${newUsername})`,
-      'info'
-    );
-
-    return res.json({
-      success: true,
-      user: updated,
-      message: `Đã phê duyệt cập nhật thông tin Official Account "${newDisplayName}"!`
-    });
-  } catch (err: any) {
-    return res.status(500).json({ error: err.message });
-  }
-});
-
-// Từ chối yêu cầu thay đổi thông tin OA
-router.post('/oa-requests/:id/reject', async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { reason } = req.body;
-
-    const { data: updated, error } = await supabaseAdmin
-      .from('profiles')
-      .update({
-        oa_pending_status: 'rejected',
-        oa_pending_update: null,
-        updated_at: new Date().toISOString(),
-      })
-      .eq('id', id)
-      .select()
-      .single();
-
-    if (error) throw error;
-
-    logSecurityEvent(
-      'verify_toggle',
-      `Từ chối yêu cầu đổi thông tin OA (UID: ${id.substring(0, 8)}...). Lý do: ${reason || 'Không đạt quy chuẩn'}`,
-      'warning'
-    );
-
-    return res.json({
-      success: true,
-      user: updated,
-      message: 'Đã từ chối yêu cầu thay đổi thông tin OA.'
-    });
-  } catch (err: any) {
-    return res.status(500).json({ error: err.message });
-  }
-});
 
 // Cấp lại lượt chỉnh sửa trực tiếp (1 lần) cho tài khoản OA
 router.post('/users/:id/reset-oa-edit', async (req, res) => {
