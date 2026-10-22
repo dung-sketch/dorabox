@@ -88,15 +88,50 @@ create policy "Allow authenticated users to update conversations" on public.conv
 
 drop policy if exists "Allow authenticated users to read messages" on public.messages;
 create policy "Allow authenticated users to read messages" on public.messages
-  for select using (true);
+  for select to authenticated
+  using (
+    exists (
+      select 1 from public.conversations c 
+      where c.id = messages.conversation_id and (
+        c.user_a = auth.uid() or 
+        c.user_b = auth.uid() or 
+        c.created_by = auth.uid() or
+        (c.is_group = true and c.member_ids ? auth.uid()::text)
+      )
+    )
+  );
 
 drop policy if exists "Allow authenticated users to insert messages" on public.messages;
 create policy "Allow authenticated users to insert messages" on public.messages
-  for insert with check (auth.uid() = sender_id);
+  for insert to authenticated
+  with check (
+    auth.uid() = sender_id and (
+      exists (
+        select 1 from public.conversations c 
+        where c.id = conversation_id and (
+          c.user_a = auth.uid() or 
+          c.user_b = auth.uid() or 
+          c.created_by = auth.uid() or
+          (c.is_group = true and c.member_ids ? auth.uid()::text)
+        )
+      )
+    )
+  );
 
 drop policy if exists "Allow authenticated users to update messages" on public.messages;
 create policy "Allow authenticated users to update messages" on public.messages
-  for update using (true);
+  for update to authenticated
+  using (
+    exists (
+      select 1 from public.conversations c 
+      where c.id = messages.conversation_id and (
+        c.user_a = auth.uid() or 
+        c.user_b = auth.uid() or 
+        c.created_by = auth.uid() or
+        (c.is_group = true and c.member_ids ? auth.uid()::text)
+      )
+    )
+  );
 
 -- =========================================================================
 -- STORAGE BUCKETS (avatars & posts)
@@ -219,7 +254,7 @@ create policy "Allow users to read own reports" on public.reports
 
 drop policy if exists "Allow service role full access on reports" on public.reports;
 create policy "Allow service role full access on reports" on public.reports
-  for all using (true) with check (true);
+  for all to service_role using (true) with check (true);
 
 -- Phân quyền RLS cho bảng user_blocks
 alter table public.user_blocks enable row level security;

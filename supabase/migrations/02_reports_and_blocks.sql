@@ -34,7 +34,7 @@ create policy "Allow users to read own reports" on public.reports
 
 drop policy if exists "Allow service role full access on reports" on public.reports;
 create policy "Allow service role full access on reports" on public.reports
-  for all using (true) with check (true);
+  for all to service_role using (true) with check (true);
 
 alter table public.user_blocks enable row level security;
 

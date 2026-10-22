@@ -901,9 +901,6 @@ export function renderAdminPage(): string {
         <button class="nav-item-btn" data-tab="bao-mat-audit" onclick="switchTab('bao-mat-audit')">
           <span class="nav-left"><i class="fas fa-shield-halved text-secondary"></i> Bảo Mật & Audit</span>
         </button>
-        <button class="nav-item-btn" data-tab="he-thong" onclick="switchTab('he-thong')">
-          <span class="nav-left"><i class="fas fa-server text-teal" style="color:#2dd4bf;"></i> Hạ Tầng Cloud</span>
-        </button>
       </nav>
 
       <!-- Sidebar Footer -->
@@ -1384,92 +1381,7 @@ export function renderAdminPage(): string {
           </div>
         </div>
 
-        <!-- =========================================================================
-             TAB 9: HẠ TẦNG CLOUD & SERVICES
-             ========================================================================= -->
-        <div id="tab-he-thong" class="tab-section">
-          <div class="row g-4">
-            <div class="col-lg-6">
-              <div class="glass-panel">
-                <div class="panel-header">
-                  <div class="panel-title"><i class="fas fa-server text-teal" style="color:#2dd4bf;"></i> Trạng Thái Dịch Vụ Đám Mây</div>
-                  <button class="btn btn-sm btn-outline-secondary" onclick="fetchSystemHealth()">
-                    <i class="fas fa-arrows-rotate"></i>
-                  </button>
-                </div>
-                <div class="p-3">
-                  <div class="d-flex align-items-center justify-content-between p-3 border-bottom border-secondary border-opacity-10">
-                    <div>
-                      <div class="fw-bold text-white">Supabase PostgreSQL 15</div>
-                      <div class="text-muted small">Cơ sở dữ liệu chính & Row Level Security</div>
-                    </div>
-                    <span class="badge bg-success" id="health-supabase">ONLINE</span>
-                  </div>
 
-                  <div class="d-flex align-items-center justify-content-between p-3 border-bottom border-secondary border-opacity-10">
-                    <div>
-                      <div class="fw-bold text-white">Cloudflare R2 Storage (S3 API)</div>
-                      <div class="text-muted small">Lưu trữ hình ảnh, video & CDN phân phối</div>
-                    </div>
-                    <span class="badge bg-success" id="health-r2">ONLINE</span>
-                  </div>
-
-                  <div class="d-flex align-items-center justify-content-between p-3 border-bottom border-secondary border-opacity-10">
-                    <div>
-                      <div class="fw-bold text-white">Firebase Cloud Messaging (FCM v1)</div>
-                      <div class="text-muted small">Hạ tầng phát sóng Push Notification</div>
-                    </div>
-                    <span class="badge bg-success" id="health-fcm">ONLINE</span>
-                  </div>
-
-                  <div class="d-flex align-items-center justify-content-between p-3">
-                    <div>
-                      <div class="fw-bold text-white">Agora RTC Audio/Video Engine</div>
-                      <div class="text-muted small">Hạ tầng gọi thoại & video call mã hóa P2P</div>
-                    </div>
-                    <span class="badge bg-success" id="health-agora">ONLINE</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="col-lg-6">
-              <div class="glass-panel">
-                <div class="panel-header">
-                  <div class="panel-title"><i class="fas fa-microchip text-info"></i> Thông Số Máy Chủ Vận Hành</div>
-                </div>
-                <div class="p-4">
-                  <div class="row g-3">
-                    <div class="col-6">
-                      <div class="p-3 rounded-3 text-center" style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-subtle);">
-                        <div class="text-muted small text-uppercase">Uptime</div>
-                        <div class="fs-4 fw-bold text-white mt-1" id="health-uptime">99.98%</div>
-                      </div>
-                    </div>
-                    <div class="col-6">
-                      <div class="p-3 rounded-3 text-center" style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-subtle);">
-                        <div class="text-muted small text-uppercase">Node.js Runtime</div>
-                        <div class="fs-4 fw-bold text-info mt-1" id="health-node">v22.x LTS</div>
-                      </div>
-                    </div>
-                    <div class="col-6">
-                      <div class="p-3 rounded-3 text-center" style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-subtle);">
-                        <div class="text-muted small text-uppercase">Database Latency</div>
-                        <div class="fs-4 fw-bold text-success mt-1" id="health-latency">~18ms</div>
-                      </div>
-                    </div>
-                    <div class="col-6">
-                      <div class="p-3 rounded-3 text-center" style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-subtle);">
-                        <div class="text-muted small text-uppercase">Cơ Chế Bảo Mật</div>
-                        <div class="fs-4 fw-bold text-warning mt-1">120Hz Guard</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
 
         <!-- =========================================================
              TAB: NHÓM TRÒ CHUYỆN (GROUP CHATS)
@@ -2241,9 +2153,11 @@ export function renderAdminPage(): string {
         const authorUsername = author.username 
           ? ('@' + escapeHtml(author.username)) 
           : (author.display_name ? ('@' + escapeHtml(author.display_name.toLowerCase().replace(/\\s+/g, ''))) : (p.author_id ? ('@' + p.author_id.substring(0, 8)) : ''));
-        const verifiedBadge = (author.is_verified || author.is_oa)
-          ? '<i class="fas fa-badge-check text-primary ms-1" title="Đã xác thực"></i>'
-          : '';
+        const verifiedBadge = (author.is_oa || author.account_type === 'oa')
+          ? '<i class="fas fa-badge-check text-warning ms-1" title="Tài khoản OA chính thức (Tích Vàng)"></i>'
+          : (author.is_verified
+              ? '<i class="fas fa-badge-check text-primary ms-1" title="Tài khoản đã xác minh (Tích Xanh)"></i>'
+              : '');
         const authorAvatar = author.avatar_url 
           ? \`<img class="user-avatar-sm me-2" src="\${author.avatar_url}" alt="\${authorName}" onerror="this.outerHTML='<div class=\\'user-avatar-fallback me-2\\'>\${authorInitial}</div>'" />\`
           : \`<div class="user-avatar-fallback me-2">\${authorInitial}</div>\`;
@@ -3165,42 +3079,7 @@ export function renderAdminPage(): string {
       });
     }
 
-    // 9. System Health
-    async function fetchSystemHealth() {
-      try {
-        const data = await safeFetchJson('/api/admin/system/health', {
-          headers: { 'Authorization': 'Bearer ' + adminToken }
-        });
-        if (data.success && data.health) {
-          const h = data.health;
-          const dbText = (h.database && typeof h.database === 'object') ? (h.database.status === 'connected' ? 'ONLINE' : 'ERROR') : (h.database || 'ONLINE');
-          const r2Text = (h.cloudflareR2 && typeof h.cloudflareR2 === 'object') ? (h.cloudflareR2.status === 'ready' ? 'ONLINE' : 'NOT CONFIGURED') : (h.storage || 'ONLINE');
-          const fcmText = (h.firebaseFcm && typeof h.firebaseFcm === 'object') ? 'ONLINE (v1)' : (h.fcm || 'ONLINE');
-          
-          const elDb = document.getElementById('health-supabase');
-          if (elDb) elDb.textContent = dbText;
-          const elR2 = document.getElementById('health-r2');
-          if (elR2) elR2.textContent = r2Text;
-          const elFcm = document.getElementById('health-fcm');
-          if (elFcm) elFcm.textContent = fcmText;
-          const elAgora = document.getElementById('health-agora');
-          if (elAgora) elAgora.textContent = h.agora || 'ONLINE';
 
-          const uptimeVal = h.uptimeSeconds ? (Math.floor(h.uptimeSeconds / 3600) + 'h ' + Math.floor((h.uptimeSeconds % 3600) / 60) + 'm') : (h.uptime || '99.98%');
-          const elUptime = document.getElementById('health-uptime');
-          if (elUptime) elUptime.textContent = uptimeVal;
-
-          const elNode = document.getElementById('health-node');
-          if (elNode) elNode.textContent = h.nodeVersion || 'v22.x LTS';
-
-          const latencyVal = (h.database && h.database.latencyMs) ? ('~' + h.database.latencyMs + 'ms') : (h.latency || '~18ms');
-          const elLatency = document.getElementById('health-latency');
-          if (elLatency) elLatency.textContent = latencyVal;
-        }
-      } catch (err) {
-        console.error('Fetch system health error:', err);
-      }
-    }
 
     // Navigation Tab Switching
     function switchTab(tabId) {
@@ -3227,8 +3106,7 @@ export function renderAdminPage(): string {
         'bai-viet': { short: 'Bài Viết', title: 'Quản Lý Bảng Tin & Bài Viết', subtitle: 'Kiểm duyệt nội dung bảng tin, hình ảnh đính kèm, ghim bài nổi bật & xóa vi phạm' },
         'binh-luan': { short: 'Bình Luận', title: 'Quản Lý Bình Luận & Thảo Luận', subtitle: 'Giám sát tương tác thảo luận cộng đồng & ngăn chặn spam' },
         'phat-thong-bao': { short: 'Push FCM', title: 'Broadcast Studio & Push FCM', subtitle: 'Soạn thảo và phát Push Notification tới ứng dụng kèm xem trước trên mobile' },
-        'bao-mat-audit': { short: 'Bảo Mật & Audit', title: 'Bảo Mật Hệ Thống & Nhật Ký Audit', subtitle: 'Giám sát khiên chống spam 120Hz, bảo trì dọn dẹp phản ứng rác & theo dõi an ninh' },
-        'he-thong': { short: 'Hạ Tầng Cloud', title: 'Hạ Tầng Cloud & Services', subtitle: 'Giám sát dịch vụ Supabase Postgres, Cloudflare R2 CDN và Firebase v1' }
+        'bao-mat-audit': { short: 'Bảo Mật & Audit', title: 'Bảo Mật Hệ Thống & Nhật Ký Audit', subtitle: 'Giám sát khiên chống spam 120Hz, bảo trì dọn dẹp phản ứng rác & theo dõi an ninh' }
       };
 
       if (titleMap[tabId]) {
@@ -3361,10 +3239,10 @@ export function renderAdminPage(): string {
           '</td>' +
           '<td class="text-end">' +
             '<div class="btn-group btn-group-sm">' +
-              '<button class="btn btn-outline-info" onclick="showGroupMembers('' + g.id + '', '' + safeGroupName + '')" title="Xem danh sách thành viên">' +
+              '<button class="btn btn-outline-info" onclick="showGroupMembers(\\\'' + g.id + '\\\', \\\'' + safeGroupName + '\\\')" title="Xem danh sách thành viên">' +
                 '<i class="fas fa-users"></i>' +
               '</button>' +
-              '<button class="btn btn-outline-danger" onclick="confirmDisbandGroup('' + g.id + '', '' + safeGroupName + '')" title="Giải tán & xóa nhóm">' +
+              '<button class="btn btn-outline-danger" onclick="confirmDisbandGroup(\\\'' + g.id + '\\\', \\\'' + safeGroupName + '\\\')" title="Giải tán & xóa nhóm">' +
                 '<i class="fas fa-trash-alt"></i>' +
               '</button>' +
             '</div>' +
