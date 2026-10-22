@@ -1,12 +1,16 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import crypto from 'crypto';
+import dotenv from 'dotenv';
+dotenv.config();
 import { supabaseAdmin } from '../services/supabase.service.js';
 import { sendFcmHttpV1Message, getFirebaseProjectId } from '../services/firebase.service.js';
 
 const router = Router();
 
-// Khóa bảo mật Admin - được nạp trực tiếp từ biến môi trường (không dùng fallback mặc định để tránh lỗ hổng bảo mật)
-const ADMIN_SECRET = process.env.ADMIN_SECRET_KEY ? process.env.ADMIN_SECRET_KEY.trim() : '';
+// Khóa bảo mật Admin - được nạp động từ biến môi trường
+function getAdminSecret(): string {
+  return (process.env.ADMIN_SECRET_KEY || '').trim();
+}
 
 // Hàm so sánh chuỗi bảo mật chống tấn công Timing Attack bằng SHA-256 Digest và crypto.timingSafeEqual
 function secureCompare(a: string, b: string): boolean {
@@ -31,9 +35,10 @@ const LOCKOUT_DURATION_MS = 15 * 60 * 1000; // 15 phút
 
 // Tạo session token bảo mật dựa trên Secret Key và ngày hiện tại
 function generateAdminToken(): string {
-  if (!ADMIN_SECRET) return '';
+  const secret = getAdminSecret();
+  if (!secret) return '';
   return crypto
-    .createHmac('sha256', ADMIN_SECRET)
+    .createHmac('sha256', secret)
     .update('dorabox_admin_session_' + new Date().toDateString())
     .digest('hex');
 }
@@ -86,7 +91,8 @@ export function logSecurityEvent(
  * Middleware kiểm tra bảo mật nghiêm ngặt cho tất cả các API Quản trị
  */
 export function requireAdminAuth(req: Request, res: Response, next: NextFunction) {
-  if (!ADMIN_SECRET || ADMIN_SECRET.length < 24) {
+  const adminSecret = getAdminSecret();
+  if (!adminSecret || adminSecret.length < 24) {
     return res.status(500).json({
       success: false,
       error: 'Bảo mật máy chủ: ADMIN_SECRET_KEY chưa được thiết lập an toàn trên Server (Yêu cầu tối thiểu 24 ký tự mã hóa).'
@@ -106,7 +112,7 @@ export function requireAdminAuth(req: Request, res: Response, next: NextFunction
   }
 
   const validToken = generateAdminToken();
-  if (secureCompare(token, ADMIN_SECRET) || (validToken && secureCompare(token, validToken))) {
+  if (secureCompare(token, adminSecret) || (validToken && secureCompare(token, validToken))) {
     return next();
   }
 
@@ -148,7 +154,8 @@ router.post('/login', async (req, res) => {
     await new Promise(resolve => setTimeout(resolve, jitter));
 
     // 3. Kiểm tra tính hợp lệ của ADMIN_SECRET cấu hình trên máy chủ
-    if (!ADMIN_SECRET || ADMIN_SECRET.length < 24) {
+    const adminSecret = getAdminSecret();
+    if (!adminSecret || adminSecret.length < 24) {
       logSecurityEvent(
         'admin_login',
         'Cảnh báo nghiêm trọng: Máy chủ chưa cấu hình ADMIN_SECRET_KEY đủ an toàn (yêu cầu >= 24 ký tự)',
@@ -162,7 +169,7 @@ router.post('/login', async (req, res) => {
     }
 
     // 4. So sánh mật khẩu an toàn theo thời gian thực (Constant-Time Comparison)
-    const isMatched = typeof password === 'string' && secureCompare(password.trim(), ADMIN_SECRET);
+    const isMatched = typeof password === 'string' && secureCompare(password.trim(), adminSecret);
 
     if (!isMatched) {
       const currentFailures = (attempt ? attempt.failures : 0) + 1;
@@ -1507,6 +1514,118 @@ router.post(['/clean-spam-reactions', '/system/clean-spam'], async (req, res) =>
       postsSynchronized: updatedPostsCount,
       message: `Đã hoàn tất bảo trì: Dọn sạch ${deletedCount} phản ứng spam và đồng bộ chính xác ${updatedPostsCount} bài viết.`
     });
+  } catch (err: any) {
+    return res.status(500).json({ error: err.message });
+  }
+});
+
+// -------------------------------------------------------------
+// 6b. BANNED / RESERVED USERNAMES MANAGEMENT
+// -------------------------------------------------------------
+
+let memoryBannedUsernames: Array<{ id: string; username: string; reason: string; created_at: string }> = [
+  { id: 'def-1', username: 'admin', reason: 'Bảo lưu tài khoản quản trị hệ thống', created_at: new Date().toISOString() },
+  { id: 'def-2', username: 'administrator', reason: 'Bảo lưu tài khoản quản trị hệ thống', created_at: new Date().toISOString() },
+  { id: 'def-3', username: 'superadmin', reason: 'Bảo lưu siêu quản trị viên', created_at: new Date().toISOString() },
+  { id: 'def-4', username: 'dorabox', reason: 'Tên thương hiệu chính thức Dorabox', created_at: new Date().toISOString() },
+  { id: 'def-5', username: 'dorabox_admin', reason: 'Bảo lưu ban quản trị Dorabox', created_at: new Date().toISOString() },
+  { id: 'def-6', username: 'official', reason: 'Bảo lưu tài khoản chính thức', created_at: new Date().toISOString() },
+  { id: 'def-7', username: 'support', reason: 'Bảo lưu bộ phận hỗ trợ khách hàng', created_at: new Date().toISOString() },
+  { id: 'def-8', username: 'help', reason: 'Bảo lưu trung tâm trợ giúp', created_at: new Date().toISOString() },
+  { id: 'def-9', username: 'moderator', reason: 'Bảo lưu kiểm duyệt viên', created_at: new Date().toISOString() },
+  { id: 'def-10', username: 'system', reason: 'Bảo lưu tiến trình hệ thống', created_at: new Date().toISOString() },
+  { id: 'def-11', username: 'root', reason: 'Bảo lưu tài khoản quản trị gốc', created_at: new Date().toISOString() },
+  { id: 'def-12', username: 'security', reason: 'Bảo lưu an ninh bảo mật', created_at: new Date().toISOString() },
+  { id: 'def-13', username: 'api', reason: 'Bảo lưu cổng kết nối hệ thống', created_at: new Date().toISOString() },
+  { id: 'def-14', username: 'null', reason: 'Từ khóa bảo lưu kỹ thuật', created_at: new Date().toISOString() },
+  { id: 'def-15', username: 'undefined', reason: 'Từ khóa bảo lưu kỹ thuật', created_at: new Date().toISOString() },
+  { id: 'def-16', username: 'doraemon', reason: 'Tên nhân vật bảo lưu bản quyền', created_at: new Date().toISOString() }
+];
+
+router.get('/banned-usernames', async (req, res) => {
+  try {
+    const { data, error } = await supabaseAdmin
+      .from('banned_usernames')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error || !data) {
+      return res.json({ success: true, bannedUsernames: memoryBannedUsernames });
+    }
+
+    return res.json({ success: true, bannedUsernames: data });
+  } catch (err: any) {
+    return res.json({ success: true, bannedUsernames: memoryBannedUsernames });
+  }
+});
+
+router.post('/banned-usernames', async (req, res) => {
+  try {
+    const { username, reason } = req.body;
+    if (!username || typeof username !== 'string') {
+      return res.status(400).json({ error: 'Tên người dùng không hợp lệ' });
+    }
+
+    const cleanUsername = username.trim().toLowerCase().replace(/^@/, '');
+    if (cleanUsername.length < 2) {
+      return res.status(400).json({ error: 'Tên người dùng phải có ít nhất 2 ký tự' });
+    }
+
+    const cleanReason = (reason && typeof reason === 'string' && reason.trim())
+      ? reason.trim()
+      : 'Bảo lưu bởi Ban Quản Trị';
+
+    // Thử chèn vào Supabase
+    try {
+      const { data, error } = await supabaseAdmin
+        .from('banned_usernames')
+        .insert({
+          username: cleanUsername,
+          reason: cleanReason
+        })
+        .select()
+        .single();
+
+      if (!error && data) {
+        logSecurityEvent('role_change', `Đã thêm tên cấm "@${cleanUsername}": ${cleanReason}`, 'warning');
+        return res.json({ success: true, item: data });
+      }
+    } catch (_) {}
+
+    // Fallback in-memory
+    const existing = memoryBannedUsernames.find(b => b.username === cleanUsername);
+    if (existing) {
+      return res.status(400).json({ error: 'Tên người dùng này đã có trong danh sách cấm' });
+    }
+
+    const newItem = {
+      id: 'ban-' + Date.now(),
+      username: cleanUsername,
+      reason: cleanReason,
+      created_at: new Date().toISOString()
+    };
+    memoryBannedUsernames.unshift(newItem);
+    logSecurityEvent('role_change', `Đã thêm tên cấm "@${cleanUsername}": ${cleanReason}`, 'warning');
+
+    return res.json({ success: true, item: newItem });
+  } catch (err: any) {
+    return res.status(500).json({ error: err.message });
+  }
+});
+
+router.delete('/banned-usernames/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!id) return res.status(400).json({ error: 'Thiếu id tên cấm' });
+
+    try {
+      await supabaseAdmin.from('banned_usernames').delete().eq('id', id);
+    } catch (_) {}
+
+    memoryBannedUsernames = memoryBannedUsernames.filter(b => b.id !== id && b.username !== id);
+    logSecurityEvent('role_change', `Đã gỡ bỏ tên cấm ID: ${id}`, 'info');
+
+    return res.json({ success: true, message: 'Đã xóa tên cấm thành công' });
   } catch (err: any) {
     return res.status(500).json({ error: err.message });
   }

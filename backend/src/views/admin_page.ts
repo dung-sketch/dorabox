@@ -4,45 +4,86 @@ export function renderAdminPage(): string {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dorabox Admin Portal — Trung Tâm Điều Hành</title>
+  <title>Dorabox Admin Portal — Trung Tâm Điều Hành Siêu Cấp</title>
   
   <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   
-  <!-- Font Awesome Icons -->
+  <!-- Font Awesome 6.5.1 -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   
-  <!-- Bootstrap 5 CSS (Grid & Dropdowns & Modals only) -->
+  <!-- Bootstrap 5 CSS (Grid & Utilities) -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
   
   <!-- SweetAlert2 CSS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 
   <style>
+    /* =========================================================================
+       1. SIÊU THIẾT KẾ DESIGN TOKENS (HARMONIOUS DARK & LIGHT THEME)
+       ========================================================================= */
     :root {
       --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       --font-mono: 'JetBrains Mono', monospace;
-      --bg-body: #0b1120;
-      --bg-sidebar: #080d1a;
-      --bg-topbar: #0b1120;
-      --bg-surface: #111a2e;
-      --bg-surface-elevated: #1e293b;
-      --border-subtle: #1e293b;
-      --border-hover: #334155;
-      --text-main: #f8fafc;
-      --text-muted: #94a3b8;
-      --text-subtle: #64748b;
-      --accent-blue: #38bdf8;
-      --accent-green: #10b981;
-      --accent-amber: #f59e0b;
-      --accent-rose: #f43f5e;
-      --accent-purple: #a855f7;
-      --sidebar-w: 260px;
-      --topbar-h: 64px;
+
+      /* Dark Theme (Default) */
+      --bg-canvas: #080c14;
+      --bg-sidebar: #060910;
+      --bg-topbar: rgba(9, 13, 22, 0.85);
+      --bg-surface: #0f172a;
+      --bg-surface-elevated: #162036;
+      --bg-surface-card: rgba(15, 23, 42, 0.7);
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-hover: rgba(56, 189, 248, 0.3);
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+
+      /* Accent Colors */
+      --primary: #0284c7;
+      --primary-light: #38bdf8;
+      --primary-glow: rgba(2, 132, 199, 0.25);
+      --success: #10b981;
+      --success-bg: rgba(16, 185, 129, 0.12);
+      --warning: #f59e0b;
+      --warning-bg: rgba(245, 158, 11, 0.12);
+      --danger: #f43f5e;
+      --danger-bg: rgba(244, 63, 94, 0.12);
+      --purple: #8b5cf6;
+      --purple-bg: rgba(139, 92, 246, 0.12);
+
+      --sidebar-w: 268px;
+      --topbar-h: 68px;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 18px;
+      --radius-xl: 24px;
     }
 
+    body.light-mode {
+      --bg-canvas: #f8fafc;
+      --bg-sidebar: #ffffff;
+      --bg-topbar: rgba(255, 255, 255, 0.88);
+      --bg-surface: #ffffff;
+      --bg-surface-elevated: #f1f5f9;
+      --bg-surface-card: #ffffff;
+      --border-subtle: #e2e8f0;
+      --border-hover: #cbd5e1;
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #94a3b8;
+      --primary: #0284c7;
+      --primary-light: #0284c7;
+      --primary-glow: rgba(2, 132, 199, 0.12);
+      --success-bg: #d1fae5;
+      --warning-bg: #fef3c7;
+      --danger-bg: #ffe4e6;
+      --purple-bg: #ede9fe;
+    }
+
+    /* Reset & Base */
     * {
       box-sizing: border-box;
       margin: 0;
@@ -51,158 +92,42 @@ export function renderAdminPage(): string {
 
     body {
       font-family: var(--font-sans);
-      background-color: var(--bg-body);
-      color: var(--text-main);
+      background-color: var(--bg-canvas);
+      color: var(--text-primary);
       font-size: 14px;
+      line-height: 1.5;
       min-height: 100vh;
       overflow-x: hidden;
       -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      transition: background-color 0.25s ease, color 0.25s ease;
     }
 
-    /* Bootstrap color contrast override for eye comfort */
-    .text-secondary {
-      color: #94a3b8 !important;
+    /* Scrollbars */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
     }
-    .text-muted {
-      color: #94a3b8 !important;
+    ::-webkit-scrollbar-track {
+      background: transparent;
     }
-
-    /* Light mode support */
-    body.light-mode {
-      --bg-body: #f8fafc;
-      --bg-sidebar: #ffffff;
-      --bg-topbar: #ffffff;
-      --bg-surface: #ffffff;
-      --bg-surface-elevated: #f1f5f9;
-      --border-subtle: #e2e8f0;
-      --border-hover: #cbd5e1;
-      --text-main: #0f172a;
-      --text-muted: #64748b;
-      --text-subtle: #94a3b8;
-      background-color: #f8fafc;
-      color: #0f172a;
+    ::-webkit-scrollbar-thumb {
+      background: var(--border-subtle);
+      border-radius: 999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--text-muted);
     }
 
-    body.light-mode .text-white {
-      color: #0f172a !important;
-    }
-    body.light-mode .text-main {
-      color: #0f172a !important;
-    }
-    body.light-mode .custom-table th {
-      background: #f1f5f9 !important;
-      color: #475569 !important;
-      border-bottom: 1px solid #e2e8f0 !important;
-    }
-    body.light-mode .custom-table td {
-      border-bottom: 1px solid #f1f5f9;
-      color: #334155;
-    }
-    body.light-mode .custom-table tr:hover td {
-      background: #f8fafc;
-    }
-    body.light-mode .filter-pill {
-      background: #ffffff !important;
-      border: 1px solid #e2e8f0 !important;
-      color: #475569 !important;
-      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
-    }
-    body.light-mode .filter-pill:hover {
-      background: #f8fafc !important;
-      color: #0f172a !important;
-      border-color: #cbd5e1 !important;
-    }
-    body.light-mode .filter-pill.active {
-      background: rgba(2, 132, 199, 0.1) !important;
-      color: #0284c7 !important;
-      border-color: rgba(2, 132, 199, 0.4) !important;
-    }
-    body.light-mode .filter-pill .pill-badge {
-      background: #f1f5f9 !important;
-      color: #64748b !important;
-    }
-    body.light-mode .filter-pill.active .pill-badge {
-      background: #0284c7 !important;
-      color: #ffffff !important;
-    }
-    body.light-mode .search-input-wrap input {
-      background: #ffffff !important;
-      border: 1px solid #cbd5e1 !important;
-      color: #0f172a !important;
-    }
-    body.light-mode .search-input-wrap input:focus {
-      border-color: #0284c7 !important;
-      box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15) !important;
-    }
-    body.light-mode .search-input-wrap input::placeholder {
-      color: #94a3b8 !important;
-    }
-    body.light-mode .search-input-wrap i {
-      color: #94a3b8 !important;
-    }
-    body.light-mode .glass-panel {
-      background: #ffffff !important;
-      border-color: #e2e8f0 !important;
-      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05) !important;
-    }
-    body.light-mode .panel-header {
-      background: #ffffff !important;
-      border-bottom-color: #e2e8f0 !important;
-    }
-    body.light-mode .panel-title {
-      color: #0f172a !important;
-    }
-    body.light-mode .stat-card {
-      background: #ffffff !important;
-      border-color: #e2e8f0 !important;
-      box-shadow: 0 4px 16px -2px rgba(0, 0, 0, 0.04) !important;
-    }
-    body.light-mode .stat-number {
-      color: #0f172a !important;
-    }
-    body.light-mode .action-ellipsis-btn {
-      background: #ffffff !important;
-      border-color: #cbd5e1 !important;
-      color: #64748b !important;
-    }
-    body.light-mode .action-ellipsis-btn:hover {
-      background: #f1f5f9 !important;
-      color: #0f172a !important;
-      border-color: #94a3b8 !important;
-    }
-    body.light-mode .modern-dropdown-menu {
-      background: #ffffff !important;
-      border-color: #e2e8f0 !important;
-      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1) !important;
-    }
-    body.light-mode .modern-dropdown-menu .dropdown-header {
-      color: #94a3b8 !important;
-    }
-    body.light-mode .modern-dropdown-menu .dropdown-item {
-      color: #334155 !important;
-    }
-    body.light-mode .modern-dropdown-menu .dropdown-item:hover {
-      background: #f1f5f9 !important;
-      color: #0f172a !important;
-    }
-    body.light-mode .modern-dropdown-menu hr.dropdown-divider {
-      border-color: #e2e8f0 !important;
-    }
-    body.light-mode .app-topbar {
-      background: #ffffff !important;
-      border-bottom-color: #e2e8f0 !important;
-    }
-
-    /* =========================================================================
-       APP SHELL LAYOUT
-       ========================================================================= */
+    /* Layout Shell */
     .app-shell {
       display: flex;
       min-height: 100vh;
-      position: relative;
     }
 
-    /* Sidebar */
+    /* =========================================================================
+       2. SIÊU THANH ĐIỀU HƯỚNG (ULTRA SIDEBAR)
+       ========================================================================= */
     .app-sidebar {
       width: var(--sidebar-w);
       background: var(--bg-sidebar);
@@ -211,10 +136,10 @@ export function renderAdminPage(): string {
       top: 0;
       bottom: 0;
       left: 0;
-      z-index: 1030;
+      z-index: 1040;
       display: flex;
       flex-direction: column;
-      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.25s ease;
     }
 
     .sidebar-brand {
@@ -222,110 +147,131 @@ export function renderAdminPage(): string {
       padding: 0 20px;
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 14px;
       border-bottom: 1px solid var(--border-subtle);
     }
-    .brand-logo-badge {
-      width: 36px;
-      height: 36px;
-      border-radius: 10px;
-      background: linear-gradient(135deg, #0284c7, #3b82f6);
+
+    .brand-logo-glow {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #0284c7 0%, #38bdf8 100%);
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #fff;
-      font-size: 16px;
-      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.35);
+      color: #ffffff;
+      font-size: 17px;
+      box-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
+      flex-shrink: 0;
+      animation: pulseBrand 3s infinite alternate ease-in-out;
+    }
+    @keyframes pulseBrand {
+      from { box-shadow: 0 0 12px rgba(2, 132, 199, 0.3); }
+      to { box-shadow: 0 0 24px rgba(56, 189, 248, 0.6); }
+    }
+
+    .brand-info {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.25;
     }
     .brand-title {
       font-size: 15px;
       font-weight: 800;
-      color: var(--text-main);
+      color: var(--text-primary);
       letter-spacing: -0.02em;
-      line-height: 1.2;
     }
-    .brand-version {
-      font-size: 10.5px;
-      font-weight: 600;
-      color: var(--accent-blue);
-      letter-spacing: 0.02em;
+    .brand-badge {
+      display: inline-flex;
+      align-items: center;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--primary-light);
+      margin-top: 2px;
+      font-family: var(--font-mono);
     }
 
-    /* Sidebar Navigation */
     .sidebar-menu {
       flex: 1;
       padding: 16px 12px;
       overflow-y: auto;
     }
     .menu-group-label {
-      font-size: 10px;
+      font-size: 10.5px;
       font-weight: 700;
       letter-spacing: 0.08em;
       text-transform: uppercase;
-      color: var(--text-subtle);
-      padding: 8px 12px 6px;
+      color: var(--text-muted);
+      padding: 10px 12px 6px;
     }
     .nav-item-btn {
       display: flex;
       align-items: center;
       justify-content: space-between;
       width: 100%;
-      padding: 9px 12px;
-      margin-bottom: 2px;
-      border-radius: 9px;
+      padding: 9.5px 14px;
+      margin-bottom: 3px;
+      border-radius: 10px;
       background: transparent;
-      border: none;
-      color: var(--text-muted);
+      border: 1px solid transparent;
+      color: var(--text-secondary);
       font-size: 13.5px;
       font-weight: 500;
       text-decoration: none;
-      transition: all 0.15s ease;
+      transition: all 0.16s ease;
       cursor: pointer;
+      position: relative;
+    }
+    .nav-item-btn:hover {
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text-primary);
+    }
+    body.light-mode .nav-item-btn:hover {
+      background: #f1f5f9;
+      color: var(--text-primary);
+    }
+    .nav-item-btn.active {
+      background: var(--primary-glow);
+      color: var(--primary-light);
+      font-weight: 700;
+      border-color: rgba(56, 189, 248, 0.3);
+    }
+    body.light-mode .nav-item-btn.active {
+      background: #e0f2fe;
+      color: #0284c7;
+      border-color: #bae6fd;
     }
     .nav-item-btn .nav-left {
       display: flex;
       align-items: center;
-      gap: 11px;
+      gap: 12px;
     }
     .nav-item-btn i {
-      font-size: 14px;
+      font-size: 15px;
       width: 18px;
       text-align: center;
-      opacity: 0.85;
-      transition: transform 0.15s ease;
-    }
-    .nav-item-btn:hover {
-      background: rgba(255, 255, 255, 0.04);
-      color: var(--text-main);
+      transition: transform 0.18s ease;
     }
     .nav-item-btn:hover i {
-      transform: scale(1.1);
-    }
-    .nav-item-btn.active {
-      background: rgba(56, 189, 248, 0.12);
-      color: var(--accent-blue);
-      font-weight: 600;
-      border: 1px solid rgba(56, 189, 248, 0.25);
-    }
-    .nav-item-btn.active i {
-      opacity: 1;
-      color: var(--accent-blue);
+      transform: scale(1.12);
     }
     .nav-counter {
-      font-size: 10.5px;
+      font-size: 11px;
       font-weight: 700;
       padding: 2px 7px;
       border-radius: 9999px;
-      background: rgba(255, 255, 255, 0.06);
-      color: var(--text-muted);
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-secondary);
+      font-family: var(--font-mono);
     }
-    .nav-item-btn.active .nav-counter {
-      background: var(--accent-blue);
-      color: #000;
+    body.light-mode .nav-counter {
+      background: #e2e8f0;
+      color: #475569;
     }
     .nav-counter.counter-danger {
-      background: rgba(239, 68, 68, 0.2);
-      color: #f87171;
+      background: var(--danger-bg);
+      color: var(--danger);
+      border: 1px solid rgba(244, 63, 94, 0.3);
     }
 
     /* Sidebar Footer Profile */
@@ -336,51 +282,67 @@ export function renderAdminPage(): string {
       align-items: center;
       justify-content: space-between;
       gap: 10px;
+      background: var(--bg-sidebar);
     }
-    .admin-profile-pill {
+    .admin-pill {
       display: flex;
       align-items: center;
       gap: 10px;
       overflow: hidden;
     }
     .admin-avatar {
-      width: 32px;
-      height: 32px;
-      border-radius: 9px;
-      background: linear-gradient(135deg, #38bdf8, #818cf8);
-      color: #fff;
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #0284c7, #8b5cf6);
+      color: #ffffff;
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: 700;
-      font-size: 12px;
+      font-size: 13px;
       flex-shrink: 0;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    }
+    .admin-meta {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.25;
+      overflow: hidden;
     }
     .admin-name {
       font-size: 12.5px;
       font-weight: 700;
-      color: var(--text-main);
+      color: var(--text-primary);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
     .admin-status {
       font-size: 10.5px;
-      color: var(--accent-green);
+      color: var(--success);
       display: flex;
       align-items: center;
       gap: 5px;
       font-weight: 600;
     }
-    .status-dot-pulse {
+    .status-radar {
       width: 6px;
       height: 6px;
       border-radius: 50%;
-      background: var(--accent-green);
-      box-shadow: 0 0 6px var(--accent-green);
+      background: var(--success);
+      box-shadow: 0 0 6px var(--success);
+      animation: radarPulse 1.8s infinite;
+    }
+    @keyframes radarPulse {
+      0% { transform: scale(0.95); opacity: 0.8; }
+      50% { transform: scale(1.2); opacity: 1; }
+      100% { transform: scale(0.95); opacity: 0.8; }
     }
 
-    /* Main View Area */
+    /* =========================================================================
+       3. TOPBAR & SHELL CONTENT
+       ========================================================================= */
     .app-main {
       flex: 1;
       margin-left: var(--sidebar-w);
@@ -389,30 +351,30 @@ export function renderAdminPage(): string {
       flex-direction: column;
     }
 
-    /* Topbar */
     .app-topbar {
       height: var(--topbar-h);
       background: var(--bg-topbar);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
       border-bottom: 1px solid var(--border-subtle);
       position: sticky;
       top: 0;
-      z-index: 1020;
+      z-index: 1030;
       padding: 0 28px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      box-shadow: 0 4px 16px -2px rgba(0, 0, 0, 0.4);
     }
     .topbar-left {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 14px;
     }
-    .mobile-menu-trigger {
+    .mobile-menu-btn {
       display: none;
       background: transparent;
       border: 1px solid var(--border-subtle);
-      color: var(--text-main);
+      color: var(--text-primary);
       width: 36px;
       height: 36px;
       border-radius: 8px;
@@ -428,45 +390,77 @@ export function renderAdminPage(): string {
     }
     .breadcrumb-trail .crumb-root {
       color: var(--text-muted);
-      font-weight: 500;
+      font-weight: 600;
     }
     .breadcrumb-trail .crumb-sep {
-      color: var(--text-subtle);
-      opacity: 0.5;
+      color: var(--text-muted);
+      opacity: 0.4;
     }
     .breadcrumb-trail .crumb-active {
-      color: var(--text-main);
+      color: var(--text-primary);
       font-weight: 700;
+    }
+
+    .topbar-center {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .system-health-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 12px;
+      border-radius: 9999px;
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+    .system-health-pill .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--success);
+      box-shadow: 0 0 8px var(--success);
     }
 
     .topbar-right {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
     }
-    .icon-action-btn {
-      width: 36px;
-      height: 36px;
-      border-radius: 9px;
-      background: rgba(255, 255, 255, 0.04);
+
+    .s-action-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: var(--bg-surface-elevated);
       border: 1px solid var(--border-subtle);
-      color: var(--text-muted);
+      color: var(--text-secondary);
       display: inline-flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      transition: all 0.15s ease;
+      transition: all 0.16s ease;
       text-decoration: none;
+      font-size: 14px;
     }
-    .icon-action-btn:hover {
+    .s-action-btn:hover {
       background: rgba(255, 255, 255, 0.08);
-      color: var(--text-main);
+      color: var(--text-primary);
       border-color: var(--border-hover);
+      transform: translateY(-1px);
     }
-    .icon-action-btn.btn-danger-action:hover {
-      background: rgba(239, 68, 68, 0.15);
-      color: #f87171;
-      border-color: rgba(239, 68, 68, 0.3);
+    body.light-mode .s-action-btn:hover {
+      background: #e2e8f0;
+      color: #0f172a;
+    }
+    .s-action-btn.btn-danger:hover {
+      background: var(--danger-bg);
+      color: var(--danger);
+      border-color: rgba(244, 63, 94, 0.4);
     }
 
     /* Content Body */
@@ -475,15 +469,16 @@ export function renderAdminPage(): string {
       padding: 28px 32px 48px;
       min-width: 0;
     }
+
     .tab-section {
       display: none;
-      animation: fadeIn 0.2s ease-out forwards;
+      animation: tabFadeIn 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
     .tab-section.active {
       display: block;
     }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(4px); }
+    @keyframes tabFadeIn {
+      from { opacity: 0; transform: translateY(6px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
@@ -493,106 +488,121 @@ export function renderAdminPage(): string {
       align-items: center;
       justify-content: space-between;
       margin-bottom: 24px;
-      padding-top: 4px;
     }
     .page-title {
-      font-size: 1.42rem;
+      font-size: 1.45rem;
       font-weight: 800;
-      color: var(--text-main);
+      color: var(--text-primary);
       letter-spacing: -0.025em;
+      line-height: 1.3;
       margin: 0;
-      line-height: 1.35;
     }
     .page-subtitle {
       font-size: 0.88rem;
-      color: var(--text-muted);
-      margin-top: 4px;
+      color: var(--text-secondary);
+      margin-top: 3px;
     }
 
     /* =========================================================================
-       CUSTOM CARDS & WIDGETS
+       4. SIÊU THẺ KPI & GLASS PANELS
        ========================================================================= */
     .stat-card {
-      background: var(--bg-surface);
+      background: var(--bg-surface-card);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
       border: 1px solid var(--border-subtle);
-      border-radius: 16px;
+      border-radius: var(--radius-lg);
       padding: 20px 22px;
-      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
       cursor: pointer;
       position: relative;
       overflow: hidden;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.2);
+    }
+    body.light-mode .stat-card {
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 10px 20px -5px rgba(0, 0, 0, 0.03);
     }
     .stat-card:hover {
-      transform: translateY(-2px);
+      transform: translateY(-3px);
       border-color: var(--border-hover);
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+      box-shadow: 0 14px 34px rgba(0, 0, 0, 0.35);
     }
     .stat-card-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
     }
     .stat-label {
       font-size: 0.82rem;
       font-weight: 600;
-      color: var(--text-muted);
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
     }
     .stat-icon-wrap {
-      width: 32px;
-      height: 32px;
-      border-radius: 8px;
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 14px;
+      font-size: 15px;
     }
     .stat-number {
-      font-size: 2.1rem;
+      font-size: 2.2rem;
       font-weight: 800;
-      color: #ffffff;
+      color: var(--text-primary);
       line-height: 1.1;
       letter-spacing: -0.03em;
       margin-bottom: 6px;
+      font-family: var(--font-sans);
     }
     .stat-footnote {
-      font-size: 0.78rem;
+      font-size: 0.8rem;
       color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 5px;
     }
 
     /* Glass Panels */
     .glass-panel {
-      background: var(--bg-surface);
+      background: var(--bg-surface-card);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
       border: 1px solid var(--border-subtle);
-      border-radius: 18px;
+      border-radius: var(--radius-lg);
       overflow: hidden;
       margin-bottom: 24px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+      transition: border-color 0.2s ease, background-color 0.25s ease;
+    }
+    body.light-mode .glass-panel {
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 12px 24px -6px rgba(0, 0, 0, 0.03);
     }
     .panel-header {
-      padding: 16px 20px;
+      padding: 16px 22px;
       border-bottom: 1px solid var(--border-subtle);
       display: flex;
       align-items: center;
       justify-content: space-between;
       flex-wrap: wrap;
       gap: 12px;
+      background: var(--bg-surface);
     }
     .panel-title {
-      font-size: 0.95rem;
+      font-size: 0.98rem;
       font-weight: 700;
-      color: var(--text-main);
+      color: var(--text-primary);
       margin: 0;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
     }
 
     /* =========================================================================
-       FILTER BAR & SEARCH
+       5. SIÊU BẢNG & BỘ LỌC TÌM KIẾM (SUPER TABLES & CONTROLS)
        ========================================================================= */
     .filter-pills-bar {
       display: flex;
@@ -601,74 +611,84 @@ export function renderAdminPage(): string {
       flex-wrap: wrap;
     }
     .filter-pill {
-      background: #0b1120;
+      background: var(--bg-surface-elevated);
       border: 1px solid var(--border-subtle);
-      color: var(--text-muted);
+      color: var(--text-secondary);
       border-radius: 9999px;
-      padding: 6px 15px;
+      padding: 6px 14px;
       font-size: 0.82rem;
       font-weight: 600;
       display: inline-flex;
       align-items: center;
       cursor: pointer;
-      transition: all 0.15s ease;
+      transition: all 0.16s ease;
+      font-family: var(--font-sans);
     }
     .filter-pill:hover {
-      background: #1e293b;
-      color: var(--text-main);
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text-primary);
       border-color: var(--border-hover);
     }
+    body.light-mode .filter-pill:hover {
+      background: #e2e8f0;
+      color: #0f172a;
+    }
     .filter-pill.active {
-      background: rgba(56, 189, 248, 0.14);
-      color: var(--accent-blue);
+      background: var(--primary-glow);
+      color: var(--primary-light);
       border-color: rgba(56, 189, 248, 0.4);
+    }
+    body.light-mode .filter-pill.active {
+      background: #e0f2fe;
+      color: #0284c7;
+      border-color: #7dd3fc;
     }
     .filter-pill .pill-badge {
       font-size: 10.5px;
       font-weight: 700;
       padding: 2px 7px;
       border-radius: 9999px;
-      background: #1e293b;
+      background: rgba(255, 255, 255, 0.08);
       color: var(--text-muted);
       margin-left: 6px;
+      font-family: var(--font-mono);
     }
     .filter-pill.active .pill-badge {
-      background: var(--accent-blue);
-      color: #0b1120;
+      background: var(--primary);
+      color: #ffffff;
     }
 
     .search-input-wrap {
       position: relative;
-      min-width: 250px;
+      min-width: 260px;
     }
     .search-input-wrap i {
       position: absolute;
       top: 50%;
       left: 14px;
       transform: translateY(-50%);
-      color: var(--text-subtle);
-      font-size: 13px;
+      color: var(--text-muted);
+      font-size: 13.5px;
       pointer-events: none;
     }
     .search-input-wrap input {
       width: 100%;
-      padding: 7px 14px 7px 38px;
-      background: #0b1120;
+      padding: 8px 14px 8px 38px;
+      background: var(--bg-surface-elevated);
       border: 1px solid var(--border-subtle);
-      border-radius: 10px;
-      color: var(--text-main);
-      font-size: 0.86rem;
+      border-radius: var(--radius-md);
+      color: var(--text-primary);
+      font-size: 0.88rem;
       outline: none;
-      transition: border-color 0.15s ease;
+      transition: all 0.16s ease;
     }
     .search-input-wrap input:focus {
-      border-color: var(--accent-blue);
-      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px var(--primary-glow);
+      background: var(--bg-surface);
     }
 
-    /* =========================================================================
-       CLEAN BESPOKE TABLES
-       ========================================================================= */
+    /* Custom Tables */
     .table-container {
       width: 100%;
       overflow-x: auto;
@@ -677,17 +697,17 @@ export function renderAdminPage(): string {
       width: 100%;
       border-collapse: separate;
       border-spacing: 0;
-      color: var(--text-main);
+      color: var(--text-primary);
     }
     .custom-table th {
       padding: 13px 18px;
-      font-size: 11.5px;
+      font-size: 11px;
       font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.06em;
-      color: #94a3b8;
+      letter-spacing: 0.07em;
+      color: var(--text-secondary);
       border-bottom: 1px solid var(--border-subtle);
-      background: #0f172a;
+      background: var(--bg-surface-elevated);
       white-space: nowrap;
     }
     .custom-table td {
@@ -695,75 +715,63 @@ export function renderAdminPage(): string {
       border-bottom: 1px solid var(--border-subtle);
       vertical-align: middle;
       font-size: 13.5px;
+      transition: background-color 0.15s ease;
     }
     .custom-table tr:hover td {
-      background: rgba(255, 255, 255, 0.025);
+      background: rgba(255, 255, 255, 0.02);
+    }
+    body.light-mode .custom-table tr:hover td {
+      background: #f8fafc;
     }
     .custom-table tr:last-child td {
       border-bottom: none;
     }
 
-    /* Avatars */
+    /* User Avatars */
     .user-avatar-sm {
       width: 38px;
       height: 38px;
       border-radius: 11px;
       object-fit: cover;
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+      border: 1px solid var(--border-subtle);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
     }
     .user-avatar-fallback {
       width: 38px;
       height: 38px;
       border-radius: 11px;
       background: linear-gradient(135deg, #0284c7, #3b82f6);
-      color: #fff;
+      color: #ffffff;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       font-weight: 700;
       font-size: 13px;
-      box-shadow: 0 2px 8px rgba(2, 132, 199, 0.25);
+      box-shadow: 0 2px 6px rgba(2, 132, 199, 0.25);
     }
 
-    /* Badges & Indicators - Soothing & Eye Friendly */
-    .status-dot {
-      width: 6.5px;
-      height: 6.5px;
-      border-radius: 50%;
-      display: inline-block;
-      flex-shrink: 0;
-    }
-    .status-dot.dot-success {
-      background: #10b981;
-    }
-    .status-dot.dot-danger {
-      background: #f43f5e;
-    }
-
+    /* Status Badges */
     .badge-status {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      padding: 3px 10px;
+      padding: 3.5px 11px;
       border-radius: 9999px;
       font-size: 12px;
       font-weight: 600;
-      letter-spacing: 0.01em;
     }
     .badge-status-active {
-      background: rgba(16, 185, 129, 0.12);
-      color: #34d399;
-      border: 1px solid rgba(16, 185, 129, 0.25);
+      background: var(--success-bg);
+      color: var(--success);
+      border: 1px solid rgba(16, 185, 129, 0.3);
     }
     .badge-status-banned {
-      background: rgba(244, 63, 94, 0.12);
-      color: #fb7185;
-      border: 1px solid rgba(244, 63, 94, 0.25);
+      background: var(--danger-bg);
+      color: var(--danger);
+      border: 1px solid rgba(244, 63, 94, 0.3);
     }
-
     .badge-soft {
-      font-size: 11px;
+      font-size: 11.5px;
       font-weight: 600;
       padding: 3px 9px;
       border-radius: 9999px;
@@ -772,24 +780,19 @@ export function renderAdminPage(): string {
       gap: 4px;
     }
     .badge-soft-user {
-      background: rgba(148, 163, 184, 0.1);
-      color: #cbd5e1;
-      border: 1px solid rgba(148, 163, 184, 0.2);
+      background: rgba(148, 163, 184, 0.12);
+      color: var(--text-secondary);
+      border: 1px solid var(--border-subtle);
     }
     .badge-soft-admin {
-      background: rgba(244, 63, 94, 0.12);
-      color: #fb7185;
-      border: 1px solid rgba(244, 63, 94, 0.25);
-    }
-    .badge-soft-mod {
-      background: rgba(168, 85, 247, 0.12);
-      color: #c084fc;
-      border: 1px solid rgba(168, 85, 247, 0.25);
+      background: var(--danger-bg);
+      color: var(--danger);
+      border: 1px solid rgba(244, 63, 94, 0.3);
     }
     .badge-soft-oa {
-      background: rgba(245, 158, 11, 0.12);
-      color: #fbbf24;
-      border: 1px solid rgba(245, 158, 11, 0.25);
+      background: var(--warning-bg);
+      color: var(--warning);
+      border: 1px solid rgba(245, 158, 11, 0.3);
     }
 
     /* Action Ellipsis Button & Dropdown */
@@ -797,42 +800,33 @@ export function renderAdminPage(): string {
       width: 32px;
       height: 32px;
       border-radius: 8px;
-      background: rgba(255, 255, 255, 0.03);
+      background: var(--bg-surface-elevated);
       border: 1px solid var(--border-subtle);
-      color: var(--text-muted);
+      color: var(--text-secondary);
       display: inline-flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
       transition: all 0.15s ease;
     }
-    .action-ellipsis-btn:hover, .action-ellipsis-btn[aria-expanded="true"] {
+    .action-ellipsis-btn:hover {
       background: rgba(255, 255, 255, 0.1);
-      color: #ffffff;
+      color: var(--text-primary);
       border-color: var(--border-hover);
     }
-
     .modern-dropdown-menu {
-      background: rgba(15, 23, 42, 0.96) !important;
+      background: var(--bg-surface) !important;
       backdrop-filter: blur(24px) saturate(180%);
       -webkit-backdrop-filter: blur(24px) saturate(180%);
-      border: 1px solid rgba(255, 255, 255, 0.12) !important;
-      border-radius: 12px !important;
-      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6) !important;
+      border: 1px solid var(--border-subtle) !important;
+      border-radius: var(--radius-md) !important;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45) !important;
       min-width: 210px;
       padding: 6px;
       z-index: 1060;
     }
-    .modern-dropdown-menu .dropdown-header {
-      font-size: 10px;
-      letter-spacing: 0.07em;
-      text-transform: uppercase;
-      font-weight: 700;
-      padding: 6px 12px 3px;
-      color: var(--text-subtle) !important;
-    }
     .modern-dropdown-menu .dropdown-item {
-      color: #e2e8f0;
+      color: var(--text-primary);
       font-size: 13px;
       font-weight: 500;
       border-radius: 7px;
@@ -842,12 +836,8 @@ export function renderAdminPage(): string {
       transition: all 0.12s ease;
     }
     .modern-dropdown-menu .dropdown-item:hover {
-      background: rgba(255, 255, 255, 0.08);
-      color: #ffffff;
-    }
-    .modern-dropdown-menu .dropdown-item.text-danger:hover {
-      background: rgba(239, 68, 68, 0.15);
-      color: #f87171 !important;
+      background: var(--bg-surface-elevated);
+      color: var(--text-primary);
     }
 
     /* Auth Gate Overlay */
@@ -866,47 +856,22 @@ export function renderAdminPage(): string {
     .login-box-card {
       width: 100%;
       max-width: 420px;
-      background: linear-gradient(145deg, rgba(20, 28, 48, 0.9) 0%, rgba(12, 17, 30, 0.95) 100%);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 22px;
-      padding: 36px 30px;
-      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.7);
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-xl);
+      padding: 38px 32px;
+      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.6);
       text-align: center;
     }
 
-    /* Mobile Mockup Preview */
-    .phone-mockup {
-      width: 300px;
-      margin: 0 auto;
-      background: #0d121f;
-      border: 8px solid #1e293b;
-      border-radius: 36px;
-      padding: 16px 12px;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
-    }
-    .phone-notch {
-      width: 90px;
-      height: 16px;
-      background: #1e293b;
-      border-radius: 0 0 10px 10px;
-      margin: -16px auto 14px;
-    }
-    .phone-notif-bubble {
-      background: rgba(255, 255, 255, 0.08);
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 14px;
-      padding: 12px;
-    }
-
-    /* Sidebar Drawer on Mobile */
+    /* Responsive */
     .sidebar-overlay {
       display: none;
       position: fixed;
       inset: 0;
       background: rgba(0, 0, 0, 0.6);
       backdrop-filter: blur(4px);
-      z-index: 1025;
+      z-index: 1035;
     }
 
     @media (max-width: 991px) {
@@ -922,43 +887,40 @@ export function renderAdminPage(): string {
       .app-main {
         margin-left: 0;
       }
-      .mobile-menu-trigger {
+      .mobile-menu-btn {
         display: inline-flex;
       }
       .app-content {
         padding: 16px;
+      }
+      .topbar-center {
+        display: none;
       }
     }
   </style>
 </head>
 <body>
 
-  <!-- =========================================================================
-       1. AUTH GATE OVERLAY
-       ========================================================================= -->
+  <!-- AUTH GATE OVERLAY -->
   <div id="auth-overlay">
     <div class="login-box-card">
-      <div class="brand-logo-badge mx-auto mb-3" style="width: 52px; height: 52px; font-size: 22px;">
+      <div class="brand-logo-glow mx-auto mb-3" style="width: 52px; height: 52px; font-size: 22px;">
         <i class="fas fa-box-open"></i>
       </div>
-      <h4 class="fw-bold text-white mb-1">Dorabox Admin</h4>
-      <p class="text-muted small mb-4">Vui lòng nhập Admin Secret Key để mở khóa</p>
+      <h4 class="fw-bold mb-1" style="color: var(--text-primary);">Dorabox Admin Portal</h4>
+      <p class="small mb-4" style="color: var(--text-secondary);">Vui lòng nhập Admin Secret Key để mở khóa</p>
       
       <div class="mb-3 text-start">
-        <label class="form-label text-muted small fw-semibold">SECRET KEY</label>
-        <div class="input-group">
-          <input type="password" id="admin-pass-input" class="form-control bg-dark border-secondary text-white" placeholder="••••••••••••" autofocus style="border-radius: 10px;">
-        </div>
+        <label class="form-label small fw-semibold" style="color: var(--text-secondary);">SECRET KEY</label>
+        <input type="password" id="admin-pass-input" class="form-control" placeholder="••••••••••••" autofocus style="background: var(--bg-surface-elevated); border: 1px solid var(--border-subtle); color: var(--text-primary); border-radius: 10px; padding: 10px 14px;">
       </div>
-      <button id="btn-unlock-gate" class="btn btn-primary w-100 py-2 fw-bold" style="border-radius: 10px;">
+      <button id="btn-unlock-gate" class="btn w-100 py-2.5 fw-bold" style="background: linear-gradient(135deg, #0284c7, #38bdf8); color: #fff; border: none; border-radius: 10px;">
         <i class="fas fa-shield-halved me-1"></i> Mở Khóa Bảng Điều Khiển
       </button>
     </div>
   </div>
 
-  <!-- =========================================================================
-       2. APP SHELL
-       ========================================================================= -->
+  <!-- APP SHELL -->
   <div class="app-shell">
     <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleMobileSidebar()"></div>
 
@@ -966,65 +928,73 @@ export function renderAdminPage(): string {
     <aside class="app-sidebar" id="app-sidebar">
       <!-- Brand Logo -->
       <div class="sidebar-brand">
-        <div class="brand-logo-badge">
+        <div class="brand-logo-glow">
           <i class="fas fa-box-open"></i>
         </div>
-        <div>
+        <div class="brand-info">
           <div class="brand-title">Dorabox Admin</div>
-          <div class="brand-version">Bảng Điều Khiển v1.1.2</div>
+          <div class="brand-badge"><i class="fas fa-bolt me-1"></i>v1.3.1 Pro</div>
         </div>
       </div>
 
       <!-- Navigation -->
       <nav class="sidebar-menu">
-        <div class="menu-group-label">Quản Trị & Kiểm Duyệt</div>
-<button class="nav-item-btn active" data-tab="tong-quan" onclick="switchTab('tong-quan')">
+        <div class="menu-group-label">Quản Trị & Tổng Quan</div>
+        <button class="nav-item-btn active" data-tab="tong-quan" onclick="switchTab('tong-quan')">
           <span class="nav-left"><i class="fas fa-chart-pie text-info"></i> Tổng Quan</span>
         </button>
-        <button class="nav-item-btn" data-tab="nhom-tro-chuyen" onclick="switchTab('nhom-tro-chuyen')">
-          <span class="nav-left"><i class="fas fa-users-rectangle text-primary"></i> Nhóm Trò Chuyện</span>
-          <span class="nav-counter" id="sidebar-groups-badge">0</span>
-        </button>
+
+        <div class="menu-group-label mt-2">Thành Viên & Cộng Đồng</div>
         <button class="nav-item-btn" data-tab="thanh-vien" onclick="switchTab('thanh-vien')">
-          <span class="nav-left"><i class="fas fa-users text-primary"></i> Thành Viên</span>
+          <span class="nav-left"><i class="fas fa-users" style="color: #38bdf8;"></i> Thành Viên</span>
           <span class="nav-counter" id="sidebar-user-badge">0</span>
         </button>
-        <button class="nav-item-btn" data-tab="xet-duyet" onclick="switchTab('xet-duyet')">
-          <span class="nav-left"><i class="fas fa-certificate text-warning"></i> Xét Duyệt & Yêu Cầu</span>
-          <span class="nav-counter" id="sidebar-request-badge" style="background: rgba(245, 158, 11, 0.2); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.4); display:none;">0</span>
+        <button class="nav-item-btn" data-tab="nhom-tro-chuyen" onclick="switchTab('nhom-tro-chuyen')">
+          <span class="nav-left"><i class="fas fa-users-rectangle" style="color: #818cf8;"></i> Nhóm Trò Chuyện</span>
+          <span class="nav-counter" id="sidebar-groups-badge">0</span>
         </button>
+        <button class="nav-item-btn" data-tab="xet-duyet" onclick="switchTab('xet-duyet')">
+          <span class="nav-left"><i class="fas fa-certificate text-warning"></i> Xét Duyệt OA</span>
+          <span class="nav-counter" id="sidebar-request-badge" style="background: var(--warning-bg); color: var(--warning); display:none;">0</span>
+        </button>
+        <button class="nav-item-btn" data-tab="ten-cam" onclick="switchTab('ten-cam')">
+          <span class="nav-left"><i class="fas fa-ban text-danger"></i> Tên Cấm / Bảo Lưu</span>
+          <span class="nav-counter counter-danger" id="sidebar-banned-badge">0</span>
+        </button>
+
+        <div class="menu-group-label mt-2">Kiểm Duyệt Nội Dung</div>
         <button class="nav-item-btn" data-tab="bao-cao" onclick="switchTab('bao-cao')">
           <span class="nav-left"><i class="fas fa-triangle-exclamation text-danger"></i> Báo Cáo Vi Phạm</span>
           <span class="nav-counter counter-danger" id="sidebar-report-badge">0</span>
         </button>
         <button class="nav-item-btn" data-tab="bai-viet" onclick="switchTab('bai-viet')">
-          <span class="nav-left"><i class="fas fa-newspaper text-success"></i> Bài Viết & Tin</span>
+          <span class="nav-left"><i class="fas fa-newspaper" style="color: #34d399;"></i> Bài Viết & Tin</span>
         </button>
         <button class="nav-item-btn" data-tab="binh-luan" onclick="switchTab('binh-luan')">
-          <span class="nav-left"><i class="fas fa-comments text-cyan" style="color:#06b6d4;"></i> Bình Luận</span>
+          <span class="nav-left"><i class="fas fa-comments" style="color: #22d3ee;"></i> Bình Luận</span>
         </button>
 
-        <div class="menu-group-label mt-3">Điều Hành & Kỹ Thuật</div>
+        <div class="menu-group-label mt-2">Kỹ Thuật & Hệ Thống</div>
         <button class="nav-item-btn" data-tab="phat-thong-bao" onclick="switchTab('phat-thong-bao')">
-          <span class="nav-left"><i class="fas fa-bullhorn text-purple" style="color:#c084fc;"></i> Phát Push FCM</span>
+          <span class="nav-left"><i class="fas fa-bullhorn" style="color: #c084fc;"></i> Phát Push FCM</span>
         </button>
         <button class="nav-item-btn" data-tab="bao-mat-audit" onclick="switchTab('bao-mat-audit')">
-          <span class="nav-left"><i class="fas fa-shield-halved text-secondary"></i> Bảo Mật & Audit</span>
+          <span class="nav-left"><i class="fas fa-shield-halved" style="color: #94a3b8;"></i> Bảo Mật & Audit</span>
         </button>
       </nav>
 
       <!-- Sidebar Footer -->
       <div class="sidebar-footer">
-        <div class="admin-profile-pill">
+        <div class="admin-pill">
           <div class="admin-avatar">AD</div>
-          <div>
+          <div class="admin-meta">
             <div class="admin-name">SuperAdministrator</div>
             <div class="admin-status">
-              <span class="status-dot-pulse"></span> Root Online
+              <span class="status-radar"></span> Root Online
             </div>
           </div>
         </div>
-        <button class="icon-action-btn btn-danger-action" id="btn-logout" title="Đăng xuất">
+        <button class="s-action-btn btn-danger" id="btn-logout" title="Đăng xuất">
           <i class="fas fa-arrow-right-from-bracket"></i>
         </button>
       </div>
@@ -1035,7 +1005,7 @@ export function renderAdminPage(): string {
       <!-- Topbar Header -->
       <header class="app-topbar">
         <div class="topbar-left">
-          <button class="mobile-menu-trigger" onclick="toggleMobileSidebar()">
+          <button class="mobile-menu-btn" onclick="toggleMobileSidebar()">
             <i class="fas fa-bars"></i>
           </button>
           <div class="breadcrumb-trail">
@@ -1045,17 +1015,26 @@ export function renderAdminPage(): string {
           </div>
         </div>
 
+        <div class="topbar-center">
+          <div class="system-health-pill">
+            <span class="dot"></span>
+            <span>Supabase: Online</span>
+            <span style="opacity: 0.3;">•</span>
+            <span>Cloudflare R2: Active</span>
+          </div>
+        </div>
+
         <div class="topbar-right">
           <!-- Refresh -->
-          <button class="icon-action-btn" id="btn-refresh-data" title="Làm mới dữ liệu">
+          <button class="s-action-btn" id="btn-refresh-data" title="Làm mới dữ liệu">
             <i class="fas fa-arrows-rotate"></i>
           </button>
           <!-- Dark / Light theme -->
-          <button class="icon-action-btn" id="btn-toggle-dark-mode" title="Đổi chế độ sáng / tối">
+          <button class="s-action-btn" id="btn-toggle-dark-mode" title="Đổi giao diện Sáng / Tối">
             <i class="fas fa-sun" id="theme-toggle-icon"></i>
           </button>
           <!-- Fullscreen -->
-          <button class="icon-action-btn d-none d-sm-inline-flex" id="btn-fullscreen" onclick="toggleFullscreen()" title="Toàn màn hình">
+          <button class="s-action-btn d-none d-sm-inline-flex" id="btn-fullscreen" onclick="toggleFullscreen()" title="Toàn màn hình">
             <i class="fas fa-expand"></i>
           </button>
         </div>
@@ -1069,30 +1048,25 @@ export function renderAdminPage(): string {
             <h4 class="page-title" id="topbar-title">Tổng Quan Hệ Thống</h4>
             <div class="page-subtitle" id="topbar-subtitle">Chỉ số vận hành mạng xã hội Dorabox theo thời gian thực</div>
           </div>
-          <div>
-            <button class="btn btn-sm btn-outline-secondary text-light px-3 py-1 rounded-pill" onclick="loadDashboardData()">
-              <i class="fas fa-rotate me-1 text-info"></i> Làm mới
-            </button>
-          </div>
         </div>
 
         <!-- =========================================================================
              TAB 1: TỔNG QUAN (DASHBOARD)
              ========================================================================= -->
         <div id="tab-tong-quan" class="tab-section active">
-          <!-- 4 KPI Cards -->
+          <!-- 5 KPI Cards -->
           <div class="row g-3 mb-4">
             <div class="col-xl-3 col-md-6 col-12">
               <div class="stat-card" onclick="switchTab('thanh-vien')">
                 <div class="stat-card-header">
                   <span class="stat-label">Tổng Thành Viên</span>
-                  <div class="stat-icon-wrap" style="background: rgba(56, 189, 248, 0.12); color: #38bdf8;">
+                  <div class="stat-icon-wrap" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8;">
                     <i class="fas fa-users"></i>
                   </div>
                 </div>
                 <div class="stat-number" id="kpi-users">0</div>
                 <div class="stat-footnote">
-                  <span class="text-info fw-semibold" id="kpi-verified">0</span> đã cấp tích xanh
+                  <span class="fw-semibold" style="color: #38bdf8;" id="kpi-verified">0</span> đã cấp tích xanh
                 </div>
               </div>
             </div>
@@ -1101,13 +1075,13 @@ export function renderAdminPage(): string {
               <div class="stat-card" onclick="switchTab('nhom-tro-chuyen')">
                 <div class="stat-card-header">
                   <span class="stat-label">Nhóm Trò Chuyện</span>
-                  <div class="stat-icon-wrap" style="background: rgba(14, 165, 233, 0.12); color: #0ea5e9;">
+                  <div class="stat-icon-wrap" style="background: rgba(129, 140, 248, 0.15); color: #818cf8;">
                     <i class="fas fa-users-rectangle"></i>
                   </div>
                 </div>
                 <div class="stat-number" id="kpi-groups">0</div>
                 <div class="stat-footnote">
-                  <span class="text-primary fw-semibold"><i class="fas fa-comments me-1"></i>Hoạt động cộng đồng</span>
+                  <span class="fw-semibold" style="color: #818cf8;"><i class="fas fa-comments me-1"></i>Hoạt động cộng đồng</span>
                 </div>
               </div>
             </div>
@@ -1116,13 +1090,13 @@ export function renderAdminPage(): string {
               <div class="stat-card" onclick="switchTab('bai-viet')">
                 <div class="stat-card-header">
                   <span class="stat-label">Bài Viết Bảng Tin</span>
-                  <div class="stat-icon-wrap" style="background: rgba(34, 197, 94, 0.12); color: #22c55e;">
+                  <div class="stat-icon-wrap" style="background: rgba(52, 211, 153, 0.15); color: #34d399;">
                     <i class="fas fa-newspaper"></i>
                   </div>
                 </div>
                 <div class="stat-number" id="kpi-posts">0</div>
                 <div class="stat-footnote">
-                  <span class="text-success fw-semibold" id="kpi-comments">0</span> bình luận thảo luận
+                  <span class="fw-semibold" style="color: #34d399;" id="kpi-comments">0</span> bình luận thảo luận
                 </div>
               </div>
             </div>
@@ -1130,29 +1104,14 @@ export function renderAdminPage(): string {
             <div class="col-xl-3 col-md-6 col-12">
               <div class="stat-card" onclick="switchTab('xet-duyet')">
                 <div class="stat-card-header">
-                  <span class="stat-label">Xét Duyệt & Yêu Cầu</span>
-                  <div class="stat-icon-wrap" style="background: rgba(245, 158, 11, 0.12); color: #f59e0b;">
+                  <span class="stat-label">Xét Duyệt OA</span>
+                  <div class="stat-icon-wrap" style="background: rgba(245, 158, 11, 0.15); color: #f59e0b;">
                     <i class="fas fa-certificate"></i>
                   </div>
                 </div>
                 <div class="stat-number" id="kpi-requests-pending">0</div>
                 <div class="stat-footnote">
-                  <span class="text-warning fw-semibold" id="kpi-oa-pending">0</span> hồ sơ cấp tích / thay đổi OA
-                </div>
-              </div>
-            </div>
-
-            <div class="col-xl-3 col-md-6 col-12">
-              <div class="stat-card" onclick="switchTab('bao-cao')">
-                <div class="stat-card-header">
-                  <span class="stat-label">Báo Cáo Vi Phạm</span>
-                  <div class="stat-icon-wrap" style="background: rgba(239, 68, 68, 0.12); color: #ef4444;">
-                    <i class="fas fa-triangle-exclamation"></i>
-                  </div>
-                </div>
-                <div class="stat-number" id="kpi-reports-pending">0</div>
-                <div class="stat-footnote">
-                  <span class="text-danger fw-semibold" id="sidebar-report-badge-kpi">0</span> vi phạm cần xử phạt
+                  <span class="fw-semibold" style="color: #f59e0b;" id="kpi-oa-pending">0</span> hồ sơ cần duyệt
                 </div>
               </div>
             </div>
@@ -1164,9 +1123,9 @@ export function renderAdminPage(): string {
               <div class="glass-panel h-100 mb-0">
                 <div class="panel-header">
                   <div class="panel-title"><i class="fas fa-chart-line text-info"></i> Tương Tác Bảng Tin & Hoạt Động</div>
-                  <span class="badge bg-secondary">7 ngày qua</span>
+                  <span class="badge" style="background: var(--bg-surface-elevated); color: var(--text-secondary); border: 1px solid var(--border-subtle);">7 ngày qua</span>
                 </div>
-                <div class="p-3" style="height: 260px;">
+                <div class="p-3" style="height: 270px;">
                   <canvas id="growthChart"></canvas>
                 </div>
               </div>
@@ -1175,35 +1134,38 @@ export function renderAdminPage(): string {
             <div class="col-lg-4">
               <div class="glass-panel h-100 mb-0">
                 <div class="panel-header">
-                  <div class="panel-title"><i class="fas fa-chart-pie text-purple" style="color:#c084fc;"></i> Phân Bổ Thành Viên</div>
-                  <span class="badge bg-secondary">Cơ cấu</span>
+                  <div class="panel-title"><i class="fas fa-chart-pie" style="color: #c084fc;"></i> Phân Bổ Thành Viên</div>
+                  <span class="badge" style="background: var(--bg-surface-elevated); color: var(--text-secondary); border: 1px solid var(--border-subtle);">Cơ cấu</span>
                 </div>
-                <div class="p-3" style="height: 260px;">
+                <div class="p-3" style="height: 270px;">
                   <canvas id="distributionChart"></canvas>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- Quick Actions -->
+          <!-- Quick Actions Command Bar -->
           <div class="glass-panel p-3">
             <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
               <div>
-                <div class="fw-bold text-white fs-6">Thao tác điều hành nhanh</div>
-                <div class="text-muted small">Phím tắt cho các tác vụ quản trị thường nhật</div>
+                <div class="fw-bold fs-6" style="color: var(--text-primary);"><i class="fas fa-bolt text-warning me-2"></i>Thao tác điều hành nhanh</div>
+                <div class="small" style="color: var(--text-secondary);">Phím tắt cho các tác vụ quản trị thường nhật</div>
               </div>
               <div class="d-flex flex-wrap gap-2">
-                <button class="btn btn-sm btn-dark border-secondary text-light px-3" onclick="switchTab('phat-thong-bao')">
-                  <i class="fas fa-bullhorn text-purple me-1" style="color:#c084fc;"></i> Phát Push FCM
+                <button class="filter-pill" onclick="switchTab('phat-thong-bao')">
+                  <i class="fas fa-bullhorn me-1" style="color: #c084fc;"></i> Phát Push FCM
                 </button>
-                <button class="btn btn-sm btn-dark border-secondary text-light px-3" onclick="cleanSpamReactions()">
+                <button class="filter-pill" onclick="cleanSpamReactions()">
                   <i class="fas fa-broom text-warning me-1"></i> Dọn Rác Spam
                 </button>
-                <button class="btn btn-sm btn-dark border-secondary text-light px-3" onclick="switchTab('duyet-oa')">
+                <button class="filter-pill" onclick="switchTab('xet-duyet')">
                   <i class="fas fa-certificate text-warning me-1"></i> Xét Duyệt OA
                 </button>
-                <button class="btn btn-sm btn-dark border-secondary text-light px-3" onclick="switchTab('he-thong')">
-                  <i class="fas fa-server text-teal me-1" style="color:#2dd4bf;"></i> Kiểm Tra Máy Chủ
+                <button class="filter-pill" onclick="switchTab('ten-cam')">
+                  <i class="fas fa-ban text-danger me-1"></i> Thêm Tên Cấm
+                </button>
+                <button class="filter-pill" onclick="switchTab('bao-mat-audit')">
+                  <i class="fas fa-shield-halved text-info me-1"></i> Kiểm Tra An Ninh
                 </button>
               </div>
             </div>
@@ -1215,7 +1177,6 @@ export function renderAdminPage(): string {
              ========================================================================= -->
         <div id="tab-thanh-vien" class="tab-section">
           <div class="glass-panel">
-            <!-- Filter Pills Bar & Search -->
             <div class="panel-header">
               <div class="filter-pills-bar" id="user-filter-pills">
                 <button type="button" class="filter-pill active" data-filter="all">
@@ -1240,7 +1201,6 @@ export function renderAdminPage(): string {
               </div>
             </div>
 
-            <!-- Clean Bespoke 5-Column Table -->
             <div class="table-container" style="min-height: 280px;">
               <table class="custom-table">
                 <thead>
@@ -1253,7 +1213,7 @@ export function renderAdminPage(): string {
                   </tr>
                 </thead>
                 <tbody id="users-table-body">
-                  <tr><td colspan="5" class="text-center py-5 text-muted">Đang tải danh sách thành viên...</td></tr>
+                  <tr><td colspan="5" class="text-center py-5" style="color: var(--text-muted);">Đang tải danh sách thành viên...</td></tr>
                 </tbody>
               </table>
             </div>
@@ -1261,30 +1221,30 @@ export function renderAdminPage(): string {
         </div>
 
         <!-- =========================================================================
-             TAB 3: XÉT DUYỆT & YÊU CẦU (TÍCH XANH, TÍCH VÀNG OA, CẬP NHẬT OA)
+             TAB 3: XÉT DUYỆT & YÊU CẦU (OA)
              ========================================================================= -->
         <div id="tab-xet-duyet" class="tab-section">
           <div class="glass-panel">
             <div class="panel-header flex-wrap gap-2">
               <div class="d-flex align-items-center gap-2">
                 <div class="panel-title"><i class="fas fa-certificate text-warning"></i> Hàng Đợi Xét Duyệt & Yêu Cầu Người Dùng</div>
-                <span class="badge bg-warning text-dark fw-bold" id="requests-pending-count">0 Chờ duyệt</span>
+                <span class="badge" style="background: var(--warning-bg); color: var(--warning); border: 1px solid rgba(245, 158, 11, 0.4);" id="requests-pending-count">0 Chờ duyệt</span>
               </div>
               <div class="d-flex align-items-center gap-2">
-                <div class="btn-group btn-group-sm" role="group" id="request-filter-group">
-                  <button type="button" class="btn btn-outline-warning active" onclick="filterRequests('all')">Tất cả</button>
-                  <button type="button" class="btn btn-outline-warning" onclick="filterRequests('verified')">Tích Xanh ✓</button>
-                  <button type="button" class="btn btn-outline-warning" onclick="filterRequests('oa')">Tích Vàng OA ⭐</button>
-                  <button type="button" class="btn btn-outline-warning" onclick="filterRequests('oa_update')">Đổi thông tin OA</button>
+                <div class="filter-pills-bar" id="request-filter-group">
+                  <button type="button" class="filter-pill active" onclick="filterRequests('all')">Tất cả</button>
+                  <button type="button" class="filter-pill" onclick="filterRequests('verified')">Tích Xanh ✓</button>
+                  <button type="button" class="filter-pill" onclick="filterRequests('oa')">Tích Vàng OA ⭐</button>
+                  <button type="button" class="filter-pill" onclick="filterRequests('oa_update')">Đổi thông tin OA</button>
                 </div>
-                <button class="btn btn-sm btn-outline-light" onclick="fetchRequests(true)">
-                  <i class="fas fa-arrows-rotate me-1"></i> Làm mới
+                <button class="s-action-btn" onclick="fetchRequests(true)" title="Làm mới">
+                  <i class="fas fa-arrows-rotate"></i>
                 </button>
               </div>
             </div>
             <div class="p-3">
               <div id="requests-container">
-                <div class="text-center py-5 text-muted">Đang tải danh sách hồ sơ xét duyệt...</div>
+                <div class="text-center py-5" style="color: var(--text-muted);">Đang tải danh sách hồ sơ xét duyệt...</div>
               </div>
             </div>
           </div>
@@ -1296,7 +1256,7 @@ export function renderAdminPage(): string {
         <div id="tab-bai-viet" class="tab-section">
           <div class="glass-panel">
             <div class="panel-header">
-              <div class="panel-title"><i class="fas fa-newspaper text-success"></i> Quản Lý Bảng Tin & Bài Viết</div>
+              <div class="panel-title"><i class="fas fa-newspaper" style="color: #34d399;"></i> Quản Lý Bảng Tin & Bài Viết</div>
               <div class="search-input-wrap">
                 <i class="fas fa-search"></i>
                 <input type="text" id="post-search-input" placeholder="Tìm kiếm nội dung bài viết...">
@@ -1316,7 +1276,7 @@ export function renderAdminPage(): string {
                   </tr>
                 </thead>
                 <tbody id="posts-table-body">
-                  <tr><td colspan="7" class="text-center py-5 text-muted">Đang tải danh sách bài viết...</td></tr>
+                  <tr><td colspan="7" class="text-center py-5" style="color: var(--text-muted);">Đang tải danh sách bài viết...</td></tr>
                 </tbody>
               </table>
             </div>
@@ -1329,7 +1289,7 @@ export function renderAdminPage(): string {
         <div id="tab-binh-luan" class="tab-section">
           <div class="glass-panel">
             <div class="panel-header">
-              <div class="panel-title"><i class="fas fa-comments text-cyan" style="color:#06b6d4;"></i> Quản Lý Bình Luận Thảo Luận</div>
+              <div class="panel-title"><i class="fas fa-comments" style="color: #22d3ee;"></i> Quản Lý Bình Luận Thảo Luận</div>
               <div class="search-input-wrap">
                 <i class="fas fa-search"></i>
                 <input type="text" id="comment-search-input" placeholder="Tìm nội dung bình luận...">
@@ -1347,7 +1307,7 @@ export function renderAdminPage(): string {
                   </tr>
                 </thead>
                 <tbody id="comments-table-body">
-                  <tr><td colspan="5" class="text-center py-5 text-muted">Đang tải danh sách bình luận...</td></tr>
+                  <tr><td colspan="5" class="text-center py-5" style="color: var(--text-muted);">Đang tải danh sách bình luận...</td></tr>
                 </tbody>
               </table>
             </div>
@@ -1355,24 +1315,24 @@ export function renderAdminPage(): string {
         </div>
 
         <!-- =========================================================================
-             TAB 6: BÁO CÁO VI PHẠM TIÊU CHUẨN CỘNG ĐỒNG
+             TAB 6: BÁO CÁO VI PHẠM
              ========================================================================= -->
         <div id="tab-bao-cao" class="tab-section">
           <div class="glass-panel">
             <div class="panel-header flex-wrap gap-2">
               <div class="d-flex align-items-center gap-2">
-                <div class="panel-title"><i class="fas fa-triangle-exclamation text-danger"></i> Kiểm Duyệt & Báo Cáo Vi Phạm Tiêu Chuẩn Cộng Đồng</div>
-                <span class="badge bg-danger" id="reports-pending-count">0 Chờ xử lý</span>
+                <div class="panel-title"><i class="fas fa-triangle-exclamation text-danger"></i> Kiểm Duyệt & Báo Cáo Vi Phạm</div>
+                <span class="badge" style="background: var(--danger-bg); color: var(--danger); border: 1px solid rgba(244, 63, 94, 0.4);" id="reports-pending-count">0 Chờ xử lý</span>
               </div>
               <div class="d-flex align-items-center gap-2">
-                <div class="btn-group btn-group-sm" role="group" id="report-filter-group">
-                  <button type="button" class="btn btn-outline-danger active" onclick="filterReports('all')">Tất cả</button>
-                  <button type="button" class="btn btn-outline-danger" onclick="filterReports('post')">Bài viết</button>
-                  <button type="button" class="btn btn-outline-danger" onclick="filterReports('comment')">Bình luận</button>
-                  <button type="button" class="btn btn-outline-danger" onclick="filterReports('user')">Tài khoản</button>
+                <div class="filter-pills-bar" id="report-filter-group">
+                  <button type="button" class="filter-pill active" onclick="filterReports('all')">Tất cả</button>
+                  <button type="button" class="filter-pill" onclick="filterReports('post')">Bài viết</button>
+                  <button type="button" class="filter-pill" onclick="filterReports('comment')">Bình luận</button>
+                  <button type="button" class="filter-pill" onclick="filterReports('user')">Tài khoản</button>
                 </div>
-                <button class="btn btn-sm btn-outline-light" onclick="fetchReports(true)">
-                  <i class="fas fa-arrows-rotate me-1"></i> Làm mới
+                <button class="s-action-btn" onclick="fetchReports(true)" title="Làm mới">
+                  <i class="fas fa-arrows-rotate"></i>
                 </button>
               </div>
             </div>
@@ -1389,7 +1349,7 @@ export function renderAdminPage(): string {
                   </tr>
                 </thead>
                 <tbody id="reports-table-body">
-                  <tr><td colspan="6" class="text-center py-5 text-muted">Đang tải danh sách báo cáo vi phạm...</td></tr>
+                  <tr><td colspan="6" class="text-center py-5" style="color: var(--text-muted);">Đang tải danh sách báo cáo vi phạm...</td></tr>
                 </tbody>
               </table>
             </div>
@@ -1404,29 +1364,29 @@ export function renderAdminPage(): string {
             <div class="col-lg-7">
               <div class="glass-panel">
                 <div class="panel-header">
-                  <div class="panel-title"><i class="fas fa-bullhorn text-purple" style="color:#c084fc;"></i> Soạn Thảo Push Notification FCM</div>
+                  <div class="panel-title"><i class="fas fa-bullhorn" style="color: #c084fc;"></i> Soạn Thảo Push Notification FCM</div>
                 </div>
                 <div class="p-4">
                   <div class="mb-3">
-                    <label class="form-label fw-bold small text-uppercase">Tiêu đề thông báo <span class="text-danger">*</span></label>
-                    <input type="text" id="broadcast-title-input" class="form-control bg-dark border-secondary text-white" placeholder="Ví dụ: 🚀 Dorabox Cập Nhật Phiên Bản 1.2!">
+                    <label class="form-label fw-bold small text-uppercase" style="color: var(--text-secondary);">Tiêu đề thông báo <span class="text-danger">*</span></label>
+                    <input type="text" id="broadcast-title-input" class="form-control" placeholder="Ví dụ: 🚀 Dorabox Cập Nhật v1.3.1!" style="background: var(--bg-surface-elevated); border: 1px solid var(--border-subtle); color: var(--text-primary); border-radius: 10px;">
                   </div>
 
                   <div class="mb-3">
-                    <label class="form-label fw-bold small text-uppercase">Nội dung chi tiết <span class="text-danger">*</span></label>
-                    <textarea id="broadcast-body-input" rows="5" class="form-control bg-dark border-secondary text-white" placeholder="Nhập nội dung thông báo gửi tới tất cả người dùng ứng dụng..."></textarea>
+                    <label class="form-label fw-bold small text-uppercase" style="color: var(--text-secondary);">Nội dung chi tiết <span class="text-danger">*</span></label>
+                    <textarea id="broadcast-body-input" rows="5" class="form-control" placeholder="Nhập nội dung thông báo gửi tới tất cả người dùng ứng dụng..." style="background: var(--bg-surface-elevated); border: 1px solid var(--border-subtle); color: var(--text-primary); border-radius: 10px;"></textarea>
                   </div>
 
                   <div class="mb-3">
-                    <label class="form-label fw-bold small text-uppercase">Đường dẫn điều hướng (Deep-link tùy chọn)</label>
-                    <input type="text" id="broadcast-link-input" class="form-control bg-dark border-secondary text-white font-mono" placeholder="https://dorabox.app hoặc dorabox://update">
+                    <label class="form-label fw-bold small text-uppercase" style="color: var(--text-secondary);">Đường dẫn điều hướng (Deep-link tùy chọn)</label>
+                    <input type="text" id="broadcast-link-input" class="form-control font-mono" placeholder="https://dorabox.app hoặc dorabox://update" style="background: var(--bg-surface-elevated); border: 1px solid var(--border-subtle); color: var(--text-primary); border-radius: 10px;">
                   </div>
 
-                  <div class="alert alert-info py-2 small border-0 mb-4" style="background: rgba(56, 189, 248, 0.12); color: #38bdf8;">
+                  <div class="p-3 mb-4 rounded-3" style="background: var(--primary-glow); border: 1px solid rgba(56, 189, 248, 0.3); color: var(--primary-light); font-size: 13px;">
                     <i class="fas fa-info-circle me-1"></i> Thông báo này sẽ được phát qua <strong>Firebase Cloud Messaging v1 (FCM)</strong> đồng thời ghi trực tiếp vào Hộp thông báo của tất cả thành viên.
                   </div>
 
-                  <button id="btn-send-broadcast" class="btn btn-primary w-100 py-2.5 fw-bold" style="border-radius: 10px;">
+                  <button id="btn-send-broadcast" class="btn w-100 py-2.5 fw-bold" style="background: linear-gradient(135deg, #0284c7, #38bdf8); color: #fff; border: none; border-radius: 10px;">
                     <i class="fas fa-paper-plane me-1"></i> Bắt Đầu Phát Sóng Toàn Hệ Thống
                   </button>
                 </div>
@@ -1439,20 +1399,20 @@ export function renderAdminPage(): string {
                   <div class="panel-title"><i class="fas fa-mobile-screen text-info"></i> Mô Phỏng Hiển Thị Mobile</div>
                 </div>
                 <div class="p-4">
-                  <div class="phone-mockup">
-                    <div class="phone-notch"></div>
-                    <div class="phone-notif-bubble text-start">
+                  <div style="width: 290px; margin: 0 auto; background: #070a12; border: 8px solid #1e293b; border-radius: 36px; padding: 18px 12px; box-shadow: 0 20px 50px rgba(0,0,0,0.5);">
+                    <div style="width: 80px; height: 14px; background: #1e293b; border-radius: 0 0 10px 10px; margin: -18px auto 14px;"></div>
+                    <div class="text-start p-3 rounded-3" style="background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.1);">
                       <div class="d-flex align-items-center justify-content-between mb-1">
-                        <div class="d-flex align-items-center gap-1.5">
-                          <div class="brand-logo-badge" style="width: 18px; height: 18px; font-size: 10px;">
+                        <div class="d-flex align-items-center gap-2">
+                          <div class="brand-logo-glow" style="width: 18px; height: 18px; font-size: 9px;">
                             <i class="fas fa-box-open"></i>
                           </div>
-                          <span class="fw-bold text-white small" style="font-size: 11px;">DORABOX</span>
+                          <span class="fw-bold small" style="color: #ffffff; font-size: 11px;">DORABOX</span>
                         </div>
-                        <span class="text-muted" id="preview-notif-time" style="font-size: 10px;">Vừa xong</span>
+                        <span style="color: #94a3b8; font-size: 10px;" id="preview-notif-time">Vừa xong</span>
                       </div>
-                      <div class="fw-bold text-white text-truncate" id="preview-notif-title" style="font-size: 13px;">Tiêu đề thông báo mẫu</div>
-                      <div class="text-muted small text-break mt-1" id="preview-notif-body" style="font-size: 11.5px; line-height: 1.35;">Nội dung thông báo sẽ xuất hiện ở đây khi bạn nhập văn bản.</div>
+                      <div class="fw-bold text-truncate" id="preview-notif-title" style="color: #ffffff; font-size: 13px;">Tiêu đề thông báo mẫu</div>
+                      <div class="small text-break mt-1" id="preview-notif-body" style="color: #cbd5e1; font-size: 11.5px; line-height: 1.35;">Nội dung thông báo sẽ xuất hiện ở đây khi bạn nhập văn bản.</div>
                     </div>
                   </div>
                 </div>
@@ -1467,9 +1427,9 @@ export function renderAdminPage(): string {
         <div id="tab-bao-mat-audit" class="tab-section">
           <div class="glass-panel">
             <div class="panel-header">
-              <div class="panel-title"><i class="fas fa-shield-halved text-primary"></i> Nhật Ký An Ninh & Khiên Chống Spam</div>
-              <button class="btn btn-sm btn-outline-warning" onclick="cleanSpamReactions()">
-                <i class="fas fa-broom me-1"></i> Dọn Rác Spam Phản Ứng
+              <div class="panel-title"><i class="fas fa-shield-halved" style="color: #38bdf8;"></i> Nhật Ký An Ninh & Khiên Chống Spam</div>
+              <button class="filter-pill" onclick="cleanSpamReactions()">
+                <i class="fas fa-broom text-warning me-1"></i> Dọn Rác Spam Phản Ứng
               </button>
             </div>
             <div class="table-container">
@@ -1484,62 +1444,122 @@ export function renderAdminPage(): string {
                   </tr>
                 </thead>
                 <tbody id="audit-table-body">
-                  <tr><td colspan="5" class="text-center py-5 text-muted">Đang tải nhật ký kiểm toán...</td></tr>
+                  <tr><td colspan="5" class="text-center py-5" style="color: var(--text-muted);">Đang tải nhật ký kiểm toán...</td></tr>
                 </tbody>
               </table>
             </div>
           </div>
         </div>
 
-
-
-        <!-- =========================================================
-             TAB: NHÓM TRÒ CHUYỆN (GROUP CHATS)
-             ========================================================= -->
+        <!-- =========================================================================
+             TAB 9: NHÓM TRÒ CHUYỆN (GROUP CHATS)
+             ========================================================================= -->
         <div id="tab-nhom-tro-chuyen" class="tab-section">
           <div class="glass-panel">
-            <div class="panel-header d-flex flex-wrap align-items-center justify-content-between gap-3 p-3 border-bottom border-subtle">
+            <div class="panel-header d-flex flex-wrap align-items-center justify-content-between gap-3">
               <div class="d-flex align-items-center gap-2">
-                <span class="fw-bold fs-5 text-main">Danh Sách Nhóm Trò Chuyện</span>
-                <span class="badge bg-primary rounded-pill px-3 py-2" id="groups-total-badge">0 nhóm</span>
+                <span class="panel-title"><i class="fas fa-users-rectangle" style="color: #818cf8;"></i> Danh Sách Nhóm Trò Chuyện</span>
+                <span class="badge" style="background: var(--primary-glow); color: var(--primary-light); border: 1px solid rgba(56, 189, 248, 0.3);" id="groups-total-badge">0 nhóm</span>
               </div>
               <div class="d-flex align-items-center gap-2 flex-grow-1 justify-content-end" style="max-width: 480px;">
-                <div class="search-box-wrap flex-grow-1" style="position: relative;">
-                  <i class="fas fa-search search-icon" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-muted);"></i>
-                  <input type="text" id="groups-search-input" class="form-control form-control-sm ps-5 bg-dark border-subtle text-light rounded-pill" placeholder="Tìm theo tên nhóm..." onkeyup="handleGroupsSearch(event)">
+                <div class="search-input-wrap flex-grow-1">
+                  <i class="fas fa-search"></i>
+                  <input type="text" id="groups-search-input" placeholder="Tìm theo tên nhóm..." onkeyup="handleGroupsSearch(event)">
                 </div>
-                <button class="btn btn-outline-secondary btn-sm rounded-pill px-3" onclick="loadGroups(1)" title="Làm mới">
-                  <i class="fas fa-sync-alt"></i>
+                <button class="s-action-btn" onclick="loadGroups(1)" title="Làm mới">
+                  <i class="fas fa-arrows-rotate"></i>
                 </button>
               </div>
             </div>
 
-            <div class="panel-body p-0">
-              <div class="table-responsive">
-                <table class="table custom-table align-middle mb-0">
-                  <thead>
-                    <tr>
-                      <th style="min-width: 240px;">Tên Nhóm</th>
-                      <th style="min-width: 200px;">Trưởng Nhóm</th>
-                      <th style="width: 140px;" class="text-center">Thành Viên</th>
-                      <th style="min-width: 220px;">Tin Nhắn Gần Nhất</th>
-                      <th style="width: 160px;">Thời Gian</th>
-                      <th style="width: 170px;" class="text-end">Hành Động</th>
-                    </tr>
-                  </thead>
-                  <tbody id="groups-table-body">
-                    <tr>
-                      <td colspan="6" class="text-center py-5 text-muted">
-                        <div class="spinner-border spinner-border-sm text-primary me-2"></div> Đang tải dữ liệu nhóm trò chuyện...
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
+            <div class="table-container">
+              <table class="custom-table">
+                <thead>
+                  <tr>
+                    <th style="min-width: 240px; padding-left: 20px;">Tên Nhóm</th>
+                    <th style="min-width: 200px;">Trưởng Nhóm</th>
+                    <th style="width: 140px;" class="text-center">Thành Viên</th>
+                    <th style="min-width: 220px;">Tin Nhắn Gần Nhất</th>
+                    <th style="width: 160px;">Thời Gian</th>
+                    <th style="width: 170px; text-align: right; padding-right: 20px;">Hành Động</th>
+                  </tr>
+                </thead>
+                <tbody id="groups-table-body">
+                  <tr>
+                    <td colspan="6" class="text-center py-5" style="color: var(--text-muted);">
+                      Đang tải dữ liệu nhóm trò chuyện...
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="p-3 d-flex align-items-center justify-content-between" id="groups-pagination" style="border-top: 1px solid var(--border-subtle);">
+              <!-- Phân trang render động -->
+            </div>
+          </div>
+        </div>
+
+        <!-- =========================================================================
+             TAB 10: TÊN CẤM & BẢO LƯU (BANNED USERNAMES)
+             ========================================================================= -->
+        <div id="tab-ten-cam" class="tab-section">
+          <!-- Form thêm tên cấm -->
+          <div class="glass-panel p-4 mb-4">
+            <div class="d-flex align-items-center gap-2 mb-2">
+              <i class="fas fa-ban text-danger fs-5"></i>
+              <h5 class="fw-bold mb-0" style="color: var(--text-primary);">Thêm Tên Người Dùng Cấm / Bảo Lưu Mới</h5>
+            </div>
+            <p class="small mb-3" style="color: var(--text-secondary);">
+              Các tên trong danh sách này sẽ bị hệ thống chặn triệt để, không cho phép bất kỳ thành viên nào đặt khi đăng ký tài khoản hoặc cập nhật tên người dùng (@username) hay Official Account.
+            </p>
+            <form id="add-banned-form" onsubmit="handleAddBannedUsername(event)" class="row g-3 align-items-end">
+              <div class="col-md-4 col-12">
+                <label class="form-label small fw-bold" style="color: var(--text-secondary);">Tên người dùng cấm (@username)</label>
+                <div class="search-input-wrap" style="min-width: 100%;">
+                  <i class="fas fa-at"></i>
+                  <input type="text" id="input-banned-username" placeholder="ví dụ: admin, dorabox..." required>
+                </div>
+              </div>
+              <div class="col-md-6 col-12">
+                <label class="form-label small fw-bold" style="color: var(--text-secondary);">Lý do bảo lưu / cấm đặt</label>
+                <input type="text" id="input-banned-reason" class="form-control" placeholder="Ví dụ: Tên thương hiệu chính thức Dorabox" style="background: var(--bg-surface-elevated); border: 1px solid var(--border-subtle); color: var(--text-primary); border-radius: 10px; padding: 8px 14px;">
+              </div>
+              <div class="col-md-2 col-12">
+                <button type="submit" id="btn-add-banned" class="btn w-100 py-2 fw-bold" style="background: linear-gradient(135deg, #f43f5e, #e11d48); color: #fff; border: none; border-radius: 10px;">
+                  <i class="fas fa-plus me-1"></i> Thêm Cấm
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Bảng danh sách tên cấm -->
+          <div class="glass-panel">
+            <div class="panel-header">
+              <div class="d-flex align-items-center gap-2">
+                <span class="panel-title"><i class="fas fa-list-check" style="color: var(--primary-light);"></i> Danh Sách Tên Người Dùng Bị Cấm</span>
+                <span class="badge" style="background: var(--danger-bg); color: var(--danger); border: 1px solid rgba(244, 63, 94, 0.4);" id="banned-total-badge">0 tên</span>
+              </div>
+              <div class="search-input-wrap">
+                <i class="fas fa-search"></i>
+                <input type="text" id="banned-search-input" placeholder="Tìm tên cấm hoặc lý do..." onkeyup="filterBannedUsernames()">
               </div>
             </div>
 
-            <div class="panel-footer d-flex align-items-center justify-content-between p-3 border-top border-subtle" id="groups-pagination">
-              <!-- Phân trang render động -->
+            <div class="table-container">
+              <table class="custom-table">
+                <thead>
+                  <tr>
+                    <th style="padding-left: 20px;">Tên Người Dùng (@username)</th>
+                    <th>Lý Do Bảo Lưu / Cấm</th>
+                    <th>Thời Gian Thêm</th>
+                    <th style="text-align: right; padding-right: 20px;">Thao Tác</th>
+                  </tr>
+                </thead>
+                <tbody id="banned-table-body">
+                  <tr><td colspan="4" class="text-center py-5" style="color: var(--text-muted);">Đang tải danh sách tên cấm...</td></tr>
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
@@ -1548,32 +1568,45 @@ export function renderAdminPage(): string {
     </div>
   </div>
 
-  <!-- Group Members Modal -->
-  <div class="modal fade" id="groupMembersModal" tabindex="-1" aria-hidden="true">
+  <!-- MODALS -->
+  <!-- 1. Group Members Modal -->
+  <div class="modal fade" id="modalGroupMembers" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
-      <div class="modal-content border-subtle" style="background-color: var(--bg-surface); border: 1px solid var(--border-subtle);">
-        <div class="modal-header border-subtle" style="border-bottom: 1px solid var(--border-subtle);">
-          <h5 class="modal-title fw-bold text-main" id="groupMembersModalTitle">
-            <i class="fas fa-users text-primary me-2"></i> Danh Sách Thành Viên Nhóm
-          </h5>
+      <div class="modal-content" style="background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); color: var(--text-primary); box-shadow: 0 20px 50px rgba(0,0,0,0.5);">
+        <div class="modal-header" style="border-bottom: 1px solid var(--border-subtle);">
+          <h5 class="modal-title fw-bold" id="modalGroupTitle"><i class="fas fa-users-rectangle me-2" style="color: #818cf8;"></i>Thành Viên Nhóm</h5>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <div class="modal-body p-3" id="groupMembersModalBody">
-          <!-- Loaded dynamically -->
-        </div>
-        <div class="modal-footer border-subtle" style="border-top: 1px solid var(--border-subtle);">
-          <button type="button" class="btn btn-secondary btn-sm rounded-pill px-4" data-bs-dismiss="modal">Đóng</button>
+        <div class="modal-body p-0">
+          <div class="table-container" style="max-height: 420px; overflow-y: auto;">
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th style="padding-left: 20px;">Thành Viên</th>
+                  <th>Vai Trò Trong Nhóm</th>
+                  <th style="text-align: right; padding-right: 20px;">Ngày Tham Gia</th>
+                </tr>
+              </thead>
+              <tbody id="group-members-list-body">
+                <tr><td colspan="3" class="text-center py-4" style="color: var(--text-muted);">Đang tải...</td></tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Image Lightbox Modal -->
-  <div class="modal fade" id="lightboxModal" tabindex="-1" aria-hidden="true">
+  <!-- 2. Report Detail Modal -->
+  <div class="modal fade" id="modalReportDetail" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
-      <div class="modal-content bg-transparent border-0 text-center">
-        <div class="modal-body p-0">
-          <img id="lightbox-img" src="" class="img-fluid rounded-4 shadow-lg" style="max-height: 80vh;">
+      <div class="modal-content" style="background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); color: var(--text-primary); box-shadow: 0 20px 50px rgba(0,0,0,0.5);">
+        <div class="modal-header" style="border-bottom: 1px solid var(--border-subtle);">
+          <h5 class="modal-title fw-bold text-danger"><i class="fas fa-shield-virus me-2"></i>Chi Tiết Báo Cáo Vi Phạm</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="report-detail-body">
+          <div class="text-center py-4" style="color: var(--text-muted);">Đang tải chi tiết...</div>
         </div>
       </div>
     </div>
@@ -1583,7 +1616,6 @@ export function renderAdminPage(): string {
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
   <script>
     let adminToken = localStorage.getItem('dorabox_admin_token') || '';
     let allUsersCache = [];
@@ -1774,6 +1806,7 @@ export function renderAdminPage(): string {
       fetchReports();
       fetchSystemHealth();
       fetchSecurityLogs();
+      loadBannedUsernames();
     }
 
     document.getElementById('btn-refresh-data').addEventListener('click', () => {
@@ -3262,8 +3295,13 @@ export function renderAdminPage(): string {
         'bai-viet': { short: 'Bài Viết', title: 'Quản Lý Bảng Tin & Bài Viết', subtitle: 'Kiểm duyệt nội dung bảng tin, hình ảnh đính kèm, ghim bài nổi bật & xóa vi phạm' },
         'binh-luan': { short: 'Bình Luận', title: 'Quản Lý Bình Luận & Thảo Luận', subtitle: 'Giám sát tương tác thảo luận cộng đồng & ngăn chặn spam' },
         'phat-thong-bao': { short: 'Push FCM', title: 'Broadcast Studio & Push FCM', subtitle: 'Soạn thảo và phát Push Notification tới ứng dụng kèm xem trước trên mobile' },
-        'bao-mat-audit': { short: 'Bảo Mật & Audit', title: 'Bảo Mật Hệ Thống & Nhật Ký Audit', subtitle: 'Giám sát khiên chống spam 120Hz, bảo trì dọn dẹp phản ứng rác & theo dõi an ninh' }
+        'bao-mat-audit': { short: 'Bảo Mật & Audit', title: 'Bảo Mật Hệ Thống & Nhật Ký Audit', subtitle: 'Giám sát khiên chống spam 120Hz, bảo trì dọn dẹp phản ứng rác & theo dõi an ninh' },
+        'ten-cam': { short: 'Tên Cấm & Bảo Lưu', title: 'Quản Lý Tên Người Dùng Cấm & Bảo Lưu', subtitle: 'Thiết lập danh sách các username không được phép sử dụng trên toàn hệ thống Dorabox' }
       };
+
+      if (tabId === 'ten-cam') {
+        loadBannedUsernames();
+      }
 
       if (titleMap[tabId]) {
         document.getElementById('topbar-title').textContent = titleMap[tabId].title;
@@ -3524,6 +3562,177 @@ export function renderAdminPage(): string {
           title: 'Lỗi',
           text: res.error || 'Không thể xóa nhóm lúc này'
         });
+      }
+    }
+
+    // =========================================================================
+    // QUẢN LÝ TÊN NGƯỜI DÙNG CẤM & BẢO LƯU (BANNED USERNAMES)
+    // =========================================================================
+    let allBannedUsernamesCache = [];
+
+    async function loadBannedUsernames() {
+      const tbody = document.getElementById('banned-table-body');
+      if (tbody) {
+        tbody.innerHTML = '<tr><td colspan="4" class="text-center py-5 text-muted"><div class="spinner-border spinner-border-sm text-danger me-2"></div> Đang tải danh sách tên người dùng cấm...</td></tr>';
+      }
+
+      try {
+        const data = await safeFetchJson('/api/admin/banned-usernames', {
+          headers: { 'Authorization': 'Bearer ' + adminToken }
+        });
+
+        if (data.success && data.bannedUsernames) {
+          allBannedUsernamesCache = data.bannedUsernames;
+          renderBannedUsernames(allBannedUsernamesCache);
+          updateBannedBadge(allBannedUsernamesCache.length);
+        } else {
+          if (tbody) tbody.innerHTML = '<tr><td colspan="4" class="text-center py-4 text-warning">Không thể nạp danh sách tên cấm.</td></tr>';
+        }
+      } catch (err) {
+        console.error('Lỗi loadBannedUsernames:', err);
+        if (tbody) tbody.innerHTML = '<tr><td colspan="4" class="text-center py-4 text-danger">Lỗi tải dữ liệu.</td></tr>';
+      }
+    }
+
+    function updateBannedBadge(count) {
+      const sideBadge = document.getElementById('sidebar-banned-badge');
+      if (sideBadge) sideBadge.textContent = count;
+      const totalBadge = document.getElementById('banned-total-badge');
+      if (totalBadge) totalBadge.textContent = count + ' tên';
+    }
+
+    function renderBannedUsernames(items) {
+      const tbody = document.getElementById('banned-table-body');
+      if (!tbody) return;
+
+      if (!items || items.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" class="text-center py-5 text-muted"><i class="fas fa-check-circle text-success fs-3 d-block mb-2"></i> Chưa có tên cấm nào trong danh sách.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = items.map(item => {
+        const timeStr = item.created_at ? new Date(item.created_at).toLocaleString('vi-VN') : 'Mặc định hệ thống';
+        const safeU = escapeHtml(item.username || '');
+        const safeR = escapeHtml(item.reason || 'Bảo lưu bởi hệ thống');
+        const safeId = escapeHtml(item.id || '');
+        return '<tr>' +
+          '<td>' +
+            '<div class="d-flex align-items-center gap-2">' +
+              '<span class="badge bg-danger-subtle text-danger px-2 py-1 rounded-pill fw-bold" style="font-size: 13px;">' +
+                '<i class="fas fa-at me-1"></i>' + safeU +
+              '</span>' +
+            '</div>' +
+          '</td>' +
+          '<td><span class="text-light">' + safeR + '</span></td>' +
+          '<td><span class="text-muted small">' + timeStr + '</span></td>' +
+          '<td class="text-end">' +
+            '<button class="btn btn-outline-danger btn-sm rounded-pill px-3" data-id="' + safeId + '" data-username="' + safeU + '" onclick="confirmDeleteBannedUsername(this.dataset.id, this.dataset.username)">' +
+              '<i class="fas fa-trash-can me-1"></i> Gỡ Cấm' +
+            '</button>' +
+          '</td>' +
+        '</tr>';
+      }).join('');
+    }
+
+    function filterBannedUsernames() {
+      const q = (document.getElementById('banned-search-input')?.value || '').trim().toLowerCase();
+      if (!q) {
+        renderBannedUsernames(allBannedUsernamesCache);
+        return;
+      }
+      const filtered = allBannedUsernamesCache.filter(item => {
+        const u = (item.username || '').toLowerCase();
+        const r = (item.reason || '').toLowerCase();
+        return u.includes(q) || r.includes(q);
+      });
+      renderBannedUsernames(filtered);
+    }
+
+    async function handleAddBannedUsername(e) {
+      e.preventDefault();
+      const inputUsername = document.getElementById('input-banned-username');
+      const inputReason = document.getElementById('input-banned-reason');
+      const btn = document.getElementById('btn-add-banned');
+
+      const username = inputUsername.value.trim().toLowerCase().replace(/^@/, '');
+      const reason = inputReason.value.trim();
+
+      if (!username) {
+        Swal.fire({ icon: 'warning', title: 'Thiếu thông tin', text: 'Vui lòng nhập tên người dùng cần cấm' });
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Đang thêm...';
+
+      try {
+        const res = await safeFetchJson('/api/admin/banned-usernames', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + adminToken
+          },
+          body: JSON.stringify({ username, reason })
+        });
+
+        if (res.success) {
+          Swal.fire({
+            toast: true,
+            position: 'top-end',
+            icon: 'success',
+            title: 'Đã thêm cấm username "@' + username + '" thành công!',
+            showConfirmButton: false,
+            timer: 2000
+          });
+          inputUsername.value = '';
+          inputReason.value = '';
+          loadBannedUsernames();
+        } else {
+          Swal.fire({ icon: 'error', title: 'Lỗi thêm tên cấm', text: res.error || 'Có lỗi xảy ra' });
+        }
+      } catch (err) {
+        Swal.fire({ icon: 'error', title: 'Lỗi', text: 'Không thể kết nối đến máy chủ' });
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-plus me-1"></i> Thêm Tên Cấm';
+      }
+    }
+
+    async function confirmDeleteBannedUsername(id, username) {
+      const confirm = await Swal.fire({
+        title: 'Gỡ cấm "@' + username + '"?',
+        text: 'Sau khi gỡ, người dùng sẽ có thể đăng ký hoặc sử dụng lại tên này.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#ef4444',
+        cancelButtonColor: '#64748b',
+        confirmButtonText: 'Đồng ý gỡ cấm',
+        cancelButtonText: 'Hủy'
+      });
+
+      if (!confirm.isConfirmed) return;
+
+      try {
+        const res = await safeFetchJson('/api/admin/banned-usernames/' + encodeURIComponent(id), {
+          method: 'DELETE',
+          headers: { 'Authorization': 'Bearer ' + adminToken }
+        });
+
+        if (res.success) {
+          Swal.fire({
+            toast: true,
+            position: 'top-end',
+            icon: 'success',
+            title: 'Đã gỡ cấm tên "@' + username + '"!',
+            showConfirmButton: false,
+            timer: 2000
+          });
+          loadBannedUsernames();
+        } else {
+          Swal.fire({ icon: 'error', title: 'Lỗi gỡ cấm', text: res.error || 'Có lỗi xảy ra' });
+        }
+      } catch (err) {
+        Swal.fire({ icon: 'error', title: 'Lỗi', text: 'Không thể kết nối đến máy chủ' });
       }
     }
   </script>

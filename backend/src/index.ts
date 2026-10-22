@@ -38,7 +38,7 @@ app.get('/', (req, res) => {
   res.json({
     platform: 'Dorabox Mini Social Network API',
     status: 'online',
-    version: '1.0.0',
+    version: '1.3.1',
     adminPortal: '/admin',
     supabaseConfigured: Boolean(process.env.SUPABASE_URL),
     r2Configured: Boolean(process.env.R2_ACCOUNT_ID),
@@ -52,6 +52,22 @@ app.get('/api/health', (req, res) => {
     platform: 'Dorabox API',
     status: 'online',
     timestamp: new Date().toISOString(),
+  });
+});
+
+// App Version & OTA Update Check
+app.get('/api/app-version', (req, res) => {
+  res.json({
+    latest_version: '1.3.1',
+    build_number: 14,
+    apk_url: 'https://doraboxcdn.zpiltk.io.vn/apk/Dorabox-arm64-v8a.apk',
+    ios_url: 'https://dorabox.app/ios',
+    force_update: false,
+    changelog: [
+      'Tối ưu bảng màu Sáng / Tối dịu mắt, độ tương phản chuẩn xác.',
+      'Nâng cấp tính năng nhóm chat & trang cá nhân OA.',
+      'Cải tiến hệ thống bảo mật & tối ưu hiệu năng toàn diện.',
+    ]
   });
 });
 
@@ -314,8 +330,24 @@ app.delete('/api/user/comments/:id', async (req, res) => {
 });
 
 /**
- * Endpoint xóa cuộc trò chuyện an toàn cho User (Xóa tin nhắn + cuộc trò chuyện)
+ * Lấy danh sách tên người dùng bị cấm / bảo lưu (Công khai cho Mobile Client)
  */
+app.get('/api/auth/banned-usernames', async (req, res) => {
+  try {
+    const { data } = await supabaseAdmin.from('banned_usernames').select('username');
+    if (data && data.length > 0) {
+      return res.json({ success: true, usernames: data.map((d: any) => d.username) });
+    }
+  } catch (_) {}
+
+  const defaultList = [
+    'admin', 'administrator', 'superadmin', 'dorabox', 'dorabox_admin',
+    'official', 'support', 'help', 'moderator', 'system', 'root',
+    'security', 'api', 'null', 'undefined', 'doraemon'
+  ];
+  return res.json({ success: true, usernames: defaultList });
+});
+
 /**
  * Lấy danh sách cuộc trò chuyện của người dùng hiện tại (Hỗ trợ cả 1-1 và Nhóm)
  */
@@ -339,17 +371,31 @@ app.get('/api/user/conversations', async (req, res) => {
 
     if (error) throw error;
 
-    // 2. Lấy thêm các nhóm mà user là thành viên trong member_ids
-    const { data: groupConvs } = await supabaseAdmin
-      .from('conversations')
-      .select('*')
-      .eq('is_group', true)
-      .contains('member_ids', JSON.stringify([user.id]))
-      .order('last_message_at', { ascending: false });
-
     const map = new Map<string, any>();
     for (const c of (convs || [])) map.set(c.id, c);
-    for (const g of (groupConvs || [])) map.set(g.id, g);
+
+    // 2. Lấy thêm các nhóm mà user là thành viên trong member_ids (thử cả string và array JSON)
+    try {
+      const { data: groupConvs } = await supabaseAdmin
+        .from('conversations')
+        .select('*')
+        .eq('is_group', true)
+        .contains('member_ids', JSON.stringify([user.id]))
+        .order('last_message_at', { ascending: false });
+
+      for (const g of (groupConvs || [])) map.set(g.id, g);
+    } catch (_) {}
+
+    try {
+      const { data: groupConvsArr } = await supabaseAdmin
+        .from('conversations')
+        .select('*')
+        .eq('is_group', true)
+        .contains('member_ids', [user.id])
+        .order('last_message_at', { ascending: false });
+
+      for (const g of (groupConvsArr || [])) map.set(g.id, g);
+    } catch (_) {}
 
     const combined = Array.from(map.values()).sort((a, b) => {
       const timeA = new Date(a.last_message_at || a.created_at || 0).getTime();
@@ -439,6 +485,7 @@ app.post('/api/user/groups', async (req, res) => {
         name: name.trim(),
         avatar_url: avatarUrl || null,
         created_by: user.id,
+        user_a: user.id,
         member_ids: finalMemberIds,
         nicknames: {},
         last_message: `Đã tạo nhóm trò chuyện "${name.trim()}"`,
