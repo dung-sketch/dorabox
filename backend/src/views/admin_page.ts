@@ -83,6 +83,116 @@ export function renderAdminPage(): string {
       color: #0f172a;
     }
 
+    body.light-mode .text-white {
+      color: #0f172a !important;
+    }
+    body.light-mode .text-main {
+      color: #0f172a !important;
+    }
+    body.light-mode .custom-table th {
+      background: #f1f5f9 !important;
+      color: #475569 !important;
+      border-bottom: 1px solid #e2e8f0 !important;
+    }
+    body.light-mode .custom-table td {
+      border-bottom: 1px solid #f1f5f9;
+      color: #334155;
+    }
+    body.light-mode .custom-table tr:hover td {
+      background: #f8fafc;
+    }
+    body.light-mode .filter-pill {
+      background: #ffffff !important;
+      border: 1px solid #e2e8f0 !important;
+      color: #475569 !important;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+    }
+    body.light-mode .filter-pill:hover {
+      background: #f8fafc !important;
+      color: #0f172a !important;
+      border-color: #cbd5e1 !important;
+    }
+    body.light-mode .filter-pill.active {
+      background: rgba(2, 132, 199, 0.1) !important;
+      color: #0284c7 !important;
+      border-color: rgba(2, 132, 199, 0.4) !important;
+    }
+    body.light-mode .filter-pill .pill-badge {
+      background: #f1f5f9 !important;
+      color: #64748b !important;
+    }
+    body.light-mode .filter-pill.active .pill-badge {
+      background: #0284c7 !important;
+      color: #ffffff !important;
+    }
+    body.light-mode .search-input-wrap input {
+      background: #ffffff !important;
+      border: 1px solid #cbd5e1 !important;
+      color: #0f172a !important;
+    }
+    body.light-mode .search-input-wrap input:focus {
+      border-color: #0284c7 !important;
+      box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15) !important;
+    }
+    body.light-mode .search-input-wrap input::placeholder {
+      color: #94a3b8 !important;
+    }
+    body.light-mode .search-input-wrap i {
+      color: #94a3b8 !important;
+    }
+    body.light-mode .glass-panel {
+      background: #ffffff !important;
+      border-color: #e2e8f0 !important;
+      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05) !important;
+    }
+    body.light-mode .panel-header {
+      background: #ffffff !important;
+      border-bottom-color: #e2e8f0 !important;
+    }
+    body.light-mode .panel-title {
+      color: #0f172a !important;
+    }
+    body.light-mode .stat-card {
+      background: #ffffff !important;
+      border-color: #e2e8f0 !important;
+      box-shadow: 0 4px 16px -2px rgba(0, 0, 0, 0.04) !important;
+    }
+    body.light-mode .stat-number {
+      color: #0f172a !important;
+    }
+    body.light-mode .action-ellipsis-btn {
+      background: #ffffff !important;
+      border-color: #cbd5e1 !important;
+      color: #64748b !important;
+    }
+    body.light-mode .action-ellipsis-btn:hover {
+      background: #f1f5f9 !important;
+      color: #0f172a !important;
+      border-color: #94a3b8 !important;
+    }
+    body.light-mode .modern-dropdown-menu {
+      background: #ffffff !important;
+      border-color: #e2e8f0 !important;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1) !important;
+    }
+    body.light-mode .modern-dropdown-menu .dropdown-header {
+      color: #94a3b8 !important;
+    }
+    body.light-mode .modern-dropdown-menu .dropdown-item {
+      color: #334155 !important;
+    }
+    body.light-mode .modern-dropdown-menu .dropdown-item:hover {
+      background: #f1f5f9 !important;
+      color: #0f172a !important;
+    }
+    body.light-mode .modern-dropdown-menu hr.dropdown-divider {
+      border-color: #e2e8f0 !important;
+    }
+    body.light-mode .app-topbar {
+      background: #ffffff !important;
+      border-bottom-color: #e2e8f0 !important;
+    }
+
     /* =========================================================================
        APP SHELL LAYOUT
        ========================================================================= */
@@ -1878,7 +1988,7 @@ export function renderAdminPage(): string {
                 \${avatarHtml}
                 <div>
                   <div class="d-flex align-items-center">
-                    <span class="fw-bold text-white fs-6">\${escapeHtml(u.display_name || 'Chưa đặt tên')}</span>
+                    <span class="fw-bold text-main fs-6">\${escapeHtml(u.display_name || 'Chưa đặt tên')}</span>
                     \${inlineBadges}
                   </div>
                   <div class="d-flex align-items-center gap-2 mt-1">
@@ -1926,6 +2036,14 @@ export function renderAdminPage(): string {
                     <a class="dropdown-item \${u.is_banned ? 'text-success' : 'text-danger'}" href="javascript:void(0)" onclick="toggleBan('\${u.id}', \${!u.is_banned})">
                       <i class="fas \${u.is_banned ? 'fa-lock-open text-success' : 'fa-ban text-danger'} me-2 fa-fw"></i>
                       \${u.is_banned ? 'Mở khóa tài khoản' : 'Khóa tài khoản này'}
+                    </a>
+                  </li>
+                  <li><hr class="dropdown-divider border-secondary border-opacity-25 my-1"></li>
+                  <li class="dropdown-header text-danger">Khu vực nguy hiểm</li>
+                  <li>
+                    <a class="dropdown-item text-danger" href="javascript:void(0)" onclick="confirmDeleteUser('\${u.id}', '\${escapeHtml(u.display_name || u.username || 'Người dùng')}')">
+                      <i class="fas fa-trash-alt text-danger me-2 fa-fw"></i>
+                      Xóa vĩnh viễn tài khoản
                     </a>
                   </li>
                 </ul>
@@ -2004,6 +2122,44 @@ export function renderAdminPage(): string {
           }
         }
       });
+    }
+
+    async function confirmDeleteUser(userId, name) {
+      const result = await Swal.fire({
+        title: 'Xóa vĩnh viễn tài khoản?',
+        html: 'Bạn có chắc chắn muốn xóa hoàn toàn tài khoản <strong>\"' + escapeHtml(name) + '\"</strong>?<br><br><span class=\"text-danger small\"><i class=\"fas fa-exclamation-triangle me-1\"></i> Cảnh báo: Toàn bộ bài viết, bình luận, tin nhắn và tài khoản đăng nhập Supabase sẽ bị quét sạch vĩnh viễn. Không thể khôi phục!</span>',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#ef4444',
+        cancelButtonColor: '#475569',
+        confirmButtonText: '<i class=\"fas fa-trash-alt me-1\"></i> Xác nhận xóa vĩnh viễn',
+        cancelButtonText: 'Hủy'
+      });
+
+      if (!result.isConfirmed) return;
+
+      Swal.showLoading();
+      try {
+        const data = await safeFetchJson('/api/admin/users/' + userId, {
+          method: 'DELETE',
+          headers: { 'Authorization': 'Bearer ' + adminToken }
+        });
+        if (data.success) {
+          Swal.fire({
+            icon: 'success',
+            title: 'Đã xóa tài khoản!',
+            text: data.message || 'Tài khoản người dùng đã bị xóa sạch hoàn toàn.',
+            timer: 2000,
+            showConfirmButton: false
+          });
+          fetchUsers();
+          fetchMetrics();
+        } else {
+          Swal.fire({ icon: 'error', title: 'Lỗi', text: data.error || 'Không thể xóa tài khoản.' });
+        }
+      } catch (err) {
+        Swal.fire({ icon: 'error', title: 'Lỗi', text: err.message });
+      }
     }
 
     async function promptChangeRole(userId, name, currentRole) {
