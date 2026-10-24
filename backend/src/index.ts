@@ -18,8 +18,10 @@ const PORT = process.env.PORT || 4000;
 app.use(cors());
 app.use(express.json());
 
-// Giao diện Web Admin Portal trực quan
-app.get('/admin', (req, res) => {
+const ADMIN_PORTAL_PATH = (process.env.ADMIN_PORTAL_PATH || '/admin').trim();
+
+// Giao diện Web Admin Portal
+app.get(ADMIN_PORTAL_PATH, (req, res) => {
   res.send(renderAdminPage());
 });
 
@@ -33,15 +35,12 @@ app.get('/watch', (req, res) => {
 // Admin REST APIs
 app.use('/api/admin', adminRouter);
 
-// Root endpoint kiểm tra trạng thái
+// Root endpoint kiểm tra trạng thái an toàn (Không để lộ đường dẫn admin hay cấu hình hệ thống)
 app.get('/', (req, res) => {
   res.json({
-    platform: 'Dorabox Mini Social Network API',
     status: 'online',
-    version: '1.3.1',
-    adminPortal: '/admin',
-    supabaseConfigured: Boolean(process.env.SUPABASE_URL),
-    r2Configured: Boolean(process.env.R2_ACCOUNT_ID),
+    message: 'Dorabox API Service',
+    version: '1.4.2',
     timestamp: new Date().toISOString(),
   });
 });
@@ -58,8 +57,8 @@ app.get('/api/health', (req, res) => {
 // App Version & OTA Update Check
 app.get('/api/app-version', (req, res) => {
   res.json({
-    latest_version: '1.3.1',
-    build_number: 14,
+    latest_version: '1.4.2',
+    build_number: 15,
     apk_url: 'https://doraboxcdn.zpiltk.io.vn/apk/Dorabox-arm64-v8a.apk',
     ios_url: 'https://dorabox.app/ios',
     force_update: false,
