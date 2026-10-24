@@ -20,16 +20,26 @@ app.use(express.json());
 
 const ADMIN_PORTAL_PATH = (process.env.ADMIN_PORTAL_PATH || '/dorabox@dungkito.com').trim();
 
-// Giao diện Web Admin Portal bí mật (Hỗ trợ cả dạng thô và URL-encoded)
-const adminRoutes = [ADMIN_PORTAL_PATH];
-if (ADMIN_PORTAL_PATH.includes('@')) {
-  adminRoutes.push(ADMIN_PORTAL_PATH.replace('@', '%40'));
-}
-app.get(adminRoutes, (req, res) => {
-  res.send(renderAdminPage());
+// Giao diện Web Admin Portal bí mật (Hỗ trợ chuẩn xác 100% trên cả Vercel Serverless và Local)
+app.use((req, res, next) => {
+  if (req.method !== 'GET') return next();
+  const rawPath = (req.path || req.url || '').split('?')[0];
+  const lowerPath = rawPath.toLowerCase();
+  const targetLower = ADMIN_PORTAL_PATH.toLowerCase();
+
+  if (
+    lowerPath === targetLower ||
+    lowerPath === '/dorabox@dungkito.com' ||
+    lowerPath === '/dorabox%40dungkito.com' ||
+    lowerPath === '/api/dorabox@dungkito.com' ||
+    lowerPath === '/api/dorabox%40dungkito.com'
+  ) {
+    return res.send(renderAdminPage());
+  }
+  next();
 });
 
-// Chặn tuyệt đối đường dẫn /admin cũ (Trả về 404 Not Found)
+// Chặn tuyệt đối đường dẫn /admin cũ (Trả về 404 Not Found như không hề tồn tại)
 app.get('/admin', (req, res) => {
   res.status(404).send('Cannot GET /admin');
 });
