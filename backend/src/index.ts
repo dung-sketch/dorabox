@@ -71,15 +71,15 @@ app.get('/api/health', (req, res) => {
 // App Version & OTA Update Check
 app.get('/api/app-version', (req, res) => {
   res.json({
-    latest_version: '1.4.2',
-    build_number: 15,
+    latest_version: '1.4.3',
+    build_number: 16,
     apk_url: 'https://doraboxcdn.zpiltk.io.vn/apk/Dorabox-arm64-v8a.apk',
     ios_url: 'https://dorabox.app/ios',
     force_update: false,
     changelog: [
-      'Tối ưu bảng màu Sáng / Tối dịu mắt, độ tương phản chuẩn xác.',
-      'Nâng cấp tính năng nhóm chat & trang cá nhân OA.',
-      'Cải tiến hệ thống bảo mật & tối ưu hiệu năng toàn diện.',
+      'Khắc phục hiển thị thông báo lỗi khi nhập sai mã xác thực OTP.',
+      'Tối ưu hiển thị hình ảnh bài đăng sắc nét, chuẩn tỉ lệ tự nhiên không méo mó.',
+      'Nâng cấp hệ thống và tối ưu hiệu năng toàn diện trên phiên bản 1.4.3.',
     ]
   });
 });

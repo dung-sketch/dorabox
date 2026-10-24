@@ -970,7 +970,7 @@ export function renderAdminPage(): string {
         </div>
         <div class="brand-info">
           <div class="brand-title">Dorabox Admin</div>
-          <div class="brand-badge"><i class="fas fa-bolt me-1"></i>v1.4.2 Pro</div>
+          <div class="brand-badge"><i class="fas fa-bolt me-1"></i>v1.4.3 Pro</div>
         </div>
       </div>
 
@@ -1406,7 +1406,7 @@ export function renderAdminPage(): string {
                 <div class="p-4">
                   <div class="mb-3">
                     <label class="form-label fw-bold small text-uppercase" style="color: var(--text-secondary);">Tiêu đề thông báo <span class="text-danger">*</span></label>
-                    <input type="text" id="broadcast-title-input" class="form-control" placeholder="Ví dụ: 🚀 Dorabox Cập Nhật v1.4.2!" style="background: var(--bg-surface-elevated); border: 1px solid var(--border-subtle); color: var(--text-primary); border-radius: 10px;">
+                    <input type="text" id="broadcast-title-input" class="form-control" placeholder="Ví dụ: 🚀 Dorabox Cập Nhật v1.4.3!" style="background: var(--bg-surface-elevated); border: 1px solid var(--border-subtle); color: var(--text-primary); border-radius: 10px;">
                   </div>
 
                   <div class="mb-3">
