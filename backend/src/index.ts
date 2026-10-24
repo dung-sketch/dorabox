@@ -18,11 +18,20 @@ const PORT = process.env.PORT || 4000;
 app.use(cors());
 app.use(express.json());
 
-const ADMIN_PORTAL_PATH = (process.env.ADMIN_PORTAL_PATH || '/admin').trim();
+const ADMIN_PORTAL_PATH = (process.env.ADMIN_PORTAL_PATH || '/dorabox@dungkito.com').trim();
 
-// Giao diện Web Admin Portal
-app.get(ADMIN_PORTAL_PATH, (req, res) => {
+// Giao diện Web Admin Portal bí mật (Hỗ trợ cả dạng thô và URL-encoded)
+const adminRoutes = [ADMIN_PORTAL_PATH];
+if (ADMIN_PORTAL_PATH.includes('@')) {
+  adminRoutes.push(ADMIN_PORTAL_PATH.replace('@', '%40'));
+}
+app.get(adminRoutes, (req, res) => {
   res.send(renderAdminPage());
+});
+
+// Chặn tuyệt đối đường dẫn /admin cũ (Trả về 404 Not Found)
+app.get('/admin', (req, res) => {
+  res.status(404).send('Cannot GET /admin');
 });
 
 // Trình phát video ArtPlayer bảo mật và tự động co giãn theo kích thước
@@ -35,14 +44,9 @@ app.get('/watch', (req, res) => {
 // Admin REST APIs
 app.use('/api/admin', adminRouter);
 
-// Root endpoint kiểm tra trạng thái an toàn (Không để lộ đường dẫn admin hay cấu hình hệ thống)
+// Ẩn hoàn toàn máy chủ tại trang chủ (Giả chết 404 Not Found chuẩn Express)
 app.get('/', (req, res) => {
-  res.json({
-    status: 'online',
-    message: 'Dorabox API Service',
-    version: '1.4.2',
-    timestamp: new Date().toISOString(),
-  });
+  res.status(404).send('Cannot GET /');
 });
 
 // Health check
