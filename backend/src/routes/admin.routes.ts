@@ -547,17 +547,32 @@ router.get('/posts', async (req, res) => {
     const { q } = req.query;
     let query = supabaseAdmin
       .from('posts')
-      .select('id, author_id, content, media_urls, link_url, likes_count, comments_count, is_pinned, created_at, profiles:author_id(id, username, display_name, avatar_url, is_verified)')
+      .select('id, author_id, content, media_urls, link_url, link_title, likes_count, comments_count, is_pinned, created_at, profiles:author_id(id, username, display_name, avatar_url, is_verified)')
       .order('created_at', { ascending: false });
 
     if (q && typeof q === 'string' && q.trim()) {
       query = query.ilike('content', `%${q.trim()}%`);
     }
 
-    const { data, error } = await query.limit(80);
-    if (error) throw error;
+    let postsData: any[] = [];
+    const resFirst = await query.limit(80);
+    if (resFirst.error) {
+      // Fallback nếu cột link_title chưa chạy migration
+      let fallbackQuery = supabaseAdmin
+        .from('posts')
+        .select('id, author_id, content, media_urls, link_url, likes_count, comments_count, is_pinned, created_at, profiles:author_id(id, username, display_name, avatar_url, is_verified)')
+        .order('created_at', { ascending: false });
+      if (q && typeof q === 'string' && q.trim()) {
+        fallbackQuery = fallbackQuery.ilike('content', `%${q.trim()}%`);
+      }
+      const fallbackRes = await fallbackQuery.limit(80);
+      if (fallbackRes.error) throw fallbackRes.error;
+      postsData = fallbackRes.data || [];
+    } else {
+      postsData = resFirst.data || [];
+    }
 
-    const posts = (data || []).map((p: any) => {
+    const posts = postsData.map((p: any) => {
       const prof = Array.isArray(p.profiles) ? p.profiles[0] : p.profiles;
       return {
         ...p,
@@ -566,6 +581,51 @@ router.get('/posts', async (req, res) => {
     });
 
     return res.json({ success: true, posts });
+  } catch (err: any) {
+    return res.status(500).json({ error: err.message });
+  }
+});
+
+// Chỉnh sửa bài viết (Nội dung, Hình ảnh media_urls, Link URL, Link Title)
+router.put('/posts/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { content, media_urls, link_url, link_title } = req.body;
+
+    const basePayload: any = {
+      content: typeof content === 'string' ? content.trim() : '',
+      media_urls: Array.isArray(media_urls) ? media_urls : [],
+      link_url: link_url && typeof link_url === 'string' && link_url.trim() ? link_url.trim() : null,
+    };
+
+    // Cập nhật kèm link_title
+    let updateRes = await supabaseAdmin
+      .from('posts')
+      .update({
+        ...basePayload,
+        link_title: link_title && typeof link_title === 'string' && link_title.trim() ? link_title.trim() : null,
+      })
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (updateRes.error) {
+      // Fallback nếu cột link_title chưa có trong schema Supabase
+      updateRes = await supabaseAdmin
+        .from('posts')
+        .update(basePayload)
+        .eq('id', id)
+        .select()
+        .single();
+    }
+
+    if (updateRes.error) throw updateRes.error;
+
+    return res.json({
+      success: true,
+      post: updateRes.data,
+      message: 'Đã cập nhật bài viết thành công!',
+    });
   } catch (err: any) {
     return res.status(500).json({ error: err.message });
   }

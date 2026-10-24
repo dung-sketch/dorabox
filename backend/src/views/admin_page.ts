@@ -1649,6 +1649,82 @@ export function renderAdminPage(): string {
     </div>
   </div>
 
+  <!-- 3. Edit Post Modal (Chỉnh sửa bài đăng có hình ảnh, liên kết và tiêu đề liên kết) -->
+  <div class="modal fade" id="modalEditPost" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content" style="background: var(--bg-surface-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); color: var(--text-primary); box-shadow: var(--neu-extruded);">
+        <div class="modal-header" style="border-bottom: 1px solid var(--border-subtle);">
+          <h5 class="modal-title fw-bold" style="color: var(--primary);"><i class="fas fa-pen-to-square me-2"></i>Chỉnh Sửa Bài Viết</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body p-4">
+          <input type="hidden" id="edit-post-id">
+          
+          <div class="mb-3">
+            <label class="form-label small fw-bold" style="color: var(--text-secondary);">NỘI DUNG BÀI VIẾT</label>
+            <textarea id="edit-post-content" class="form-control" rows="4" placeholder="Nhập nội dung bài viết..."></textarea>
+          </div>
+
+          <!-- Quản lý hình ảnh media_urls -->
+          <div class="mb-3">
+            <label class="form-label small fw-bold d-flex justify-content-between align-items-center" style="color: var(--text-secondary);">
+              <span><i class="fas fa-images me-1 text-info"></i>HÌNH ẢNH ĐÍNH KÈM (MEDIA URLS)</span>
+              <span id="edit-post-media-count" class="badge" style="background: var(--primary-glow); color: var(--primary-light);">0 ảnh</span>
+            </label>
+            
+            <div id="edit-post-media-list" class="d-flex flex-wrap gap-2 mb-2 p-2 rounded-3" style="background: var(--bg-surface-elevated); min-height: 60px; border: 1px solid var(--border-subtle);">
+              <!-- Danh sách thumbnail có nút xóa render động -->
+            </div>
+
+            <div class="input-group">
+              <input type="text" id="edit-post-new-media-url" class="form-control" placeholder="Dán URL hình ảnh mới (https://...)">
+              <button class="btn btn-primary" type="button" onclick="addEditPostMediaUrl()">
+                <i class="fas fa-plus me-1"></i> Thêm Ảnh
+              </button>
+            </div>
+          </div>
+
+          <!-- Liên kết đính kèm và Tiêu đề liên kết -->
+          <div class="row g-3 mb-3">
+            <div class="col-md-7 col-12">
+              <label class="form-label small fw-bold" style="color: var(--text-secondary);"><i class="fas fa-link me-1 text-primary"></i>LIÊN KẾT ĐÍNH KÈM (URL)</label>
+              <div class="search-input-wrap" style="min-width: 100%;">
+                <i class="fas fa-link"></i>
+                <input type="text" id="edit-post-link-url" placeholder="https://dorabox.app/..." oninput="updateEditPostLinkPreview()">
+              </div>
+            </div>
+            <div class="col-md-5 col-12">
+              <label class="form-label small fw-bold" style="color: var(--text-secondary);"><i class="fas fa-heading me-1 text-warning"></i>TIÊU ĐỀ LIÊN KẾT (TÙY CHỌN)</label>
+              <input type="text" id="edit-post-link-title" class="form-control" placeholder="Đặt tiêu đề hiển thị..." oninput="updateEditPostLinkPreview()">
+            </div>
+          </div>
+
+          <!-- Preview Card mô phỏng ứng dụng -->
+          <div class="mb-2 p-3 rounded-3" style="background: var(--bg-surface-elevated); border: 1px dashed var(--border-subtle);">
+            <div class="small fw-bold mb-2" style="color: var(--text-secondary);"><i class="fas fa-mobile-screen me-1"></i>Mô phỏng hiển thị trên ứng dụng Dorabox:</div>
+            <div class="p-3 rounded-3 d-flex align-items-center gap-3" style="background: var(--bg-surface-card); box-shadow: var(--neu-extruded-sm); border: 1px solid var(--border-subtle);">
+              <div class="rounded-3 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; background: rgba(2, 132, 199, 0.15); color: var(--primary);">
+                <i class="fas fa-link"></i>
+              </div>
+              <div class="flex-grow-1 overflow-hidden text-start">
+                <div class="fw-bold text-truncate" id="preview-link-title-display" style="color: var(--text-primary); font-size: 13.5px;">(Chưa có liên kết)</div>
+                <div class="small text-truncate" id="preview-link-url-display" style="color: var(--text-muted); font-size: 12px;">Mở liên kết</div>
+              </div>
+              <i class="fas fa-arrow-up-right-from-square text-muted"></i>
+            </div>
+          </div>
+
+        </div>
+        <div class="modal-footer" style="border-top: 1px solid var(--border-subtle);">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+          <button type="button" class="btn btn-primary" onclick="submitEditPost()" id="btn-save-edit-post">
+            <i class="fas fa-floppy-disk me-1"></i> Lưu Thay Đổi
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Bootstrap 5 JS & SweetAlert2 & Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -2406,13 +2482,25 @@ export function renderAdminPage(): string {
         const dateStr = p.created_at ? new Date(p.created_at).toLocaleString('vi-VN') : '-';
         
         let mediaHtml = '<span class="text-muted small">Không đính kèm</span>';
+        let mediaParts = [];
         if (p.media_urls && p.media_urls.length > 0) {
-          mediaHtml = \`
+          mediaParts.push(\`
             <div class="d-flex gap-1 align-items-center">
               <img src="\${p.media_urls[0]}" class="rounded-2" style="width: 44px; height: 44px; object-fit: cover; cursor: pointer;" onclick="openLightbox('\${p.media_urls[0]}')" title="Phóng to ảnh" />
               \${p.media_urls.length > 1 ? \`<span class="badge bg-dark border border-secondary align-self-center">+\${p.media_urls.length - 1}</span>\` : ''}
             </div>
-          \`;
+          \`);
+        }
+        if (p.link_url) {
+          const lTitle = p.link_title ? escapeHtml(p.link_title) : 'Đính kèm Link';
+          mediaParts.push(\`
+            <a href="\${escapeHtml(p.link_url)}" target="_blank" class="badge bg-info-subtle text-info text-decoration-none mt-1 d-inline-flex align-items-center text-truncate" style="max-width: 150px;" title="\${escapeHtml(p.link_url)}">
+              <i class="fas fa-link me-1"></i>\${lTitle}
+            </a>
+          \`);
+        }
+        if (mediaParts.length > 0) {
+          mediaHtml = \`<div class="d-flex flex-column gap-1">\${mediaParts.join('')}</div>\`;
         }
 
         return \`
@@ -2442,6 +2530,9 @@ export function renderAdminPage(): string {
             <td class="text-secondary small">\${dateStr}</td>
             <td style="text-align: right; padding-right: 20px;">
               <div class="d-flex align-items-center justify-content-end gap-1.5">
+                <button class="action-ellipsis-btn text-primary" title="Chỉnh sửa bài viết (Nội dung, Ảnh, Liên kết)" onclick="openEditPostModal('\${p.id}')">
+                  <i class="fas fa-pen-to-square"></i>
+                </button>
                 <button class="action-ellipsis-btn" title="\${p.is_pinned ? 'Bỏ ghim' : 'Ghim nổi bật'}" onclick="togglePinPost('\${p.id}', \${!p.is_pinned})">
                   <i class="fas fa-thumbtack \${p.is_pinned ? 'text-warning' : ''}"></i>
                 </button>
@@ -2453,6 +2544,172 @@ export function renderAdminPage(): string {
           </tr>
         \`;
       }).join('');
+    }
+
+    // =========================================================================
+    // QUẢN LÝ CHỈNH SỬA BÀI VIẾT (EDIT POSTS MODAL)
+    // =========================================================================
+    let currentEditMediaUrls = [];
+
+    function openEditPostModal(postId) {
+      const post = allPostsCache.find(p => p.id === postId);
+      if (!post) {
+        Swal.fire({ icon: 'error', title: 'Lỗi', text: 'Không tìm thấy thông tin bài viết' });
+        return;
+      }
+
+      document.getElementById('edit-post-id').value = post.id;
+      document.getElementById('edit-post-content').value = post.content || '';
+      currentEditMediaUrls = Array.isArray(post.media_urls) ? [...post.media_urls] : [];
+      document.getElementById('edit-post-new-media-url').value = '';
+      document.getElementById('edit-post-link-url').value = post.link_url || '';
+      document.getElementById('edit-post-link-title').value = post.link_title || '';
+
+      renderEditPostMediaList();
+      updateEditPostLinkPreview();
+
+      const modalEl = document.getElementById('modalEditPost');
+      const modal = new bootstrap.Modal(modalEl);
+      modal.show();
+    }
+
+    function renderEditPostMediaList() {
+      const container = document.getElementById('edit-post-media-list');
+      const countBadge = document.getElementById('edit-post-media-count');
+      if (!container || !countBadge) return;
+      countBadge.textContent = currentEditMediaUrls.length + ' ảnh';
+
+      if (currentEditMediaUrls.length === 0) {
+        container.innerHTML = '<span class="text-muted small p-2">Chưa có ảnh nào đính kèm. Dán URL bên dưới để thêm ảnh.</span>';
+        return;
+      }
+
+      container.innerHTML = currentEditMediaUrls.map((url, idx) => {
+        const safeUrl = escapeHtml(url);
+        return \`
+          <div class="position-relative d-inline-block rounded-2 overflow-hidden border border-secondary shadow-sm" style="width: 72px; height: 72px;">
+            <img src="\${safeUrl}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='https://placehold.co/100x100?text=Error';" />
+            <button type="button" class="btn btn-danger btn-sm p-0 position-absolute top-0 end-0 rounded-circle m-1" style="width: 20px; height: 20px; line-height: 18px; font-size: 11px;" onclick="removeEditPostMedia(\${idx})" title="Gỡ ảnh này">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+        \`;
+      }).join('');
+    }
+
+    function removeEditPostMedia(idx) {
+      currentEditMediaUrls.splice(idx, 1);
+      renderEditPostMediaList();
+    }
+
+    function addEditPostMediaUrl() {
+      const input = document.getElementById('edit-post-new-media-url');
+      const val = (input ? input.value : '').trim();
+      if (!val) {
+        Swal.fire({ icon: 'warning', title: 'Thiếu URL ảnh', text: 'Vui lòng dán liên kết hình ảnh hợp lệ (https://...)' });
+        return;
+      }
+      currentEditMediaUrls.push(val);
+      input.value = '';
+      renderEditPostMediaList();
+    }
+
+    function updateEditPostLinkPreview() {
+      const urlInput = document.getElementById('edit-post-link-url');
+      const titleInput = document.getElementById('edit-post-link-title');
+      const url = (urlInput ? urlInput.value : '').trim();
+      const customTitle = (titleInput ? titleInput.value : '').trim();
+      const titleDisplay = document.getElementById('preview-link-title-display');
+      const urlDisplay = document.getElementById('preview-link-url-display');
+
+      if (!titleDisplay || !urlDisplay) return;
+
+      if (!url) {
+        titleDisplay.textContent = '(Chưa có liên kết)';
+        titleDisplay.style.color = 'var(--text-muted)';
+        urlDisplay.textContent = 'Mở liên kết';
+        return;
+      }
+
+      titleDisplay.style.color = 'var(--text-primary)';
+      if (customTitle) {
+        titleDisplay.textContent = customTitle;
+        urlDisplay.textContent = url;
+      } else {
+        try {
+          const parsed = new URL(url.startsWith('http') ? url : 'https://' + url);
+          titleDisplay.textContent = parsed.hostname;
+          urlDisplay.textContent = url;
+        } catch (_) {
+          titleDisplay.textContent = url;
+          urlDisplay.textContent = 'Mở liên kết';
+        }
+      }
+    }
+
+    async function submitEditPost() {
+      const idInput = document.getElementById('edit-post-id');
+      const contentInput = document.getElementById('edit-post-content');
+      const linkUrlInput = document.getElementById('edit-post-link-url');
+      const linkTitleInput = document.getElementById('edit-post-link-title');
+
+      const id = idInput ? idInput.value : '';
+      const content = (contentInput ? contentInput.value : '').trim();
+      const link_url = (linkUrlInput ? linkUrlInput.value : '').trim();
+      const link_title = (linkTitleInput ? linkTitleInput.value : '').trim();
+      const btn = document.getElementById('btn-save-edit-post');
+
+      if (!content && currentEditMediaUrls.length === 0) {
+        Swal.fire({ icon: 'warning', title: 'Thiếu nội dung', text: 'Bài viết phải có ít nhất nội dung văn bản hoặc hình ảnh.' });
+        return;
+      }
+
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Đang lưu...';
+      }
+
+      try {
+        const res = await safeFetchJson('/api/admin/posts/' + encodeURIComponent(id), {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + adminToken
+          },
+          body: JSON.stringify({
+            content,
+            media_urls: currentEditMediaUrls,
+            link_url: link_url || null,
+            link_title: link_title || null
+          })
+        });
+
+        if (res.success) {
+          const modalEl = document.getElementById('modalEditPost');
+          const modal = bootstrap.Modal.getInstance(modalEl);
+          if (modal) modal.hide();
+
+          Swal.fire({
+            toast: true,
+            position: 'top-end',
+            icon: 'success',
+            title: 'Đã cập nhật bài viết thành công!',
+            showConfirmButton: false,
+            timer: 2000
+          });
+
+          fetchPosts();
+        } else {
+          Swal.fire({ icon: 'error', title: 'Lỗi cập nhật', text: res.error || 'Có lỗi xảy ra khi lưu bài viết' });
+        }
+      } catch (err) {
+        Swal.fire({ icon: 'error', title: 'Lỗi', text: 'Không thể kết nối máy chủ' });
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fas fa-floppy-disk me-1"></i> Lưu Thay Đổi';
+        }
+      }
     }
 
     async function togglePinPost(postId, newStatus) {
