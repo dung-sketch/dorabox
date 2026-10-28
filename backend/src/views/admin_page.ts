@@ -1,12 +1,12 @@
 export function renderAdminPage(): string {
   return `<!DOCTYPE html>
-<html lang="vi">
+<html lang="vi" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dorabox Admin Portal — Trung Tâm Điều Hành Siêu Cấp</title>
+  <title>Dorabox Admin Console - Bảng Điều Khiển Quản Trị Hệ Thống</title>
   
-  <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -14,7 +14,7 @@ export function renderAdminPage(): string {
   <!-- Font Awesome 6.5.1 -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   
-  <!-- Bootstrap 5 CSS (Grid & Utilities) -->
+  <!-- Bootstrap 5 CSS (Grid & Modals) -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
   
   <!-- SweetAlert2 CSS -->
@@ -22,93 +22,81 @@ export function renderAdminPage(): string {
 
   <style>
     /* =========================================================================
-       1. SIÊU THIẾT KẾ BLUE-WHITE GRADIENT NEUMORPHISM (TACTILE & LUXURY)
+       DORABOX MODERN DESIGN SYSTEM (Dark-first, 60fps, Zero-Shadow-Lag)
+       Inspired by Linear, Vercel & Supabase
        ========================================================================= */
     :root {
       --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       --font-mono: 'JetBrains Mono', monospace;
 
-      /* Blue-White Neumorphism (Default Master Theme) */
-      --bg-canvas: #e8f1f9;
-      --bg-gradient: linear-gradient(135deg, #eef5fc 0%, #e1edf8 50%, #f3f8fd 100%);
-      --bg-sidebar: #e8f1f9;
-      --bg-topbar: rgba(232, 241, 249, 0.88);
-      --bg-surface: #edf4fa;
-      --bg-surface-elevated: #e2edf7;
-      --bg-surface-card: linear-gradient(145deg, #ffffff 0%, #e8f2fc 100%);
+      /* Dark Theme (Default) */
+      --bg-canvas: #09090b;
+      --bg-sidebar: #0e0e12;
+      --bg-topbar: rgba(14, 14, 18, 0.85);
+      --bg-surface: #141419;
+      --bg-card: #18181f;
+      --bg-card-hover: #1f1f28;
+      --bg-input: #121217;
+      
+      --border-subtle: #1f1f26;
+      --border-default: #2a2a35;
+      --border-strong: #3b3b4a;
+      
+      --text-primary: #f4f4f7;
+      --text-secondary: #a1a1b2;
+      --text-muted: #6e6e82;
 
-      /* Tactile Neumorphic Dual Shadows (Light Highlight & Soft Slate Shadow) */
-      --neu-light: #ffffff;
-      --neu-shadow: rgba(160, 185, 212, 0.55);
-      --neu-shadow-dark: rgba(135, 165, 196, 0.45);
-      --neu-extruded: 8px 8px 18px rgba(160, 185, 212, 0.5), -8px -8px 18px #ffffff;
-      --neu-extruded-hover: 12px 12px 26px rgba(155, 182, 210, 0.65), -12px -12px 26px #ffffff;
-      --neu-extruded-sm: 4px 4px 10px rgba(160, 185, 212, 0.45), -4px -4px 10px #ffffff;
-      --neu-inset-shadow: inset 3px 3px 7px rgba(155, 182, 210, 0.55), inset -3px -3px 7px #ffffff;
+      /* Refined Semantic Accents */
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --primary-subtle: rgba(59, 130, 246, 0.12);
+      --primary-border: rgba(59, 130, 246, 0.3);
 
-      --border-subtle: rgba(255, 255, 255, 0.75);
-      --border-hover: #38bdf8;
-      --border-focus: #0284c7;
+      --success: #10b981;
+      --success-subtle: rgba(16, 185, 129, 0.12);
+      --warning: #f59e0b;
+      --warning-subtle: rgba(245, 158, 11, 0.12);
+      --danger: #ef4444;
+      --danger-subtle: rgba(239, 68, 68, 0.12);
+      --purple: #8b5cf6;
+      --purple-subtle: rgba(139, 92, 246, 0.12);
+      --cyan: #06b6d4;
+      --cyan-subtle: rgba(6, 182, 212, 0.12);
 
-      /* Typography Contrast (Deep Navy & Slate) */
-      --text-primary: #0e2a47;
-      --text-secondary: #476885;
-      --text-muted: #799ab8;
+      --sidebar-w: 260px;
+      --topbar-h: 64px;
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 14px;
+      --radius-pill: 9999px;
 
-      /* Blue & White Accent Gradients */
-      --primary: #0284c7;
-      --primary-light: #38bdf8;
-      --primary-gradient: linear-gradient(135deg, #0284c7 0%, #38bdf8 100%);
-      --primary-glow: rgba(2, 132, 199, 0.2);
-      --cyan-gradient: linear-gradient(135deg, #00b4d8 0%, #90e0ef 100%);
-      --card-gradient: linear-gradient(145deg, #ffffff 0%, #e9f2fb 100%);
-
-      /* Status Colors */
-      --success: #059669;
-      --success-bg: rgba(16, 185, 129, 0.15);
-      --warning: #d97706;
-      --warning-bg: rgba(245, 158, 11, 0.15);
-      --danger: #e11d48;
-      --danger-bg: rgba(244, 63, 94, 0.15);
-      --purple: #7c3aed;
-      --purple-bg: rgba(139, 92, 246, 0.15);
-
-      --sidebar-w: 270px;
-      --topbar-h: 70px;
-      --radius-sm: 10px;
-      --radius-md: 14px;
-      --radius-lg: 20px;
-      --radius-xl: 28px;
+      --transition-fast: 0.15s ease;
     }
 
-    /* Midnight Blue Neumorphic Mode (Chế độ tối khi người dùng bấm icon mặt trăng) */
-    body.dark-mode {
-      --bg-canvas: #090f1d;
-      --bg-gradient: linear-gradient(135deg, #070c17 0%, #0a1324 50%, #0d182e 100%);
-      --bg-sidebar: #070d1a;
-      --bg-topbar: rgba(7, 13, 26, 0.88);
-      --bg-surface: #0c1629;
-      --bg-surface-elevated: #111e38;
-      --bg-surface-card: linear-gradient(145deg, #0e192f 0%, #0a1222 100%);
+    /* Light Theme */
+    html[data-theme="light"] {
+      --bg-canvas: #f8fafc;
+      --bg-sidebar: #ffffff;
+      --bg-topbar: rgba(255, 255, 255, 0.9);
+      --bg-surface: #ffffff;
+      --bg-card: #ffffff;
+      --bg-card-hover: #f1f5f9;
+      --bg-input: #f8fafc;
+      
+      --border-subtle: #f1f5f9;
+      --border-default: #e2e8f0;
+      --border-strong: #cbd5e1;
+      
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #94a3b8;
 
-      --neu-light: rgba(255, 255, 255, 0.05);
-      --neu-shadow: rgba(0, 0, 0, 0.65);
-      --neu-shadow-dark: rgba(0, 0, 0, 0.85);
-      --neu-inset-shadow: inset 3px 3px 7px rgba(0, 0, 0, 0.7), inset -3px -3px 7px rgba(255, 255, 255, 0.05);
-      --neu-extruded: 8px 8px 20px rgba(0, 0, 0, 0.6), -8px -8px 20px rgba(255, 255, 255, 0.03);
-      --neu-extruded-hover: 12px 12px 28px rgba(0, 0, 0, 0.75), -12px -12px 28px rgba(255, 255, 255, 0.06);
-      --neu-extruded-sm: 4px 4px 10px rgba(0, 0, 0, 0.55), -4px -4px 10px rgba(255, 255, 255, 0.04);
-
-      --border-subtle: rgba(255, 255, 255, 0.08);
-      --border-hover: rgba(56, 189, 248, 0.4);
-
-      --text-primary: #f1f7fc;
-      --text-secondary: #8da4be;
-      --text-muted: #57708c;
-      --primary-light: #38bdf8;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-subtle: rgba(37, 99, 235, 0.08);
+      --primary-border: rgba(37, 99, 235, 0.25);
     }
 
-    /* Reset & Base */
     * {
       box-sizing: border-box;
       margin: 0;
@@ -117,18 +105,15 @@ export function renderAdminPage(): string {
 
     body {
       font-family: var(--font-sans);
-      background: var(--bg-gradient);
+      background-color: var(--bg-canvas);
       color: var(--text-primary);
-      font-size: 14px;
-      line-height: 1.5;
       min-height: 100vh;
       overflow-x: hidden;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
-      transition: background 0.25s ease, color 0.25s ease;
     }
 
-    /* Scrollbars */
+    /* Scrollbar */
     ::-webkit-scrollbar {
       width: 7px;
       height: 7px;
@@ -137,800 +122,1012 @@ export function renderAdminPage(): string {
       background: transparent;
     }
     ::-webkit-scrollbar-thumb {
-      background: rgba(160, 185, 212, 0.4);
-      border-radius: 999px;
+      background: var(--border-default);
+      border-radius: 4px;
     }
     ::-webkit-scrollbar-thumb:hover {
-      background: var(--primary-light);
+      background: var(--border-strong);
     }
 
-    /* Layout Shell */
-    .app-shell {
+    /* Layout */
+    .app-layout {
       display: flex;
       min-height: 100vh;
     }
 
-    /* =========================================================================
-       2. SIÊU THANH ĐIỀU HƯỚNG NEUMORPHIC (TACTILE SIDEBAR)
-       ========================================================================= */
+    /* Sidebar */
     .app-sidebar {
       width: var(--sidebar-w);
       background: var(--bg-sidebar);
       border-right: 1px solid var(--border-subtle);
+      display: flex;
+      flex-direction: column;
       position: fixed;
       top: 0;
       bottom: 0;
       left: 0;
-      z-index: 1040;
-      display: flex;
-      flex-direction: column;
-      box-shadow: 4px 0 16px rgba(160, 185, 212, 0.15);
-      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.25s ease;
+      z-index: 1020;
+      transition: transform var(--transition-fast);
     }
 
-    .sidebar-brand {
+    .brand-header {
       height: var(--topbar-h);
-      padding: 0 22px;
+      padding: 0 20px;
       display: flex;
       align-items: center;
-      gap: 14px;
-      border-bottom: 1px solid rgba(160, 185, 212, 0.25);
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-subtle);
     }
 
-    .brand-logo-glow {
-      width: 42px;
-      height: 42px;
-      border-radius: 14px;
-      background: linear-gradient(135deg, #0284c7 0%, #38bdf8 60%, #ffffff 130%);
+    .brand-logo-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: var(--text-primary);
+    }
+
+    .brand-icon-box {
+      width: 34px;
+      height: 34px;
+      background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+      border-radius: 8px;
       display: flex;
       align-items: center;
       justify-content: center;
       color: #ffffff;
-      font-size: 19px;
-      box-shadow: 4px 4px 12px rgba(2, 132, 199, 0.4), -2px -2px 8px #ffffff;
-      flex-shrink: 0;
-      animation: pulseBrand 3s infinite alternate ease-in-out;
-    }
-    @keyframes pulseBrand {
-      from { box-shadow: 4px 4px 12px rgba(2, 132, 199, 0.35), -2px -2px 8px #ffffff; }
-      to { box-shadow: 6px 6px 20px rgba(56, 189, 248, 0.6), -3px -3px 12px #ffffff; }
+      font-size: 17px;
     }
 
-    .brand-info {
-      display: flex;
-      flex-direction: column;
-      line-height: 1.25;
-    }
-    .brand-title {
-      font-size: 16px;
-      font-weight: 800;
-      color: var(--text-primary);
-      letter-spacing: -0.02em;
-    }
-    .brand-badge {
-      display: inline-flex;
-      align-items: center;
-      font-size: 10.5px;
+    .brand-title-group h1 {
+      font-size: 15px;
       font-weight: 700;
-      color: var(--primary);
-      margin-top: 2px;
-      font-family: var(--font-mono);
+      letter-spacing: -0.3px;
+      margin: 0;
+      line-height: 1.2;
+    }
+
+    .brand-title-group span {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      letter-spacing: 0.3px;
+      text-transform: uppercase;
     }
 
     .sidebar-menu {
       flex: 1;
-      padding: 16px 14px;
       overflow-y: auto;
+      padding: 14px 12px;
     }
+
     .menu-group-label {
-      font-size: 11px;
+      font-size: 10.5px;
       font-weight: 700;
-      letter-spacing: 0.08em;
       text-transform: uppercase;
+      letter-spacing: 0.8px;
       color: var(--text-muted);
-      padding: 12px 14px 6px;
+      padding: 12px 10px 6px;
     }
+
     .nav-item-btn {
+      width: 100%;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      width: 100%;
-      padding: 10.5px 14px;
-      margin-bottom: 5px;
+      gap: 10px;
+      padding: 9px 12px;
       border-radius: var(--radius-md);
       background: transparent;
       border: 1px solid transparent;
       color: var(--text-secondary);
       font-size: 13.5px;
-      font-weight: 600;
-      text-decoration: none;
-      transition: all 0.18s ease;
+      font-weight: 500;
       cursor: pointer;
-      position: relative;
-    }
-    .nav-item-btn:hover {
-      background: var(--bg-surface-elevated);
-      box-shadow: var(--neu-extruded-sm);
-      color: var(--primary);
-      transform: translateY(-1px);
-    }
-    .nav-item-btn.active {
-      background: linear-gradient(135deg, rgba(2, 132, 199, 0.14) 0%, rgba(56, 189, 248, 0.06) 100%);
-      box-shadow: var(--neu-inset-shadow);
-      color: var(--primary);
-      font-weight: 700;
-      border: 1px solid rgba(56, 189, 248, 0.35);
-    }
-    .nav-item-btn .nav-left {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .nav-item-btn i {
-      font-size: 15px;
-      width: 18px;
-      text-align: center;
-      transition: transform 0.18s ease;
-    }
-    .nav-item-btn:hover i {
-      transform: scale(1.15);
-    }
-    .nav-counter {
-      font-size: 11px;
-      font-weight: 700;
-      padding: 2.5px 8px;
-      border-radius: 9999px;
-      background: var(--bg-surface-elevated);
-      box-shadow: var(--neu-inset-shadow);
-      color: var(--text-secondary);
-      font-family: var(--font-mono);
-    }
-    .nav-counter.counter-danger {
-      background: var(--danger-bg);
-      color: var(--danger);
-      box-shadow: inset 1px 1px 3px rgba(225, 29, 72, 0.3);
+      text-align: left;
+      transition: background-color var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
+      margin-bottom: 3px;
+      text-decoration: none;
     }
 
-    /* Sidebar Footer Profile */
+    .nav-item-btn:hover {
+      background: var(--bg-card-hover);
+      color: var(--text-primary);
+    }
+
+    .nav-item-btn.active {
+      background: var(--primary-subtle);
+      border-color: var(--primary-border);
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .nav-item-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .nav-item-left i {
+      font-size: 15px;
+      width: 20px;
+      text-align: center;
+      opacity: 0.85;
+    }
+
+    .nav-badge {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: var(--radius-pill);
+      background: var(--bg-card);
+      border: 1px solid var(--border-default);
+      color: var(--text-secondary);
+    }
+
+    .nav-badge.danger {
+      background: var(--danger-subtle);
+      border-color: rgba(239, 68, 68, 0.3);
+      color: var(--danger);
+    }
+
+    .nav-badge.warning {
+      background: var(--warning-subtle);
+      border-color: rgba(245, 158, 11, 0.3);
+      color: var(--warning);
+    }
+
     .sidebar-footer {
       padding: 14px 16px;
-      border-top: 1px solid rgba(160, 185, 212, 0.25);
+      border-top: 1px solid var(--border-subtle);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 10px;
-      background: var(--bg-sidebar);
-    }
-    .admin-pill {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      overflow: hidden;
-    }
-    .admin-avatar {
-      width: 36px;
-      height: 36px;
-      border-radius: 11px;
-      background: var(--primary-gradient);
-      color: #ffffff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 800;
-      font-size: 13.5px;
-      flex-shrink: 0;
-      box-shadow: 2px 2px 8px rgba(2, 132, 199, 0.35);
-    }
-    .admin-meta {
-      display: flex;
-      flex-direction: column;
-      line-height: 1.25;
-      overflow: hidden;
-    }
-    .admin-name {
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--text-primary);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .admin-status {
-      font-size: 11px;
-      color: var(--success);
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      font-weight: 600;
-    }
-    .status-radar {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: var(--success);
-      box-shadow: 0 0 8px var(--success);
-      animation: radarPulse 1.8s infinite;
-    }
-    @keyframes radarPulse {
-      0% { transform: scale(0.95); opacity: 0.8; }
-      50% { transform: scale(1.25); opacity: 1; }
-      100% { transform: scale(0.95); opacity: 0.8; }
+      font-size: 12px;
+      color: var(--text-muted);
     }
 
-    /* =========================================================================
-       3. TOPBAR & SHELL CONTENT (NEUMORPHIC FROST)
-       ========================================================================= */
+    /* Main Content Area */
     .app-main {
-      flex: 1;
       margin-left: var(--sidebar-w);
-      min-width: 0;
+      flex: 1;
       display: flex;
       flex-direction: column;
+      min-width: 0;
     }
 
+    /* Top Bar */
     .app-topbar {
       height: var(--topbar-h);
       background: var(--bg-topbar);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--border-subtle);
       position: sticky;
       top: 0;
-      z-index: 1030;
-      padding: 0 30px;
+      z-index: 1000;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      padding: 0 24px;
     }
+
     .topbar-left {
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 16px;
     }
-    .mobile-menu-btn {
+
+    .sidebar-toggle-btn {
       display: none;
-      background: var(--bg-surface);
-      box-shadow: var(--neu-extruded-sm);
-      border: 1px solid var(--border-subtle);
+      background: transparent;
+      border: 1px solid var(--border-default);
       color: var(--text-primary);
-      width: 38px;
-      height: 38px;
+      width: 36px;
+      height: 36px;
       border-radius: var(--radius-md);
       align-items: center;
       justify-content: center;
       cursor: pointer;
     }
-    .breadcrumb-trail {
+
+    .breadcrumb-title {
+      font-size: 15px;
+      font-weight: 600;
       display: flex;
       align-items: center;
       gap: 8px;
-      font-size: 13.5px;
-    }
-    .breadcrumb-trail .crumb-root {
-      color: var(--text-muted);
-      font-weight: 600;
-    }
-    .breadcrumb-trail .crumb-sep {
-      color: var(--text-muted);
-      opacity: 0.4;
-    }
-    .breadcrumb-trail .crumb-active {
-      color: var(--text-primary);
-      font-weight: 800;
     }
 
-    .topbar-center {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .system-health-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 6px 14px;
-      border-radius: 9999px;
-      background: var(--bg-surface-elevated);
-      box-shadow: var(--neu-inset-shadow);
-      border: 1px solid var(--border-subtle);
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--text-secondary);
-    }
-    .system-health-pill .dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: var(--success);
-      box-shadow: 0 0 8px var(--success);
+    .breadcrumb-title span {
+      color: var(--text-muted);
+      font-weight: 400;
     }
 
     .topbar-right {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
     }
 
-    .s-action-btn {
-      width: 40px;
-      height: 40px;
-      border-radius: var(--radius-md);
+    .cmd-bar-trigger {
+      display: flex;
+      align-items: center;
+      gap: 10px;
       background: var(--bg-surface);
-      box-shadow: var(--neu-extruded-sm);
-      border: 1px solid var(--border-subtle);
+      border: 1px solid var(--border-default);
+      padding: 6px 12px;
+      border-radius: var(--radius-md);
+      color: var(--text-muted);
+      font-size: 13px;
+      cursor: pointer;
+      transition: border-color var(--transition-fast);
+    }
+
+    .cmd-bar-trigger:hover {
+      border-color: var(--border-strong);
       color: var(--text-secondary);
-      display: inline-flex;
+    }
+
+    .kbd-shortcut {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-default);
+      padding: 1px 6px;
+      border-radius: 4px;
+      color: var(--text-secondary);
+    }
+
+    .system-health-pill {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-family: var(--font-mono);
+      background: var(--bg-surface);
+      border: 1px solid var(--border-default);
+      padding: 6px 10px;
+      border-radius: var(--radius-pill);
+      color: var(--text-secondary);
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--success);
+      display: inline-block;
+    }
+
+    .topbar-btn {
+      width: 36px;
+      height: 36px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-default);
+      color: var(--text-secondary);
+      border-radius: var(--radius-md);
+      display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      transition: all 0.18s ease;
-      text-decoration: none;
-      font-size: 14.5px;
-    }
-    .s-action-btn:hover {
-      box-shadow: var(--neu-extruded);
-      color: var(--primary);
-      transform: translateY(-2px);
-    }
-    .s-action-btn:active {
-      box-shadow: var(--neu-inset-shadow);
-      transform: translateY(0);
-    }
-    .s-action-btn.btn-danger:hover {
-      background: var(--danger-bg);
-      color: var(--danger);
-      box-shadow: 2px 2px 8px rgba(225, 29, 72, 0.25);
+      transition: background-color var(--transition-fast), color var(--transition-fast);
     }
 
-    /* Content Body */
-    .app-content {
+    .topbar-btn:hover {
+      background: var(--bg-card-hover);
+      color: var(--text-primary);
+    }
+
+    .admin-profile-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 10px 4px 6px;
+      border-radius: var(--radius-pill);
+      background: var(--bg-surface);
+      border: 1px solid var(--border-default);
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .admin-avatar {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    /* Main Container */
+    .app-body {
+      padding: 24px;
       flex: 1;
-      padding: 30px 34px 52px;
-      min-width: 0;
     }
 
+    /* Tab Sections */
     .tab-section {
       display: none;
-      animation: tabFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
+
     .tab-section.active {
       display: block;
+      animation: fadeIn var(--transition-fast);
     }
-    @keyframes tabFadeIn {
-      from { opacity: 0; transform: translateY(8px); }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
     /* Page Header */
-    .page-header-row {
+    .section-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
       margin-bottom: 24px;
     }
-    .page-title {
-      font-size: 1.55rem;
-      font-weight: 800;
-      color: var(--text-primary);
-      letter-spacing: -0.025em;
-      line-height: 1.3;
+
+    .section-header-left h2 {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.4px;
       margin: 0;
     }
-    .page-subtitle {
-      font-size: 0.9rem;
+
+    .section-header-left p {
+      font-size: 13.5px;
       color: var(--text-secondary);
-      margin-top: 3px;
+      margin: 4px 0 0;
     }
 
-    /* =========================================================================
-       4. SIÊU THẺ KPI & PANELS (NEUMORPHIC BLUE EMBOSSED)
-       ========================================================================= */
-    .stat-card {
-      background: var(--bg-surface-card);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-lg);
-      padding: 22px 24px;
-      box-shadow: var(--neu-extruded);
-      transition: all 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+    .section-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* Clean Button Styles */
+    .btn-db {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 8px 14px;
+      font-size: 13.5px;
+      font-weight: 600;
+      border-radius: var(--radius-md);
+      border: 1px solid transparent;
       cursor: pointer;
-      position: relative;
-      overflow: hidden;
+      transition: background-color var(--transition-fast), border-color var(--transition-fast);
+      text-decoration: none;
     }
+
+    .btn-db-primary {
+      background: var(--primary);
+      color: #ffffff;
+    }
+    .btn-db-primary:hover {
+      background: var(--primary-hover);
+      color: #ffffff;
+    }
+
+    .btn-db-outline {
+      background: var(--bg-surface);
+      border-color: var(--border-default);
+      color: var(--text-primary);
+    }
+    .btn-db-outline:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--border-strong);
+      color: var(--text-primary);
+    }
+
+    .btn-db-danger {
+      background: var(--danger-subtle);
+      border-color: rgba(239, 68, 68, 0.3);
+      color: var(--danger);
+    }
+    .btn-db-danger:hover {
+      background: var(--danger);
+      color: #ffffff;
+    }
+
+    .btn-db-sm {
+      padding: 5px 10px;
+      font-size: 12.5px;
+      border-radius: var(--radius-sm);
+    }
+
+    /* Stat Cards Grid */
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .stat-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-lg);
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: border-color var(--transition-fast), transform var(--transition-fast);
+      cursor: pointer;
+    }
+
     .stat-card:hover {
-      transform: translateY(-4px);
-      box-shadow: var(--neu-extruded-hover);
-      border-color: rgba(56, 189, 248, 0.5);
+      border-color: var(--primary-border);
+      transform: translateY(-2px);
     }
-    .stat-card-header {
+
+    .stat-card-top {
       display: flex;
       align-items: center;
       justify-content: space-between;
       margin-bottom: 12px;
     }
-    .stat-label {
-      font-size: 0.82rem;
-      font-weight: 700;
+
+    .stat-card-title {
+      font-size: 13px;
+      font-weight: 500;
       color: var(--text-secondary);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
     }
-    .stat-icon-wrap {
-      width: 42px;
-      height: 42px;
-      border-radius: 12px;
+
+    .stat-card-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: var(--radius-md);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 16px;
-      box-shadow: var(--neu-inset-shadow);
-      border: 1px solid rgba(255, 255, 255, 0.7);
-    }
-    .stat-number {
-      font-size: 2.35rem;
-      font-weight: 800;
-      background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      line-height: 1.1;
-      letter-spacing: -0.03em;
-      margin-bottom: 6px;
-      font-family: var(--font-mono);
-    }
-    body.dark-mode .stat-number {
-      background: linear-gradient(135deg, #38bdf8 0%, #90e0ef 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-    .stat-footnote {
-      font-size: 0.82rem;
-      color: var(--text-muted);
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-weight: 500;
+      font-size: 14px;
     }
 
-    /* Glass Panels */
-    .glass-panel {
-      background: var(--bg-surface-card);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-xl);
+    .stat-card-value {
+      font-size: 26px;
+      font-weight: 700;
+      font-family: var(--font-sans);
+      letter-spacing: -0.5px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .stat-card-subtitle {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* Cards & Containers */
+    .db-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-lg);
       overflow: hidden;
       margin-bottom: 24px;
-      box-shadow: var(--neu-extruded);
-      transition: all 0.24s ease;
     }
-    .panel-header {
-      padding: 18px 24px;
-      border-bottom: 1px solid rgba(160, 185, 212, 0.22);
+
+    .db-card-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border-subtle);
       display: flex;
       align-items: center;
       justify-content: space-between;
       flex-wrap: wrap;
       gap: 12px;
-      background: transparent;
     }
-    .panel-title {
-      font-size: 1.02rem;
-      font-weight: 700;
-      color: var(--text-primary);
+
+    .db-card-title {
+      font-size: 15px;
+      font-weight: 600;
       margin: 0;
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
     }
 
-    /* =========================================================================
-       5. BẢNG DỮ LIỆU & BỘ LỌC (NEUMORPHIC CONTROLS)
-       ========================================================================= */
-    .filter-pills-bar {
+    .db-card-body {
+      padding: 20px;
+    }
+
+    /* Toolbar / Filters */
+    .filter-toolbar {
       display: flex;
       align-items: center;
-      gap: 10px;
+      justify-content: space-between;
       flex-wrap: wrap;
-    }
-    .filter-pill {
-      background: var(--bg-surface);
-      box-shadow: var(--neu-extruded-sm);
-      border: 1px solid var(--border-subtle);
-      color: var(--text-secondary);
-      border-radius: 9999px;
-      padding: 7px 16px;
-      font-size: 0.83rem;
-      font-weight: 600;
-      display: inline-flex;
-      align-items: center;
-      cursor: pointer;
-      transition: all 0.18s ease;
-      font-family: var(--font-sans);
-    }
-    .filter-pill:hover {
-      box-shadow: var(--neu-extruded);
-      color: var(--primary);
-      transform: translateY(-1px);
-    }
-    .filter-pill:active {
-      box-shadow: var(--neu-inset-shadow);
-      transform: translateY(0);
-    }
-    .filter-pill.active {
-      background: var(--primary-gradient);
-      box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.2), 0 4px 12px rgba(2, 132, 199, 0.35);
-      color: #ffffff;
-      border-color: rgba(255, 255, 255, 0.4);
-    }
-    .filter-pill .pill-badge {
-      font-size: 10.5px;
-      font-weight: 700;
-      padding: 2px 8px;
-      border-radius: 9999px;
-      background: rgba(160, 185, 212, 0.25);
-      color: var(--text-secondary);
-      margin-left: 6px;
-      font-family: var(--font-mono);
-    }
-    .filter-pill.active .pill-badge {
-      background: rgba(255, 255, 255, 0.25);
-      color: #ffffff;
+      gap: 12px;
+      margin-bottom: 16px;
     }
 
     .search-input-wrap {
       position: relative;
-      min-width: 270px;
+      min-width: 260px;
+      flex: 1;
+      max-width: 380px;
     }
+
     .search-input-wrap i {
       position: absolute;
+      left: 12px;
       top: 50%;
-      left: 14px;
       transform: translateY(-50%);
       color: var(--text-muted);
-      font-size: 14px;
-      pointer-events: none;
+      font-size: 13px;
     }
-    .search-input-wrap input,
-    .form-control,
-    .form-select {
+
+    .db-input {
       width: 100%;
-      padding: 9px 16px 9px 40px;
-      background: var(--bg-surface-elevated) !important;
-      box-shadow: var(--neu-inset-shadow) !important;
-      border: 1px solid var(--border-subtle) !important;
-      border-radius: var(--radius-md) !important;
-      color: var(--text-primary) !important;
-      font-size: 0.88rem;
+      background: var(--bg-input);
+      border: 1px solid var(--border-default);
+      color: var(--text-primary);
+      padding: 8px 12px 8px 34px;
+      border-radius: var(--radius-md);
+      font-size: 13.5px;
       outline: none;
-      transition: all 0.2s ease;
-    }
-    .search-input-wrap input:focus,
-    .form-control:focus,
-    .form-select:focus {
-      border-color: var(--border-focus) !important;
-      box-shadow: var(--neu-inset-shadow), 0 0 0 3px var(--primary-glow) !important;
+      transition: border-color var(--transition-fast);
     }
 
-    /* Buttons */
-    .btn-primary, .btn-submit-glow {
-      background: var(--primary-gradient) !important;
-      border: 1px solid rgba(255, 255, 255, 0.5) !important;
-      box-shadow: 4px 4px 14px rgba(2, 132, 199, 0.4), -2px -2px 8px rgba(255, 255, 255, 0.8) !important;
-      border-radius: var(--radius-md) !important;
-      color: #ffffff !important;
-      font-weight: 700 !important;
-      transition: all 0.2s ease;
-    }
-    .btn-primary:hover, .btn-submit-glow:hover {
-      transform: translateY(-2px);
-      box-shadow: 6px 6px 18px rgba(2, 132, 199, 0.5), -3px -3px 10px rgba(255, 255, 255, 0.9) !important;
-    }
-    .btn-primary:active, .btn-submit-glow:active {
-      transform: translateY(0);
-      box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.3) !important;
+    .db-input:focus {
+      border-color: var(--primary);
     }
 
-    /* Custom Tables */
-    .table-container {
-      width: 100%;
-      overflow-x: auto;
+    .filter-pills {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
     }
-    .custom-table {
-      width: 100%;
-      border-collapse: separate;
-      border-spacing: 0;
+
+    .filter-pill {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-default);
+      color: var(--text-secondary);
+      padding: 6px 12px;
+      border-radius: var(--radius-pill);
+      font-size: 12.5px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .filter-pill:hover {
+      background: var(--bg-card-hover);
       color: var(--text-primary);
     }
-    .custom-table th {
-      padding: 14px 20px;
-      font-size: 11.5px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.07em;
-      color: var(--text-secondary);
-      border-bottom: 1px solid rgba(160, 185, 212, 0.25);
-      background: rgba(226, 237, 247, 0.75);
-      white-space: nowrap;
-    }
-    .custom-table td {
-      padding: 16px 20px;
-      border-bottom: 1px solid rgba(160, 185, 212, 0.18);
-      vertical-align: middle;
-      font-size: 13.5px;
-      transition: background-color 0.15s ease;
-    }
-    .custom-table tr:hover td {
-      background: rgba(2, 132, 199, 0.04);
-    }
-    .custom-table tr:last-child td {
-      border-bottom: none;
+
+    .filter-pill.active {
+      background: var(--primary-subtle);
+      border-color: var(--primary-border);
+      color: var(--primary);
+      font-weight: 600;
     }
 
-    /* User Avatars */
-    .user-avatar-sm {
-      width: 40px;
-      height: 40px;
-      border-radius: 12px;
-      object-fit: cover;
-      box-shadow: var(--neu-extruded-sm);
-      border: 1px solid var(--border-subtle);
+    /* Data Tables */
+    .db-table-responsive {
+      overflow-x: auto;
+      border-radius: 0 0 var(--radius-lg) var(--radius-lg);
     }
-    .user-avatar-fallback {
-      width: 40px;
-      height: 40px;
-      border-radius: 12px;
-      background: var(--primary-gradient);
-      color: #ffffff;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 700;
+
+    .db-table {
+      width: 100%;
+      border-collapse: collapse;
       font-size: 13.5px;
-      box-shadow: 2px 2px 8px rgba(2, 132, 199, 0.3);
+      text-align: left;
+    }
+
+    .db-table th {
+      background: var(--bg-card);
+      color: var(--text-secondary);
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border-default);
+      white-space: nowrap;
+    }
+
+    .db-table td {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border-subtle);
+      vertical-align: middle;
+      color: var(--text-primary);
+    }
+
+    .db-table tbody tr {
+      transition: background-color var(--transition-fast);
+    }
+
+    .db-table tbody tr:hover {
+      background-color: var(--bg-card-hover);
+    }
+
+    .cell-user-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .user-avatar-img {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      object-fit: cover;
+      background: var(--bg-card);
+      border: 1px solid var(--border-default);
+      flex-shrink: 0;
+    }
+
+    .user-text-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .user-display-name {
+      font-weight: 600;
+      font-size: 13.5px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .user-handle {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
     }
 
     /* Status Badges */
-    .badge-status {
+    .status-badge {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      padding: 4px 12px;
-      border-radius: 9999px;
-      font-size: 12px;
-      font-weight: 600;
-    }
-    .badge-status-active {
-      background: var(--success-bg);
-      color: var(--success);
-      border: 1px solid rgba(16, 185, 129, 0.3);
-    }
-    .badge-status-banned {
-      background: var(--danger-bg);
-      color: var(--danger);
-      border: 1px solid rgba(244, 63, 94, 0.3);
-    }
-    .badge-soft {
+      gap: 5px;
+      padding: 3px 8px;
+      border-radius: var(--radius-pill);
       font-size: 11.5px;
       font-weight: 600;
-      padding: 3.5px 10px;
-      border-radius: 9999px;
+      white-space: nowrap;
+    }
+
+    .status-badge.verified {
+      background: rgba(16, 185, 129, 0.12);
+      color: #10b981;
+      border: 1px solid rgba(16, 185, 129, 0.25);
+    }
+
+    .status-badge.oa {
+      background: rgba(245, 158, 11, 0.12);
+      color: #f59e0b;
+      border: 1px solid rgba(245, 158, 11, 0.25);
+    }
+
+    .status-badge.banned {
+      background: rgba(239, 68, 68, 0.12);
+      color: #ef4444;
+      border: 1px solid rgba(239, 68, 68, 0.25);
+    }
+
+    .status-badge.admin {
+      background: rgba(139, 92, 246, 0.12);
+      color: #8b5cf6;
+      border: 1px solid rgba(139, 92, 246, 0.25);
+    }
+
+    .status-badge.active {
+      background: rgba(16, 185, 129, 0.12);
+      color: #10b981;
+    }
+
+    .status-badge.pending {
+      background: rgba(245, 158, 11, 0.12);
+      color: #f59e0b;
+      border: 1px solid rgba(245, 158, 11, 0.25);
+    }
+
+    /* Monospace ID Pill */
+    .id-pill {
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      color: var(--text-secondary);
+      background: var(--bg-card);
+      border: 1px solid var(--border-default);
+      padding: 2px 7px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
       display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .id-pill:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    /* Action Icon Buttons */
+    .action-btn-group {
+      display: flex;
       align-items: center;
       gap: 4px;
     }
-    .badge-soft-user {
-      background: rgba(148, 163, 184, 0.15);
-      color: var(--text-secondary);
-      border: 1px solid rgba(160, 185, 212, 0.3);
-    }
-    .badge-soft-admin {
-      background: var(--danger-bg);
-      color: var(--danger);
-      border: 1px solid rgba(244, 63, 94, 0.3);
-    }
-    .badge-soft-oa {
-      background: var(--warning-bg);
-      color: var(--warning);
-      border: 1px solid rgba(245, 158, 11, 0.3);
-    }
 
-    /* Action Ellipsis Button & Dropdown */
-    .action-ellipsis-btn {
-      width: 34px;
-      height: 34px;
+    .btn-icon {
+      width: 30px;
+      height: 30px;
       border-radius: var(--radius-sm);
-      background: var(--bg-surface);
-      box-shadow: var(--neu-extruded-sm);
-      border: 1px solid var(--border-subtle);
+      background: transparent;
+      border: 1px solid transparent;
       color: var(--text-secondary);
-      display: inline-flex;
+      display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      transition: all 0.15s ease;
-    }
-    .action-ellipsis-btn:hover {
-      box-shadow: var(--neu-extruded);
-      color: var(--primary);
-    }
-    .modern-dropdown-menu {
-      background: var(--bg-surface-card) !important;
-      backdrop-filter: blur(24px) saturate(180%);
-      -webkit-backdrop-filter: blur(24px) saturate(180%);
-      border: 1px solid var(--border-subtle) !important;
-      border-radius: var(--radius-md) !important;
-      box-shadow: var(--neu-extruded-hover) !important;
-      min-width: 210px;
-      padding: 8px;
-      z-index: 1060;
-    }
-    .modern-dropdown-menu .dropdown-item {
-      color: var(--text-primary);
       font-size: 13px;
-      font-weight: 500;
-      border-radius: 8px;
-      padding: 8px 12px;
-      display: flex;
-      align-items: center;
-      transition: all 0.12s ease;
-    }
-    .modern-dropdown-menu .dropdown-item:hover {
-      background: var(--bg-surface-elevated);
-      color: var(--primary);
-      box-shadow: var(--neu-extruded-sm);
+      transition: all var(--transition-fast);
     }
 
-    /* Auth Gate Overlay */
-    #auth-overlay {
+    .btn-icon:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--border-default);
+      color: var(--text-primary);
+    }
+
+    .btn-icon.danger:hover {
+      background: var(--danger-subtle);
+      border-color: rgba(239, 68, 68, 0.3);
+      color: var(--danger);
+    }
+
+    .btn-icon.success:hover {
+      background: var(--success-subtle);
+      border-color: rgba(16, 185, 129, 0.3);
+      color: var(--success);
+    }
+
+    /* Modal Overrides */
+    .modal-content {
+      background: var(--bg-surface) !important;
+      border: 1px solid var(--border-default) !important;
+      border-radius: var(--radius-lg) !important;
+      color: var(--text-primary) !important;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4) !important;
+    }
+
+    .modal-header {
+      border-bottom: 1px solid var(--border-subtle) !important;
+      padding: 16px 20px !important;
+    }
+
+    .modal-title {
+      font-size: 16px !important;
+      font-weight: 600 !important;
+      color: var(--text-primary) !important;
+    }
+
+    .modal-body {
+      padding: 20px !important;
+    }
+
+    .modal-footer {
+      border-top: 1px solid var(--border-subtle) !important;
+      padding: 14px 20px !important;
+    }
+
+    .btn-close {
+      filter: invert(1) grayscale(100%) brightness(200%);
+    }
+    html[data-theme="light"] .btn-close {
+      filter: none;
+    }
+
+    /* Command Palette Modal */
+    .cmd-palette-backdrop {
       position: fixed;
       inset: 0;
-      background: rgba(14, 42, 71, 0.55);
-      backdrop-filter: blur(20px);
-      z-index: 99999;
+      background: rgba(0, 0, 0, 0.65);
+      backdrop-filter: blur(4px);
+      z-index: 1060;
+      display: none;
+      align-items: flex-start;
+      justify-content: center;
+      padding-top: 15vh;
+    }
+
+    .cmd-palette-backdrop.show {
+      display: flex;
+    }
+
+    .cmd-palette-box {
+      width: 100%;
+      max-width: 580px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+      overflow: hidden;
+      animation: cmdSlideDown 0.15s ease;
+    }
+
+    @keyframes cmdSlideDown {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .cmd-input-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .cmd-input-row i {
+      color: var(--text-muted);
+      font-size: 16px;
+    }
+
+    .cmd-search-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text-primary);
+      font-size: 15px;
+    }
+
+    .cmd-results-list {
+      max-height: 340px;
+      overflow-y: auto;
+      padding: 8px;
+    }
+
+    .cmd-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      border-radius: var(--radius-md);
+      color: var(--text-secondary);
+      font-size: 13.5px;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .cmd-item:hover, .cmd-item.selected {
+      background: var(--bg-card-hover);
+      color: var(--text-primary);
+    }
+
+    .cmd-item-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .cmd-item-left i {
+      font-size: 14px;
+      width: 20px;
+      text-align: center;
+      color: var(--primary);
+    }
+
+    .cmd-palette-footer {
+      padding: 10px 16px;
+      border-top: 1px solid var(--border-subtle);
+      font-size: 11.5px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* Login Overlay */
+    .login-overlay {
+      position: fixed;
+      inset: 0;
+      background: var(--bg-canvas);
+      z-index: 2000;
       display: flex;
       align-items: center;
       justify-content: center;
       padding: 20px;
-      transition: opacity 0.3s ease, visibility 0.3s ease;
     }
-    .login-box-card {
+
+    .login-card {
       width: 100%;
-      max-width: 440px;
-      background: var(--bg-surface-card);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-xl);
-      padding: 42px 36px;
-      box-shadow: 16px 16px 36px var(--neu-shadow), -16px -16px 36px var(--neu-light);
-      text-align: center;
+      max-width: 420px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    }
+
+    .login-brand-icon {
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+
+    /* Broadcast Mobile Mockup */
+    .broadcast-container {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 24px;
+    }
+
+    @media (max-width: 991px) {
+      .broadcast-container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .mobile-mockup {
+      background: #000000;
+      border: 8px solid #27272a;
+      border-radius: 36px;
+      padding: 14px;
+      min-height: 540px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .mobile-notch {
+      width: 120px;
+      height: 18px;
+      background: #27272a;
+      border-radius: 0 0 12px 12px;
+      margin: 0 auto 20px;
+    }
+
+    .mobile-notif-card {
+      background: rgba(39, 39, 42, 0.85);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      padding: 12px 14px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #ffffff;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.4);
     }
 
     /* Responsive */
-    .sidebar-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.4);
-      backdrop-filter: blur(4px);
-      z-index: 1035;
-    }
-
     @media (max-width: 991px) {
       .app-sidebar {
         transform: translateX(-100%);
       }
-      .app-sidebar.open {
+      .app-sidebar.show {
         transform: translateX(0);
-      }
-      .sidebar-overlay.active {
-        display: block;
       }
       .app-main {
         margin-left: 0;
       }
-      .mobile-menu-btn {
+      .sidebar-toggle-btn {
         display: inline-flex;
       }
-      .app-content {
-        padding: 18px;
-      }
-      .topbar-center {
+      .cmd-bar-trigger {
         display: none;
       }
     }
@@ -938,694 +1135,790 @@ export function renderAdminPage(): string {
 </head>
 <body>
 
-  <!-- AUTH GATE OVERLAY -->
-  <div id="auth-overlay">
-    <div class="login-box-card">
-      <div class="brand-logo-glow mx-auto mb-3" style="width: 52px; height: 52px; font-size: 22px;">
-        <i class="fas fa-box-open"></i>
+  <!-- LOGIN OVERLAY -->
+  <div class="login-overlay" id="login-overlay">
+    <div class="login-card">
+      <div class="login-brand-icon">
+        <i class="fas fa-cube"></i>
       </div>
-      <h4 class="fw-bold mb-1" style="color: var(--text-primary);">Dorabox Admin Portal</h4>
-      <p class="small mb-4" style="color: var(--text-secondary);">Vui lòng nhập Admin Secret Key để mở khóa</p>
-      
-      <div class="mb-3 text-start">
-        <label class="form-label small fw-semibold" style="color: var(--text-secondary);">SECRET KEY</label>
-        <input type="password" id="admin-pass-input" class="form-control" placeholder="••••••••••••" autofocus style="background: var(--bg-surface-elevated); border: 1px solid var(--border-subtle); color: var(--text-primary); border-radius: 10px; padding: 10px 14px;">
+      <h2 style="font-size: 20px; font-weight: 700; margin-bottom: 6px;">Quản Trị Dorabox</h2>
+      <p style="font-size: 13.5px; color: var(--text-secondary); margin-bottom: 24px;">
+        Nhập khóa bảo mật Master Secret Key để truy cập hệ thống điều hành.
+      </p>
+
+      <form id="form-login" onsubmit="event.preventDefault(); doLogin();">
+        <div style="margin-bottom: 20px;">
+          <label style="font-size: 12.5px; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px; display: block;">
+            Master Secret Key
+          </label>
+          <div style="position: relative;">
+            <input type="password" id="input-admin-password" class="db-input" placeholder="••••••••••••••••" style="padding-left: 12px; font-family: var(--font-mono);" required autocomplete="current-password">
+          </div>
+        </div>
+
+        <button type="submit" id="btn-login-submit" class="btn-db btn-db-primary" style="width: 100%; padding: 10px;">
+          <i class="fas fa-lock-open me-1"></i> Xác Thực & Đăng Nhập
+        </button>
+
+        <div id="login-error-msg" style="margin-top: 14px; font-size: 12.5px; color: var(--danger); display: none; text-align: center;"></div>
+      </form>
+    </div>
+  </div>
+
+  <!-- COMMAND PALETTE (CTRL+K) -->
+  <div class="cmd-palette-backdrop" id="cmd-palette" onclick="if(event.target === this) closeCommandPalette();">
+    <div class="cmd-palette-box">
+      <div class="cmd-input-row">
+        <i class="fas fa-search"></i>
+        <input type="text" id="cmd-palette-input" class="cmd-search-input" placeholder="Gõ để tìm kiếm tính năng hoặc chuyển nhanh..." autocomplete="off">
+        <span class="kbd-shortcut">ESC</span>
       </div>
-      <button id="btn-unlock-gate" class="btn w-100 py-2.5 fw-bold" style="background: linear-gradient(135deg, #0284c7, #38bdf8); color: #fff; border: none; border-radius: 10px;">
-        <i class="fas fa-shield-halved me-1"></i> Mở Khóa Bảng Điều Khiển
-      </button>
+      <div class="cmd-results-list" id="cmd-results-list">
+        <!-- Rendered by JS -->
+      </div>
+      <div class="cmd-palette-footer">
+        <span>Điều hướng bằng phím mũi tên & Enter</span>
+        <span>Dorabox Quick Navigator</span>
+      </div>
     </div>
   </div>
 
   <!-- APP SHELL -->
-  <div class="app-shell">
-    <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleMobileSidebar()"></div>
-
-    <!-- App Sidebar -->
+  <div class="app-layout">
+    
+    <!-- SIDEBAR -->
     <aside class="app-sidebar" id="app-sidebar">
-      <!-- Brand Logo -->
-      <div class="sidebar-brand">
-        <div class="brand-logo-glow">
-          <i class="fas fa-box-open"></i>
-        </div>
-        <div class="brand-info">
-          <div class="brand-title">Dorabox Admin</div>
-          <div class="brand-badge"><i class="fas fa-bolt me-1"></i>v1.4.5 Pro</div>
-        </div>
+      <div class="brand-header">
+        <a href="javascript:void(0)" class="brand-logo-wrap" onclick="switchTab('tong-quan')">
+          <div class="brand-icon-box">
+            <i class="fas fa-cube"></i>
+          </div>
+          <div class="brand-title-group">
+            <h1>DORABOX</h1>
+            <span>Admin Console</span>
+          </div>
+        </a>
+        <button class="topbar-btn d-lg-none" onclick="toggleMobileSidebar()">
+          <i class="fas fa-times"></i>
+        </button>
       </div>
 
-      <!-- Navigation -->
-      <nav class="sidebar-menu">
-        <div class="menu-group-label">Quản Trị & Tổng Quan</div>
+      <div class="sidebar-menu">
+        <div class="menu-group-label">Tổng Quan</div>
         <button class="nav-item-btn active" data-tab="tong-quan" onclick="switchTab('tong-quan')">
-          <span class="nav-left"><i class="fas fa-chart-pie text-info"></i> Tổng Quan</span>
+          <div class="nav-item-left">
+            <i class="fas fa-chart-pie"></i>
+            <span>Tổng Quan</span>
+          </div>
         </button>
 
-        <div class="menu-group-label mt-2">Thành Viên & Cộng Đồng</div>
+        <div class="menu-group-label">Người Dùng & Tương Tác</div>
         <button class="nav-item-btn" data-tab="thanh-vien" onclick="switchTab('thanh-vien')">
-          <span class="nav-left"><i class="fas fa-users" style="color: #38bdf8;"></i> Thành Viên</span>
-          <span class="nav-counter" id="sidebar-user-badge">0</span>
-        </button>
-        <button class="nav-item-btn" data-tab="nhom-tro-chuyen" onclick="switchTab('nhom-tro-chuyen')">
-          <span class="nav-left"><i class="fas fa-users-rectangle" style="color: #818cf8;"></i> Nhóm Trò Chuyện</span>
-          <span class="nav-counter" id="sidebar-groups-badge">0</span>
+          <div class="nav-item-left">
+            <i class="fas fa-users"></i>
+            <span>Thành Viên</span>
+          </div>
+          <span class="nav-badge" id="badge-users-count">0</span>
         </button>
         <button class="nav-item-btn" data-tab="xet-duyet" onclick="switchTab('xet-duyet')">
-          <span class="nav-left"><i class="fas fa-certificate text-warning"></i> Xét Duyệt OA</span>
-          <span class="nav-counter" id="sidebar-request-badge" style="background: var(--warning-bg); color: var(--warning); display:none;">0</span>
+          <div class="nav-item-left">
+            <i class="fas fa-id-badge"></i>
+            <span>Duyệt Tích & OA</span>
+          </div>
+          <span class="nav-badge warning" id="badge-requests-count">0</span>
+        </button>
+        <button class="nav-item-btn" data-tab="nhom-tro-chuyen" onclick="switchTab('nhom-tro-chuyen')">
+          <div class="nav-item-left">
+            <i class="fas fa-comments"></i>
+            <span>Nhóm Trò Chuyện</span>
+          </div>
         </button>
         <button class="nav-item-btn" data-tab="ten-cam" onclick="switchTab('ten-cam')">
-          <span class="nav-left"><i class="fas fa-ban text-danger"></i> Tên Cấm / Bảo Lưu</span>
-          <span class="nav-counter counter-danger" id="sidebar-banned-badge">0</span>
+          <div class="nav-item-left">
+            <i class="fas fa-ban"></i>
+            <span>Tên Người Dùng Cấm</span>
+          </div>
         </button>
 
-        <div class="menu-group-label mt-2">Kiểm Duyệt Nội Dung</div>
-        <button class="nav-item-btn" data-tab="bao-cao" onclick="switchTab('bao-cao')">
-          <span class="nav-left"><i class="fas fa-triangle-exclamation text-danger"></i> Báo Cáo Vi Phạm</span>
-          <span class="nav-counter counter-danger" id="sidebar-report-badge">0</span>
-        </button>
+        <div class="menu-group-label">Nội Dung & Kiểm Duyệt</div>
         <button class="nav-item-btn" data-tab="bai-viet" onclick="switchTab('bai-viet')">
-          <span class="nav-left"><i class="fas fa-newspaper" style="color: #34d399;"></i> Bài Viết & Tin</span>
+          <div class="nav-item-left">
+            <i class="fas fa-newspaper"></i>
+            <span>Bài Viết Feed</span>
+          </div>
         </button>
         <button class="nav-item-btn" data-tab="binh-luan" onclick="switchTab('binh-luan')">
-          <span class="nav-left"><i class="fas fa-comments" style="color: #22d3ee;"></i> Bình Luận</span>
+          <div class="nav-item-left">
+            <i class="fas fa-comment-dots"></i>
+            <span>Bình Luận</span>
+          </div>
+        </button>
+        <button class="nav-item-btn" data-tab="bao-cao" onclick="switchTab('bao-cao')">
+          <div class="nav-item-left">
+            <i class="fas fa-flag"></i>
+            <span>Báo Cáo Vi Phạm</span>
+          </div>
+          <span class="nav-badge danger" id="badge-reports-count">0</span>
         </button>
 
-        <div class="menu-group-label mt-2">Kỹ Thuật & Hệ Thống</div>
+        <div class="menu-group-label">Hệ Thống & Truyền Thông</div>
         <button class="nav-item-btn" data-tab="phat-thong-bao" onclick="switchTab('phat-thong-bao')">
-          <span class="nav-left"><i class="fas fa-bullhorn" style="color: #c084fc;"></i> Phát Push FCM</span>
+          <div class="nav-item-left">
+            <i class="fas fa-paper-plane"></i>
+            <span>Phát Thông Báo FCM</span>
+          </div>
         </button>
         <button class="nav-item-btn" data-tab="bao-mat-audit" onclick="switchTab('bao-mat-audit')">
-          <span class="nav-left"><i class="fas fa-shield-halved" style="color: #94a3b8;"></i> Bảo Mật & Audit</span>
-        </button>
-      </nav>
-
-      <!-- Sidebar Footer -->
-      <div class="sidebar-footer">
-        <div class="admin-pill">
-          <div class="admin-avatar">AD</div>
-          <div class="admin-meta">
-            <div class="admin-name">SuperAdministrator</div>
-            <div class="admin-status">
-              <span class="status-radar"></span> Root Online
-            </div>
+          <div class="nav-item-left">
+            <i class="fas fa-shield-halved"></i>
+            <span>Bảo Mật & Audit</span>
           </div>
-        </div>
-        <button class="s-action-btn btn-danger" id="btn-logout" title="Đăng xuất">
-          <i class="fas fa-arrow-right-from-bracket"></i>
         </button>
+      </div>
+
+      <div class="sidebar-footer">
+        <div>v1.5.6 <span style="color: var(--success); font-weight: 600;">● Live</span></div>
+        <div style="font-family: var(--font-mono); font-size: 11px;">Production</div>
       </div>
     </aside>
 
-    <!-- App Main -->
-    <div class="app-main">
-      <!-- Topbar Header -->
+    <!-- MAIN BODY -->
+    <main class="app-main">
+      
+      <!-- TOPBAR -->
       <header class="app-topbar">
         <div class="topbar-left">
-          <button class="mobile-menu-btn" onclick="toggleMobileSidebar()">
+          <button class="sidebar-toggle-btn" onclick="toggleMobileSidebar()">
             <i class="fas fa-bars"></i>
           </button>
-          <div class="breadcrumb-trail">
-            <span class="crumb-root">Dorabox</span>
-            <span class="crumb-sep">/</span>
-            <span class="crumb-active" id="breadcrumb-title">Tổng Quan Hệ Thống</span>
-          </div>
-        </div>
-
-        <div class="topbar-center">
-          <div class="system-health-pill">
-            <span class="dot"></span>
-            <span>Supabase: Online</span>
-            <span style="opacity: 0.3;">•</span>
-            <span>Cloudflare R2: Active</span>
+          <div class="breadcrumb-title">
+            <span>Quản Trị</span>
+            <i class="fas fa-chevron-right" style="font-size: 10px; color: var(--text-muted);"></i>
+            <strong id="topbar-tab-title">Tổng Quan</strong>
           </div>
         </div>
 
         <div class="topbar-right">
-          <!-- Refresh -->
-          <button class="s-action-btn" id="btn-refresh-data" title="Làm mới dữ liệu">
-            <i class="fas fa-arrows-rotate"></i>
+          <!-- Quick search / command palette trigger -->
+          <div class="cmd-bar-trigger" onclick="openCommandPalette()">
+            <i class="fas fa-search"></i>
+            <span>Tìm nhanh tính năng...</span>
+            <span class="kbd-shortcut">Ctrl K</span>
+          </div>
+
+          <!-- Real-time Health Ping -->
+          <div class="system-health-pill" id="health-pill" title="Độ trễ API Server">
+            <span class="status-dot"></span>
+            <span id="health-latency">API: 24ms</span>
+          </div>
+
+          <!-- Theme Toggle -->
+          <button class="topbar-btn" id="btn-theme-toggle" onclick="toggleTheme()" title="Đổi giao diện Sáng / Tối">
+            <i class="fas fa-moon"></i>
           </button>
-          <!-- Dark / Light theme -->
-          <button class="s-action-btn" id="btn-toggle-dark-mode" title="Đổi giao diện Sáng / Tối">
-            <i class="fas fa-moon" id="theme-toggle-icon"></i>
+
+          <!-- Refresh Active Tab -->
+          <button class="topbar-btn" id="btn-refresh-active" onclick="refreshCurrentTab()" title="Làm mới dữ liệu">
+            <i class="fas fa-sync-alt" id="icon-refresh-spinner"></i>
           </button>
-          <!-- Fullscreen -->
-          <button class="s-action-btn d-none d-sm-inline-flex" id="btn-fullscreen" onclick="toggleFullscreen()" title="Toàn màn hình">
-            <i class="fas fa-expand"></i>
-          </button>
+
+          <!-- Profile / Logout -->
+          <div class="admin-profile-pill">
+            <div class="admin-avatar">AD</div>
+            <span style="font-weight: 600;">Admin</span>
+            <button class="btn-icon danger" onclick="doLogout()" title="Đăng xuất" style="margin-left: 2px;">
+              <i class="fas fa-arrow-right-from-bracket"></i>
+            </button>
+          </div>
         </div>
       </header>
 
-      <!-- Content Area -->
-      <main class="app-content">
-        <!-- Title & Subtitle Row -->
-        <div class="page-header-row">
-          <div>
-            <h4 class="page-title" id="topbar-title">Tổng Quan Hệ Thống</h4>
-            <div class="page-subtitle" id="topbar-subtitle">Chỉ số vận hành mạng xã hội Dorabox theo thời gian thực</div>
-          </div>
-        </div>
+      <!-- TAB SECTIONS CONTAINER -->
+      <div class="app-body">
 
-        <!-- =========================================================================
-             TAB 1: TỔNG QUAN (DASHBOARD)
-             ========================================================================= -->
-        <div id="tab-tong-quan" class="tab-section active">
-          <!-- 5 KPI Cards -->
-          <div class="row g-3 mb-4">
-            <div class="col-xl-3 col-md-6 col-12">
-              <div class="stat-card" onclick="switchTab('thanh-vien')">
-                <div class="stat-card-header">
-                  <span class="stat-label">Tổng Thành Viên</span>
-                  <div class="stat-icon-wrap" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8;">
-                    <i class="fas fa-users"></i>
-                  </div>
-                </div>
-                <div class="stat-number" id="kpi-users">0</div>
-                <div class="stat-footnote">
-                  <span class="fw-semibold" style="color: #38bdf8;" id="kpi-verified">0</span> đã cấp tích xanh
-                </div>
-              </div>
+        <!-- ============================================================== -->
+        <!-- TAB 1: TỔNG QUAN (OVERVIEW) -->
+        <!-- ============================================================== -->
+        <section id="tab-tong-quan" class="tab-section active">
+          <div class="section-header">
+            <div class="section-header-left">
+              <h2>Tổng Quan Hệ Thống</h2>
+              <p>Chỉ số hoạt động, kiểm duyệt và tài nguyên thời gian thực của Dorabox.</p>
             </div>
-
-            <div class="col-xl-3 col-md-6 col-12">
-              <div class="stat-card" onclick="switchTab('nhom-tro-chuyen')">
-                <div class="stat-card-header">
-                  <span class="stat-label">Nhóm Trò Chuyện</span>
-                  <div class="stat-icon-wrap" style="background: rgba(129, 140, 248, 0.15); color: #818cf8;">
-                    <i class="fas fa-users-rectangle"></i>
-                  </div>
-                </div>
-                <div class="stat-number" id="kpi-groups">0</div>
-                <div class="stat-footnote">
-                  <span class="fw-semibold" style="color: #818cf8;"><i class="fas fa-comments me-1"></i>Hoạt động cộng đồng</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="col-xl-3 col-md-6 col-12">
-              <div class="stat-card" onclick="switchTab('bai-viet')">
-                <div class="stat-card-header">
-                  <span class="stat-label">Bài Viết Bảng Tin</span>
-                  <div class="stat-icon-wrap" style="background: rgba(52, 211, 153, 0.15); color: #34d399;">
-                    <i class="fas fa-newspaper"></i>
-                  </div>
-                </div>
-                <div class="stat-number" id="kpi-posts">0</div>
-                <div class="stat-footnote">
-                  <span class="fw-semibold" style="color: #34d399;" id="kpi-comments">0</span> bình luận thảo luận
-                </div>
-              </div>
-            </div>
-
-            <div class="col-xl-3 col-md-6 col-12">
-              <div class="stat-card" onclick="switchTab('xet-duyet')">
-                <div class="stat-card-header">
-                  <span class="stat-label">Xét Duyệt OA</span>
-                  <div class="stat-icon-wrap" style="background: rgba(245, 158, 11, 0.15); color: #f59e0b;">
-                    <i class="fas fa-certificate"></i>
-                  </div>
-                </div>
-                <div class="stat-number" id="kpi-requests-pending">0</div>
-                <div class="stat-footnote">
-                  <span class="fw-semibold" style="color: #f59e0b;" id="kpi-oa-pending">0</span> hồ sơ cần duyệt
-                </div>
-              </div>
+            <div class="section-actions">
+              <button class="btn-db btn-db-primary btn-db-sm" onclick="switchTab('phat-thong-bao')">
+                <i class="fas fa-bullhorn"></i> Phát Thông Báo
+              </button>
+              <button class="btn-db btn-db-outline btn-db-sm" onclick="switchTab('xet-duyet')">
+                <i class="fas fa-clipboard-check"></i> Xử Lý Xét Duyệt
+              </button>
             </div>
           </div>
 
-          <!-- Charts Row -->
-          <div class="row g-3 mb-4">
+          <!-- KPI STAT CARDS -->
+          <div class="stat-grid">
+            <div class="stat-card" onclick="switchTab('thanh-vien')">
+              <div class="stat-card-top">
+                <span class="stat-card-title">Tổng Người Dùng</span>
+                <div class="stat-card-icon" style="background: var(--primary-subtle); color: var(--primary);">
+                  <i class="fas fa-users"></i>
+                </div>
+              </div>
+              <div class="stat-card-value" id="stat-total-users">-</div>
+              <div class="stat-card-subtitle" id="stat-verified-sub">- tài khoản tích xanh</div>
+            </div>
+
+            <div class="stat-card" onclick="switchTab('bai-viet')">
+              <div class="stat-card-top">
+                <span class="stat-card-title">Tổng Bài Viết</span>
+                <div class="stat-card-icon" style="background: var(--cyan-subtle); color: var(--cyan);">
+                  <i class="fas fa-newspaper"></i>
+                </div>
+              </div>
+              <div class="stat-card-value" id="stat-total-posts">-</div>
+              <div class="stat-card-subtitle" id="stat-comments-sub">- bình luận thảo luận</div>
+            </div>
+
+            <div class="stat-card" onclick="switchTab('xet-duyet')">
+              <div class="stat-card-top">
+                <span class="stat-card-title">Yêu Cầu Chờ Duyệt</span>
+                <div class="stat-card-icon" style="background: var(--warning-subtle); color: var(--warning);">
+                  <i class="fas fa-id-card"></i>
+                </div>
+              </div>
+              <div class="stat-card-value" id="stat-pending-requests" style="color: var(--warning);">-</div>
+              <div class="stat-card-subtitle" id="stat-oa-sub">- hồ sơ OA & Tích xanh</div>
+            </div>
+
+            <div class="stat-card" onclick="switchTab('bao-cao')">
+              <div class="stat-card-top">
+                <span class="stat-card-title">Báo Cáo Vi Phạm</span>
+                <div class="stat-card-icon" style="background: var(--danger-subtle); color: var(--danger);">
+                  <i class="fas fa-flag"></i>
+                </div>
+              </div>
+              <div class="stat-card-value" id="stat-pending-reports" style="color: var(--danger);">-</div>
+              <div class="stat-card-subtitle" id="stat-reports-resolved-sub">- đã xử lý</div>
+            </div>
+
+            <div class="stat-card" onclick="switchTab('nhom-tro-chuyen')">
+              <div class="stat-card-top">
+                <span class="stat-card-title">Nhóm Trò Chuyện</span>
+                <div class="stat-card-icon" style="background: var(--purple-subtle); color: var(--purple);">
+                  <i class="fas fa-comments"></i>
+                </div>
+              </div>
+              <div class="stat-card-value" id="stat-total-groups">-</div>
+              <div class="stat-card-subtitle">Nhóm cộng đồng hoạt động</div>
+            </div>
+          </div>
+
+          <!-- SYSTEM HEALTH & METRICS ROW -->
+          <div class="row g-3">
             <div class="col-lg-8">
-              <div class="glass-panel h-100 mb-0">
-                <div class="panel-header">
-                  <div class="panel-title"><i class="fas fa-chart-line text-info"></i> Tương Tác Bảng Tin & Hoạt Động</div>
-                  <span class="badge" style="background: var(--bg-surface-elevated); color: var(--text-secondary); border: 1px solid var(--border-subtle);">7 ngày qua</span>
+              <div class="db-card">
+                <div class="db-card-header">
+                  <h3 class="db-card-title"><i class="fas fa-chart-line text-primary"></i> Tăng Trưởng & Tương Tác</h3>
+                  <span class="badge bg-secondary" style="font-size: 11px;">30 Ngày Gần Nhất</span>
                 </div>
-                <div class="p-3" style="height: 270px;">
-                  <canvas id="growthChart"></canvas>
+                <div class="db-card-body">
+                  <div style="height: 280px; position: relative;">
+                    <canvas id="overviewGrowthChart"></canvas>
+                  </div>
                 </div>
               </div>
             </div>
 
             <div class="col-lg-4">
-              <div class="glass-panel h-100 mb-0">
-                <div class="panel-header">
-                  <div class="panel-title"><i class="fas fa-chart-pie" style="color: #c084fc;"></i> Phân Bổ Thành Viên</div>
-                  <span class="badge" style="background: var(--bg-surface-elevated); color: var(--text-secondary); border: 1px solid var(--border-subtle);">Cơ cấu</span>
+              <div class="db-card">
+                <div class="db-card-header">
+                  <h3 class="db-card-title"><i class="fas fa-server text-success"></i> Máy Chủ & Cơ Sở Dữ Liệu</h3>
+                  <button class="btn-db btn-db-outline btn-db-sm" onclick="fetchSystemHealth(true)">Kiểm Tra</button>
                 </div>
-                <div class="p-3" style="height: 270px;">
-                  <canvas id="distributionChart"></canvas>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Quick Actions Command Bar -->
-          <div class="glass-panel p-3">
-            <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
-              <div>
-                <div class="fw-bold fs-6" style="color: var(--text-primary);"><i class="fas fa-bolt text-warning me-2"></i>Thao tác điều hành nhanh</div>
-                <div class="small" style="color: var(--text-secondary);">Phím tắt cho các tác vụ quản trị thường nhật</div>
-              </div>
-              <div class="d-flex flex-wrap gap-2">
-                <button class="filter-pill" onclick="switchTab('phat-thong-bao')">
-                  <i class="fas fa-bullhorn me-1" style="color: #c084fc;"></i> Phát Push FCM
-                </button>
-                <button class="filter-pill" onclick="cleanSpamReactions()">
-                  <i class="fas fa-broom text-warning me-1"></i> Dọn Rác Spam
-                </button>
-                <button class="filter-pill" onclick="switchTab('xet-duyet')">
-                  <i class="fas fa-certificate text-warning me-1"></i> Xét Duyệt OA
-                </button>
-                <button class="filter-pill" onclick="switchTab('ten-cam')">
-                  <i class="fas fa-ban text-danger me-1"></i> Thêm Tên Cấm
-                </button>
-                <button class="filter-pill" onclick="switchTab('bao-mat-audit')">
-                  <i class="fas fa-shield-halved text-info me-1"></i> Kiểm Tra An Ninh
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- =========================================================================
-             TAB 2: THÀNH VIÊN (USERS)
-             ========================================================================= -->
-        <div id="tab-thanh-vien" class="tab-section">
-          <div class="glass-panel">
-            <div class="panel-header">
-              <div class="filter-pills-bar" id="user-filter-pills">
-                <button type="button" class="filter-pill active" data-filter="all">
-                  Tất cả <span class="pill-badge" id="filter-count-all">0</span>
-                </button>
-                <button type="button" class="filter-pill" data-filter="oa">
-                  <i class="fas fa-certificate text-warning me-1"></i> Official Account <span class="pill-badge" id="filter-count-oa">0</span>
-                </button>
-                <button type="button" class="filter-pill" data-filter="verified">
-                  <i class="fas fa-circle-check text-info me-1"></i> Tích xanh <span class="pill-badge" id="filter-count-verified">0</span>
-                </button>
-                <button type="button" class="filter-pill" data-filter="admin">
-                  <i class="fas fa-shield text-danger me-1"></i> Quản trị viên <span class="pill-badge" id="filter-count-admin">0</span>
-                </button>
-                <button type="button" class="filter-pill" data-filter="banned">
-                  <i class="fas fa-ban text-danger me-1"></i> Đã khóa <span class="pill-badge" id="filter-count-banned">0</span>
-                </button>
-              </div>
-              <div class="search-input-wrap">
-                <i class="fas fa-search"></i>
-                <input type="text" id="user-search-input" placeholder="Tìm theo tên, @username, UID...">
-              </div>
-            </div>
-
-            <div class="table-container" style="min-height: 280px;">
-              <table class="custom-table">
-                <thead>
-                  <tr>
-                    <th style="padding-left: 20px;">Thành Viên</th>
-                    <th>Vai Trò</th>
-                    <th>Trạng Thái</th>
-                    <th>Ngày Tham Gia</th>
-                    <th style="text-align: right; padding-right: 20px;">Thao Tác</th>
-                  </tr>
-                </thead>
-                <tbody id="users-table-body">
-                  <tr><td colspan="5" class="text-center py-5" style="color: var(--text-muted);">Đang tải danh sách thành viên...</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-
-        <!-- =========================================================================
-             TAB 3: XÉT DUYỆT & YÊU CẦU (OA)
-             ========================================================================= -->
-        <div id="tab-xet-duyet" class="tab-section">
-          <div class="glass-panel">
-            <div class="panel-header flex-wrap gap-2">
-              <div class="d-flex align-items-center gap-2">
-                <div class="panel-title"><i class="fas fa-certificate text-warning"></i> Hàng Đợi Xét Duyệt & Yêu Cầu Người Dùng</div>
-                <span class="badge" style="background: var(--warning-bg); color: var(--warning); border: 1px solid rgba(245, 158, 11, 0.4);" id="requests-pending-count">0 Chờ duyệt</span>
-              </div>
-              <div class="d-flex align-items-center gap-2">
-                <div class="filter-pills-bar" id="request-filter-group">
-                  <button type="button" class="filter-pill active" onclick="filterRequests('all')">Tất cả</button>
-                  <button type="button" class="filter-pill" onclick="filterRequests('verified')">Tích Xanh ✓</button>
-                  <button type="button" class="filter-pill" onclick="filterRequests('oa')">Tích Vàng OA ⭐</button>
-                  <button type="button" class="filter-pill" onclick="filterRequests('oa_update')">Đổi thông tin OA</button>
-                </div>
-                <button class="s-action-btn" onclick="fetchRequests(true)" title="Làm mới">
-                  <i class="fas fa-arrows-rotate"></i>
-                </button>
-              </div>
-            </div>
-            <div class="p-3">
-              <div id="requests-container">
-                <div class="text-center py-5" style="color: var(--text-muted);">Đang tải danh sách hồ sơ xét duyệt...</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- =========================================================================
-             TAB 4: BÀI VIẾT & TIN
-             ========================================================================= -->
-        <div id="tab-bai-viet" class="tab-section">
-          <div class="glass-panel">
-            <div class="panel-header">
-              <div class="panel-title"><i class="fas fa-newspaper" style="color: #34d399;"></i> Quản Lý Bảng Tin & Bài Viết</div>
-              <div class="search-input-wrap">
-                <i class="fas fa-search"></i>
-                <input type="text" id="post-search-input" placeholder="Tìm kiếm nội dung bài viết...">
-              </div>
-            </div>
-            <div class="table-container">
-              <table class="custom-table">
-                <thead>
-                  <tr>
-                    <th style="padding-left: 20px;">Tác Giả</th>
-                    <th style="max-width: 340px;">Nội Dung</th>
-                    <th>Hình Ảnh</th>
-                    <th>Tương Tác</th>
-                    <th>Ghim</th>
-                    <th>Thời Gian</th>
-                    <th style="text-align: right; padding-right: 20px;">Hành Động</th>
-                  </tr>
-                </thead>
-                <tbody id="posts-table-body">
-                  <tr><td colspan="7" class="text-center py-5" style="color: var(--text-muted);">Đang tải danh sách bài viết...</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-
-        <!-- =========================================================================
-             TAB 5: BÌNH LUẬN
-             ========================================================================= -->
-        <div id="tab-binh-luan" class="tab-section">
-          <div class="glass-panel">
-            <div class="panel-header">
-              <div class="panel-title"><i class="fas fa-comments" style="color: #22d3ee;"></i> Quản Lý Bình Luận Thảo Luận</div>
-              <div class="search-input-wrap">
-                <i class="fas fa-search"></i>
-                <input type="text" id="comment-search-input" placeholder="Tìm nội dung bình luận...">
-              </div>
-            </div>
-            <div class="table-container">
-              <table class="custom-table">
-                <thead>
-                  <tr>
-                    <th style="padding-left: 20px;">Người Bình Luận</th>
-                    <th>Nội Dung</th>
-                    <th>Bài Viết Liên Quan</th>
-                    <th>Thời Gian</th>
-                    <th style="text-align: right; padding-right: 20px;">Thao Tác</th>
-                  </tr>
-                </thead>
-                <tbody id="comments-table-body">
-                  <tr><td colspan="5" class="text-center py-5" style="color: var(--text-muted);">Đang tải danh sách bình luận...</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-
-        <!-- =========================================================================
-             TAB 6: BÁO CÁO VI PHẠM
-             ========================================================================= -->
-        <div id="tab-bao-cao" class="tab-section">
-          <div class="glass-panel">
-            <div class="panel-header flex-wrap gap-2">
-              <div class="d-flex align-items-center gap-2">
-                <div class="panel-title"><i class="fas fa-triangle-exclamation text-danger"></i> Kiểm Duyệt & Báo Cáo Vi Phạm</div>
-                <span class="badge" style="background: var(--danger-bg); color: var(--danger); border: 1px solid rgba(244, 63, 94, 0.4);" id="reports-pending-count">0 Chờ xử lý</span>
-              </div>
-              <div class="d-flex align-items-center gap-2">
-                <div class="filter-pills-bar" id="report-filter-group">
-                  <button type="button" class="filter-pill active" onclick="filterReports('all')">Tất cả</button>
-                  <button type="button" class="filter-pill" onclick="filterReports('post')">Bài viết</button>
-                  <button type="button" class="filter-pill" onclick="filterReports('comment')">Bình luận</button>
-                  <button type="button" class="filter-pill" onclick="filterReports('user')">Tài khoản</button>
-                </div>
-                <button class="s-action-btn" onclick="fetchReports(true)" title="Làm mới">
-                  <i class="fas fa-arrows-rotate"></i>
-                </button>
-              </div>
-            </div>
-            <div class="table-container">
-              <table class="custom-table">
-                <thead>
-                  <tr>
-                    <th style="padding-left: 20px;">Người Báo Cáo</th>
-                    <th style="min-width: 280px;">Đối Tượng & Nội Dung Bị Tố Cáo</th>
-                    <th>Lý Do Vi Phạm</th>
-                    <th>Trạng Thái</th>
-                    <th>Thời Gian</th>
-                    <th style="text-align: right; padding-right: 20px;">Phán Quyết</th>
-                  </tr>
-                </thead>
-                <tbody id="reports-table-body">
-                  <tr><td colspan="6" class="text-center py-5" style="color: var(--text-muted);">Đang tải danh sách báo cáo vi phạm...</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-
-        <!-- =========================================================================
-             TAB 7: PHÁT PUSH FCM
-             ========================================================================= -->
-        <div id="tab-phat-thong-bao" class="tab-section">
-          <div class="row g-4">
-            <div class="col-lg-7">
-              <div class="glass-panel">
-                <div class="panel-header">
-                  <div class="panel-title"><i class="fas fa-bullhorn" style="color: #c084fc;"></i> Soạn Thảo Push Notification FCM</div>
-                </div>
-                <div class="p-4">
-                  <div class="mb-3">
-                    <label class="form-label fw-bold small text-uppercase" style="color: var(--text-secondary);">Tiêu đề thông báo <span class="text-danger">*</span></label>
-                    <input type="text" id="broadcast-title-input" class="form-control" placeholder="Ví dụ: 🚀 Dorabox Cập Nhật v1.4.5!" style="background: var(--bg-surface-elevated); border: 1px solid var(--border-subtle); color: var(--text-primary); border-radius: 10px;">
-                  </div>
-
-                  <div class="mb-3">
-                    <label class="form-label fw-bold small text-uppercase" style="color: var(--text-secondary);">Nội dung chi tiết <span class="text-danger">*</span></label>
-                    <textarea id="broadcast-body-input" rows="5" class="form-control" placeholder="Nhập nội dung thông báo gửi tới tất cả người dùng ứng dụng..." style="background: var(--bg-surface-elevated); border: 1px solid var(--border-subtle); color: var(--text-primary); border-radius: 10px;"></textarea>
-                  </div>
-
-                  <div class="mb-3">
-                    <label class="form-label fw-bold small text-uppercase" style="color: var(--text-secondary);">Đường dẫn điều hướng (Deep-link tùy chọn)</label>
-                    <input type="text" id="broadcast-link-input" class="form-control font-mono" placeholder="https://dorabox.app hoặc dorabox://update" style="background: var(--bg-surface-elevated); border: 1px solid var(--border-subtle); color: var(--text-primary); border-radius: 10px;">
-                  </div>
-
-                  <div class="p-3 mb-4 rounded-3" style="background: var(--primary-glow); border: 1px solid rgba(56, 189, 248, 0.3); color: var(--primary-light); font-size: 13px;">
-                    <i class="fas fa-info-circle me-1"></i> Thông báo này sẽ được phát qua <strong>Firebase Cloud Messaging v1 (FCM)</strong> đồng thời ghi trực tiếp vào Hộp thông báo của tất cả thành viên.
-                  </div>
-
-                  <button id="btn-send-broadcast" class="btn w-100 py-2.5 fw-bold" style="background: linear-gradient(135deg, #0284c7, #38bdf8); color: #fff; border: none; border-radius: 10px;">
-                    <i class="fas fa-paper-plane me-1"></i> Bắt Đầu Phát Sóng Toàn Hệ Thống
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <div class="col-lg-5">
-              <div class="glass-panel text-center">
-                <div class="panel-header justify-content-center">
-                  <div class="panel-title"><i class="fas fa-mobile-screen text-info"></i> Mô Phỏng Hiển Thị Mobile</div>
-                </div>
-                <div class="p-4">
-                  <div style="width: 290px; margin: 0 auto; background: #070a12; border: 8px solid #1e293b; border-radius: 36px; padding: 18px 12px; box-shadow: 0 20px 50px rgba(0,0,0,0.5);">
-                    <div style="width: 80px; height: 14px; background: #1e293b; border-radius: 0 0 10px 10px; margin: -18px auto 14px;"></div>
-                    <div class="text-start p-3 rounded-3" style="background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.1);">
-                      <div class="d-flex align-items-center justify-content-between mb-1">
-                        <div class="d-flex align-items-center gap-2">
-                          <div class="brand-logo-glow" style="width: 18px; height: 18px; font-size: 9px;">
-                            <i class="fas fa-box-open"></i>
-                          </div>
-                          <span class="fw-bold small" style="color: #ffffff; font-size: 11px;">DORABOX</span>
-                        </div>
-                        <span style="color: #94a3b8; font-size: 10px;" id="preview-notif-time">Vừa xong</span>
+                <div class="db-card-body">
+                  <div style="display: flex; flex-direction: column; gap: 14px;">
+                    <div>
+                      <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px;">
+                        <span style="color: var(--text-secondary);">Supabase Database</span>
+                        <strong id="health-db-status" style="color: var(--success);">Đang Kết Nối</strong>
                       </div>
-                      <div class="fw-bold text-truncate" id="preview-notif-title" style="color: #ffffff; font-size: 13px;">Tiêu đề thông báo mẫu</div>
-                      <div class="small text-break mt-1" id="preview-notif-body" style="color: #cbd5e1; font-size: 11.5px; line-height: 1.35;">Nội dung thông báo sẽ xuất hiện ở đây khi bạn nhập văn bản.</div>
+                      <div style="font-size: 11.5px; color: var(--text-muted); font-family: var(--font-mono);" id="health-db-latency">Latency: ~25ms</div>
+                    </div>
+
+                    <div style="border-top: 1px solid var(--border-subtle); padding-top: 10px;">
+                      <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px;">
+                        <span style="color: var(--text-secondary);">Node.js Runtime</span>
+                        <strong id="health-node-version" style="font-family: var(--font-mono);">-</strong>
+                      </div>
+                      <div style="font-size: 11.5px; color: var(--text-muted);" id="health-uptime">Uptime: -</div>
+                    </div>
+
+                    <div style="border-top: 1px solid var(--border-subtle); padding-top: 10px;">
+                      <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px;">
+                        <span style="color: var(--text-secondary);">RAM Bộ Nhớ Heap</span>
+                        <strong id="health-memory-usage" style="font-family: var(--font-mono);">-</strong>
+                      </div>
+                      <div class="progress" style="height: 6px; background: var(--bg-card);">
+                        <div class="progress-bar bg-primary" id="health-memory-bar" style="width: 35%;"></div>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
+        </section>
 
-        <!-- =========================================================================
-             TAB 8: BẢO MẬT & AUDIT LOGS
-             ========================================================================= -->
-        <div id="tab-bao-mat-audit" class="tab-section">
-          <div class="glass-panel">
-            <div class="panel-header">
-              <div class="panel-title"><i class="fas fa-shield-halved" style="color: #38bdf8;"></i> Nhật Ký An Ninh & Khiên Chống Spam</div>
-              <button class="filter-pill" onclick="cleanSpamReactions()">
-                <i class="fas fa-broom text-warning me-1"></i> Dọn Rác Spam Phản Ứng
+        <!-- ============================================================== -->
+        <!-- TAB 2: THÀNH VIÊN (USERS) -->
+        <!-- ============================================================== -->
+        <section id="tab-thanh-vien" class="tab-section">
+          <div class="section-header">
+            <div class="section-header-left">
+              <h2>Quản Lý Thành Viên</h2>
+              <p>Tra cứu hồ sơ, phân quyền, cấp tích xanh, tích OA hoặc xử phạt tài khoản.</p>
+            </div>
+            <div class="section-actions">
+              <button class="btn-db btn-db-outline btn-db-sm" onclick="fetchUsers(true)">
+                <i class="fas fa-sync-alt"></i> Làm Mới
               </button>
             </div>
-            <div class="table-container">
-              <table class="custom-table">
+          </div>
+
+          <div class="db-card">
+            <div class="db-card-header">
+              <div class="filter-toolbar w-100 m-0">
+                <div class="search-input-wrap">
+                  <i class="fas fa-search"></i>
+                  <input type="text" id="users-search-input" class="db-input" placeholder="Tìm theo username hoặc tên..." oninput="onSearchUsersDebounced()">
+                </div>
+                <div class="filter-pills" id="users-filter-pills">
+                  <button class="filter-pill active" data-filter="all" onclick="setUserFilter('all')">Tất Cả</button>
+                  <button class="filter-pill" data-filter="verified" onclick="setUserFilter('verified')">Tích Xanh ✓</button>
+                  <button class="filter-pill" data-filter="oa" onclick="setUserFilter('oa')">Doanh Nghiệp OA ⭐</button>
+                  <button class="filter-pill" data-filter="banned" onclick="setUserFilter('banned')">Bị Khóa 🔒</button>
+                  <button class="filter-pill" data-filter="admin" onclick="setUserFilter('admin')">Quản Trị Viên 🛡️</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="db-table-responsive">
+              <table class="db-table">
                 <thead>
                   <tr>
-                    <th style="padding-left: 20px;">Sự Kiện</th>
-                    <th>Tác Nhân (Admin/User)</th>
-                    <th>Chi Tiết & Tham Số</th>
-                    <th>Địa Chỉ IP</th>
-                    <th style="text-align: right; padding-right: 20px;">Thời Gian</th>
+                    <th>Thành Viên</th>
+                    <th>User ID</th>
+                    <th>Trạng Thái</th>
+                    <th>Vai Trò</th>
+                    <th>Ngày Tạo</th>
+                    <th style="text-align: right;">Thao Tác</th>
                   </tr>
                 </thead>
-                <tbody id="audit-table-body">
-                  <tr><td colspan="5" class="text-center py-5" style="color: var(--text-muted);">Đang tải nhật ký kiểm toán...</td></tr>
+                <tbody id="users-table-body">
+                  <tr><td colspan="6" style="text-align: center; padding: 40px; color: var(--text-muted);">Đang tải danh sách...</td></tr>
                 </tbody>
               </table>
             </div>
           </div>
-        </div>
+        </section>
 
-        <!-- =========================================================================
-             TAB 9: NHÓM TRÒ CHUYỆN (GROUP CHATS)
-             ========================================================================= -->
-        <div id="tab-nhom-tro-chuyen" class="tab-section">
-          <div class="glass-panel">
-            <div class="panel-header d-flex flex-wrap align-items-center justify-content-between gap-3">
-              <div class="d-flex align-items-center gap-2">
-                <span class="panel-title"><i class="fas fa-users-rectangle" style="color: #818cf8;"></i> Danh Sách Nhóm Trò Chuyện</span>
-                <span class="badge" style="background: var(--primary-glow); color: var(--primary-light); border: 1px solid rgba(56, 189, 248, 0.3);" id="groups-total-badge">0 nhóm</span>
-              </div>
-              <div class="d-flex align-items-center gap-2 flex-grow-1 justify-content-end" style="max-width: 480px;">
-                <div class="search-input-wrap flex-grow-1">
-                  <i class="fas fa-search"></i>
-                  <input type="text" id="groups-search-input" placeholder="Tìm theo tên nhóm..." onkeyup="handleGroupsSearch(event)">
-                </div>
-                <button class="s-action-btn" onclick="loadGroups(1)" title="Làm mới">
-                  <i class="fas fa-arrows-rotate"></i>
-                </button>
+        <!-- ============================================================== -->
+        <!-- TAB 3: XÉT DUYỆT & YÊU CẦU (REQUESTS) -->
+        <!-- ============================================================== -->
+        <section id="tab-xet-duyet" class="tab-section">
+          <div class="section-header">
+            <div class="section-header-left">
+              <h2>Hàng Đợi Xét Duyệt & Yêu Cầu</h2>
+              <p>Phê duyệt hồ sơ cấp Tích Xanh cá nhân, Tích Vàng OA và đề xuất cập nhật thông tin thương hiệu.</p>
+            </div>
+            <div class="section-actions">
+              <button class="btn-db btn-db-outline btn-db-sm" onclick="fetchRequests(true)">
+                <i class="fas fa-sync-alt"></i> Làm Mới
+              </button>
+            </div>
+          </div>
+
+          <div class="db-card">
+            <div class="db-card-header">
+              <div class="filter-pills">
+                <button class="filter-pill active" id="pill-req-all" onclick="filterRequests('all')">Tất Cả</button>
+                <button class="filter-pill" id="pill-req-verified" onclick="filterRequests('verified')">Tích Xanh Cá Nhân</button>
+                <button class="filter-pill" id="pill-req-oa" onclick="filterRequests('oa')">Tích Vàng Doanh Nghiệp (OA)</button>
               </div>
             </div>
 
-            <div class="table-container">
-              <table class="custom-table">
+            <div class="db-card-body" id="requests-container">
+              <div style="text-align: center; padding: 40px; color: var(--text-muted);">Đang tải hàng đợi...</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============================================================== -->
+        <!-- TAB 4: NHÓM TRÒ CHUYỆN (GROUPS) -->
+        <!-- ============================================================== -->
+        <section id="tab-nhom-tro-chuyen" class="tab-section">
+          <div class="section-header">
+            <div class="section-header-left">
+              <h2>Quản Lý Nhóm Trò Chuyện</h2>
+              <p>Giám sát các nhóm chat cộng đồng, số lượng thành viên và xử lý giải tán nhóm vi phạm.</p>
+            </div>
+            <div class="section-actions">
+              <button class="btn-db btn-db-outline btn-db-sm" onclick="fetchGroups(1, true)">
+                <i class="fas fa-sync-alt"></i> Làm Mới
+              </button>
+            </div>
+          </div>
+
+          <div class="db-card">
+            <div class="db-card-header">
+              <div class="search-input-wrap">
+                <i class="fas fa-search"></i>
+                <input type="text" id="groups-search-input" class="db-input" placeholder="Tìm theo tên nhóm..." oninput="onSearchGroupsDebounced()">
+              </div>
+            </div>
+
+            <div class="db-table-responsive">
+              <table class="db-table">
                 <thead>
                   <tr>
-                    <th style="min-width: 240px; padding-left: 20px;">Tên Nhóm</th>
-                    <th style="min-width: 200px;">Trưởng Nhóm</th>
-                    <th style="width: 140px;" class="text-center">Thành Viên</th>
-                    <th style="min-width: 220px;">Tin Nhắn Gần Nhất</th>
-                    <th style="width: 160px;">Thời Gian</th>
-                    <th style="width: 170px; text-align: right; padding-right: 20px;">Hành Động</th>
+                    <th>Tên Nhóm</th>
+                    <th>ID Nhóm</th>
+                    <th>Thành Viên</th>
+                    <th>Ngày Tạo</th>
+                    <th style="text-align: right;">Thao Tác</th>
                   </tr>
                 </thead>
                 <tbody id="groups-table-body">
-                  <tr>
-                    <td colspan="6" class="text-center py-5" style="color: var(--text-muted);">
-                      Đang tải dữ liệu nhóm trò chuyện...
-                    </td>
-                  </tr>
+                  <tr><td colspan="5" style="text-align: center; padding: 40px; color: var(--text-muted);">Đang tải danh sách nhóm...</td></tr>
                 </tbody>
               </table>
             </div>
 
-            <div class="p-3 d-flex align-items-center justify-content-between" id="groups-pagination" style="border-top: 1px solid var(--border-subtle);">
-              <!-- Phân trang render động -->
+            <div class="db-card-header" style="border-top: 1px solid var(--border-subtle); border-bottom: none;">
+              <span id="groups-pagination-info" style="font-size: 13px; color: var(--text-secondary);">-</span>
+              <div style="display: flex; gap: 6px;" id="groups-pagination-btns"></div>
             </div>
           </div>
-        </div>
+        </section>
 
-        <!-- =========================================================================
-             TAB 10: TÊN CẤM & BẢO LƯU (BANNED USERNAMES)
-             ========================================================================= -->
-        <div id="tab-ten-cam" class="tab-section">
-          <!-- Form thêm tên cấm -->
-          <div class="glass-panel p-4 mb-4">
-            <div class="d-flex align-items-center gap-2 mb-2">
-              <i class="fas fa-ban text-danger fs-5"></i>
-              <h5 class="fw-bold mb-0" style="color: var(--text-primary);">Thêm Tên Người Dùng Cấm / Bảo Lưu Mới</h5>
+        <!-- ============================================================== -->
+        <!-- TAB 5: TÊN NGƯỜI DÙNG CẤM & BẢO LƯU (BANNED USERNAMES) -->
+        <!-- ============================================================== -->
+        <section id="tab-ten-cam" class="tab-section">
+          <div class="section-header">
+            <div class="section-header-left">
+              <h2>Danh Sách Username Bị Cấm & Bảo Lưu</h2>
+              <p>Ngăn chặn thành viên đặt username mạo danh ban quản trị, thương hiệu hoặc từ ngữ nhạy cảm.</p>
             </div>
-            <p class="small mb-3" style="color: var(--text-secondary);">
-              Các tên trong danh sách này sẽ bị hệ thống chặn triệt để, không cho phép bất kỳ thành viên nào đặt khi đăng ký tài khoản hoặc cập nhật tên người dùng (@username) hay Official Account.
-            </p>
-            <form id="add-banned-form" onsubmit="handleAddBannedUsername(event)" class="row g-3 align-items-end">
-              <div class="col-md-4 col-12">
-                <label class="form-label small fw-bold" style="color: var(--text-secondary);">Tên người dùng cấm (@username)</label>
-                <div class="search-input-wrap" style="min-width: 100%;">
-                  <i class="fas fa-at"></i>
-                  <input type="text" id="input-banned-username" placeholder="ví dụ: admin, dorabox..." required>
-                </div>
-              </div>
-              <div class="col-md-6 col-12">
-                <label class="form-label small fw-bold" style="color: var(--text-secondary);">Lý do bảo lưu / cấm đặt</label>
-                <input type="text" id="input-banned-reason" class="form-control" placeholder="Ví dụ: Tên thương hiệu chính thức Dorabox" style="background: var(--bg-surface-elevated); border: 1px solid var(--border-subtle); color: var(--text-primary); border-radius: 10px; padding: 8px 14px;">
-              </div>
-              <div class="col-md-2 col-12">
-                <button type="submit" id="btn-add-banned" class="btn w-100 py-2 fw-bold" style="background: linear-gradient(135deg, #f43f5e, #e11d48); color: #fff; border: none; border-radius: 10px;">
-                  <i class="fas fa-plus me-1"></i> Thêm Cấm
-                </button>
-              </div>
-            </form>
+            <div class="section-actions">
+              <button class="btn-db btn-db-primary btn-db-sm" onclick="openAddBannedModal()">
+                <i class="fas fa-plus"></i> Thêm Username Cấm
+              </button>
+            </div>
           </div>
 
-          <!-- Bảng danh sách tên cấm -->
-          <div class="glass-panel">
-            <div class="panel-header">
-              <div class="d-flex align-items-center gap-2">
-                <span class="panel-title"><i class="fas fa-list-check" style="color: var(--primary-light);"></i> Danh Sách Tên Người Dùng Bị Cấm</span>
-                <span class="badge" style="background: var(--danger-bg); color: var(--danger); border: 1px solid rgba(244, 63, 94, 0.4);" id="banned-total-badge">0 tên</span>
-              </div>
+          <div class="db-card">
+            <div class="db-card-header">
               <div class="search-input-wrap">
                 <i class="fas fa-search"></i>
-                <input type="text" id="banned-search-input" placeholder="Tìm tên cấm hoặc lý do..." onkeyup="filterBannedUsernames()">
+                <input type="text" id="banned-search-input" class="db-input" placeholder="Tìm kiếm từ khóa / username..." oninput="filterBannedUsernames()">
               </div>
             </div>
 
-            <div class="table-container">
-              <table class="custom-table">
+            <div class="db-table-responsive">
+              <table class="db-table">
                 <thead>
                   <tr>
-                    <th style="padding-left: 20px;">Tên Người Dùng (@username)</th>
+                    <th>Username Bị Cấm</th>
                     <th>Lý Do Bảo Lưu / Cấm</th>
-                    <th>Thời Gian Thêm</th>
-                    <th style="text-align: right; padding-right: 20px;">Thao Tác</th>
+                    <th>Ngày Thiết Lập</th>
+                    <th style="text-align: right;">Thao Tác</th>
                   </tr>
                 </thead>
                 <tbody id="banned-table-body">
-                  <tr><td colspan="4" class="text-center py-5" style="color: var(--text-muted);">Đang tải danh sách tên cấm...</td></tr>
+                  <tr><td colspan="4" style="text-align: center; padding: 40px; color: var(--text-muted);">Đang tải danh sách...</td></tr>
                 </tbody>
               </table>
             </div>
           </div>
-        </div>
+        </section>
 
-      </main>
-    </div>
+        <!-- ============================================================== -->
+        <!-- TAB 6: BÀI VIẾT FEED (POSTS) -->
+        <!-- ============================================================== -->
+        <section id="tab-bai-viet" class="tab-section">
+          <div class="section-header">
+            <div class="section-header-left">
+              <h2>Kiểm Duyệt Bài Viết Feed</h2>
+              <p>Giám sát nội dung bảng tin, hình ảnh, video, ghim bài nổi bật và gỡ bỏ vi phạm.</p>
+            </div>
+            <div class="section-actions">
+              <button class="btn-db btn-db-outline btn-db-sm" onclick="fetchPosts(true)">
+                <i class="fas fa-sync-alt"></i> Làm Mới
+              </button>
+            </div>
+          </div>
+
+          <div class="db-card">
+            <div class="db-card-header">
+              <div class="search-input-wrap">
+                <i class="fas fa-search"></i>
+                <input type="text" id="posts-search-input" class="db-input" placeholder="Tìm bài viết theo nội dung..." oninput="onSearchPostsDebounced()">
+              </div>
+            </div>
+
+            <div class="db-table-responsive">
+              <table class="db-table">
+                <thead>
+                  <tr>
+                    <th style="width: 280px;">Tác Giả</th>
+                    <th>Nội Dung & File Đính Kèm</th>
+                    <th>Tương Tác</th>
+                    <th>Thời Gian</th>
+                    <th style="text-align: right;">Thao Tác</th>
+                  </tr>
+                </thead>
+                <tbody id="posts-table-body">
+                  <tr><td colspan="5" style="text-align: center; padding: 40px; color: var(--text-muted);">Đang tải bài viết...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============================================================== -->
+        <!-- TAB 7: BÌNH LUẬN (COMMENTS) -->
+        <!-- ============================================================== -->
+        <section id="tab-binh-luan" class="tab-section">
+          <div class="section-header">
+            <div class="section-header-left">
+              <h2>Kiểm Duyệt Bình Luận</h2>
+              <p>Xử lý bình luận spam, xúc phạm hoặc chứa liên kết độc hại trên các bài viết cộng đồng.</p>
+            </div>
+            <div class="section-actions">
+              <button class="btn-db btn-db-outline btn-db-sm" onclick="fetchComments(true)">
+                <i class="fas fa-sync-alt"></i> Làm Mới
+              </button>
+            </div>
+          </div>
+
+          <div class="db-card">
+            <div class="db-card-header">
+              <div class="search-input-wrap">
+                <i class="fas fa-search"></i>
+                <input type="text" id="comments-search-input" class="db-input" placeholder="Tìm kiếm nội dung bình luận..." oninput="onSearchCommentsDebounced()">
+              </div>
+            </div>
+
+            <div class="db-table-responsive">
+              <table class="db-table">
+                <thead>
+                  <tr>
+                    <th style="width: 240px;">Người Bình Luận</th>
+                    <th>Nội Dung</th>
+                    <th>Bài Viết Gốc</th>
+                    <th>Thời Gian</th>
+                    <th style="text-align: right;">Thao Tác</th>
+                  </tr>
+                </thead>
+                <tbody id="comments-table-body">
+                  <tr><td colspan="5" style="text-align: center; padding: 40px; color: var(--text-muted);">Đang tải bình luận...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============================================================== -->
+        <!-- TAB 8: BÁO CÁO VI PHẠM (REPORTS) -->
+        <!-- ============================================================== -->
+        <section id="tab-bao-cao" class="tab-section">
+          <div class="section-header">
+            <div class="section-header-left">
+              <h2>Xử Lý Báo Cáo Vi Phạm</h2>
+              <p>Hàng đợi xử phạt tài khoản, bài viết và bình luận bị người dùng gửi báo cáo.</p>
+            </div>
+            <div class="section-actions">
+              <button class="btn-db btn-db-outline btn-db-sm" onclick="fetchReports(true)">
+                <i class="fas fa-sync-alt"></i> Làm Mới
+              </button>
+            </div>
+          </div>
+
+          <div class="db-card">
+            <div class="db-card-header">
+              <div class="filter-pills">
+                <button class="filter-pill active" id="pill-rep-all" onclick="filterReports('all')">Tất Cả</button>
+                <button class="filter-pill" id="pill-rep-user" onclick="filterReports('user')">Người Dùng</button>
+                <button class="filter-pill" id="pill-rep-post" onclick="filterReports('post')">Bài Viết</button>
+                <button class="filter-pill" id="pill-rep-comment" onclick="filterReports('comment')">Bình Luận</button>
+              </div>
+            </div>
+
+            <div class="db-table-responsive">
+              <table class="db-table">
+                <thead>
+                  <tr>
+                    <th>Mục Vi Phạm</th>
+                    <th>Người Báo Cáo</th>
+                    <th>Lý Do Vi Phạm</th>
+                    <th>Trạng Thái</th>
+                    <th>Thời Gian</th>
+                    <th style="text-align: right;">Xử Lý</th>
+                  </tr>
+                </thead>
+                <tbody id="reports-table-body">
+                  <tr><td colspan="6" style="text-align: center; padding: 40px; color: var(--text-muted);">Đang tải báo cáo...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============================================================== -->
+        <!-- TAB 9: PHÁT THÔNG BÁO PUSH FCM (BROADCAST STUDIO) -->
+        <!-- ============================================================== -->
+        <section id="tab-phat-thong-bao" class="tab-section">
+          <div class="section-header">
+            <div class="section-header-left">
+              <h2>Broadcast Studio & Push Notification FCM</h2>
+              <p>Gửi thông báo đẩy tức thì tới toàn bộ thiết bị di động cài đặt ứng dụng Dorabox.</p>
+            </div>
+          </div>
+
+          <div class="broadcast-container">
+            <!-- Composer Form -->
+            <div class="db-card">
+              <div class="db-card-header">
+                <h3 class="db-card-title"><i class="fas fa-paper-plane text-primary"></i> Soạn Thảo Thông Báo Đẩy</h3>
+              </div>
+              <div class="db-card-body">
+                <form id="form-broadcast" onsubmit="event.preventDefault(); sendBroadcast();">
+                  <div class="mb-3">
+                    <label class="form-label" style="font-size: 13px; font-weight: 600;">Tiêu Đề Thông Báo *</label>
+                    <input type="text" id="bc-title" class="db-input" placeholder="Ví dụ: Cập nhật Dorabox v1.5.6 đã sẵn sàng!" style="padding-left: 12px;" required oninput="updateBroadcastPreview()">
+                  </div>
+
+                  <div class="mb-3">
+                    <label class="form-label" style="font-size: 13px; font-weight: 600;">Nội Dung Chi Tiết *</label>
+                    <textarea id="bc-body" class="db-input" rows="4" placeholder="Khám phá ngay các tính năng phòng trò chuyện mới và chia sẻ tài liệu mã hóa..." style="padding-left: 12px;" required oninput="updateBroadcastPreview()"></textarea>
+                  </div>
+
+                  <div class="mb-4">
+                    <label class="form-label" style="font-size: 13px; font-weight: 600;">Liên Kết Điều Hướng (DeepLink hoặc Web URL)</label>
+                    <input type="text" id="bc-link" class="db-input" placeholder="dorabox://feed hoặc https://dorabox.vn" style="padding-left: 12px;">
+                    <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Người dùng khi nhấp vào thông báo sẽ tự động mở trang này.</div>
+                  </div>
+
+                  <button type="submit" id="btn-send-broadcast" class="btn-db btn-db-primary" style="padding: 10px 20px;">
+                    <i class="fas fa-paper-plane me-1"></i> Phát Thông Báo Tới Toàn Bộ Thiết Bị
+                  </button>
+                </form>
+              </div>
+            </div>
+
+            <!-- Real-time Mobile Phone Mockup -->
+            <div>
+              <div style="font-size: 13px; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;">Xem Trước Giao Diện Thiết Bị</div>
+              <div class="mobile-mockup">
+                <div class="mobile-notch"></div>
+                <div style="font-size: 11px; text-align: center; color: rgba(255,255,255,0.4); margin-bottom: 16px;">MÀN HÌNH KHÓA DI ĐỘNG</div>
+                
+                <div class="mobile-notif-card">
+                  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+                    <div style="display: flex; align-items: center; gap: 6px;">
+                      <div style="width: 18px; height: 18px; background: #3b82f6; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 9px;">
+                        <i class="fas fa-cube"></i>
+                      </div>
+                      <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.2px;">DORABOX</span>
+                    </div>
+                    <span style="font-size: 10px; color: rgba(255,255,255,0.6);">Vừa xong</span>
+                  </div>
+                  <div id="preview-notif-title" style="font-size: 13px; font-weight: 700; margin-bottom: 2px;">Tiêu đề thông báo...</div>
+                  <div id="preview-notif-body" style="font-size: 12px; color: rgba(255,255,255,0.85); line-height: 1.35;">Nội dung chi tiết thông báo sẽ xuất hiện ở đây...</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============================================================== -->
+        <!-- TAB 10: BẢO MẬT & NHẬT KÝ AUDIT (SECURITY) -->
+        <!-- ============================================================== -->
+        <section id="tab-bao-mat-audit" class="tab-section">
+          <div class="section-header">
+            <div class="section-header-left">
+              <h2>Bảo Mật Hệ Thống & Nhật Ký Audit</h2>
+              <p>Nhật ký bảo mật thời gian thực, ngăn chặn brute-force và công cụ dọn rác cơ sở dữ liệu.</p>
+            </div>
+            <div class="section-actions">
+              <button class="btn-db btn-db-danger btn-db-sm" onclick="cleanSpamReactions()">
+                <i class="fas fa-broom"></i> Dọn Rác Reactions Spam
+              </button>
+              <button class="btn-db btn-db-outline btn-db-sm" onclick="fetchSecurityLogs(true)">
+                <i class="fas fa-sync-alt"></i> Làm Mới Logs
+              </button>
+            </div>
+          </div>
+
+          <div class="db-card">
+            <div class="db-card-header">
+              <h3 class="db-card-title"><i class="fas fa-shield-halved text-primary"></i> Nhật Ký Sự Kiện Quản Trị</h3>
+              <div class="search-input-wrap" style="max-width: 280px;">
+                <i class="fas fa-search"></i>
+                <input type="text" id="logs-search-input" class="db-input" placeholder="Lọc nhật ký sự kiện..." oninput="filterLogs()">
+              </div>
+            </div>
+
+            <div class="db-table-responsive">
+              <table class="db-table">
+                <thead>
+                  <tr>
+                    <th>Thời Gian</th>
+                    <th>Loại Sự Kiện</th>
+                    <th>Mức Độ</th>
+                    <th>Người Thực Hiện</th>
+                    <th>Chi Tiết</th>
+                    <th>IP</th>
+                  </tr>
+                </thead>
+                <tbody id="logs-table-body">
+                  <tr><td colspan="6" style="text-align: center; padding: 40px; color: var(--text-muted);">Đang tải nhật ký...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </main>
   </div>
 
+  <!-- ============================================================== -->
   <!-- MODALS -->
-  <!-- 1. Group Members Modal -->
+  <!-- ============================================================== -->
+
+  <!-- Modal: Xem Thành Viên Nhóm Chat -->
   <div class="modal fade" id="modalGroupMembers" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
-      <div class="modal-content" style="background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); color: var(--text-primary); box-shadow: 0 20px 50px rgba(0,0,0,0.5);">
-        <div class="modal-header" style="border-bottom: 1px solid var(--border-subtle);">
-          <h5 class="modal-title fw-bold" id="modalGroupTitle"><i class="fas fa-users-rectangle me-2" style="color: #818cf8;"></i>Thành Viên Nhóm</h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalGroupTitle"><i class="fas fa-users me-2 text-primary"></i>Thành Viên Nhóm</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body p-0">
-          <div class="table-container" style="max-height: 420px; overflow-y: auto;">
-            <table class="custom-table">
+          <div class="db-table-responsive">
+            <table class="db-table">
               <thead>
                 <tr>
-                  <th style="padding-left: 20px;">Thành Viên</th>
+                  <th>Thành Viên</th>
+                  <th>User ID</th>
                   <th>Vai Trò Trong Nhóm</th>
-                  <th style="text-align: right; padding-right: 20px;">Ngày Tham Gia</th>
+                  <th>Tham Gia</th>
                 </tr>
               </thead>
-              <tbody id="group-members-list-body">
-                <tr><td colspan="3" class="text-center py-4" style="color: var(--text-muted);">Đang tải...</td></tr>
+              <tbody id="modalGroupMembersList">
+                <!-- Rendered by JS -->
               </tbody>
             </table>
           </div>
@@ -1634,399 +1927,507 @@ export function renderAdminPage(): string {
     </div>
   </div>
 
-  <!-- 2. Report Detail Modal -->
+  <!-- Modal: Chi Tiết Báo Cáo Vi Phạm -->
   <div class="modal fade" id="modalReportDetail" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
-      <div class="modal-content" style="background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); color: var(--text-primary); box-shadow: 0 20px 50px rgba(0,0,0,0.5);">
-        <div class="modal-header" style="border-bottom: 1px solid var(--border-subtle);">
-          <h5 class="modal-title fw-bold text-danger"><i class="fas fa-shield-virus me-2"></i>Chi Tiết Báo Cáo Vi Phạm</h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body" id="report-detail-body">
-          <div class="text-center py-4" style="color: var(--text-muted);">Đang tải chi tiết...</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- 3. Edit Post Modal (Chỉnh sửa bài đăng có hình ảnh, liên kết và tiêu đề liên kết) -->
-  <div class="modal fade" id="modalEditPost" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-      <div class="modal-content" style="background: var(--bg-surface-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); color: var(--text-primary); box-shadow: var(--neu-extruded);">
-        <div class="modal-header" style="border-bottom: 1px solid var(--border-subtle);">
-          <h5 class="modal-title fw-bold" style="color: var(--primary);"><i class="fas fa-pen-to-square me-2"></i>Chỉnh Sửa Bài Viết</h5>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title text-danger"><i class="fas fa-shield-virus me-2"></i>Chi Tiết Báo Cáo Vi Phạm</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <div class="modal-body p-4">
-          <input type="hidden" id="edit-post-id">
-          
-          <div class="mb-3">
-            <label class="form-label small fw-bold" style="color: var(--text-secondary);">NỘI DUNG BÀI VIẾT</label>
-            <textarea id="edit-post-content" class="form-control" rows="4" placeholder="Nhập nội dung bài viết..."></textarea>
-          </div>
-
-          <!-- Quản lý hình ảnh media_urls -->
-          <div class="mb-3">
-            <label class="form-label small fw-bold d-flex justify-content-between align-items-center" style="color: var(--text-secondary);">
-              <span><i class="fas fa-images me-1 text-info"></i>HÌNH ẢNH ĐÍNH KÈM (MEDIA URLS)</span>
-              <span id="edit-post-media-count" class="badge" style="background: var(--primary-glow); color: var(--primary-light);">0 ảnh</span>
-            </label>
-            
-            <div id="edit-post-media-list" class="d-flex flex-wrap gap-2 mb-2 p-2 rounded-3" style="background: var(--bg-surface-elevated); min-height: 60px; border: 1px solid var(--border-subtle);">
-              <!-- Danh sách thumbnail có nút xóa render động -->
-            </div>
-
-            <div class="input-group">
-              <input type="text" id="edit-post-new-media-url" class="form-control" placeholder="Dán URL hình ảnh mới (https://...)">
-              <button class="btn btn-primary" type="button" onclick="addEditPostMediaUrl()">
-                <i class="fas fa-plus me-1"></i> Thêm Ảnh
-              </button>
-            </div>
-          </div>
-
-          <!-- Liên kết đính kèm và Tiêu đề liên kết -->
-          <div class="row g-3 mb-3">
-            <div class="col-md-7 col-12">
-              <label class="form-label small fw-bold" style="color: var(--text-secondary);"><i class="fas fa-link me-1 text-primary"></i>LIÊN KẾT ĐÍNH KÈM (URL)</label>
-              <div class="search-input-wrap" style="min-width: 100%;">
-                <i class="fas fa-link"></i>
-                <input type="text" id="edit-post-link-url" placeholder="https://dorabox.app/..." oninput="updateEditPostLinkPreview()">
-              </div>
-            </div>
-            <div class="col-md-5 col-12">
-              <label class="form-label small fw-bold" style="color: var(--text-secondary);"><i class="fas fa-heading me-1 text-warning"></i>TIÊU ĐỀ LIÊN KẾT (TÙY CHỌN)</label>
-              <input type="text" id="edit-post-link-title" class="form-control" placeholder="Đặt tiêu đề hiển thị..." oninput="updateEditPostLinkPreview()">
-            </div>
-          </div>
-
-          <!-- Preview Card mô phỏng ứng dụng -->
-          <div class="mb-2 p-3 rounded-3" style="background: var(--bg-surface-elevated); border: 1px dashed var(--border-subtle);">
-            <div class="small fw-bold mb-2" style="color: var(--text-secondary);"><i class="fas fa-mobile-screen me-1"></i>Mô phỏng hiển thị trên ứng dụng Dorabox:</div>
-            <div class="p-3 rounded-3 d-flex align-items-center gap-3" style="background: var(--bg-surface-card); box-shadow: var(--neu-extruded-sm); border: 1px solid var(--border-subtle);">
-              <div class="rounded-3 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; background: rgba(2, 132, 199, 0.15); color: var(--primary);">
-                <i class="fas fa-link"></i>
-              </div>
-              <div class="flex-grow-1 overflow-hidden text-start">
-                <div class="fw-bold text-truncate" id="preview-link-title-display" style="color: var(--text-primary); font-size: 13.5px;">(Chưa có liên kết)</div>
-                <div class="small text-truncate" id="preview-link-url-display" style="color: var(--text-muted); font-size: 12px;">Mở liên kết</div>
-              </div>
-              <i class="fas fa-arrow-up-right-from-square text-muted"></i>
-            </div>
-          </div>
-
+        <div class="modal-body" id="report-detail-body">
+          <!-- Rendered by JS -->
         </div>
-        <div class="modal-footer" style="border-top: 1px solid var(--border-subtle);">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-          <button type="button" class="btn btn-primary" onclick="submitEditPost()" id="btn-save-edit-post">
-            <i class="fas fa-floppy-disk me-1"></i> Lưu Thay Đổi
-          </button>
+        <div class="modal-footer" id="report-detail-footer">
+          <!-- Actions -->
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Bootstrap 5 JS & SweetAlert2 & Chart.js -->
+  <!-- Modal: Chỉnh Sửa Bài Viết -->
+  <div class="modal fade" id="modalEditPost" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"><i class="fas fa-pen-to-square me-2 text-primary"></i>Chỉnh Sửa Bài Viết</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" id="editPostId">
+          <div class="mb-3">
+            <label class="form-label" style="font-size: 13px; font-weight: 600;">Nội Dung Bài Đăng</label>
+            <textarea id="editPostContent" class="db-input" rows="5" style="padding-left: 12px;"></textarea>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label" style="font-size: 13px; font-weight: 600;">Đính Kèm Liên Kết (URL)</label>
+            <input type="text" id="editPostLink" class="db-input" placeholder="https://..." style="padding-left: 12px;">
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label" style="font-size: 13px; font-weight: 600;">Danh Sách Ảnh / Media</label>
+            <div id="editPostMediaContainer" style="display: flex; gap: 10px; flex-wrap: wrap;"></div>
+            <div style="display: flex; gap: 8px; margin-top: 10px;">
+              <input type="text" id="newMediaUrlInput" class="db-input" placeholder="Dán link ảnh / video mới..." style="padding-left: 12px;">
+              <button class="btn-db btn-db-outline btn-db-sm" type="button" onclick="addEditPostMediaUrl()">Thêm</button>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-db btn-db-outline" data-bs-dismiss="modal">Hủy</button>
+          <button type="button" class="btn-db btn-db-primary" onclick="submitEditPost()">Lưu Thay Đổi</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Thêm Username Cấm -->
+  <div class="modal fade" id="modalAddBannedUser" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"><i class="fas fa-ban me-2 text-danger"></i>Thêm Username Bị Cấm / Bảo Lưu</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="formAddBanned" onsubmit="event.preventDefault(); submitAddBannedUsername();">
+            <div class="mb-3">
+              <label class="form-label" style="font-size: 13px; font-weight: 600;">Username Cấm *</label>
+              <input type="text" id="inputBannedUsername" class="db-input" placeholder="Ví dụ: helpdesk, support_vn" style="padding-left: 12px; font-family: var(--font-mono);" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label" style="font-size: 13px; font-weight: 600;">Lý Do Cấm / Bảo Lưu *</label>
+              <input type="text" id="inputBannedReason" class="db-input" placeholder="Ví dụ: Mạo danh hỗ trợ kỹ thuật" style="padding-left: 12px;" required>
+            </div>
+            <div class="d-flex justify-content-end gap-2 mt-4">
+              <button type="button" class="btn-db btn-db-outline" data-bs-dismiss="modal">Hủy</button>
+              <button type="submit" class="btn-db btn-db-primary">Lưu Vào Danh Sách</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JS Dependencies -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- ============================================================== -->
+  <!-- APPLICATION LOGIC SCRIPT (Ultra-Fast & Robust) -->
+  <!-- ============================================================== -->
   <script>
-    let adminToken = localStorage.getItem('dorabox_admin_token') || '';
-    let allUsersCache = [];
-    let allPostsCache = [];
-    let allCommentsCache = [];
-    let allReportsCache = [];
-    let allOaRequestsCache = [];
-    let growthChartInstance = null;
-    let distributionChartInstance = null;
-    let currentUserFilter = 'all';
-    let lastMetricsCache = null;
+    (function() {
+      let adminToken = localStorage.getItem('dorabox_admin_token') || '';
+      let currentTab = 'tong-quan';
+      let tabLoadedMap = {};
+      let searchDebounceTimers = {};
+      let overviewChartInstance = null;
 
-    // Safe API client - NEVER crashes on HTML 404/500 responses
-    async function safeFetchJson(url, options = {}) {
-      try {
-        const res = await fetch(url, options);
-        const text = await res.text();
-        let data;
+      // In-memory data store for snappy switching
+      let store = {
+        metrics: null,
+        users: [],
+        usersFiltered: [],
+        userFilter: 'all',
+        requests: [],
+        requestsFiltered: [],
+        requestFilter: 'all',
+        groups: [],
+        groupsPage: 1,
+        groupsTotal: 0,
+        bannedUsernames: [],
+        posts: [],
+        comments: [],
+        reports: [],
+        reportsFiltered: [],
+        reportFilter: 'all',
+        logs: [],
+        logsFiltered: [],
+        editingPost: null,
+      };
+
+      // Helper for Safe JSON Fetch
+      async function safeFetchJson(url, options = {}) {
         try {
-          data = JSON.parse(text);
+          const res = await fetch(url, options);
+          const data = await res.json();
+          return data;
+        } catch (err) {
+          console.error('[Admin Fetch Error]:', err);
+          return { success: false, error: err.message || 'Lỗi kết nối máy chủ' };
+        }
+      }
+
+      function escapeHtml(text) {
+        if (!text) return '';
+        return String(text)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#039;');
+      }
+
+      function formatDate(dateStr) {
+        if (!dateStr) return '-';
+        try {
+          const d = new Date(dateStr);
+          return d.toLocaleDateString('vi-VN', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit', year: 'numeric' });
         } catch (_) {
-          console.warn('API returned non-JSON response from', url, text.substring(0, 100));
-          return {
-            success: false,
-            status: res.status,
-            error: res.status === 404 ? 'Endpoint máy chủ không tồn tại (404)' : ('Lỗi phản hồi máy chủ (' + res.status + ')')
-          };
+          return dateStr;
         }
-        if (!res.ok && !data.error) {
-          data.error = 'Yêu cầu thất bại (' + res.status + ')';
-        }
-        return data;
-      } catch (networkErr) {
-        console.error('Fetch network error:', url, networkErr);
-        return { success: false, error: networkErr.message || 'Lỗi kết nối mạng' };
       }
-    }
 
-    document.addEventListener('DOMContentLoaded', () => {
-      initTheme();
-      setupUserFilterPills();
-      setupBroadcastPreview();
-
-      if (adminToken) {
+      // Initialize App
+      document.addEventListener('DOMContentLoaded', () => {
+        initTheme();
+        initKeyboardShortcuts();
+        setupCommandPaletteData();
         verifySession();
-      } else {
-        showLoginOverlay();
-      }
-    });
+      });
 
-    // Theme Toggle (Dark / Light Neumorphism Mode)
-    function initTheme() {
-      const isDark = localStorage.getItem('dorabox_admin_theme') === 'dark';
-      const toggleIcon = document.getElementById('theme-toggle-icon');
-      if (isDark) {
-        document.body.classList.add('dark-mode');
-        if (toggleIcon) toggleIcon.className = 'fas fa-sun';
-      } else {
-        document.body.classList.remove('dark-mode');
-        if (toggleIcon) toggleIcon.className = 'fas fa-moon';
+      // Theme Support
+      function initTheme() {
+        const savedTheme = localStorage.getItem('dorabox_admin_theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        updateThemeIcon(savedTheme);
       }
 
-      const toggleBtn = document.getElementById('btn-toggle-dark-mode');
-      if (toggleBtn) {
-        toggleBtn.addEventListener('click', () => {
-          const isCurrentlyDark = document.body.classList.contains('dark-mode');
-          if (isCurrentlyDark) {
-            document.body.classList.remove('dark-mode');
-            if (toggleIcon) toggleIcon.className = 'fas fa-moon';
-            localStorage.setItem('dorabox_admin_theme', 'light');
-          } else {
-            document.body.classList.add('dark-mode');
-            if (toggleIcon) toggleIcon.className = 'fas fa-sun';
-            localStorage.setItem('dorabox_admin_theme', 'dark');
-          }
-          if (lastMetricsCache) renderCharts(lastMetricsCache);
+      window.toggleTheme = function() {
+        const current = document.documentElement.getAttribute('data-theme') || 'dark';
+        const next = current === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        localStorage.setItem('dorabox_admin_theme', next);
+        updateThemeIcon(next);
+        if (overviewChartInstance) {
+          renderGrowthChart(store.metrics);
+        }
+      };
+
+      function updateThemeIcon(theme) {
+        const btn = document.getElementById('btn-theme-toggle');
+        if (!btn) return;
+        btn.innerHTML = theme === 'dark' ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+      }
+
+      // Mobile Sidebar
+      window.toggleMobileSidebar = function() {
+        const sidebar = document.getElementById('app-sidebar');
+        if (sidebar) sidebar.classList.toggle('show');
+      };
+
+      // Session & Login
+      async function verifySession() {
+        if (!adminToken) {
+          showLoginOverlay();
+          return;
+        }
+        const data = await safeFetchJson('/api/admin/auth/check', {
+          headers: { 'Authorization': 'Bearer ' + adminToken }
         });
-      }
-    }
-
-    function toggleMobileSidebar() {
-      const sidebar = document.getElementById('app-sidebar');
-      const overlay = document.getElementById('sidebar-overlay');
-      sidebar.classList.toggle('open');
-      overlay.classList.toggle('active');
-    }
-
-    function toggleFullscreen() {
-      if (!document.fullscreenElement) {
-        document.documentElement.requestFullscreen().catch(() => {});
-      } else {
-        document.exitFullscreen().catch(() => {});
-      }
-    }
-
-    // Login Overlay Handlers
-    function showLoginOverlay() {
-      const overlay = document.getElementById('auth-overlay');
-      overlay.style.visibility = 'visible';
-      overlay.style.opacity = '1';
-      document.getElementById('admin-pass-input').focus();
-    }
-
-    function hideLoginOverlay() {
-      const overlay = document.getElementById('auth-overlay');
-      overlay.style.opacity = '0';
-      overlay.style.visibility = 'hidden';
-    }
-
-    document.getElementById('btn-unlock-gate').addEventListener('click', doLogin);
-    document.getElementById('admin-pass-input').addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') doLogin();
-    });
-
-    async function doLogin() {
-      const pass = document.getElementById('admin-pass-input').value.trim();
-      if (!pass) {
-        Swal.fire({ icon: 'warning', title: 'Thông báo', text: 'Vui lòng nhập Admin Secret Key' });
-        return;
+        if (data.success && data.authenticated) {
+          hideLoginOverlay();
+          switchTab('tong-quan', true);
+        } else {
+          localStorage.removeItem('dorabox_admin_token');
+          adminToken = '';
+          showLoginOverlay();
+        }
       }
 
-      try {
+      function showLoginOverlay() {
+        const overlay = document.getElementById('login-overlay');
+        if (overlay) overlay.style.display = 'flex';
+      }
+
+      function hideLoginOverlay() {
+        const overlay = document.getElementById('login-overlay');
+        if (overlay) overlay.style.display = 'none';
+      }
+
+      window.doLogin = async function() {
+        const pwdInput = document.getElementById('input-admin-password');
+        const submitBtn = document.getElementById('btn-login-submit');
+        const errDiv = document.getElementById('login-error-msg');
+        const pwd = pwdInput ? pwdInput.value.trim() : '';
+
+        if (!pwd) return;
+
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Đang xác thực...';
+        errDiv.style.display = 'none';
+
         const data = await safeFetchJson('/api/admin/login', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ password: pass })
+          body: JSON.stringify({ password: pwd })
         });
+
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="fas fa-lock-open me-1"></i> Xác Thực & Đăng Nhập';
 
         if (data.success && data.token) {
           adminToken = data.token;
           localStorage.setItem('dorabox_admin_token', adminToken);
           hideLoginOverlay();
-          Swal.fire({
-            toast: true,
-            position: 'top-end',
-            icon: 'success',
-            title: 'Chào mừng SuperAdministrator!',
-            showConfirmButton: false,
-            timer: 2000
-          });
-          loadDashboardData();
+          switchTab('tong-quan', true);
         } else {
-          Swal.fire({ icon: 'error', title: 'Thất bại', text: data.error || 'Khóa bảo mật không chính xác!' });
+          errDiv.textContent = data.error || 'Mật khẩu quản trị viên không chính xác!';
+          errDiv.style.display = 'block';
         }
-      } catch (err) {
-        Swal.fire({ icon: 'error', title: 'Lỗi', text: err.message });
-      }
-    }
+      };
 
-    // Logout
-    document.getElementById('btn-logout').addEventListener('click', () => {
-      Swal.fire({
-        title: 'Đăng xuất?',
-        text: 'Bạn có chắc chắn muốn kết thúc phiên làm việc Quản trị?',
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonColor: '#ef4444',
-        cancelButtonColor: '#64748b',
-        confirmButtonText: 'Đăng xuất',
-        cancelButtonText: 'Hủy'
-      }).then((result) => {
-        if (result.isConfirmed) {
-          localStorage.removeItem('dorabox_admin_token');
-          adminToken = '';
-          showLoginOverlay();
-        }
-      });
-    });
-
-    // Verify Session
-    async function verifySession() {
-      try {
-        const data = await safeFetchJson('/api/admin/auth/check', {
-          headers: { 'Authorization': 'Bearer ' + adminToken }
+      window.doLogout = function() {
+        Swal.fire({
+          title: 'Đăng xuất?',
+          text: 'Bạn có chắc chắn muốn kết thúc phiên làm việc quản trị này?',
+          icon: 'question',
+          showCancelButton: true,
+          confirmButtonText: 'Đăng xuất',
+          cancelButtonText: 'Ở lại',
+          confirmButtonColor: '#ef4444'
+        }).then((res) => {
+          if (res.isConfirmed) {
+            localStorage.removeItem('dorabox_admin_token');
+            adminToken = '';
+            showLoginOverlay();
+          }
         });
-        if (data.success || !data.error) {
-          hideLoginOverlay();
-          loadDashboardData();
-        } else {
-          localStorage.removeItem('dorabox_admin_token');
-          adminToken = '';
-          showLoginOverlay();
+      };
+
+      // ==============================================================
+      // TAB NAVIGATION & LAZY LOADING
+      // ==============================================================
+      window.switchTab = function(tabId, forceReload = false) {
+        if (!tabId) tabId = 'tong-quan';
+        currentTab = tabId;
+
+        // Close mobile drawer if open
+        const sidebar = document.getElementById('app-sidebar');
+        if (sidebar && sidebar.classList.contains('show')) {
+          sidebar.classList.remove('show');
         }
-      } catch (_) {
-        showLoginOverlay();
+
+        // Update nav buttons
+        document.querySelectorAll('.app-sidebar .nav-item-btn').forEach(btn => {
+          btn.classList.toggle('active', btn.getAttribute('data-tab') === tabId);
+        });
+
+        // Update section visibility
+        document.querySelectorAll('.tab-section').forEach(sec => {
+          sec.classList.remove('active');
+        });
+        const targetSec = document.getElementById('tab-' + tabId);
+        if (targetSec) targetSec.classList.add('active');
+
+        // Update Topbar Title
+        const titleMap = {
+          'tong-quan': 'Tổng Quan Hệ Thống',
+          'thanh-vien': 'Quản Lý Thành Viên',
+          'xet-duyet': 'Hàng Đợi Xét Duyệt & Yêu Cầu',
+          'nhom-tro-chuyen': 'Quản Lý Nhóm Trò Chuyện',
+          'ten-cam': 'Tên Người Dùng Cấm & Bảo Lưu',
+          'bai-viet': 'Kiểm Duyệt Bài Viết Feed',
+          'binh-luan': 'Kiểm Duyệt Bình Luận',
+          'bao-cao': 'Xử Lý Báo Cáo Vi Phạm',
+          'phat-thong-bao': 'Broadcast Push Notification FCM',
+          'bao-mat-audit': 'Bảo Mật & Nhật Ký Audit',
+        };
+        const titleEl = document.getElementById('topbar-tab-title');
+        if (titleEl) titleEl.textContent = titleMap[tabId] || 'Quản Trị';
+
+        // Lazy load tab data if not loaded or forceReload
+        loadTabContent(tabId, forceReload);
+      };
+
+      window.refreshCurrentTab = function() {
+        const spinner = document.getElementById('icon-refresh-spinner');
+        if (spinner) spinner.classList.add('fa-spin');
+        
+        switchTab(currentTab, true);
+
+        setTimeout(() => {
+          if (spinner) spinner.classList.remove('fa-spin');
+        }, 600);
+      };
+
+      function loadTabContent(tabId, force) {
+        if (!force && tabLoadedMap[tabId] && (Date.now() - tabLoadedMap[tabId] < 60000)) {
+          return; // Use cached data
+        }
+
+        tabLoadedMap[tabId] = Date.now();
+
+        switch (tabId) {
+          case 'tong-quan':
+            fetchMetrics();
+            fetchSystemHealth();
+            break;
+          case 'thanh-vien':
+            fetchUsers();
+            break;
+          case 'xet-duyet':
+            fetchRequests();
+            break;
+          case 'nhom-tro-chuyen':
+            fetchGroups(1);
+            break;
+          case 'ten-cam':
+            fetchBannedUsernames();
+            break;
+          case 'bai-viet':
+            fetchPosts();
+            break;
+          case 'binh-luan':
+            fetchComments();
+            break;
+          case 'bao-cao':
+            fetchReports();
+            break;
+          case 'phat-thong-bao':
+            updateBroadcastPreview();
+            break;
+          case 'bao-mat-audit':
+            fetchSecurityLogs();
+            break;
+        }
       }
-    }
 
-    // Load All Data
-    async function loadDashboardData() {
-      fetchGroups();
-      fetchMetrics();
-      fetchUsers();
-      fetchRequests();
-      fetchPosts();
-      fetchComments();
-      fetchReports();
-      fetchSystemHealth();
-      fetchSecurityLogs();
-      loadBannedUsernames();
-    }
-
-    document.getElementById('btn-refresh-data').addEventListener('click', () => {
-      loadDashboardData();
-      Swal.fire({
-        toast: true,
-        position: 'top-end',
-        icon: 'success',
-        title: 'Đã cập nhật dữ liệu mới nhất!',
-        showConfirmButton: false,
-        timer: 1500
-      });
-    });
-
-    // 1. Fetch Metrics & Render Charts
-    async function fetchMetrics() {
-      try {
+      // ==============================================================
+      // 1. TỔNG QUAN (METRICS & CHARTS)
+      // ==============================================================
+      async function fetchMetrics() {
+        const t0 = performance.now();
         const data = await safeFetchJson('/api/admin/metrics', {
           headers: { 'Authorization': 'Bearer ' + adminToken }
         });
+        const latency = Math.round(performance.now() - t0);
+        updateLatencyIndicator(latency);
+
         if (data.success && data.metrics) {
+          store.metrics = data.metrics;
           const m = data.metrics;
-          document.getElementById('kpi-users').textContent = Number(m.totalUsers || 0).toLocaleString();
-          const totalGroups = Number(m.totalGroups || 0);
-          const kpiGroups = document.getElementById('kpi-groups');
-          if (kpiGroups) kpiGroups.textContent = totalGroups.toLocaleString();
-          const sideGroups = document.getElementById('sidebar-groups-badge');
-          if (sideGroups) sideGroups.textContent = totalGroups.toLocaleString();
-          document.getElementById('sidebar-user-badge').textContent = Number(m.totalUsers || 0).toLocaleString();
-          document.getElementById('kpi-verified').textContent = Number(m.verifiedUsers || 0).toLocaleString();
-          document.getElementById('kpi-banned').textContent = Number(m.bannedUsers || 0).toLocaleString();
-          document.getElementById('kpi-posts').textContent = Number(m.totalPosts || 0).toLocaleString();
-          document.getElementById('kpi-comments').textContent = Number(m.totalComments || 0).toLocaleString();
-          
-          // Báo cáo vi phạm tiêu chuẩn cộng đồng thuần túy
-          const pendingRep = Number(m.pendingReports || 0);
-          const repBadge = document.getElementById('sidebar-report-badge');
-          if (repBadge) repBadge.textContent = pendingRep;
-          const repKpi = document.getElementById('sidebar-report-badge-kpi');
-          if (repKpi) repKpi.textContent = pendingRep;
-          const kpiRepPending = document.getElementById('kpi-reports-pending');
-          if (kpiRepPending) kpiRepPending.textContent = pendingRep;
-          const repPendingCount = document.getElementById('reports-pending-count');
-          if (repPendingCount) repPendingCount.textContent = pendingRep + ' Chờ xử lý';
 
-          // Yêu cầu xét duyệt & đề xuất OA
-          const pendingReq = Number(m.pendingRequests || 0);
-          const reqBadge = document.getElementById('sidebar-request-badge');
-          if (reqBadge) {
-            reqBadge.textContent = pendingReq;
-            reqBadge.style.display = pendingReq > 0 ? 'inline-block' : 'none';
-          }
-          const kpiReq = document.getElementById('kpi-requests-pending');
-          if (kpiReq) kpiReq.textContent = pendingReq;
-          const reqCount = document.getElementById('requests-pending-count');
-          if (reqCount) reqCount.textContent = pendingReq + ' Chờ duyệt';
-          const kpiOa = document.getElementById('kpi-oa-pending');
-          if (kpiOa) kpiOa.textContent = (m.pendingBadgeRequests || 0) + ' tích / ' + (m.pendingOaRequests || 0) + ' OA';
+          document.getElementById('stat-total-users').textContent = Number(m.totalUsers || 0).toLocaleString();
+          document.getElementById('stat-verified-sub').textContent = Number(m.verifiedUsers || 0).toLocaleString() + ' tài khoản tích xanh';
 
-          lastMetricsCache = m;
-          renderCharts(m);
+          document.getElementById('stat-total-posts').textContent = Number(m.totalPosts || 0).toLocaleString();
+          document.getElementById('stat-comments-sub').textContent = Number(m.totalComments || 0).toLocaleString() + ' bình luận thảo luận';
+
+          document.getElementById('stat-pending-requests').textContent = Number(m.pendingRequests || 0).toLocaleString();
+          document.getElementById('stat-oa-sub').textContent = (m.pendingOaRequests || 0) + ' OA, ' + (m.pendingBadgeRequests || 0) + ' tích xanh';
+
+          document.getElementById('stat-pending-reports').textContent = Number(m.pendingReports || 0).toLocaleString();
+          document.getElementById('stat-reports-resolved-sub').textContent = Number(m.resolvedReports || 0).toLocaleString() + ' đã giải quyết';
+
+          document.getElementById('stat-total-groups').textContent = Number(m.totalGroups || 0).toLocaleString();
+
+          // Badges in sidebar
+          const bReq = document.getElementById('badge-requests-count');
+          if (bReq) bReq.textContent = m.pendingRequests || 0;
+          const bRep = document.getElementById('badge-reports-count');
+          if (bRep) bRep.textContent = m.pendingReports || 0;
+          const bUsr = document.getElementById('badge-users-count');
+          if (bUsr) bUsr.textContent = m.totalUsers || 0;
+
+          renderGrowthChart(m);
         }
-      } catch (err) {
-        console.error('Fetch metrics error:', err);
       }
-    }
 
-    function renderCharts(m) {
-      if (!m) m = lastMetricsCache || {};
-      const isDark = document.body.classList.contains('dark-mode');
-      const textColor = isDark ? '#8da4be' : '#476885';
-      const gridColor = isDark ? 'rgba(255, 255, 255, 0.06)' : 'rgba(160, 185, 212, 0.25)';
+      function updateLatencyIndicator(ms) {
+        const el = document.getElementById('health-latency');
+        if (el) el.textContent = 'API: ' + ms + 'ms';
+      }
 
-      const ctxGrowth = document.getElementById('growthChart');
-      if (ctxGrowth) {
-        if (growthChartInstance) growthChartInstance.destroy();
-        growthChartInstance = new Chart(ctxGrowth, {
+      async function fetchSystemHealth(showToast = false) {
+        const data = await safeFetchJson('/api/admin/system-health', {
+          headers: { 'Authorization': 'Bearer ' + adminToken }
+        });
+        if (data.success && data.health) {
+          const h = data.health;
+          const dbStatus = document.getElementById('health-db-status');
+          if (dbStatus) {
+            dbStatus.textContent = h.database?.status === 'connected' ? 'Đang Kết Nối' : 'Có Lỗi';
+            dbStatus.style.color = h.database?.status === 'connected' ? 'var(--success)' : 'var(--danger)';
+          }
+          const dbLat = document.getElementById('health-db-latency');
+          if (dbLat) dbLat.textContent = 'Latency: ~' + (h.database?.latencyMs || 25) + 'ms';
+
+          const nodeV = document.getElementById('health-node-version');
+          if (nodeV) nodeV.textContent = h.nodeVersion || '-';
+
+          const uptime = document.getElementById('health-uptime');
+          if (uptime) {
+            const hrs = Math.floor((h.uptimeSeconds || 0) / 3600);
+            const mins = Math.floor(((h.uptimeSeconds || 0) % 3600) / 60);
+            uptime.textContent = 'Uptime: ' + hrs + ' giờ ' + mins + ' phút';
+          }
+
+          const memUsage = document.getElementById('health-memory-usage');
+          if (memUsage && h.memory) {
+            memUsage.textContent = h.memory.heapUsedMb + ' MB / ' + h.memory.heapTotalMb + ' MB';
+            const pct = Math.min(100, Math.round((h.memory.heapUsedMb / h.memory.heapTotalMb) * 100));
+            const bar = document.getElementById('health-memory-bar');
+            if (bar) bar.style.width = pct + '%';
+          }
+
+          if (showToast) {
+            Swal.fire({
+              toast: true,
+              position: 'top-end',
+              icon: 'success',
+              title: 'Hệ thống vận hành bình thường!',
+              showConfirmButton: false,
+              timer: 1500
+            });
+          }
+        }
+      }
+
+      function renderGrowthChart(metrics) {
+        const canvas = document.getElementById('overviewGrowthChart');
+        if (!canvas) return;
+
+        const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
+        const gridColor = isDark ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0, 0, 0, 0.06)';
+        const textColor = isDark ? '#a1a1aa' : '#64748b';
+
+        if (overviewChartInstance) {
+          overviewChartInstance.destroy();
+        }
+
+        const labels = ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'];
+        const posts = metrics?.totalPosts || 12;
+        const users = metrics?.totalUsers || 20;
+
+        overviewChartInstance = new Chart(canvas, {
           type: 'line',
           data: {
-            labels: ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'],
+            labels: labels,
             datasets: [
               {
-                label: 'Bài viết',
-                data: [Math.floor((m.totalPosts||10)*0.2), Math.floor((m.totalPosts||10)*0.35), Math.floor((m.totalPosts||10)*0.5), Math.floor((m.totalPosts||10)*0.6), Math.floor((m.totalPosts||10)*0.75), Math.floor((m.totalPosts||10)*0.9), m.totalPosts || 10],
-                borderColor: '#0284c7',
-                backgroundColor: 'rgba(2, 132, 199, 0.12)',
-                borderWidth: 2.5,
+                label: 'Tương Tác Bài Viết',
+                data: [Math.round(posts * 0.4), Math.round(posts * 0.55), Math.round(posts * 0.7), Math.round(posts * 0.65), Math.round(posts * 0.8), Math.round(posts * 0.95), posts],
+                borderColor: '#3b82f6',
+                backgroundColor: 'rgba(59, 130, 246, 0.08)',
+                fill: true,
                 tension: 0.35,
-                fill: true
+                borderWidth: 2,
+                pointRadius: 3,
+                pointHoverRadius: 6,
               },
               {
-                label: 'Bình luận',
-                data: [Math.floor((m.totalComments||20)*0.15), Math.floor((m.totalComments||20)*0.3), Math.floor((m.totalComments||20)*0.45), Math.floor((m.totalComments||20)*0.6), Math.floor((m.totalComments||20)*0.7), Math.floor((m.totalComments||20)*0.85), m.totalComments || 20],
-                borderColor: '#059669',
-                backgroundColor: 'rgba(5, 150, 105, 0.1)',
-                borderWidth: 2.5,
+                label: 'Thành Viên Hoạt Động',
+                data: [Math.round(users * 0.6), Math.round(users * 0.68), Math.round(users * 0.75), Math.round(users * 0.82), Math.round(users * 0.88), Math.round(users * 0.94), users],
+                borderColor: '#10b981',
+                backgroundColor: 'transparent',
+                borderDash: [4, 4],
                 tension: 0.35,
-                fill: true
+                borderWidth: 2,
+                pointRadius: 2,
               }
             ]
           },
@@ -2034,1532 +2435,1410 @@ export function renderAdminPage(): string {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-              legend: { labels: { color: textColor, font: { family: 'Plus Jakarta Sans', weight: '600' } } }
+              legend: {
+                position: 'top',
+                labels: { color: textColor, font: { family: 'Plus Jakarta Sans', size: 12 } }
+              },
+              tooltip: {
+                backgroundColor: isDark ? '#18181b' : '#ffffff',
+                titleColor: isDark ? '#ffffff' : '#09090b',
+                bodyColor: isDark ? '#a1a1aa' : '#475569',
+                borderColor: isDark ? '#27272a' : '#e2e8f0',
+                borderWidth: 1,
+                padding: 10,
+                boxPadding: 4,
+              }
             },
             scales: {
-              x: { grid: { color: gridColor }, ticks: { color: textColor } },
-              y: { grid: { color: gridColor }, ticks: { color: textColor } }
-            }
-          }
-        });
-      }
-
-      const ctxDist = document.getElementById('distributionChart');
-      if (ctxDist) {
-        if (distributionChartInstance) distributionChartInstance.destroy();
-        const total = m.totalUsers || 10;
-        const ver = m.verifiedUsers || 2;
-        const ban = m.bannedUsers || 0;
-        const norm = Math.max(0, total - ver - ban);
-
-        distributionChartInstance = new Chart(ctxDist, {
-          type: 'doughnut',
-          data: {
-            labels: ['Tiêu chuẩn', 'Tích xanh & OA', 'Bị khóa'],
-            datasets: [{
-              data: [norm, ver, ban],
-              backgroundColor: ['#0284c7', '#f59e0b', '#e11d48'],
-              borderWidth: 0
-            }]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            cutout: '72%',
-            plugins: {
-              legend: { 
-                position: 'bottom', 
-                labels: { color: textColor, boxWidth: 10, usePointStyle: true, font: { family: 'Plus Jakarta Sans', weight: '600', size: 11 } } 
+              x: {
+                grid: { color: gridColor },
+                ticks: { color: textColor, font: { family: 'Plus Jakarta Sans', size: 11 } }
+              },
+              y: {
+                grid: { color: gridColor },
+                ticks: { color: textColor, font: { family: 'Plus Jakarta Sans', size: 11 } }
               }
             }
           }
         });
       }
-    }
 
-    // 2. Fetch Users
-    async function fetchUsers() {
-      try {
-        const data = await safeFetchJson('/api/admin/users', {
+      // ==============================================================
+      // 2. THÀNH VIÊN (USERS)
+      // ==============================================================
+      window.onSearchUsersDebounced = function() {
+        clearTimeout(searchDebounceTimers.users);
+        searchDebounceTimers.users = setTimeout(() => {
+          fetchUsers();
+        }, 250);
+      };
+
+      window.setUserFilter = function(filter) {
+        store.userFilter = filter;
+        document.querySelectorAll('#users-filter-pills .filter-pill').forEach(p => {
+          p.classList.toggle('active', p.getAttribute('data-filter') === filter);
+        });
+        fetchUsers();
+      };
+
+      async function fetchUsers(force = false) {
+        const q = (document.getElementById('users-search-input')?.value || '').trim();
+        const filter = store.userFilter;
+        let url = '/api/admin/users?';
+        if (q) url += 'q=' + encodeURIComponent(q) + '&';
+        if (filter && filter !== 'all') url += 'filter=' + encodeURIComponent(filter);
+
+        const tbody = document.getElementById('users-table-body');
+        if (tbody) tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 40px; color: var(--text-muted);"><i class="fas fa-spinner fa-spin me-2"></i> Đang tải danh sách...</td></tr>';
+
+        const data = await safeFetchJson(url, {
           headers: { 'Authorization': 'Bearer ' + adminToken }
         });
+
         if (data.success && data.users) {
-          allUsersCache = data.users;
-          updateUserFilterCounts();
-          filterUsers();
-
-          const vipCount = allUsersCache.filter(u => u.is_vip || u.is_oa || u.account_type === 'oa').length;
-          document.getElementById('kpi-vip').textContent = Number(vipCount).toLocaleString();
+          store.users = data.users;
+          renderUsersTable(data.users);
+        } else {
+          if (tbody) tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 40px; color: var(--danger);">Không thể tải dữ liệu: ' + escapeHtml(data.error) + '</td></tr>';
         }
-      } catch (err) {
-        console.error('Fetch users error:', err);
-      }
-    }
-
-    function renderUsersTable(users) {
-      const tbody = document.getElementById('users-table-body');
-      if (!users || users.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" class="text-center py-5 text-muted">Không tìm thấy thành viên phù hợp.</td></tr>';
-        return;
       }
 
-      tbody.innerHTML = users.map(u => {
-        const initial = (u.display_name || u.username || 'U').charAt(0).toUpperCase();
-        const avatarHtml = u.avatar_url 
-          ? \`<img class="user-avatar-sm me-3" src="\${u.avatar_url}" alt="\${escapeHtml(u.display_name)}" onerror="this.outerHTML='<div class=\\'user-avatar-fallback me-3\\'>\${initial}</div>'" />\`
-          : \`<div class="user-avatar-fallback me-3">\${initial}</div>\`;
+      function renderUsersTable(users) {
+        const tbody = document.getElementById('users-table-body');
+        if (!tbody) return;
 
-        // Inline Badges next to name
-        let inlineBadges = '';
-        if (u.is_oa || u.account_type === 'oa') {
-          inlineBadges += '<i class="fas fa-certificate text-warning ms-1" title="Official Account (Tích vàng)" style="font-size: 13px;"></i>';
-        } else if (u.is_verified) {
-          inlineBadges += '<i class="fas fa-circle-check text-info ms-1" title="Tài khoản đã xác thực" style="font-size: 13px;"></i>';
-        }
-        if (u.is_vip) {
-          inlineBadges += '<i class="fas fa-crown text-warning ms-1" title="Thành viên VIP" style="font-size: 11px;"></i>';
+        if (!users || users.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 40px; color: var(--text-muted);">Không tìm thấy người dùng nào phù hợp.</td></tr>';
+          return;
         }
 
-        // Role column
-        let roleBadge = '<span class="badge-soft badge-soft-user">Thành viên</span>';
-        if (u.role === 'admin') {
-          roleBadge = '<span class="badge-soft badge-soft-admin">Admin</span>';
-        } else if (u.role === 'mod') {
-          roleBadge = '<span class="badge-soft badge-soft-mod">Moderator</span>';
-        } else if (u.is_oa || u.account_type === 'oa') {
-          roleBadge = '<span class="badge-soft badge-soft-oa">Official Account</span>';
-        }
+        let html = '';
+        users.forEach(u => {
+          const avatarUrl = u.avatar_url || 'https://api.dicebear.com/7.x/identicon/svg?seed=' + u.id;
+          const isVerified = Boolean(u.is_verified);
+          const isVip = Boolean(u.is_vip || u.is_oa || u.account_type === 'oa');
+          const isBanned = Boolean(u.is_banned);
+          const role = u.role || 'user';
 
-        // Status column
-        const statusHtml = u.is_banned
-          ? '<span class="badge-status badge-status-banned"><span class="status-dot dot-danger"></span> Đã khóa</span>'
-          : '<span class="badge-status badge-status-active"><span class="status-dot dot-success"></span> Hoạt động</span>';
+          let badgesHtml = '';
+          if (isBanned) {
+            badgesHtml += '<span class="status-badge banned"><i class="fas fa-ban"></i> Bị Khóa</span> ';
+          } else {
+            badgesHtml += '<span class="status-badge active"><i class="fas fa-circle" style="font-size: 6px;"></i> Hoạt Động</span> ';
+          }
+          if (isVerified) {
+            badgesHtml += '<span class="status-badge verified" title="Tài khoản tích xanh"><i class="fas fa-circle-check"></i> Tích Xanh</span> ';
+          }
+          if (isVip) {
+            badgesHtml += '<span class="status-badge oa" title="Tài khoản Doanh Nghiệp / OA"><i class="fas fa-star"></i> OA</span> ';
+          }
 
-        const joinDate = u.created_at ? new Date(u.created_at).toLocaleDateString('vi-VN') : '-';
-
-        const isOa = (u.is_oa || u.account_type === 'oa');
-        const oaResetAction = isOa 
-          ? \`<li><a class="dropdown-item" href="javascript:void(0)" onclick="resetOaEditCount('\${u.id}', '\${escapeHtml(u.display_name || u.username)}')"><i class="fas fa-rotate-left text-info me-2 fa-fw"></i>Cấp 1 lượt sửa OA</a></li>\` 
-          : '';
-
-        return \`
-          <tr>
-            <td style="padding-left: 20px;">
-              <div class="d-flex align-items-center">
-                \${avatarHtml}
-                <div>
-                  <div class="d-flex align-items-center">
-                    <span class="fw-bold text-main fs-6">\${escapeHtml(u.display_name || 'Chưa đặt tên')}</span>
-                    \${inlineBadges}
-                  </div>
-                  <div class="d-flex align-items-center gap-2 mt-1">
-                    <span class="font-mono text-info small">@\${escapeHtml(u.username || '')}</span>
-                    <span class="text-secondary opacity-50">•</span>
-                    <span class="text-muted font-mono" style="font-size: 11px;">UID: \${u.id.substring(0, 8)}...</span>
+          html += \`
+            <tr>
+              <td>
+                <div class="cell-user-info">
+                  <img src="\${escapeHtml(avatarUrl)}" class="user-avatar-img" alt="avatar" onerror="this.src='https://api.dicebear.com/7.x/identicon/svg?seed=\${u.id}'">
+                  <div class="user-text-meta">
+                    <span class="user-display-name">
+                      \${escapeHtml(u.display_name || u.username || 'Người dùng')}
+                      \${isVerified ? '<i class="fas fa-circle-check text-primary" style="font-size: 13px;"></i>' : ''}
+                      \${isVip ? '<i class="fas fa-star" style="color: #f59e0b; font-size: 13px;"></i>' : ''}
+                    </span>
+                    <span class="user-handle">@\${escapeHtml(u.username || 'chua_dat_ten')}</span>
                   </div>
                 </div>
-              </div>
-            </td>
-            <td>\${roleBadge}</td>
-            <td>\${statusHtml}</td>
-            <td class="text-secondary small font-mono">\${joinDate}</td>
-            <td style="text-align: right; padding-right: 20px;">
-              <div class="dropdown d-inline-block">
-                <button class="action-ellipsis-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Thao tác với thành viên">
-                  <i class="fas fa-ellipsis"></i>
-                </button>
-                <ul class="dropdown-menu dropdown-menu-end modern-dropdown-menu shadow-lg">
-                  <li class="dropdown-header">Danh hiệu & Xác thực</li>
-                  <li>
-                    <a class="dropdown-item" href="javascript:void(0)" onclick="toggleVerify('\${u.id}', \${!u.is_verified})">
-                      <i class="fas \${u.is_verified ? 'fa-circle-xmark text-secondary' : 'fa-circle-check text-info'} me-2 fa-fw"></i>
-                      \${u.is_verified ? 'Hủy tích xanh' : 'Cấp tích xanh xác thực'}
-                    </a>
-                  </li>
-                  <li>
-                    <a class="dropdown-item" href="javascript:void(0)" onclick="toggleVip('\${u.id}', \${!u.is_vip})">
-                      <i class="fas fa-crown text-warning me-2 fa-fw"></i>
-                      \${u.is_vip ? 'Hủy quyền VIP' : 'Cấp huy hiệu VIP'}
-                    </a>
-                  </li>
-                  <li><hr class="dropdown-divider border-secondary border-opacity-25 my-1"></li>
-                  <li class="dropdown-header">Phân quyền tài khoản</li>
-                  <li>
-                    <a class="dropdown-item" href="javascript:void(0)" onclick="promptChangeRole('\${u.id}', '\${escapeHtml(u.display_name || u.username)}', '\${u.role || 'user'}')">
-                      <i class="fas fa-user-shield text-primary me-2 fa-fw"></i>
-                      Đổi vai trò (Role)
-                    </a>
-                  </li>
-                  \${oaResetAction}
-                  <li><hr class="dropdown-divider border-secondary border-opacity-25 my-1"></li>
-                  <li class="dropdown-header">Kỷ luật</li>
-                  <li>
-                    <a class="dropdown-item \${u.is_banned ? 'text-success' : 'text-danger'}" href="javascript:void(0)" onclick="toggleBan('\${u.id}', \${!u.is_banned})">
-                      <i class="fas \${u.is_banned ? 'fa-lock-open text-success' : 'fa-ban text-danger'} me-2 fa-fw"></i>
-                      \${u.is_banned ? 'Mở khóa tài khoản' : 'Khóa tài khoản này'}
-                    </a>
-                  </li>
-                  <li><hr class="dropdown-divider border-secondary border-opacity-25 my-1"></li>
-                  <li class="dropdown-header text-danger">Khu vực nguy hiểm</li>
-                  <li>
-                    <a class="dropdown-item text-danger" href="javascript:void(0)" onclick="confirmDeleteUser('\${u.id}', '\${escapeHtml(u.display_name || u.username || 'Người dùng')}')">
-                      <i class="fas fa-trash-alt text-danger me-2 fa-fw"></i>
-                      Xóa vĩnh viễn tài khoản
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            </td>
-          </tr>
-        \`;
-      }).join('');
-    }
+              </td>
+              <td>
+                <span class="id-pill" onclick="copyToClipboard('\${u.id}')" title="Nhấp để sao chép UID">
+                  \${u.id.substring(0, 8)}... <i class="fas fa-copy" style="font-size: 10px;"></i>
+                </span>
+              </td>
+              <td>\${badgesHtml}</td>
+              <td>
+                <span class="status-badge \${role === 'admin' ? 'admin' : ''}" style="text-transform: capitalize; font-family: var(--font-mono);">
+                  \${escapeHtml(role)}
+                </span>
+              </td>
+              <td style="font-size: 12.5px; color: var(--text-secondary);">\${formatDate(u.created_at)}</td>
+              <td style="text-align: right;">
+                <div class="action-btn-group" style="justify-content: flex-end;">
+                  <!-- Toggle Verify -->
+                  <button class="btn-icon \${isVerified ? 'success' : ''}" onclick="toggleVerify('\${u.id}', \${!isVerified})" title="\${isVerified ? 'Gỡ Tích Xanh' : 'Cấp Tích Xanh'}">
+                    <i class="fas fa-check-double"></i>
+                  </button>
+                  <!-- Toggle VIP / OA -->
+                  <button class="btn-icon" onclick="toggleVip('\${u.id}', \${!isVip})" title="\${isVip ? 'Gỡ Huy Hiệu OA' : 'Kích Hoạt Tích Vàng OA'}">
+                    <i class="fas fa-star" style="\${isVip ? 'color: #f59e0b;' : ''}"></i>
+                  </button>
+                  <!-- Change Role -->
+                  <button class="btn-icon" onclick="promptChangeRole('\${u.id}', '\${escapeHtml(u.display_name || u.username)}', '\${role}')" title="Phân Quyền Vai Trò">
+                    <i class="fas fa-user-shield"></i>
+                  </button>
+                  <!-- Toggle Ban -->
+                  <button class="btn-icon \${isBanned ? 'danger' : ''}" onclick="toggleBan('\${u.id}', \${!isBanned})" title="\${isBanned ? 'Mở Khóa Nick' : 'Khóa Tài Khoản'}">
+                    <i class="fas \${isBanned ? 'fa-lock' : 'fa-lock-open'}"></i>
+                  </button>
+                  <!-- Reset OA Edit -->
+                  <button class="btn-icon" onclick="resetOaEditCount('\${u.id}', '\${escapeHtml(u.display_name || u.username)}')" title="Cấp Lại Lượt Sửa Thông Tin OA">
+                    <i class="fas fa-rotate"></i>
+                  </button>
+                  <!-- Wipe User Account -->
+                  <button class="btn-icon danger" onclick="confirmDeleteUser('\${u.id}', '\${escapeHtml(u.display_name || u.username)}')" title="Xóa Sạch Tài Khoản Vĩnh Viễn">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          \`;
+        });
 
-    async function toggleVerify(userId, newStatus) {
-      try {
+        tbody.innerHTML = html;
+      }
+
+      window.copyToClipboard = function(text) {
+        if (!navigator.clipboard) return;
+        navigator.clipboard.writeText(text).then(() => {
+          Swal.fire({
+            toast: true,
+            position: 'top-end',
+            icon: 'info',
+            title: 'Đã sao chép ID vào bộ nhớ tạm!',
+            showConfirmButton: false,
+            timer: 1200
+          });
+        });
+      };
+
+      window.toggleVerify = async function(userId, newStatus) {
         const data = await safeFetchJson(\`/api/admin/users/\${userId}/toggle-verify\`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + adminToken },
           body: JSON.stringify({ isVerified: newStatus })
         });
         if (data.success) {
-          Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: data.message, showConfirmButton: false, timer: 1800 });
+          Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: data.message, showConfirmButton: false, timer: 1500 });
           fetchUsers();
-          fetchMetrics();
         } else {
           Swal.fire({ icon: 'error', title: 'Lỗi', text: data.error });
         }
-      } catch (err) {
-        Swal.fire({ icon: 'error', title: 'Lỗi', text: err.message });
-      }
-    }
+      };
 
-    async function toggleVip(userId, newStatus) {
-      try {
+      window.toggleVip = async function(userId, newStatus) {
         const data = await safeFetchJson(\`/api/admin/users/\${userId}/toggle-vip\`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + adminToken },
           body: JSON.stringify({ isVip: newStatus })
         });
         if (data.success) {
-          Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: data.message, showConfirmButton: false, timer: 1800 });
+          Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: data.message, showConfirmButton: false, timer: 1500 });
           fetchUsers();
-          fetchMetrics();
         } else {
           Swal.fire({ icon: 'error', title: 'Lỗi', text: data.error });
         }
-      } catch (err) {
-        Swal.fire({ icon: 'error', title: 'Lỗi', text: err.message });
-      }
-    }
+      };
 
-    async function toggleBan(userId, newStatus) {
-      const action = newStatus ? 'KHÓA' : 'MỞ KHÓA';
-      Swal.fire({
-        title: \`Xác nhận \${action} tài khoản?\`,
-        text: newStatus ? 'Người dùng sẽ bị thu hồi toàn bộ quyền truy cập ứng dụng!' : 'Người dùng có thể đăng nhập và hoạt động bình thường.',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: newStatus ? '#ef4444' : '#10b981',
-        confirmButtonText: action,
-        cancelButtonText: 'Hủy'
-      }).then(async (result) => {
-        if (result.isConfirmed) {
-          try {
+      window.toggleBan = async function(userId, newStatus) {
+        const confirmMsg = newStatus ? 'Khóa vĩnh viễn tài khoản này?' : 'Mở khóa hoạt động cho tài khoản?';
+        Swal.fire({
+          title: confirmMsg,
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonText: newStatus ? 'Khóa Ngay' : 'Mở Khóa',
+          cancelButtonText: 'Hủy'
+        }).then(async (res) => {
+          if (res.isConfirmed) {
             const data = await safeFetchJson(\`/api/admin/users/\${userId}/toggle-ban\`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + adminToken },
               body: JSON.stringify({ isBanned: newStatus })
             });
             if (data.success) {
-              Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: data.message, showConfirmButton: false, timer: 1800 });
+              Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: data.message, showConfirmButton: false, timer: 1500 });
               fetchUsers();
-              fetchMetrics();
             } else {
               Swal.fire({ icon: 'error', title: 'Lỗi', text: data.error });
             }
-          } catch (err) {
-            Swal.fire({ icon: 'error', title: 'Lỗi', text: err.message });
           }
-        }
-      });
-    }
-
-    async function confirmDeleteUser(userId, name) {
-      const result = await Swal.fire({
-        title: 'Xóa vĩnh viễn tài khoản?',
-        html: 'Bạn có chắc chắn muốn xóa hoàn toàn tài khoản <strong>\"' + escapeHtml(name) + '\"</strong>?<br><br><span class=\"text-danger small\"><i class=\"fas fa-exclamation-triangle me-1\"></i> Cảnh báo: Toàn bộ bài viết, bình luận, tin nhắn và tài khoản đăng nhập Supabase sẽ bị quét sạch vĩnh viễn. Không thể khôi phục!</span>',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#ef4444',
-        cancelButtonColor: '#475569',
-        confirmButtonText: '<i class=\"fas fa-trash-alt me-1\"></i> Xác nhận xóa vĩnh viễn',
-        cancelButtonText: 'Hủy'
-      });
-
-      if (!result.isConfirmed) return;
-
-      Swal.showLoading();
-      try {
-        const data = await safeFetchJson('/api/admin/users/' + userId, {
-          method: 'DELETE',
-          headers: { 'Authorization': 'Bearer ' + adminToken }
         });
-        if (data.success) {
-          Swal.fire({
-            icon: 'success',
-            title: 'Đã xóa tài khoản!',
-            text: data.message || 'Tài khoản người dùng đã bị xóa sạch hoàn toàn.',
-            timer: 2000,
-            showConfirmButton: false
-          });
-          fetchUsers();
-          fetchMetrics();
-        } else {
-          Swal.fire({ icon: 'error', title: 'Lỗi', text: data.error || 'Không thể xóa tài khoản.' });
-        }
-      } catch (err) {
-        Swal.fire({ icon: 'error', title: 'Lỗi', text: err.message });
-      }
-    }
+      };
 
-    async function promptChangeRole(userId, name, currentRole) {
-      const { value: newRole } = await Swal.fire({
-        title: \`Phân quyền cho "\${name}"\`,
-        input: 'select',
-        inputOptions: {
-          'user': 'Thành viên tiêu chuẩn (User)',
-          'oa': 'Official Account Doanh Nghiệp (OA)',
-          'mod': 'Điều phối viên kiểm duyệt (Moderator)',
-          'admin': 'Quản trị viên cấp cao (Admin)'
-        },
-        inputValue: currentRole,
-        showCancelButton: true,
-        confirmButtonText: 'Lưu quyền mới',
-        cancelButtonText: 'Hủy'
-      });
-
-      if (newRole) {
-        try {
-          const data = await safeFetchJson(\`/api/admin/users/\${userId}/change-role\`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + adminToken },
-            body: JSON.stringify({ role: newRole })
-          });
-          if (data.success) {
-            Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: data.message, showConfirmButton: false, timer: 1800 });
-            fetchUsers();
-            fetchMetrics();
-          } else {
-            Swal.fire({ icon: 'error', title: 'Lỗi', text: data.error });
+      window.promptChangeRole = function(userId, name, currentRole) {
+        Swal.fire({
+          title: 'Phân Quyền: ' + name,
+          input: 'select',
+          inputOptions: {
+            'user': 'Thành Viên Thường (user)',
+            'moderator': 'Kiểm Duyệt Viên (moderator)',
+            'admin': 'Quản Trị Viên (admin)'
+          },
+          inputValue: currentRole,
+          showCancelButton: true,
+          confirmButtonText: 'Lưu Phân Quyền',
+          cancelButtonText: 'Hủy'
+        }).then(async (res) => {
+          if (res.isConfirmed && res.value) {
+            const data = await safeFetchJson(\`/api/admin/users/\${userId}/change-role\`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + adminToken },
+              body: JSON.stringify({ role: res.value })
+            });
+            if (data.success) {
+              Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: data.message, showConfirmButton: false, timer: 1500 });
+              fetchUsers();
+            } else {
+              Swal.fire({ icon: 'error', title: 'Lỗi', text: data.error });
+            }
           }
-        } catch (err) {
-          Swal.fire({ icon: 'error', title: 'Lỗi', text: err.message });
-        }
-      }
-    }
+        });
+      };
 
-    async function resetOaEditCount(userId, name) {
-      Swal.fire({
-        title: 'Cấp lượt sửa OA?',
-        text: \`Cấp lại 1 lượt cập nhật thông tin Official Account cho "\${name}"?\`,
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonText: 'Cấp 1 lượt',
-        cancelButtonText: 'Hủy'
-      }).then(async (result) => {
-        if (result.isConfirmed) {
-          try {
+      window.resetOaEditCount = function(userId, name) {
+        Swal.fire({
+          title: 'Cấp lại lượt sửa thông tin OA?',
+          text: 'Người dùng ' + name + ' sẽ được mở thêm 1 lần chỉnh sửa trực tiếp thông tin OA.',
+          icon: 'question',
+          showCancelButton: true,
+          confirmButtonText: 'Đồng ý',
+          cancelButtonText: 'Hủy'
+        }).then(async (res) => {
+          if (res.isConfirmed) {
             const data = await safeFetchJson(\`/api/admin/users/\${userId}/reset-oa-edit\`, {
               method: 'POST',
               headers: { 'Authorization': 'Bearer ' + adminToken }
             });
             if (data.success) {
-              Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: data.message, showConfirmButton: false, timer: 1800 });
+              Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: data.message, showConfirmButton: false, timer: 1500 });
+              fetchUsers();
             } else {
               Swal.fire({ icon: 'error', title: 'Lỗi', text: data.error });
             }
-          } catch (err) {
-            Swal.fire({ icon: 'error', title: 'Lỗi', text: err.message });
           }
-        }
-      });
-    }
-
-    // Filter Users
-    function setupUserFilterPills() {
-      const pills = document.querySelectorAll('#user-filter-pills .filter-pill');
-      pills.forEach(btn => {
-        btn.addEventListener('click', () => {
-          pills.forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
-          currentUserFilter = btn.getAttribute('data-filter') || 'all';
-          filterUsers();
         });
-      });
-    }
+      };
 
-    function updateUserFilterCounts() {
-      if (!allUsersCache) return;
-      const countAll = allUsersCache.length;
-      const countOa = allUsersCache.filter(u => u.is_oa || u.account_type === 'oa').length;
-      const countVer = allUsersCache.filter(u => u.is_verified).length;
-      const countAdm = allUsersCache.filter(u => u.role === 'admin' || u.role === 'mod').length;
-      const countBan = allUsersCache.filter(u => u.is_banned).length;
+      window.confirmDeleteUser = function(userId, name) {
+        Swal.fire({
+          title: 'XÓA SẠCH TÀI KHOẢN VĨNH VIỄN?',
+          html: '<span style="color: #ef4444; font-weight: 600;">Hành động này KHÔNG THỂ HOÀN TÁC!</span><br>Toàn bộ bài viết, bình luận, tin nhắn, thông báo của người dùng <b>' + escapeHtml(name) + '</b> sẽ bị xóa khỏi cơ sở dữ liệu.',
+          icon: 'error',
+          showCancelButton: true,
+          confirmButtonText: 'Tôi Hiểu, Hãy Xóa Hết',
+          cancelButtonText: 'Hủy Bỏ',
+          confirmButtonColor: '#ef4444'
+        }).then(async (res) => {
+          if (res.isConfirmed) {
+            const data = await safeFetchJson('/api/admin/users/' + userId, {
+              method: 'DELETE',
+              headers: { 'Authorization': 'Bearer ' + adminToken }
+            });
+            if (data.success) {
+              Swal.fire({ icon: 'success', title: 'Đã xóa hoàn toàn', text: data.message });
+              fetchUsers();
+            } else {
+              Swal.fire({ icon: 'error', title: 'Lỗi', text: data.error });
+            }
+          }
+        });
+      };
 
-      const setTxt = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
-      setTxt('filter-count-all', countAll);
-      setTxt('filter-count-oa', countOa);
-      setTxt('filter-count-verified', countVer);
-      setTxt('filter-count-admin', countAdm);
-      setTxt('filter-count-banned', countBan);
-    }
+      // ==============================================================
+      // 3. XÉT DUYỆT & YÊU CẦU (REQUESTS)
+      // ==============================================================
+      window.filterRequests = function(type) {
+        store.requestFilter = type;
+        document.querySelectorAll('#tab-xet-duyet .filter-pill').forEach(p => p.classList.remove('active'));
+        const btn = document.getElementById('pill-req-' + type);
+        if (btn) btn.classList.add('active');
 
-    const userSearchEl = document.getElementById('user-search-input');
-    if (userSearchEl) userSearchEl.addEventListener('input', filterUsers);
+        if (type === 'all') {
+          renderRequests(store.requests);
+        } else if (type === 'verified') {
+          renderRequests(store.requests.filter(r => r.type === 'verified' || r.request_type === 'verified_badge'));
+        } else if (type === 'oa') {
+          renderRequests(store.requests.filter(r => r.type === 'oa' || r.request_type === 'oa_upgrade'));
+        }
+      };
 
-    function filterUsers() {
-      const qInput = document.getElementById('user-search-input');
-      const q = qInput ? qInput.value.toLowerCase().trim() : '';
+      async function fetchRequests(showToast = false) {
+        const container = document.getElementById('requests-container');
+        if (container) container.innerHTML = '<div style="text-align: center; padding: 40px; color: var(--text-muted);"><i class="fas fa-spinner fa-spin me-2"></i> Đang tải danh sách chờ duyệt...</div>';
 
-      let filtered = allUsersCache.filter(u => {
-        const matchesQuery = !q || 
-          (u.display_name && u.display_name.toLowerCase().includes(q)) || 
-          (u.username && u.username.toLowerCase().includes(q)) ||
-          (u.id && u.id.toLowerCase().includes(q));
-
-        let matchesRole = true;
-        if (currentUserFilter === 'banned') matchesRole = u.is_banned === true;
-        else if (currentUserFilter === 'oa') matchesRole = u.is_oa === true || u.account_type === 'oa';
-        else if (currentUserFilter === 'verified') matchesRole = u.is_verified === true;
-        else if (currentUserFilter === 'admin') matchesRole = u.role === 'admin' || u.role === 'mod';
-
-        return matchesQuery && matchesRole;
-      });
-
-      renderUsersTable(filtered);
-    }
-
-    // 3. Fetch Posts
-    async function fetchPosts() {
-      try {
-        const data = await safeFetchJson('/api/admin/posts', {
+        const data = await safeFetchJson('/api/admin/requests', {
           headers: { 'Authorization': 'Bearer ' + adminToken }
         });
-        if (data.success && data.posts) {
-          allPostsCache = data.posts;
-          renderPostsTable(allPostsCache);
+
+        if (data.success && data.requests) {
+          store.requests = data.requests;
+          renderRequests(data.requests);
+          const bReq = document.getElementById('badge-requests-count');
+          if (bReq) bReq.textContent = data.requests.length;
+
+          if (showToast) {
+            Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'Đã cập nhật hàng đợi!', showConfirmButton: false, timer: 1200 });
+          }
+        } else {
+          if (container) container.innerHTML = '<div style="text-align: center; padding: 40px; color: var(--danger);">Lỗi tải hàng đợi: ' + escapeHtml(data.error) + '</div>';
         }
-      } catch (err) {
-        console.error('Fetch posts error:', err);
       }
-    }
 
-    function renderPostsTable(posts) {
-      const tbody = document.getElementById('posts-table-body');
-      if (!posts || posts.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="7" class="text-center py-5 text-muted">Chưa có bài viết nào trên bảng tin.</td></tr>';
-        return;
-      }
+      function renderRequests(requests) {
+        const container = document.getElementById('requests-container');
+        if (!container) return;
 
-      tbody.innerHTML = posts.map(p => {
-        const prof = Array.isArray(p.profiles) ? p.profiles[0] : p.profiles;
-        const author = p.author || prof || {};
-        const authorName = escapeHtml(author.display_name || author.username || 'Người dùng Dorabox');
-        const authorInitial = authorName.charAt(0).toUpperCase();
-        const authorUsername = author.username 
-          ? ('@' + escapeHtml(author.username)) 
-          : (author.display_name ? ('@' + escapeHtml(author.display_name.toLowerCase().replace(/\\s+/g, ''))) : (p.author_id ? ('@' + p.author_id.substring(0, 8)) : ''));
-        const verifiedBadge = (author.is_oa || author.account_type === 'oa')
-          ? '<i class="fas fa-badge-check text-warning ms-1" title="Tài khoản OA chính thức (Tích Vàng)"></i>'
-          : (author.is_verified
-              ? '<i class="fas fa-badge-check text-primary ms-1" title="Tài khoản đã xác minh (Tích Xanh)"></i>'
-              : '');
-        const authorAvatar = author.avatar_url 
-          ? \`<img class="user-avatar-sm me-2" src="\${author.avatar_url}" alt="\${authorName}" onerror="this.outerHTML='<div class=\\'user-avatar-fallback me-2\\'>\${authorInitial}</div>'" />\`
-          : \`<div class="user-avatar-fallback me-2">\${authorInitial}</div>\`;
-
-        const dateStr = p.created_at ? new Date(p.created_at).toLocaleString('vi-VN') : '-';
-        
-        let mediaHtml = '<span class="text-muted small">Không đính kèm</span>';
-        let mediaParts = [];
-        if (p.media_urls && p.media_urls.length > 0) {
-          mediaParts.push(\`
-            <div class="d-flex gap-1 align-items-center">
-              <img src="\${p.media_urls[0]}" class="rounded-2" style="width: 44px; height: 44px; object-fit: cover; cursor: pointer;" onclick="openLightbox('\${p.media_urls[0]}')" title="Phóng to ảnh" />
-              \${p.media_urls.length > 1 ? \`<span class="badge bg-dark border border-secondary align-self-center">+\${p.media_urls.length - 1}</span>\` : ''}
-            </div>
-          \`);
-        }
-        if (p.link_url) {
-          const lTitle = p.link_title ? escapeHtml(p.link_title) : 'Đính kèm Link';
-          mediaParts.push(\`
-            <a href="\${escapeHtml(p.link_url)}" target="_blank" class="badge bg-info-subtle text-info text-decoration-none mt-1 d-inline-flex align-items-center text-truncate" style="max-width: 150px;" title="\${escapeHtml(p.link_url)}">
-              <i class="fas fa-link me-1"></i>\${lTitle}
-            </a>
-          \`);
-        }
-        if (mediaParts.length > 0) {
-          mediaHtml = \`<div class="d-flex flex-column gap-1">\${mediaParts.join('')}</div>\`;
+        if (!requests || requests.length === 0) {
+          container.innerHTML = '<div style="text-align: center; padding: 50px; color: var(--text-muted);"><i class="fas fa-check-circle text-success fa-2x mb-3"></i><br>Hàng đợi trống! Hiện không có yêu cầu nào cần duyệt.</div>';
+          return;
         }
 
-        return \`
-          <tr>
-            <td style="padding-left: 20px;">
-              <div class="d-flex align-items-center">
-                \${authorAvatar}
+        let html = '<div style="display: flex; flex-direction: column; gap: 14px;">';
+        requests.forEach(r => {
+          const u = r.user || r.profile || {};
+          const isOaReq = r.type === 'oa' || r.request_type === 'oa_upgrade';
+          const avatarUrl = u.avatar_url || 'https://api.dicebear.com/7.x/identicon/svg?seed=' + (u.id || r.id);
+
+          html += \`
+            <div style="background: var(--bg-card); border: 1px solid var(--border-default); border-radius: var(--radius-md); padding: 16px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px;">
+              <div style="display: flex; align-items: center; gap: 14px;">
+                <img src="\${escapeHtml(avatarUrl)}" class="user-avatar-img" style="width: 44px; height: 44px;" alt="avatar">
                 <div>
-                  <div class="fw-bold text-white d-flex align-items-center">\${authorName} \${verifiedBadge}</div>
-                  <div class="text-muted font-mono" style="font-size: 11px;">\${authorUsername}</div>
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <strong style="font-size: 14px;">\${escapeHtml(u.display_name || u.username || 'Người dùng')}</strong>
+                    <span class="user-handle">@\${escapeHtml(u.username || '')}</span>
+                    <span class="status-badge \${isOaReq ? 'oa' : 'verified'}">
+                      \${isOaReq ? '<i class="fas fa-star"></i> Đề xuất OA' : '<i class="fas fa-check"></i> Xin Tích Xanh'}
+                    </span>
+                  </div>
+                  <div style="font-size: 12.5px; color: var(--text-secondary); margin-top: 4px;">
+                    \${escapeHtml(r.reason || r.note || r.details || 'Yêu cầu xác minh tài khoản chính chủ.')}
+                  </div>
+                  <div style="font-size: 11.5px; color: var(--text-muted); margin-top: 2px;">
+                    Gửi lúc: \${formatDate(r.created_at)}
+                  </div>
                 </div>
               </div>
-            </td>
-            <td style="max-width: 340px;">
-              <div class="text-truncate text-light small">\${escapeHtml(p.content || '')}</div>
-            </td>
-            <td>\${mediaHtml}</td>
-            <td>
-              <div class="small text-muted d-flex gap-3">
-                <span><i class="fas fa-heart text-danger me-1"></i>\${p.likes_count || 0}</span>
-                <span><i class="fas fa-comment text-info me-1"></i>\${p.comments_count || 0}</span>
-              </div>
-            </td>
-            <td>
-              \${p.is_pinned ? '<span class="badge-soft badge-soft-oa"><i class="fas fa-thumbtack me-1"></i>Đã ghim</span>' : '<span class="text-muted small">-</span>'}
-            </td>
-            <td class="text-secondary small">\${dateStr}</td>
-            <td style="text-align: right; padding-right: 20px;">
-              <div class="d-flex align-items-center justify-content-end gap-1.5">
-                <button class="action-ellipsis-btn text-primary" title="Chỉnh sửa bài viết (Nội dung, Ảnh, Liên kết)" onclick="openEditPostModal('\${p.id}')">
-                  <i class="fas fa-pen-to-square"></i>
+
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <button class="btn-db btn-db-primary btn-db-sm" onclick="reviewRequest('\${r.id}', 'approve', '\${escapeHtml(u.display_name || u.username)}')">
+                  <i class="fas fa-check me-1"></i> Phê Duyệt
                 </button>
-                <button class="action-ellipsis-btn" title="\${p.is_pinned ? 'Bỏ ghim' : 'Ghim nổi bật'}" onclick="togglePinPost('\${p.id}', \${!p.is_pinned})">
-                  <i class="fas fa-thumbtack \${p.is_pinned ? 'text-warning' : ''}"></i>
-                </button>
-                <button class="action-ellipsis-btn text-danger" title="Xóa bài viết vĩnh viễn" onclick="deletePost('\${p.id}')">
-                  <i class="fas fa-trash"></i>
+                <button class="btn-db btn-db-danger btn-db-sm" onclick="reviewRequest('\${r.id}', 'reject', '\${escapeHtml(u.display_name || u.username)}')">
+                  <i class="fas fa-times me-1"></i> Từ Chối
                 </button>
               </div>
-            </td>
-          </tr>
-        \`;
-      }).join('');
-    }
+            </div>
+          \`;
+        });
+        html += '</div>';
 
-    // =========================================================================
-    // QUẢN LÝ CHỈNH SỬA BÀI VIẾT (EDIT POSTS MODAL)
-    // =========================================================================
-    let currentEditMediaUrls = [];
-
-    function openEditPostModal(postId) {
-      const post = allPostsCache.find(p => p.id === postId);
-      if (!post) {
-        Swal.fire({ icon: 'error', title: 'Lỗi', text: 'Không tìm thấy thông tin bài viết' });
-        return;
+        container.innerHTML = html;
       }
 
-      document.getElementById('edit-post-id').value = post.id;
-      document.getElementById('edit-post-content').value = post.content || '';
-      currentEditMediaUrls = Array.isArray(post.media_urls) ? [...post.media_urls] : [];
-      document.getElementById('edit-post-new-media-url').value = '';
-      document.getElementById('edit-post-link-url').value = post.link_url || '';
-      document.getElementById('edit-post-link-title').value = post.link_title || '';
-
-      renderEditPostMediaList();
-      updateEditPostLinkPreview();
-
-      const modalEl = document.getElementById('modalEditPost');
-      const modal = new bootstrap.Modal(modalEl);
-      modal.show();
-    }
-
-    function renderEditPostMediaList() {
-      const container = document.getElementById('edit-post-media-list');
-      const countBadge = document.getElementById('edit-post-media-count');
-      if (!container || !countBadge) return;
-      countBadge.textContent = currentEditMediaUrls.length + ' ảnh';
-
-      if (currentEditMediaUrls.length === 0) {
-        container.innerHTML = '<span class="text-muted small p-2">Chưa có ảnh nào đính kèm. Dán URL bên dưới để thêm ảnh.</span>';
-        return;
-      }
-
-      container.innerHTML = currentEditMediaUrls.map((url, idx) => {
-        const safeUrl = escapeHtml(url);
-        return \`
-          <div class="position-relative d-inline-block rounded-2 overflow-hidden border border-secondary shadow-sm" style="width: 72px; height: 72px;">
-            <img src="\${safeUrl}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='https://placehold.co/100x100?text=Error';" />
-            <button type="button" class="btn btn-danger btn-sm p-0 position-absolute top-0 end-0 rounded-circle m-1" style="width: 20px; height: 20px; line-height: 18px; font-size: 11px;" onclick="removeEditPostMedia(\${idx})" title="Gỡ ảnh này">
-              <i class="fas fa-times"></i>
-            </button>
-          </div>
-        \`;
-      }).join('');
-    }
-
-    function removeEditPostMedia(idx) {
-      currentEditMediaUrls.splice(idx, 1);
-      renderEditPostMediaList();
-    }
-
-    function addEditPostMediaUrl() {
-      const input = document.getElementById('edit-post-new-media-url');
-      const val = (input ? input.value : '').trim();
-      if (!val) {
-        Swal.fire({ icon: 'warning', title: 'Thiếu URL ảnh', text: 'Vui lòng dán liên kết hình ảnh hợp lệ (https://...)' });
-        return;
-      }
-      currentEditMediaUrls.push(val);
-      input.value = '';
-      renderEditPostMediaList();
-    }
-
-    function updateEditPostLinkPreview() {
-      const urlInput = document.getElementById('edit-post-link-url');
-      const titleInput = document.getElementById('edit-post-link-title');
-      const url = (urlInput ? urlInput.value : '').trim();
-      const customTitle = (titleInput ? titleInput.value : '').trim();
-      const titleDisplay = document.getElementById('preview-link-title-display');
-      const urlDisplay = document.getElementById('preview-link-url-display');
-
-      if (!titleDisplay || !urlDisplay) return;
-
-      if (!url) {
-        titleDisplay.textContent = '(Chưa có liên kết)';
-        titleDisplay.style.color = 'var(--text-muted)';
-        urlDisplay.textContent = 'Mở liên kết';
-        return;
-      }
-
-      titleDisplay.style.color = 'var(--text-primary)';
-      if (customTitle) {
-        titleDisplay.textContent = customTitle;
-        urlDisplay.textContent = url;
-      } else {
-        try {
-          const parsed = new URL(url.startsWith('http') ? url : 'https://' + url);
-          titleDisplay.textContent = parsed.hostname;
-          urlDisplay.textContent = url;
-        } catch (_) {
-          titleDisplay.textContent = url;
-          urlDisplay.textContent = 'Mở liên kết';
+      window.reviewRequest = function(reqId, action, userName) {
+        const isApprove = action === 'approve';
+        if (isApprove) {
+          Swal.fire({
+            title: 'Phê duyệt hồ sơ?',
+            text: 'Cấp huy hiệu xác thực chính thức cho ' + userName,
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Đồng Ý Duyệt',
+            cancelButtonText: 'Hủy'
+          }).then(async (res) => {
+            if (res.isConfirmed) {
+              const data = await safeFetchJson(\`/api/admin/requests/\${reqId}/approve\`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + adminToken },
+                body: JSON.stringify({ reason: 'Hồ sơ đạt tiêu chuẩn phê duyệt.' })
+              });
+              if (data.success) {
+                Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: data.message, showConfirmButton: false, timer: 1500 });
+                fetchRequests();
+              } else {
+                Swal.fire({ icon: 'error', title: 'Lỗi', text: data.error });
+              }
+            }
+          });
+        } else {
+          Swal.fire({
+            title: 'Từ chối yêu cầu của ' + userName,
+            input: 'text',
+            inputPlaceholder: 'Nhập lý do từ chối (hồ sơ chưa đủ, mạo danh...)',
+            showCancelButton: true,
+            confirmButtonText: 'Xác Nhận Từ Chối',
+            cancelButtonText: 'Hủy',
+            confirmButtonColor: '#ef4444'
+          }).then(async (res) => {
+            if (res.isConfirmed) {
+              const reason = res.value || 'Hồ sơ chưa đạt tiêu chuẩn.';
+              const data = await safeFetchJson(\`/api/admin/requests/\${reqId}/reject\`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + adminToken },
+                body: JSON.stringify({ reason })
+              });
+              if (data.success) {
+                Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: data.message, showConfirmButton: false, timer: 1500 });
+                fetchRequests();
+              } else {
+                Swal.fire({ icon: 'error', title: 'Lỗi', text: data.error });
+              }
+            }
+          });
         }
-      }
-    }
+      };
 
-    async function submitEditPost() {
-      const idInput = document.getElementById('edit-post-id');
-      const contentInput = document.getElementById('edit-post-content');
-      const linkUrlInput = document.getElementById('edit-post-link-url');
-      const linkTitleInput = document.getElementById('edit-post-link-title');
+      // ==============================================================
+      // 4. NHÓM TRÒ CHUYỆN (GROUPS)
+      // ==============================================================
+      window.onSearchGroupsDebounced = function() {
+        clearTimeout(searchDebounceTimers.groups);
+        searchDebounceTimers.groups = setTimeout(() => {
+          fetchGroups(1);
+        }, 250);
+      };
 
-      const id = idInput ? idInput.value : '';
-      const content = (contentInput ? contentInput.value : '').trim();
-      const link_url = (linkUrlInput ? linkUrlInput.value : '').trim();
-      const link_title = (linkTitleInput ? linkTitleInput.value : '').trim();
-      const btn = document.getElementById('btn-save-edit-post');
+      async function fetchGroups(page = 1, showToast = false) {
+        store.groupsPage = page;
+        const search = (document.getElementById('groups-search-input')?.value || '').trim();
+        const url = \`/api/admin/groups?page=\${page}&limit=20&search=\${encodeURIComponent(search)}\`;
 
-      if (!content && currentEditMediaUrls.length === 0) {
-        Swal.fire({ icon: 'warning', title: 'Thiếu nội dung', text: 'Bài viết phải có ít nhất nội dung văn bản hoặc hình ảnh.' });
-        return;
-      }
+        const tbody = document.getElementById('groups-table-body');
+        if (tbody) tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 40px; color: var(--text-muted);"><i class="fas fa-spinner fa-spin me-2"></i> Đang tải danh sách nhóm...</td></tr>';
 
-      if (btn) {
-        btn.disabled = true;
-        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Đang lưu...';
-      }
-
-      try {
-        const res = await safeFetchJson('/api/admin/posts/' + encodeURIComponent(id), {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + adminToken
-          },
-          body: JSON.stringify({
-            content,
-            media_urls: currentEditMediaUrls,
-            link_url: link_url || null,
-            link_title: link_title || null
-          })
+        const data = await safeFetchJson(url, {
+          headers: { 'Authorization': 'Bearer ' + adminToken }
         });
 
-        if (res.success) {
-          const modalEl = document.getElementById('modalEditPost');
-          const modal = bootstrap.Modal.getInstance(modalEl);
-          if (modal) modal.hide();
+        if (data.success && data.groups) {
+          store.groups = data.groups;
+          store.groupsTotal = data.total || 0;
+          renderGroupsTable(data.groups);
+          renderGroupsPagination(data.total, page, 20);
 
-          Swal.fire({
-            toast: true,
-            position: 'top-end',
-            icon: 'success',
-            title: 'Đã cập nhật bài viết thành công!',
-            showConfirmButton: false,
-            timer: 2000
-          });
-
-          fetchPosts();
+          if (showToast) {
+            Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'Đã làm mới danh sách nhóm!', showConfirmButton: false, timer: 1200 });
+          }
         } else {
-          Swal.fire({ icon: 'error', title: 'Lỗi cập nhật', text: res.error || 'Có lỗi xảy ra khi lưu bài viết' });
-        }
-      } catch (err) {
-        Swal.fire({ icon: 'error', title: 'Lỗi', text: 'Không thể kết nối máy chủ' });
-      } finally {
-        if (btn) {
-          btn.disabled = false;
-          btn.innerHTML = '<i class="fas fa-floppy-disk me-1"></i> Lưu Thay Đổi';
+          if (tbody) tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 40px; color: var(--danger);">Lỗi tải nhóm: ' + escapeHtml(data.error) + '</td></tr>';
         }
       }
-    }
 
-    async function togglePinPost(postId, newStatus) {
-      try {
+      function renderGroupsTable(groups) {
+        const tbody = document.getElementById('groups-table-body');
+        if (!tbody) return;
+
+        if (!groups || groups.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 40px; color: var(--text-muted);">Không tìm thấy nhóm trò chuyện nào.</td></tr>';
+          return;
+        }
+
+        let html = '';
+        groups.forEach(g => {
+          html += \`
+            <tr>
+              <td>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <div style="width: 36px; height: 36px; border-radius: var(--radius-md); background: var(--purple-subtle); color: var(--purple); display: flex; align-items: center; justify-content: center; font-size: 15px;">
+                    <i class="fas fa-users-rectangle"></i>
+                  </div>
+                  <div>
+                    <strong style="font-size: 13.5px;">\${escapeHtml(g.name || 'Nhóm không tên')}</strong>
+                    <div style="font-size: 11.5px; color: var(--text-muted);">Tạo bởi: \${escapeHtml(g.created_by || 'Hệ thống')}</div>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <span class="id-pill" onclick="copyToClipboard('\${g.id}')">
+                  \${g.id.substring(0, 8)}... <i class="fas fa-copy" style="font-size: 10px;"></i>
+                </span>
+              </td>
+              <td>
+                <span class="status-badge" style="background: var(--bg-card); border: 1px solid var(--border-default);">
+                  <i class="fas fa-user-group me-1" style="color: var(--purple);"></i> \${g.member_count || (g.members ? g.members.length : 0)} thành viên
+                </span>
+              </td>
+              <td style="font-size: 12.5px; color: var(--text-secondary);">\${formatDate(g.created_at)}</td>
+              <td style="text-align: right;">
+                <div class="action-btn-group" style="justify-content: flex-end;">
+                  <button class="btn-icon" onclick="showGroupMembers('\${g.id}', '\${escapeHtml(g.name)}')" title="Xem Danh Sách Thành Viên">
+                    <i class="fas fa-list"></i>
+                  </button>
+                  <button class="btn-icon danger" onclick="confirmDisbandGroup('\${g.id}', '\${escapeHtml(g.name)}')" title="Giải Tán & Xóa Nhóm Vi Phạm">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          \`;
+        });
+
+        tbody.innerHTML = html;
+      }
+
+      function renderGroupsPagination(total, page, limit) {
+        const info = document.getElementById('groups-pagination-info');
+        const btns = document.getElementById('groups-pagination-btns');
+        if (!info || !btns) return;
+
+        const maxPage = Math.max(1, Math.ceil(total / limit));
+        info.textContent = \`Hiển thị trang \${page} / \${maxPage} (Tổng cộng \${total} nhóm)\`;
+
+        btns.innerHTML = \`
+          <button class="btn-db btn-db-outline btn-db-sm" \${page <= 1 ? 'disabled' : ''} onclick="fetchGroups(\${page - 1})">
+            <i class="fas fa-chevron-left"></i>
+          </button>
+          <button class="btn-db btn-db-outline btn-db-sm" \${page >= maxPage ? 'disabled' : ''} onclick="fetchGroups(\${page + 1})">
+            <i class="fas fa-chevron-right"></i>
+          </button>
+        \`;
+      }
+
+      window.showGroupMembers = async function(groupId, groupName) {
+        document.getElementById('modalGroupTitle').innerHTML = '<i class="fas fa-users me-2 text-primary"></i>Thành Viên: ' + escapeHtml(groupName);
+        const listTbody = document.getElementById('modalGroupMembersList');
+        listTbody.innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 30px; color: var(--text-muted);"><i class="fas fa-spinner fa-spin me-2"></i> Đang tải thành viên...</td></tr>';
+
+        const myModal = new bootstrap.Modal(document.getElementById('modalGroupMembers'));
+        myModal.show();
+
+        const data = await safeFetchJson('/api/admin/groups/' + groupId + '/members', {
+          headers: { 'Authorization': 'Bearer ' + adminToken }
+        });
+
+        if (data.success && data.members) {
+          if (data.members.length === 0) {
+            listTbody.innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 30px; color: var(--text-muted);">Nhóm chưa có thành viên nào.</td></tr>';
+            return;
+          }
+          let html = '';
+          data.members.forEach(m => {
+            const avatarUrl = m.avatar_url || 'https://api.dicebear.com/7.x/identicon/svg?seed=' + m.id;
+            html += \`
+              <tr>
+                <td>
+                  <div class="cell-user-info">
+                    <img src="\${escapeHtml(avatarUrl)}" class="user-avatar-img" alt="avatar">
+                    <div class="user-text-meta">
+                      <span class="user-display-name">\${escapeHtml(m.display_name || m.username || 'Thành viên')}</span>
+                      <span class="user-handle">@\${escapeHtml(m.username || '')}</span>
+                    </div>
+                  </div>
+                </td>
+                <td><span class="id-pill" onclick="copyToClipboard('\${m.id}')">\${m.id.substring(0, 8)}...</span></td>
+                <td><span class="status-badge \${m.is_admin ? 'admin' : ''}">\${m.is_admin ? 'Trưởng nhóm' : 'Thành viên'}</span></td>
+                <td style="font-size: 12px; color: var(--text-secondary);">\${formatDate(m.joined_at)}</td>
+              </tr>
+            \`;
+          });
+          listTbody.innerHTML = html;
+        } else {
+          listTbody.innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 30px; color: var(--danger);">Lỗi tải thành viên nhóm: ' + escapeHtml(data.error) + '</td></tr>';
+        }
+      };
+
+      window.confirmDisbandGroup = function(groupId, groupName) {
+        Swal.fire({
+          title: 'Giải tán nhóm này?',
+          html: 'Toàn bộ tin nhắn và thành viên trong nhóm <b>' + escapeHtml(groupName) + '</b> sẽ bị xóa khỏi hệ thống.',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonText: 'Giải Tán Ngay',
+          cancelButtonText: 'Hủy',
+          confirmButtonColor: '#ef4444'
+        }).then(async (res) => {
+          if (res.isConfirmed) {
+            const data = await safeFetchJson('/api/admin/groups/' + groupId, {
+              method: 'DELETE',
+              headers: { 'Authorization': 'Bearer ' + adminToken }
+            });
+            if (data.success) {
+              Swal.fire({ icon: 'success', title: 'Đã giải tán nhóm', text: data.message });
+              fetchGroups(store.groupsPage);
+            } else {
+              Swal.fire({ icon: 'error', title: 'Lỗi', text: data.error });
+            }
+          }
+        });
+      };
+
+      // ==============================================================
+      // 5. TÊN NGƯỜI DÙNG CẤM & BẢO LƯU (BANNED USERNAMES)
+      // ==============================================================
+      async function fetchBannedUsernames() {
+        const tbody = document.getElementById('banned-table-body');
+        if (tbody) tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 40px; color: var(--text-muted);"><i class="fas fa-spinner fa-spin me-2"></i> Đang tải danh sách...</td></tr>';
+
+        const data = await safeFetchJson('/api/admin/banned-usernames', {
+          headers: { 'Authorization': 'Bearer ' + adminToken }
+        });
+
+        if (data.success && data.bannedUsernames) {
+          store.bannedUsernames = data.bannedUsernames;
+          renderBannedUsernames(data.bannedUsernames);
+        } else {
+          if (tbody) tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 40px; color: var(--danger);">Lỗi tải danh sách: ' + escapeHtml(data.error) + '</td></tr>';
+        }
+      }
+
+      function renderBannedUsernames(items) {
+        const tbody = document.getElementById('banned-table-body');
+        if (!tbody) return;
+
+        if (!items || items.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 40px; color: var(--text-muted);">Chưa có username nào trong danh sách cấm.</td></tr>';
+          return;
+        }
+
+        let html = '';
+        items.forEach(b => {
+          html += \`
+            <tr>
+              <td>
+                <span class="status-badge banned" style="font-family: var(--font-mono); font-size: 13px;">
+                  @\${escapeHtml(b.username)}
+                </span>
+              </td>
+              <td>\${escapeHtml(b.reason || 'Bảo lưu kỹ thuật hệ thống')}</td>
+              <td style="font-size: 12.5px; color: var(--text-secondary);">\${formatDate(b.created_at)}</td>
+              <td style="text-align: right;">
+                <button class="btn-icon danger" onclick="confirmDeleteBannedUsername('\${b.id}', '\${escapeHtml(b.username)}')" title="Gỡ Bỏ Khỏi Danh Sách Cấm">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </td>
+            </tr>
+          \`;
+        });
+
+        tbody.innerHTML = html;
+      }
+
+      window.filterBannedUsernames = function() {
+        const q = (document.getElementById('banned-search-input')?.value || '').trim().toLowerCase();
+        if (!q) {
+          renderBannedUsernames(store.bannedUsernames);
+          return;
+        }
+        const filtered = store.bannedUsernames.filter(b => 
+          (b.username && b.username.toLowerCase().includes(q)) ||
+          (b.reason && b.reason.toLowerCase().includes(q))
+        );
+        renderBannedUsernames(filtered);
+      };
+
+      window.openAddBannedModal = function() {
+        document.getElementById('inputBannedUsername').value = '';
+        document.getElementById('inputBannedReason').value = '';
+        const modal = new bootstrap.Modal(document.getElementById('modalAddBannedUser'));
+        modal.show();
+      };
+
+      window.submitAddBannedUsername = async function() {
+        const username = document.getElementById('inputBannedUsername').value.trim();
+        const reason = document.getElementById('inputBannedReason').value.trim();
+        if (!username || !reason) return;
+
+        const data = await safeFetchJson('/api/admin/banned-usernames', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + adminToken },
+          body: JSON.stringify({ username, reason })
+        });
+
+        if (data.success) {
+          bootstrap.Modal.getInstance(document.getElementById('modalAddBannedUser'))?.hide();
+          Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: data.message, showConfirmButton: false, timer: 1500 });
+          fetchBannedUsernames();
+        } else {
+          Swal.fire({ icon: 'error', title: 'Lỗi', text: data.error });
+        }
+      };
+
+      window.confirmDeleteBannedUsername = function(id, username) {
+        Swal.fire({
+          title: 'Gỡ username cấm?',
+          text: 'Sau khi gỡ, người dùng có thể đăng ký tài khoản mang tên @' + username,
+          icon: 'question',
+          showCancelButton: true,
+          confirmButtonText: 'Gỡ Bỏ',
+          cancelButtonText: 'Hủy'
+        }).then(async (res) => {
+          if (res.isConfirmed) {
+            const data = await safeFetchJson('/api/admin/banned-usernames/' + encodeURIComponent(id), {
+              method: 'DELETE',
+              headers: { 'Authorization': 'Bearer ' + adminToken }
+            });
+            if (data.success) {
+              Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: data.message, showConfirmButton: false, timer: 1500 });
+              fetchBannedUsernames();
+            } else {
+              Swal.fire({ icon: 'error', title: 'Lỗi', text: data.error });
+            }
+          }
+        });
+      };
+
+      // ==============================================================
+      // 6. BÀI VIẾT FEED (POSTS)
+      // ==============================================================
+      window.onSearchPostsDebounced = function() {
+        clearTimeout(searchDebounceTimers.posts);
+        searchDebounceTimers.posts = setTimeout(() => {
+          fetchPosts();
+        }, 250);
+      };
+
+      async function fetchPosts(showToast = false) {
+        const q = (document.getElementById('posts-search-input')?.value || '').trim();
+        let url = '/api/admin/posts';
+        if (q) url += '?q=' + encodeURIComponent(q);
+
+        const tbody = document.getElementById('posts-table-body');
+        if (tbody) tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 40px; color: var(--text-muted);"><i class="fas fa-spinner fa-spin me-2"></i> Đang tải bài viết...</td></tr>';
+
+        const data = await safeFetchJson(url, {
+          headers: { 'Authorization': 'Bearer ' + adminToken }
+        });
+
+        if (data.success && data.posts) {
+          store.posts = data.posts;
+          renderPostsTable(data.posts);
+          if (showToast) {
+            Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'Đã làm mới bài viết!', showConfirmButton: false, timer: 1200 });
+          }
+        } else {
+          if (tbody) tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 40px; color: var(--danger);">Lỗi tải bài viết: ' + escapeHtml(data.error) + '</td></tr>';
+        }
+      }
+
+      function renderPostsTable(posts) {
+        const tbody = document.getElementById('posts-table-body');
+        if (!tbody) return;
+
+        if (!posts || posts.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 40px; color: var(--text-muted);">Không tìm thấy bài viết nào.</td></tr>';
+          return;
+        }
+
+        let html = '';
+        posts.forEach(p => {
+          const author = p.author || p.profiles || {};
+          const avatarUrl = author.avatar_url || 'https://api.dicebear.com/7.x/identicon/svg?seed=' + (author.id || p.id);
+          const isPinned = Boolean(p.is_pinned);
+
+          let mediaPreview = '';
+          if (p.media_urls && Array.isArray(p.media_urls) && p.media_urls.length > 0) {
+            mediaPreview = '<div style="display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap;">';
+            p.media_urls.slice(0, 3).forEach(url => {
+              if (url.match(/\\.(mp4|mov|webm)$/i)) {
+                mediaPreview += \`<a href="/watch?url=\${encodeURIComponent(url)}" target="_blank" class="status-badge" style="background: var(--bg-card);"><i class="fas fa-play me-1 text-danger"></i> Video</a>\`;
+              } else {
+                mediaPreview += \`<img src="\${escapeHtml(url)}" style="width: 44px; height: 44px; border-radius: 6px; object-fit: cover; border: 1px solid var(--border-default);">\`;
+              }
+            });
+            if (p.media_urls.length > 3) {
+              mediaPreview += \`<span style="font-size: 11px; color: var(--text-muted); align-self: center;">+\${p.media_urls.length - 3}</span>\`;
+            }
+            mediaPreview += '</div>';
+          }
+
+          html += \`
+            <tr>
+              <td>
+                <div class="cell-user-info">
+                  <img src="\${escapeHtml(avatarUrl)}" class="user-avatar-img" alt="avatar">
+                  <div class="user-text-meta">
+                    <span class="user-display-name">
+                      \${escapeHtml(author.display_name || author.username || 'Người dùng')}
+                      \${author.is_verified ? '<i class="fas fa-circle-check text-primary" style="font-size: 12px;"></i>' : ''}
+                    </span>
+                    <span class="user-handle">@\${escapeHtml(author.username || '')}</span>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div>
+                  <div style="font-size: 13.5px; line-height: 1.4; max-width: 460px;">
+                    \${isPinned ? '<span class="status-badge" style="background: var(--primary-subtle); color: var(--primary); margin-right: 6px;"><i class="fas fa-thumbtack"></i> Đã Ghim</span>' : ''}
+                    \${escapeHtml(p.content || '(Không có văn bản)')}
+                  </div>
+                  \${mediaPreview}
+                  \${p.link_url ? \`<div style="font-size: 11.5px; margin-top: 4px;"><a href="\${escapeHtml(p.link_url)}" target="_blank" style="color: var(--primary); text-decoration: none;"><i class="fas fa-link me-1"></i>\${escapeHtml(p.link_url)}</a></div>\` : ''}
+                </div>
+              </td>
+              <td>
+                <div style="font-size: 12px; color: var(--text-secondary); display: flex; gap: 10px;">
+                  <span><i class="fas fa-heart text-danger me-1"></i>\${p.likes_count || 0}</span>
+                  <span><i class="fas fa-comment text-primary me-1"></i>\${p.comments_count || 0}</span>
+                </div>
+              </td>
+              <td style="font-size: 12px; color: var(--text-secondary);">\${formatDate(p.created_at)}</td>
+              <td style="text-align: right;">
+                <div class="action-btn-group" style="justify-content: flex-end;">
+                  <button class="btn-icon \${isPinned ? 'primary' : ''}" onclick="togglePinPost('\${p.id}', \${!isPinned})" title="\${isPinned ? 'Bỏ Ghim Bài' : 'Ghim Bài Viết Lên Đầu'}">
+                    <i class="fas fa-thumbtack" style="\${isPinned ? 'color: var(--primary);' : ''}"></i>
+                  </button>
+                  <button class="btn-icon" onclick="openEditPostModal('\${p.id}')" title="Sửa Bài Viết">
+                    <i class="fas fa-pen-to-square"></i>
+                  </button>
+                  <button class="btn-icon danger" onclick="deletePost('\${p.id}')" title="Xóa Bài Viết Vi Phạm">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          \`;
+        });
+
+        tbody.innerHTML = html;
+      }
+
+      window.togglePinPost = async function(postId, newStatus) {
         const data = await safeFetchJson(\`/api/admin/posts/\${postId}/toggle-pin\`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + adminToken },
           body: JSON.stringify({ isPinned: newStatus })
         });
         if (data.success) {
-          Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: data.message, showConfirmButton: false, timer: 1800 });
+          Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: data.message, showConfirmButton: false, timer: 1200 });
           fetchPosts();
         } else {
           Swal.fire({ icon: 'error', title: 'Lỗi', text: data.error });
         }
-      } catch (err) {
-        Swal.fire({ icon: 'error', title: 'Lỗi', text: err.message });
-      }
-    }
+      };
 
-    async function deletePost(postId) {
-      Swal.fire({
-        title: 'Xóa bài viết này?',
-        text: 'Toàn bộ nội dung, hình ảnh và bình luận liên quan sẽ bị xóa vĩnh viễn!',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#ef4444',
-        confirmButtonText: 'Xóa vĩnh viễn',
-        cancelButtonText: 'Hủy'
-      }).then(async (result) => {
-        if (result.isConfirmed) {
-          try {
+      window.openEditPostModal = function(postId) {
+        const post = store.posts.find(p => p.id === postId);
+        if (!post) return;
+
+        store.editingPost = JSON.parse(JSON.stringify(post));
+        document.getElementById('editPostId').value = post.id;
+        document.getElementById('editPostContent').value = post.content || '';
+        document.getElementById('editPostLink').value = post.link_url || '';
+
+        renderEditPostMediaList();
+        const modal = new bootstrap.Modal(document.getElementById('modalEditPost'));
+        modal.show();
+      };
+
+      function renderEditPostMediaList() {
+        const container = document.getElementById('editPostMediaContainer');
+        if (!container || !store.editingPost) return;
+
+        const urls = store.editingPost.media_urls || [];
+        if (urls.length === 0) {
+          container.innerHTML = '<span style="font-size: 12px; color: var(--text-muted);">Chưa có tệp đính kèm nào.</span>';
+          return;
+        }
+
+        let html = '';
+        urls.forEach((url, idx) => {
+          html += \`
+            <div style="position: relative; display: inline-block;">
+              <img src="\${escapeHtml(url)}" style="width: 60px; height: 60px; border-radius: 8px; object-fit: cover; border: 1px solid var(--border-default);">
+              <button type="button" class="btn-icon danger" onclick="removeEditPostMedia(\${idx})" style="position: absolute; top: -6px; right: -6px; width: 20px; height: 20px; font-size: 10px; background: var(--bg-surface); border-radius: 50%;">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+          \`;
+        });
+        container.innerHTML = html;
+      }
+
+      window.removeEditPostMedia = function(idx) {
+        if (!store.editingPost || !store.editingPost.media_urls) return;
+        store.editingPost.media_urls.splice(idx, 1);
+        renderEditPostMediaList();
+      };
+
+      window.addEditPostMediaUrl = function() {
+        const input = document.getElementById('newMediaUrlInput');
+        const url = (input?.value || '').trim();
+        if (!url || !store.editingPost) return;
+
+        if (!store.editingPost.media_urls) store.editingPost.media_urls = [];
+        store.editingPost.media_urls.push(url);
+        input.value = '';
+        renderEditPostMediaList();
+      };
+
+      window.submitEditPost = async function() {
+        const id = document.getElementById('editPostId').value;
+        const content = document.getElementById('editPostContent').value;
+        const link_url = document.getElementById('editPostLink').value;
+        const media_urls = store.editingPost ? store.editingPost.media_urls : [];
+
+        const data = await safeFetchJson('/api/admin/posts/' + encodeURIComponent(id), {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + adminToken },
+          body: JSON.stringify({ content, link_url, media_urls })
+        });
+
+        if (data.success) {
+          bootstrap.Modal.getInstance(document.getElementById('modalEditPost'))?.hide();
+          Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: data.message, showConfirmButton: false, timer: 1500 });
+          fetchPosts();
+        } else {
+          Swal.fire({ icon: 'error', title: 'Lỗi', text: data.error });
+        }
+      };
+
+      window.deletePost = function(postId) {
+        Swal.fire({
+          title: 'Xóa bài viết này?',
+          text: 'Bài viết và toàn bộ phản hồi, bình luận liên quan sẽ bị xóa vĩnh viễn.',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonText: 'Xóa Ngay',
+          cancelButtonText: 'Hủy',
+          confirmButtonColor: '#ef4444'
+        }).then(async (res) => {
+          if (res.isConfirmed) {
             const data = await safeFetchJson(\`/api/admin/posts/\${postId}\`, {
               method: 'DELETE',
               headers: { 'Authorization': 'Bearer ' + adminToken }
             });
             if (data.success) {
-              Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: data.message, showConfirmButton: false, timer: 1800 });
+              Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: data.message, showConfirmButton: false, timer: 1500 });
               fetchPosts();
-              fetchMetrics();
             } else {
               Swal.fire({ icon: 'error', title: 'Lỗi', text: data.error });
             }
-          } catch (err) {
-            Swal.fire({ icon: 'error', title: 'Lỗi', text: err.message });
           }
-        }
-      });
-    }
+        });
+      };
 
-    const postSearchEl = document.getElementById('post-search-input');
-    if (postSearchEl) {
-      postSearchEl.addEventListener('input', (e) => {
-        const q = e.target.value.toLowerCase().trim();
-        const filtered = allPostsCache.filter(p => p.content && p.content.toLowerCase().includes(q));
-        renderPostsTable(filtered);
-      });
-    }
+      // ==============================================================
+      // 7. BÌNH LUẬN (COMMENTS)
+      // ==============================================================
+      window.onSearchCommentsDebounced = function() {
+        clearTimeout(searchDebounceTimers.comments);
+        searchDebounceTimers.comments = setTimeout(() => {
+          fetchComments();
+        }, 250);
+      };
 
-    // 4. Fetch Comments
-    async function fetchComments() {
-      try {
-        const data = await safeFetchJson('/api/admin/comments', {
+      async function fetchComments(showToast = false) {
+        const q = (document.getElementById('comments-search-input')?.value || '').trim();
+        let url = '/api/admin/comments';
+        if (q) url += '?q=' + encodeURIComponent(q);
+
+        const tbody = document.getElementById('comments-table-body');
+        if (tbody) tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 40px; color: var(--text-muted);"><i class="fas fa-spinner fa-spin me-2"></i> Đang tải bình luận...</td></tr>';
+
+        const data = await safeFetchJson(url, {
           headers: { 'Authorization': 'Bearer ' + adminToken }
         });
+
         if (data.success && data.comments) {
-          allCommentsCache = data.comments;
-          renderCommentsTable(allCommentsCache);
+          store.comments = data.comments;
+          renderCommentsTable(data.comments);
+          if (showToast) {
+            Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'Đã làm mới bình luận!', showConfirmButton: false, timer: 1200 });
+          }
+        } else {
+          if (tbody) tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 40px; color: var(--danger);">Lỗi tải bình luận: ' + escapeHtml(data.error) + '</td></tr>';
         }
-      } catch (err) {
-        console.error('Fetch comments error:', err);
-      }
-    }
-
-    function renderCommentsTable(comments) {
-      const tbody = document.getElementById('comments-table-body');
-      if (!comments || comments.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" class="text-center py-5 text-muted">Chưa có bình luận nào.</td></tr>';
-        return;
       }
 
-      tbody.innerHTML = comments.map(c => {
-        const prof = Array.isArray(c.profiles) ? c.profiles[0] : c.profiles;
-        const user = c.user || prof || {};
-        const userName = escapeHtml(user.display_name || user.username || 'Người dùng Dorabox');
-        const userInitial = userName.charAt(0).toUpperCase();
-        const userUsername = user.username 
-          ? ('@' + escapeHtml(user.username)) 
-          : (user.display_name ? ('@' + escapeHtml(user.display_name.toLowerCase().replace(/\\s+/g, ''))) : (c.user_id ? ('@' + c.user_id.substring(0, 8)) : ''));
-        const userAvatar = user.avatar_url 
-          ? \`<img class="user-avatar-sm me-2" src="\${user.avatar_url}" alt="\${userName}" onerror="this.outerHTML='<div class=\\'user-avatar-fallback me-2\\'>\${userInitial}</div>'" />\`
-          : \`<div class="user-avatar-fallback me-2">\${userInitial}</div>\`;
-        const dateStr = c.created_at ? new Date(c.created_at).toLocaleString('vi-VN') : '-';
+      function renderCommentsTable(comments) {
+        const tbody = document.getElementById('comments-table-body');
+        if (!tbody) return;
 
-        return \`
-          <tr>
-            <td style="padding-left: 20px;">
-              <div class="d-flex align-items-center">
-                \${userAvatar}
-                <div>
-                  <div class="fw-bold text-white">\${userName}</div>
-                  <div class="text-muted font-mono" style="font-size: 11px;">\${userUsername}</div>
+        if (!comments || comments.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 40px; color: var(--text-muted);">Không tìm thấy bình luận nào.</td></tr>';
+          return;
+        }
+
+        let html = '';
+        comments.forEach(c => {
+          const user = c.user || c.profiles || {};
+          const post = c.post || c.posts || {};
+          const avatarUrl = user.avatar_url || 'https://api.dicebear.com/7.x/identicon/svg?seed=' + (user.id || c.id);
+
+          html += \`
+            <tr>
+              <td>
+                <div class="cell-user-info">
+                  <img src="\${escapeHtml(avatarUrl)}" class="user-avatar-img" alt="avatar">
+                  <div class="user-text-meta">
+                    <span class="user-display-name">\${escapeHtml(user.display_name || user.username || 'Người dùng')}</span>
+                    <span class="user-handle">@\${escapeHtml(user.username || '')}</span>
+                  </div>
                 </div>
-              </div>
-            </td>
-            <td>
-              <div class="text-light small text-break">\${escapeHtml(c.content || '')}</div>
-            </td>
-            <td>
-              <span class="text-muted font-mono small">Post: \${c.post_id ? c.post_id.substring(0, 8) + '...' : '-'}</span>
-            </td>
-            <td class="text-secondary small">\${dateStr}</td>
-            <td style="text-align: right; padding-right: 20px;">
-              <button class="action-ellipsis-btn text-danger" title="Xóa bình luận" onclick="deleteComment('\${c.id}')">
-                <i class="fas fa-trash"></i>
-              </button>
-            </td>
-          </tr>
-        \`;
-      }).join('');
-    }
+              </td>
+              <td>
+                <div style="font-size: 13.5px; max-width: 400px; line-height: 1.4;">
+                  \${escapeHtml(c.content || '')}
+                </div>
+              </td>
+              <td>
+                <div style="font-size: 12px; color: var(--text-secondary); max-width: 250px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                  \${escapeHtml(post.content || 'Bài viết #' + (c.post_id ? c.post_id.substring(0, 8) : ''))}
+                </div>
+              </td>
+              <td style="font-size: 12px; color: var(--text-secondary);">\${formatDate(c.created_at)}</td>
+              <td style="text-align: right;">
+                <button class="btn-icon danger" onclick="deleteComment('\${c.id}')" title="Xóa Bình Luận Vi Phạm">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </td>
+            </tr>
+          \`;
+        });
 
-    async function deleteComment(commentId) {
-      Swal.fire({
-        title: 'Xóa bình luận này?',
-        text: 'Hành động không thể hoàn tác!',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#ef4444',
-        confirmButtonText: 'Xóa',
-        cancelButtonText: 'Hủy'
-      }).then(async (result) => {
-        if (result.isConfirmed) {
-          try {
+        tbody.innerHTML = html;
+      }
+
+      window.deleteComment = function(commentId) {
+        Swal.fire({
+          title: 'Xóa bình luận này?',
+          text: 'Bình luận vi phạm sẽ bị xóa khỏi bài viết ngay lập tức.',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonText: 'Xóa Bình Luận',
+          cancelButtonText: 'Hủy',
+          confirmButtonColor: '#ef4444'
+        }).then(async (res) => {
+          if (res.isConfirmed) {
             const data = await safeFetchJson(\`/api/admin/comments/\${commentId}\`, {
               method: 'DELETE',
               headers: { 'Authorization': 'Bearer ' + adminToken }
             });
             if (data.success) {
-              Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: data.message, showConfirmButton: false, timer: 1800 });
+              Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: data.message, showConfirmButton: false, timer: 1200 });
               fetchComments();
-              fetchMetrics();
             } else {
               Swal.fire({ icon: 'error', title: 'Lỗi', text: data.error });
             }
-          } catch (err) {
-            Swal.fire({ icon: 'error', title: 'Lỗi', text: err.message });
           }
+        });
+      };
+
+      // ==============================================================
+      // 8. BÁO CÁO VI PHẠM (REPORTS)
+      // ==============================================================
+      window.filterReports = function(type) {
+        store.reportFilter = type;
+        document.querySelectorAll('#tab-bao-cao .filter-pill').forEach(p => p.classList.remove('active'));
+        const btn = document.getElementById('pill-rep-' + type);
+        if (btn) btn.classList.add('active');
+
+        if (type === 'all') {
+          renderReportsTable(store.reports);
+        } else {
+          renderReportsTable(store.reports.filter(r => r.target_type === type));
         }
-      });
-    }
+      };
 
-    const commentSearchEl = document.getElementById('comment-search-input');
-    if (commentSearchEl) {
-      commentSearchEl.addEventListener('input', (e) => {
-        const q = e.target.value.toLowerCase().trim();
-        const filtered = allCommentsCache.filter(c => c.content && c.content.toLowerCase().includes(q));
-        renderCommentsTable(filtered);
-      });
-    }
+      async function fetchReports(showToast = false) {
+        const tbody = document.getElementById('reports-table-body');
+        if (tbody) tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 40px; color: var(--text-muted);"><i class="fas fa-spinner fa-spin me-2"></i> Đang tải báo cáo...</td></tr>';
 
-    // 5. Fetch Reports (Kiểm duyệt Báo cáo Vi phạm Tiêu chuẩn Cộng đồng)
-    let currentReportFilter = 'all';
-
-    async function fetchReports(showToast = false) {
-      try {
         const data = await safeFetchJson('/api/admin/reports', {
           headers: { 'Authorization': 'Bearer ' + adminToken }
         });
+
         if (data.success && data.reports) {
-          allReportsCache = data.reports;
-          renderReportsTable(allReportsCache);
+          store.reports = data.reports;
+          renderReportsTable(data.reports);
+
+          const pendingCount = data.reports.filter(r => r.status === 'pending').length;
+          const bRep = document.getElementById('badge-reports-count');
+          if (bRep) bRep.textContent = pendingCount;
+
           if (showToast) {
-            Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'Đã tải danh sách báo cáo vi phạm', showConfirmButton: false, timer: 1500 });
+            Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'Đã làm mới báo cáo!', showConfirmButton: false, timer: 1200 });
           }
+        } else {
+          if (tbody) tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 40px; color: var(--danger);">Lỗi tải báo cáo: ' + escapeHtml(data.error) + '</td></tr>';
         }
-      } catch (err) {
-        console.error('Fetch reports error:', err);
-      }
-    }
-
-    function filterReports(type) {
-      currentReportFilter = type;
-      document.querySelectorAll('#report-filter-group button').forEach(btn => btn.classList.remove('active'));
-      const activeBtn = event.target;
-      if (activeBtn) activeBtn.classList.add('active');
-
-      if (type === 'all') {
-        renderReportsTable(allReportsCache);
-      } else {
-        renderReportsTable(allReportsCache.filter(r => r.target_type === type));
-      }
-    }
-
-    function renderReportsTable(reports) {
-      const tbody = document.getElementById('reports-table-body');
-      if (!reports || reports.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" class="text-center py-5 text-muted"><i class="fas fa-shield-check fs-2 text-success mb-2 d-block"></i>Tuyệt vời! Không có báo cáo vi phạm nào cần xử lý.</td></tr>';
-        return;
       }
 
-      tbody.innerHTML = reports.map(r => {
-        const rep = r.reporter || {};
-        const reporterName = escapeHtml(rep.display_name || rep.username || 'Người dùng');
-        const reporterUsername = rep.username ? ('@' + escapeHtml(rep.username)) : (r.reporter_id ? ('ID: ' + r.reporter_id.substring(0, 8)) : '');
-        const reporterAvatar = rep.avatar_url || ('https://api.dicebear.com/7.x/bottts/svg?seed=' + (r.reporter_id || 'rep'));
+      function renderReportsTable(reports) {
+        const tbody = document.getElementById('reports-table-body');
+        if (!tbody) return;
 
-        let targetHtml = '';
-        if (r.target_type === 'post') {
-          if (r.is_deleted || !r.target_data) {
-            targetHtml = \`
-              <div>
-                <span class="badge bg-secondary mb-1"><i class="fas fa-trash-alt me-1"></i>BÀI VIẾT (ĐÃ GỠ BỎ)</span>
-                <div class="p-2 rounded mt-1" style="background: rgba(255,255,255,0.02); border-left: 3px solid #64748b;">
-                  <div class="text-warning small"><i class="fas fa-info-circle me-1"></i>Bài viết này đã bị xóa hoặc đã xử phạt gỡ bỏ trước đó.</div>
-                  <div class="text-muted small mt-1 font-mono" style="font-size: 11px;">Mã bài viết: \${r.target_id}</div>
+        if (!reports || reports.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 40px; color: var(--text-muted);"><i class="fas fa-check-circle text-success fa-2x mb-3"></i><br>Không có báo cáo vi phạm nào!</td></tr>';
+          return;
+        }
+
+        let html = '';
+        reports.forEach(r => {
+          const reporter = r.reporter || r.profiles || {};
+          const isPending = r.status === 'pending';
+          const typeBadgeMap = {
+            'user': '<span class="status-badge" style="background: var(--purple-subtle); color: var(--purple);"><i class="fas fa-user"></i> Người Dùng</span>',
+            'post': '<span class="status-badge" style="background: var(--cyan-subtle); color: var(--cyan);"><i class="fas fa-newspaper"></i> Bài Viết</span>',
+            'comment': '<span class="status-badge" style="background: var(--primary-subtle); color: var(--primary);"><i class="fas fa-comment"></i> Bình Luận</span>',
+          };
+
+          html += \`
+            <tr>
+              <td>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  \${typeBadgeMap[r.target_type] || '<span class="status-badge">Mục</span>'}
+                  <span class="id-pill" onclick="copyToClipboard('\${r.target_id}')">\${r.target_id ? r.target_id.substring(0, 8) + '...' : '-'}</span>
                 </div>
+              </td>
+              <td>
+                <div style="font-size: 13px;">
+                  <strong>\${escapeHtml(reporter.display_name || reporter.username || 'Ẩn danh')}</strong>
+                  <div class="user-handle">@\${escapeHtml(reporter.username || '')}</div>
+                </div>
+              </td>
+              <td>
+                <div style="font-size: 13px; max-width: 320px; color: var(--text-primary);">
+                  \${escapeHtml(r.reason || 'Vi phạm tiêu chuẩn cộng đồng')}
+                </div>
+              </td>
+              <td>
+                <span class="status-badge \${isPending ? 'pending' : 'verified'}">
+                  \${isPending ? 'Chờ xử lý' : 'Đã duyệt'}
+                </span>
+              </td>
+              <td style="font-size: 12px; color: var(--text-secondary);">\${formatDate(r.created_at)}</td>
+              <td style="text-align: right;">
+                <div class="action-btn-group" style="justify-content: flex-end;">
+                  <button class="btn-icon" onclick="viewReportDetail('\${r.id}')" title="Xem Chi Tiết Báo Cáo">
+                    <i class="fas fa-eye"></i>
+                  </button>
+                  \${isPending ? \`
+                    <button class="btn-icon danger" onclick="resolveReport('\${r.id}', 'delete_content')" title="Xóa Nội Dung Vi Phạm">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                    <button class="btn-icon" onclick="resolveReport('\${r.id}', 'dismiss')" title="Bỏ Qua Báo Cáo">
+                      <i class="fas fa-check"></i>
+                    </button>
+                  \` : ''}
+                </div>
+              </td>
+            </tr>
+          \`;
+        });
+
+        tbody.innerHTML = html;
+      }
+
+      window.viewReportDetail = function(reportId) {
+        const rep = store.reports.find(r => r.id === reportId);
+        if (!rep) return;
+
+        const body = document.getElementById('report-detail-body');
+        const footer = document.getElementById('report-detail-footer');
+        const reporter = rep.reporter || {};
+
+        body.innerHTML = \`
+          <div style="display: flex; flex-direction: column; gap: 14px;">
+            <div>
+              <span style="font-size: 12px; color: var(--text-muted);">Loại mục bị báo cáo:</span>
+              <strong style="text-transform: uppercase; color: var(--primary); margin-left: 6px;">\${rep.target_type}</strong>
+            </div>
+            <div>
+              <span style="font-size: 12px; color: var(--text-muted);">Người gửi báo cáo:</span>
+              <div style="margin-top: 4px; font-weight: 600;">\${escapeHtml(reporter.display_name || reporter.username || 'Ẩn danh')} (@\${escapeHtml(reporter.username || '')})</div>
+            </div>
+            <div>
+              <span style="font-size: 12px; color: var(--text-muted);">Lý do vi phạm:</span>
+              <div style="margin-top: 4px; background: var(--bg-card); padding: 12px; border-radius: var(--radius-md); border: 1px solid var(--border-default);">
+                \${escapeHtml(rep.reason || 'Không có ghi chú lý do')}
               </div>
-            \`;
-          } else {
-            const author = r.target_data.author || {};
-            const authorName = escapeHtml(author.display_name || author.username || 'Tác giả');
-            const authorUsername = author.username ? ('@' + escapeHtml(author.username)) : (r.target_data.author_id ? ('ID: ' + r.target_data.author_id.substring(0, 8)) : '');
-            const authorAvatar = author.avatar_url || ('https://api.dicebear.com/7.x/bottts/svg?seed=' + (author.id || 'usr'));
-            const snippet = escapeHtml(r.target_data.content || '(Bài viết hình ảnh / không có văn bản)');
-            
-            let mediaPreview = '';
-            if (r.target_data.media_urls && r.target_data.media_urls.length > 0) {
-              mediaPreview = \`
-                <div class="d-flex gap-1.5 mt-2 align-items-center">
-                  \${r.target_data.media_urls.slice(0, 3).map(url => \`
-                    <img src="\${url}" class="rounded-2 border border-secondary" style="width: 44px; height: 44px; object-fit: cover; cursor: pointer;" onclick="openLightbox('\${url}')" title="Click để phóng to ảnh xem chứng cứ" />
-                  \`).join('')}
-                  \${r.target_data.media_urls.length > 3 ? \`<span class="badge bg-dark border border-secondary">+\${r.target_data.media_urls.length - 3}</span>\` : ''}
-                </div>
-              \`;
+            </div>
+          </div>
+        \`;
+
+        footer.innerHTML = \`
+          <button type="button" class="btn-db btn-db-outline" data-bs-dismiss="modal">Đóng</button>
+          <button type="button" class="btn-db btn-db-danger" onclick="resolveReport('\${rep.id}', 'ban_user')">
+            <i class="fas fa-ban me-1"></i> Khóa Nick Đối Tượng
+          </button>
+          <button type="button" class="btn-db btn-db-primary" onclick="resolveReport('\${rep.id}', 'dismiss')">
+            <i class="fas fa-check me-1"></i> Bỏ Qua & Đóng Báo Cáo
+          </button>
+        \`;
+
+        const modal = new bootstrap.Modal(document.getElementById('modalReportDetail'));
+        modal.show();
+      };
+
+      window.resolveReport = function(reportId, action) {
+        const actionLabels = {
+          'dismiss': 'Bỏ qua và đóng báo cáo này?',
+          'delete_content': 'Xóa nội dung bị tố cáo vi phạm?',
+          'ban_user': 'Khóa vĩnh viễn tài khoản người bị tố cáo?'
+        };
+
+        Swal.fire({
+          title: actionLabels[action] || 'Xử lý báo cáo?',
+          icon: action === 'dismiss' ? 'question' : 'warning',
+          showCancelButton: true,
+          confirmButtonText: 'Xác Nhận',
+          cancelButtonText: 'Hủy'
+        }).then(async (res) => {
+          if (res.isConfirmed) {
+            const data = await safeFetchJson(\`/api/admin/reports/\${reportId}/action\`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + adminToken },
+              body: JSON.stringify({ action })
+            });
+
+            if (data.success) {
+              bootstrap.Modal.getInstance(document.getElementById('modalReportDetail'))?.hide();
+              Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: data.message, showConfirmButton: false, timer: 1500 });
+              fetchReports();
+            } else {
+              Swal.fire({ icon: 'error', title: 'Lỗi', text: data.error });
+            }
+          }
+        });
+      };
+
+      // ==============================================================
+      // 9. PHÁT THÔNG BÁO PUSH FCM (BROADCAST)
+      // ==============================================================
+      window.updateBroadcastPreview = function() {
+        const title = document.getElementById('bc-title')?.value || '';
+        const body = document.getElementById('bc-body')?.value || '';
+
+        const pTitle = document.getElementById('preview-notif-title');
+        const pBody = document.getElementById('preview-notif-body');
+
+        if (pTitle) pTitle.textContent = title.trim() || 'Tiêu đề thông báo...';
+        if (pBody) pBody.textContent = body.trim() || 'Nội dung chi tiết thông báo sẽ xuất hiện ở đây...';
+      };
+
+      window.sendBroadcast = async function() {
+        const title = document.getElementById('bc-title').value.trim();
+        const body = document.getElementById('bc-body').value.trim();
+        const link = document.getElementById('bc-link').value.trim();
+
+        if (!title || !body) return;
+
+        Swal.fire({
+          title: 'Phát thông báo tới toàn bộ thiết bị?',
+          html: 'Thông báo sẽ được gửi qua Firebase Cloud Messaging (FCM) tới tất cả người dùng ứng dụng Dorabox.',
+          icon: 'question',
+          showCancelButton: true,
+          confirmButtonText: 'Gửi Ngay',
+          cancelButtonText: 'Hủy'
+        }).then(async (res) => {
+          if (res.isConfirmed) {
+            const btn = document.getElementById('btn-send-broadcast');
+            if (btn) {
+              btn.disabled = true;
+              btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Đang truyền dữ liệu...';
             }
 
-            targetHtml = \`
-              <div>
-                <div class="d-flex align-items-center justify-content-between mb-1">
-                  <span class="badge bg-primary"><i class="fas fa-newspaper me-1"></i>BÀI VIẾT</span>
-                  <button class="btn btn-sm btn-outline-info py-0 px-2" style="font-size: 11px;" onclick="viewReportDetail('\${r.id}')"><i class="fas fa-eye me-1"></i>Chi tiết</button>
-                </div>
-                <div class="p-2 rounded mt-1" style="background: rgba(255,255,255,0.03); border-left: 3px solid #38bdf8;">
-                  <div class="d-flex align-items-center gap-2 mb-1">
-                    <img src="\${authorAvatar}" style="width: 20px; height: 20px; border-radius: 50%; object-fit: cover;" onerror="this.src='https://api.dicebear.com/7.x/bottts/svg?seed=usr'" />
-                    <span class="text-white small fw-bold">\${authorName}</span>
-                    <span class="text-muted font-mono" style="font-size: 11px;">\${authorUsername}</span>
-                  </div>
-                  <div class="text-light small text-break" style="max-height: 48px; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">\${snippet}</div>
-                  \${mediaPreview}
-                </div>
-              </div>
-            \`;
-          }
-        } else if (r.target_type === 'comment') {
-          if (r.is_deleted || !r.target_data) {
-            targetHtml = \`
-              <div>
-                <span class="badge bg-secondary mb-1"><i class="fas fa-trash-alt me-1"></i>BÌNH LUẬN (ĐÃ GỠ BỎ)</span>
-                <div class="p-2 rounded mt-1" style="background: rgba(255,255,255,0.02); border-left: 3px solid #64748b;">
-                  <div class="text-warning small"><i class="fas fa-info-circle me-1"></i>Bình luận đã bị gỡ bỏ khỏi bài viết.</div>
-                  <div class="text-muted small mt-1 font-mono" style="font-size: 11px;">Mã bình luận: \${r.target_id}</div>
-                </div>
-              </div>
-            \`;
-          } else {
-            const author = r.target_data.author || {};
-            const authorName = escapeHtml(author.display_name || author.username || 'Người bình luận');
-            const authorUsername = author.username ? ('@' + escapeHtml(author.username)) : '';
-            const authorAvatar = author.avatar_url || ('https://api.dicebear.com/7.x/bottts/svg?seed=' + (author.id || 'cmt'));
-            const snippet = escapeHtml(r.target_data.content || '(Bình luận trống)');
-
-            targetHtml = \`
-              <div>
-                <div class="d-flex align-items-center justify-content-between mb-1">
-                  <span class="badge bg-info"><i class="fas fa-comment me-1"></i>BÌNH LUẬN</span>
-                  <button class="btn btn-sm btn-outline-info py-0 px-2" style="font-size: 11px;" onclick="viewReportDetail('\${r.id}')"><i class="fas fa-eye me-1"></i>Chi tiết</button>
-                </div>
-                <div class="p-2 rounded mt-1" style="background: rgba(255,255,255,0.03); border-left: 3px solid #06b6d4;">
-                  <div class="d-flex align-items-center gap-2 mb-1">
-                    <img src="\${authorAvatar}" style="width: 20px; height: 20px; border-radius: 50%; object-fit: cover;" onerror="this.src='https://api.dicebear.com/7.x/bottts/svg?seed=cmt'" />
-                    <span class="text-white small fw-bold">\${authorName}</span>
-                    <span class="text-muted font-mono" style="font-size: 11px;">\${authorUsername}</span>
-                  </div>
-                  <div class="text-white small">\${snippet}</div>
-                </div>
-              </div>
-            \`;
-          }
-        } else {
-          // target_type === 'user'
-          if (r.is_deleted || !r.target_data) {
-            targetHtml = \`
-              <div>
-                <span class="badge bg-secondary mb-1"><i class="fas fa-user-slash me-1"></i>TÀI KHOẢN (ĐÃ XÓA)</span>
-                <div class="p-2 rounded mt-1" style="background: rgba(255,255,255,0.02); border-left: 3px solid #64748b;">
-                  <div class="text-warning small"><i class="fas fa-info-circle me-1"></i>Tài khoản không còn tồn tại trên hệ thống.</div>
-                  <div class="text-muted small mt-1 font-mono" style="font-size: 11px;">Mã UID: \${r.target_id}</div>
-                </div>
-              </div>
-            \`;
-          } else {
-            const targetName = escapeHtml(r.target_data.display_name || 'Tài khoản');
-            const targetUsername = escapeHtml(r.target_data.username || '-');
-            const targetAvatar = r.target_data.avatar_url || ('https://api.dicebear.com/7.x/bottts/svg?seed=' + r.target_id);
-            const isBanned = r.target_data.is_banned ? '<span class="text-danger fw-bold ms-1">(Đang bị khóa)</span>' : '';
-
-            targetHtml = \`
-              <div>
-                <div class="d-flex align-items-center justify-content-between mb-1">
-                  <span class="badge bg-danger"><i class="fas fa-user-slash me-1"></i>TÀI KHOẢN</span>
-                  <button class="btn btn-sm btn-outline-info py-0 px-2" style="font-size: 11px;" onclick="viewReportDetail('\${r.id}')"><i class="fas fa-eye me-1"></i>Chi tiết</button>
-                </div>
-                <div class="p-2 rounded mt-1" style="background: rgba(255,255,255,0.03); border-left: 3px solid #ef4444;">
-                  <div class="d-flex align-items-center gap-2">
-                    <img src="\${targetAvatar}" style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover;" onerror="this.src='https://api.dicebear.com/7.x/bottts/svg?seed=usr'" />
-                    <div>
-                      <div class="text-white small fw-bold">\${targetName} \${isBanned}</div>
-                      <div class="text-muted font-mono" style="font-size: 11px;">@\${targetUsername} &bull; UID: \${r.target_id.substring(0, 8)}</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            \`;
-          }
-        }
-
-        const statusBadge = r.status === 'reviewed' 
-          ? '<span class="badge bg-success">Đã xử lý</span>' 
-          : (r.status === 'dismissed' ? '<span class="badge bg-secondary">Đã bác bỏ</span>' : '<span class="badge bg-danger">Chờ xử lý</span>');
-
-        const dateStr = r.created_at ? new Date(r.created_at).toLocaleString('vi-VN') : '-';
-
-        let actionButtons = '<span class="text-muted small">Hoàn tất</span>';
-        if (r.status === 'pending') {
-          if (r.target_type === 'user') {
-            actionButtons = \`
-              <button class="btn btn-sm btn-danger me-1" onclick="resolveReport('\${r.id}', 'ban_user')">
-                <i class="fas fa-ban me-1"></i>Khóa tài khoản
-              </button>
-              <button class="btn btn-sm btn-outline-secondary" onclick="resolveReport('\${r.id}', 'dismiss')">
-                <i class="fas fa-times me-1"></i>Bác bỏ
-              </button>
-            \`;
-          } else {
-            actionButtons = \`
-              <button class="btn btn-sm btn-outline-danger me-1" onclick="resolveReport('\${r.id}', 'delete_content')">
-                <i class="fas fa-trash-can me-1"></i>Xóa nội dung
-              </button>
-              <button class="btn btn-sm btn-outline-secondary" onclick="resolveReport('\${r.id}', 'dismiss')">
-                <i class="fas fa-times me-1"></i>Bác bỏ
-              </button>
-            \`;
-          }
-        }
-
-        return \`
-          <tr>
-            <td style="padding-left: 20px;">
-              <div class="d-flex align-items-center gap-2">
-                <img src="\${reporterAvatar}" style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover;" onerror="this.src='https://api.dicebear.com/7.x/bottts/svg?seed=rep'">
-                <div>
-                  <div class="fw-bold text-white">\${reporterName}</div>
-                  <div class="text-muted font-mono" style="font-size: 11px;">\${reporterUsername}</div>
-                </div>
-              </div>
-            </td>
-            <td>\${targetHtml}</td>
-            <td>
-              <div class="fw-bold text-warning small">\${escapeHtml(r.reason || 'Không rõ lý do')}</div>
-            </td>
-            <td>\${statusBadge}</td>
-            <td class="text-secondary small">\${dateStr}</td>
-            <td style="text-align: right; padding-right: 20px;">\${actionButtons}</td>
-          </tr>
-        \`;
-      }).join('');
-    }
-
-    function viewReportDetail(reportId) {
-      const r = allReportsCache.find(item => item.id === reportId);
-      if (!r) return;
-
-      const rep = r.reporter || {};
-      const reporterName = escapeHtml(rep.display_name || rep.username || 'Người dùng');
-      const reporterUsername = rep.username ? ('@' + escapeHtml(rep.username)) : (r.reporter_id ? ('ID: ' + r.reporter_id.substring(0, 8)) : '');
-      const reporterAvatar = rep.avatar_url || ('https://api.dicebear.com/7.x/bottts/svg?seed=' + (r.reporter_id || 'rep'));
-
-      let contentSection = '';
-      if (r.target_type === 'post') {
-        if (r.is_deleted || !r.target_data) {
-          contentSection = \`
-            <div class="alert alert-warning text-start mb-3">
-              <i class="fas fa-exclamation-triangle me-2"></i><strong>Bài viết đã bị gỡ bỏ hoặc đã xử phạt xóa trước đó.</strong>
-              <div class="small text-muted font-mono mt-1">Post ID: \${r.target_id}</div>
-            </div>
-          \`;
-        } else {
-          const author = r.target_data.author || {};
-          const authorName = escapeHtml(author.display_name || author.username || 'Tác giả');
-          const authorUsername = author.username ? ('@' + escapeHtml(author.username)) : '';
-          const authorAvatar = author.avatar_url || ('https://api.dicebear.com/7.x/bottts/svg?seed=' + (author.id || 'usr'));
-          const postText = escapeHtml(r.target_data.content || '(Bài viết không có nội dung chữ)');
-
-          let mediaGrid = '';
-          if (r.target_data.media_urls && r.target_data.media_urls.length > 0) {
-            mediaGrid = \`
-              <div class="mt-3">
-                <label class="form-label text-muted small fw-bold">HÌNH ẢNH / TÀI LIỆU ĐÍNH KÈM (\${r.target_data.media_urls.length}):</label>
-                <div class="d-flex flex-wrap gap-2">
-                  \${r.target_data.media_urls.map(url => \`
-                    <div style="position: relative;">
-                      <img src="\${url}" class="rounded-3 border border-secondary" style="width: 120px; height: 120px; object-fit: cover; cursor: pointer;" onclick="openLightbox('\${url}')" title="Click để phóng to ảnh" />
-                    </div>
-                  \`).join('')}
-                </div>
-              </div>
-            \`;
-          }
-
-          contentSection = \`
-            <div class="card bg-dark border-secondary p-3 text-start mb-3">
-              <div class="d-flex align-items-center gap-2 mb-2 pb-2 border-bottom border-secondary">
-                <img src="\${authorAvatar}" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;" onerror="this.src='https://api.dicebear.com/7.x/bottts/svg?seed=usr'" />
-                <div>
-                  <div class="fw-bold text-white">\${authorName}</div>
-                  <div class="text-muted font-mono small">\${authorUsername} &bull; ID: \${r.target_id.substring(0, 8)}</div>
-                </div>
-              </div>
-              <div class="text-light mb-2 text-break" style="white-space: pre-wrap; font-size: 14px;">\${postText}</div>
-              \${mediaGrid}
-            </div>
-          \`;
-        }
-      } else if (r.target_type === 'comment') {
-        if (r.is_deleted || !r.target_data) {
-          contentSection = \`
-            <div class="alert alert-warning text-start mb-3">
-              <i class="fas fa-exclamation-triangle me-2"></i><strong>Bình luận đã bị gỡ bỏ.</strong>
-              <div class="small text-muted font-mono mt-1">Comment ID: \${r.target_id}</div>
-            </div>
-          \`;
-        } else {
-          const author = r.target_data.author || {};
-          const authorName = escapeHtml(author.display_name || author.username || 'Người bình luận');
-          const authorUsername = author.username ? ('@' + escapeHtml(author.username)) : '';
-          const authorAvatar = author.avatar_url || ('https://api.dicebear.com/7.x/bottts/svg?seed=' + (author.id || 'cmt'));
-          const commentText = escapeHtml(r.target_data.content || '(Bình luận trống)');
-
-          contentSection = \`
-            <div class="card bg-dark border-secondary p-3 text-start mb-3">
-              <div class="d-flex align-items-center gap-2 mb-2 pb-2 border-bottom border-secondary">
-                <img src="\${authorAvatar}" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;" onerror="this.src='https://api.dicebear.com/7.x/bottts/svg?seed=cmt'" />
-                <div>
-                  <div class="fw-bold text-white">\${authorName}</div>
-                  <div class="text-muted font-mono small">\${authorUsername} &bull; ID: \${r.target_id.substring(0, 8)}</div>
-                </div>
-              </div>
-              <div class="text-light text-break" style="white-space: pre-wrap; font-size: 14px;">\${commentText}</div>
-            </div>
-          \`;
-        }
-      } else {
-        // User
-        if (r.is_deleted || !r.target_data) {
-          contentSection = \`
-            <div class="alert alert-warning text-start mb-3">
-              <i class="fas fa-exclamation-triangle me-2"></i><strong>Tài khoản không tồn tại.</strong>
-              <div class="small text-muted font-mono mt-1">UID: \${r.target_id}</div>
-            </div>
-          \`;
-        } else {
-          const targetName = escapeHtml(r.target_data.display_name || 'Tài khoản');
-          const targetUsername = escapeHtml(r.target_data.username || '-');
-          const targetAvatar = r.target_data.avatar_url || ('https://api.dicebear.com/7.x/bottts/svg?seed=' + r.target_id);
-          const bio = escapeHtml(r.target_data.bio || '(Chưa có tiểu sử)');
-
-          contentSection = \`
-            <div class="card bg-dark border-secondary p-3 text-start mb-3">
-              <div class="d-flex align-items-center gap-3">
-                <img src="\${targetAvatar}" style="width: 48px; height: 48px; border-radius: 50%; object-fit: cover;" onerror="this.src='https://api.dicebear.com/7.x/bottts/svg?seed=usr'" />
-                <div>
-                  <h6 class="text-white mb-0">\${targetName}</h6>
-                  <div class="text-muted font-mono small">@\${targetUsername} &bull; UID: \${r.target_id}</div>
-                </div>
-              </div>
-              <div class="text-secondary small mt-2">Tiểu sử: \${bio}</div>
-            </div>
-          \`;
-        }
-      }
-
-      Swal.fire({
-        title: '<i class="fas fa-shield-halved text-warning me-2"></i>Hồ sơ Báo cáo Vi phạm',
-        html: \`
-          <div class="text-start" style="font-size: 13px;">
-            <div class="mb-3 p-2.5 rounded bg-black bg-opacity-25 border border-secondary border-opacity-25 d-flex align-items-center gap-2">
-              <img src="\${reporterAvatar}" style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover;" onerror="this.src='https://api.dicebear.com/7.x/bottts/svg?seed=rep'" />
-              <div>
-                <span class="text-muted">Người báo cáo:</span> <strong class="text-white">\${reporterName}</strong> <span class="text-muted font-mono">(\${reporterUsername})</span>
-              </div>
-            </div>
-
-            <div class="mb-3">
-              <label class="form-label text-warning fw-bold mb-1"><i class="fas fa-flag me-1"></i>LÝ DO BÁO CÁO:</label>
-              <div class="p-2 rounded bg-warning bg-opacity-10 border border-warning border-opacity-25 text-warning fw-bold">
-                \${escapeHtml(r.reason || 'Không rõ lý do')}
-              </div>
-            </div>
-
-            <label class="form-label text-info fw-bold mb-1"><i class="fas fa-crosshairs me-1"></i>ĐỐI TƯỢNG BỊ TỐ CÁO (\${r.target_type.toUpperCase()}):</label>
-            \${contentSection}
-          </div>
-        \`,
-        width: 600,
-        showCloseButton: true,
-        showCancelButton: true,
-        cancelButtonText: 'Đóng',
-        confirmButtonText: r.status === 'pending' ? '<i class="fas fa-gavel me-1"></i>Xử phạt vi phạm' : 'Đã xử lý',
-        confirmButtonColor: '#ef4444',
-        showConfirmButton: r.status === 'pending'
-      }).then(res => {
-        if (res.isConfirmed && r.status === 'pending') {
-          const action = r.target_type === 'user' ? 'ban_user' : 'delete_content';
-          resolveReport(r.id, action);
-        }
-      });
-    }
-
-    async function resolveReport(reportId, action) {
-      if (action === 'delete_content' || action === 'ban_user') {
-        const confirmMsg = action === 'ban_user' ? 'Bạn có chắc chắn muốn khóa tài khoản bị tố cáo này?' : 'Bạn có chắc chắn muốn xóa vĩnh viễn nội dung vi phạm này?';
-        const { isConfirmed } = await Swal.fire({
-          title: 'Xác nhận xử phạt?',
-          text: confirmMsg,
-          icon: 'warning',
-          showCancelButton: true,
-          confirmButtonColor: '#ef4444',
-          confirmButtonText: 'Đồng ý xử phạt',
-          cancelButtonText: 'Hủy'
-        });
-        if (!isConfirmed) return;
-      }
-
-      try {
-        const data = await safeFetchJson(\`/api/admin/reports/\${reportId}/action\`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + adminToken },
-          body: JSON.stringify({ action })
-        });
-        if (data.success) {
-          Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: data.message, showConfirmButton: false, timer: 1800 });
-          fetchReports();
-          fetchMetrics();
-        } else {
-          Swal.fire({ icon: 'error', title: 'Lỗi', text: data.error });
-        }
-      } catch (err) {
-        Swal.fire({ icon: 'error', title: 'Lỗi', text: err.message });
-      }
-    }
-
-    // 6. Fetch Requests (Hàng đợi Xét duyệt Hồ sơ & Đề xuất OA)
-    let allRequestsCache = [];
-    let currentRequestFilter = 'all';
-
-    async function fetchRequests(showToast = false) {
-      try {
-        const data = await safeFetchJson('/api/admin/requests', {
-          headers: { 'Authorization': 'Bearer ' + adminToken }
-        });
-        if (data.success && data.requests) {
-          allRequestsCache = data.requests;
-          renderRequests(allRequestsCache);
-          if (showToast) {
-            Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'Đã tải danh sách xét duyệt & yêu cầu', showConfirmButton: false, timer: 1500 });
-          }
-        }
-      } catch (err) {
-        console.error('Fetch requests error:', err);
-      }
-    }
-
-    function filterRequests(type) {
-      currentRequestFilter = type;
-      document.querySelectorAll('#request-filter-group button').forEach(btn => btn.classList.remove('active'));
-      const activeBtn = event.target;
-      if (activeBtn) activeBtn.classList.add('active');
-
-      if (type === 'all') {
-        renderRequests(allRequestsCache);
-      } else if (type === 'verified') {
-        renderRequests(allRequestsCache.filter(r => r.badge_type === 'verified' || r.badge_type === 'reverify'));
-      } else if (type === 'oa') {
-        renderRequests(allRequestsCache.filter(r => r.badge_type === 'oa'));
-      } else if (type === 'oa_update') {
-        renderRequests(allRequestsCache.filter(r => r.badge_type === 'oa_update'));
-      }
-    }
-
-    function renderRequests(requests) {
-      const container = document.getElementById('requests-container');
-      if (!requests || requests.length === 0) {
-        container.innerHTML = '<div class="text-center py-5 text-muted"><i class="fas fa-circle-check fs-2 text-success mb-2 d-block"></i>Tuyệt vời! Không có hồ sơ hoặc yêu cầu nào đang chờ xét duyệt.</div>';
-        return;
-      }
-
-      container.innerHTML = requests.map(req => {
-        const app = req.applicant || {};
-        const avatarUrl = app.avatar_url || 'https://api.dicebear.com/7.x/bottts/svg?seed=' + (app.id || 'usr');
-        const displayName = escapeHtml(app.display_name || app.username || 'Người dùng');
-        const username = escapeHtml(app.username || '-');
-        const dateStr = req.created_at ? new Date(req.created_at).toLocaleString('vi-VN') : '-';
-
-        let badgePill = '';
-        if (req.badge_type === 'oa') {
-          badgePill = '<span class="badge bg-warning text-dark fw-bold"><i class="fas fa-certificate me-1"></i>XIN CẤP TÍCH VÀNG OA ⭐</span>';
-        } else if (req.badge_type === 'verified') {
-          badgePill = '<span class="badge bg-primary fw-bold"><i class="fas fa-check-circle me-1"></i>XIN CẤP TÍCH XANH ✓</span>';
-        } else if (req.badge_type === 'reverify') {
-          badgePill = '<span class="badge bg-info fw-bold"><i class="fas fa-arrows-rotate me-1"></i>XÉT DUYỆT LẠI HUY HIỆU</span>';
-        } else {
-          badgePill = '<span class="badge bg-secondary fw-bold"><i class="fas fa-pen-to-square me-1"></i>ĐỀ XUẤT ĐỔI THÔNG TIN OA</span>';
-        }
-
-        let detailSection = '';
-        if (req.badge_type === 'oa_update') {
-          const ch = req.proposed_changes || {};
-          const old = req.current_info || {};
-          detailSection = \`
-            <div class="row g-2 small p-2 rounded-2 mb-3 mt-1" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);">
-              <div class="col-md-6">
-                <span class="text-muted">Tên thương hiệu:</span> <span class="text-secondary text-decoration-line-through me-1">\${escapeHtml(old.display_name || '-')}</span> <strong class="text-info">\${escapeHtml(ch.display_name || old.display_name || '-')}</strong>
-              </div>
-              <div class="col-md-6">
-                <span class="text-muted">Lĩnh vực OA:</span> <span class="text-secondary text-decoration-line-through me-1">\${escapeHtml(old.oa_category || '-')}</span> <strong class="text-warning">\${escapeHtml(ch.oa_category || old.oa_category || '-')}</strong>
-              </div>
-              <div class="col-12 mt-1">
-                <span class="text-muted">Tiểu sử:</span> <span class="text-light">\${escapeHtml(ch.bio || old.bio || '-')}</span>
-              </div>
-            </div>
-          \`;
-        } else {
-          detailSection = \`
-            <div class="p-2 rounded-2 mb-3 mt-2" style="background: rgba(255,255,255,0.03); border-left: 3px solid #38bdf8;">
-              <div class="text-warning small fw-bold mb-1"><i class="fas fa-circle-info me-1"></i>\${escapeHtml(req.reason || 'Yêu cầu cấp huy hiệu xác thực danh tính')}</div>
-              <div class="text-muted small">\${app.bio ? 'Tiểu sử: ' + escapeHtml(app.bio) : 'Tài khoản thành viên hoạt động'}</div>
-            </div>
-          \`;
-        }
-
-        let actions = '';
-        if (req.status === 'pending') {
-          actions = \`
-            <div class="d-flex justify-content-end gap-2">
-              <button class="btn btn-sm btn-outline-danger" onclick="reviewRequest('\${req.id}', 'reject')">
-                <i class="fas fa-times me-1"></i> Từ chối
-              </button>
-              <button class="btn btn-sm btn-success fw-bold" onclick="reviewRequest('\${req.id}', 'approve')">
-                <i class="fas fa-check me-1"></i> Phê duyệt ngay
-              </button>
-            </div>
-          \`;
-        } else if (req.status === 'reviewed' || req.status === 'approved') {
-          actions = '<div class="text-end text-success small fw-bold"><i class="fas fa-check-circle me-1"></i>Đã phê duyệt</div>';
-        } else {
-          actions = '<div class="text-end text-muted small"><i class="fas fa-ban me-1"></i>Đã từ chối</div>';
-        }
-
-        return \`
-          <div class="glass-panel p-3 mb-3">
-            <div class="d-flex align-items-center justify-content-between mb-1">
-              <div class="d-flex align-items-center gap-2">
-                <img src="\${avatarUrl}" style="width: 34px; height: 34px; border-radius: 50%; object-fit: cover;">
-                <div>
-                  <div class="d-flex align-items-center gap-2">
-                    <span class="text-white fw-bold">\${displayName}</span>
-                    <span class="font-mono text-muted small">@\${username}</span>
-                    \${badgePill}
-                  </div>
-                </div>
-              </div>
-              <span class="text-secondary small">\${dateStr}</span>
-            </div>
-
-            \${detailSection}
-            \${actions}
-          </div>
-        \`;
-      }).join('');
-    }
-
-    async function reviewRequest(reqId, action) {
-      let reason = '';
-      if (action === 'reject') {
-        const { value } = await Swal.fire({
-          title: 'Lý do từ chối yêu cầu?',
-          input: 'text',
-          inputPlaceholder: 'Nhập lý do gửi thông báo giải thích cho người dùng...',
-          showCancelButton: true,
-          confirmButtonText: 'Xác nhận từ chối',
-          cancelButtonText: 'Hủy'
-        });
-        if (value === undefined) return;
-        reason = value;
-      }
-
-      try {
-        const data = await safeFetchJson(\`/api/admin/requests/\${reqId}/\${action}\`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + adminToken },
-          body: JSON.stringify({ reason })
-        });
-        if (data.success) {
-          Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: data.message, showConfirmButton: false, timer: 1800 });
-          fetchRequests();
-          fetchUsers();
-          fetchMetrics();
-        } else {
-          Swal.fire({ icon: 'error', title: 'Lỗi', text: data.error });
-        }
-      } catch (err) {
-        Swal.fire({ icon: 'error', title: 'Lỗi', text: err.message });
-      }
-    }
-
-    // Aliases cho tương thích ngược
-    const fetchOaRequests = fetchRequests;
-    const reviewOaRequest = reviewRequest;
-
-    // 7. Broadcast Preview & Send
-    function setupBroadcastPreview() {
-      const titleInput = document.getElementById('broadcast-title-input');
-      const bodyInput = document.getElementById('broadcast-body-input');
-      const previewTitle = document.getElementById('preview-notif-title');
-      const previewBody = document.getElementById('preview-notif-body');
-
-      if (titleInput && previewTitle) {
-        titleInput.addEventListener('input', (e) => {
-          previewTitle.textContent = e.target.value || 'Tiêu đề thông báo mẫu';
-        });
-      }
-      if (bodyInput && previewBody) {
-        bodyInput.addEventListener('input', (e) => {
-          previewBody.textContent = e.target.value || 'Nội dung thông báo sẽ xuất hiện ở đây khi bạn nhập văn bản.';
-        });
-      }
-
-      const sendBtn = document.getElementById('btn-send-broadcast');
-      if (sendBtn) {
-        sendBtn.addEventListener('click', sendBroadcast);
-      }
-    }
-
-    async function sendBroadcast() {
-      const title = document.getElementById('broadcast-title-input').value.trim();
-      const body = document.getElementById('broadcast-body-input').value.trim();
-      const link = document.getElementById('broadcast-link-input').value.trim();
-
-      if (!title || !body) {
-        Swal.fire({ icon: 'warning', title: 'Thiếu thông tin', text: 'Vui lòng nhập Tiêu đề và Nội dung thông báo!' });
-        return;
-      }
-
-      Swal.fire({
-        title: 'Phát sóng Push FCM?',
-        text: 'Thông báo sẽ được gửi tới TẤT CẢ người dùng ứng dụng Dorabox ngay lập tức!',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3b82f6',
-        confirmButtonText: 'Phát sóng ngay',
-        cancelButtonText: 'Hủy'
-      }).then(async (result) => {
-        if (result.isConfirmed) {
-          try {
             const data = await safeFetchJson('/api/admin/broadcast', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + adminToken },
               body: JSON.stringify({ title, body, link })
             });
-            if (data.success) {
-              Swal.fire({ icon: 'success', title: 'Phát sóng thành công!', text: data.message });
-              document.getElementById('broadcast-title-input').value = '';
-              document.getElementById('broadcast-body-input').value = '';
-              document.getElementById('broadcast-link-input').value = '';
-            } else {
-              Swal.fire({ icon: 'error', title: 'Lỗi phát sóng', text: data.error });
-            }
-          } catch (err) {
-            Swal.fire({ icon: 'error', title: 'Lỗi mạng', text: err.message });
-          }
-        }
-      });
-    }
 
-    // 8. Security Logs & Clean Spam
-    async function fetchSecurityLogs() {
-      try {
+            if (btn) {
+              btn.disabled = false;
+              btn.innerHTML = '<i class="fas fa-paper-plane me-1"></i> Phát Thông Báo Tới Toàn Bộ Thiết Bị';
+            }
+
+            if (data.success) {
+              Swal.fire({
+                icon: 'success',
+                title: 'Phát thành công!',
+                text: data.message || ('Đã gửi tới ' + (data.count || 0) + ' thiết bị.'),
+              });
+              document.getElementById('form-broadcast')?.reset();
+              updateBroadcastPreview();
+            } else {
+              Swal.fire({ icon: 'error', title: 'Lỗi phát thông báo', text: data.error });
+            }
+          }
+        });
+      };
+
+      // ==============================================================
+      // 10. BẢO MẬT & AUDIT (SECURITY)
+      // ==============================================================
+      async function fetchSecurityLogs(showToast = false) {
+        const tbody = document.getElementById('logs-table-body');
+        if (tbody) tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 40px; color: var(--text-muted);"><i class="fas fa-spinner fa-spin me-2"></i> Đang tải nhật ký...</td></tr>';
+
         const data = await safeFetchJson('/api/admin/system/audit-logs', {
           headers: { 'Authorization': 'Bearer ' + adminToken }
         });
+
         if (data.success && data.logs) {
+          store.logs = data.logs;
           renderSecurityLogs(data.logs);
+          if (showToast) {
+            Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'Đã cập nhật nhật ký bảo mật!', showConfirmButton: false, timer: 1200 });
+          }
+        } else {
+          if (tbody) tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 40px; color: var(--danger);">Lỗi tải nhật ký: ' + escapeHtml(data.error) + '</td></tr>';
         }
-      } catch (err) {
-        console.error('Fetch security logs error:', err);
-      }
-    }
-
-    function renderSecurityLogs(logs) {
-      const tbody = document.getElementById('audit-table-body');
-      if (!logs || logs.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" class="text-center py-5 text-muted">Không có bản ghi kiểm toán nào gần đây.</td></tr>';
-        return;
       }
 
-      tbody.innerHTML = logs.map(l => {
-        const dateStr = l.created_at ? new Date(l.created_at).toLocaleString('vi-VN') : '-';
-        return \`
-          <tr>
-            <td style="padding-left: 20px;">
-              <span class="badge bg-dark border border-secondary text-info fw-bold">\${escapeHtml(l.action || 'ACTION')}</span>
-            </td>
-            <td>
-              <div class="fw-bold text-white small">\${escapeHtml(l.actor_name || 'System / Admin')}</div>
-              <div class="text-muted font-mono" style="font-size: 11px;">UID: \${l.actor_id ? l.actor_id.substring(0, 8) : '-'}</div>
-            </td>
-            <td>
-              <div class="font-mono text-muted small text-break">\${escapeHtml(JSON.stringify(l.details || {}))}</div>
-            </td>
-            <td class="font-mono text-secondary small">\${escapeHtml(l.ip_address || '-')}</td>
-            <td style="text-align: right; padding-right: 20px;" class="text-secondary small font-mono">\${dateStr}</td>
-          </tr>
-        \`;
-      }).join('');
-    }
+      function renderSecurityLogs(logs) {
+        const tbody = document.getElementById('logs-table-body');
+        if (!tbody) return;
 
-    async function cleanSpamReactions() {
-      Swal.fire({
-        title: 'Dọn rác phản ứng spam?',
-        text: 'Hệ thống sẽ quét và loại bỏ các lượt tương tác trùng lặp / spam tạo bởi bot.',
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonText: 'Dọn dẹp ngay',
-        cancelButtonText: 'Hủy'
-      }).then(async (result) => {
-        if (result.isConfirmed) {
-          try {
+        if (!logs || logs.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 40px; color: var(--text-muted);">Không có nhật ký bảo mật nào gần đây.</td></tr>';
+          return;
+        }
+
+        let html = '';
+        logs.forEach(l => {
+          const sevMap = {
+            'info': '<span class="status-badge" style="background: var(--primary-subtle); color: var(--primary);">Thông tin</span>',
+            'warning': '<span class="status-badge warning">Cảnh báo</span>',
+            'alert': '<span class="status-badge banned">Khẩn cấp</span>',
+          };
+
+          html += \`
+            <tr>
+              <td style="font-size: 12px; color: var(--text-secondary); white-space: nowrap;">\${formatDate(l.timestamp)}</td>
+              <td>
+                <span class="status-badge" style="background: var(--bg-card); font-family: var(--font-mono); font-size: 11.5px;">
+                  \${escapeHtml(l.eventType || 'event')}
+                </span>
+              </td>
+              <td>\${sevMap[l.severity] || '<span class="status-badge">info</span>'}</td>
+              <td style="font-size: 13px; font-weight: 600;">\${escapeHtml(l.actor || 'system')}</td>
+              <td>
+                <div style="font-size: 13px; line-height: 1.4; max-width: 480px;">
+                  \${escapeHtml(l.details || '')}
+                </div>
+              </td>
+              <td style="font-family: var(--font-mono); font-size: 11.5px; color: var(--text-muted);">\${escapeHtml(l.ip || '-')}</td>
+            </tr>
+          \`;
+        });
+
+        tbody.innerHTML = html;
+      }
+
+      window.filterLogs = function() {
+        const q = (document.getElementById('logs-search-input')?.value || '').trim().toLowerCase();
+        if (!q) {
+          renderSecurityLogs(store.logs);
+          return;
+        }
+        const filtered = store.logs.filter(l => 
+          (l.eventType && l.eventType.toLowerCase().includes(q)) ||
+          (l.actor && l.actor.toLowerCase().includes(q)) ||
+          (l.details && l.details.toLowerCase().includes(q))
+        );
+        renderSecurityLogs(filtered);
+      };
+
+      window.cleanSpamReactions = function() {
+        Swal.fire({
+          title: 'Dọn dẹp reactions spam?',
+          text: 'Hệ thống sẽ quét và loại bỏ các lượt tương tác trùng lặp / spam tạo bởi bot.',
+          icon: 'question',
+          showCancelButton: true,
+          confirmButtonText: 'Dọn Dẹp Ngay',
+          cancelButtonText: 'Hủy'
+        }).then(async (res) => {
+          if (res.isConfirmed) {
             const data = await safeFetchJson('/api/admin/system/clean-spam', {
               method: 'POST',
               headers: { 'Authorization': 'Bearer ' + adminToken }
@@ -3570,480 +3849,115 @@ export function renderAdminPage(): string {
             } else {
               Swal.fire({ icon: 'error', title: 'Lỗi', text: data.error });
             }
-          } catch (err) {
-            Swal.fire({ icon: 'error', title: 'Lỗi', text: err.message });
           }
-        }
-      });
-    }
-
-
-
-    // Navigation Tab Switching
-    function switchTab(tabId) {
-      if (tabId === 'duyet-oa') tabId = 'xet-duyet';
-
-      window.scrollTo({ top: 0, behavior: 'instant' });
-      document.querySelectorAll('.app-sidebar .nav-item-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.getAttribute('data-tab') === tabId);
-      });
-
-      document.querySelectorAll('.tab-section').forEach(sec => {
-        sec.classList.remove('active');
-      });
-      const targetSec = document.getElementById('tab-' + tabId);
-      if (targetSec) targetSec.classList.add('active');
-
-      const titleMap = {
-        'nhom-tro-chuyen': { short: 'Nhóm Trò Chuyện', title: 'Quản Lý Nhóm Trò Chuyện Cộng Đồng', subtitle: 'Giám sát các nhóm chat, số lượng thành viên và xử lý giải tán nhóm vi phạm' },
-        'tong-quan': { short: 'Tổng Quan', title: 'Tổng Quan Hệ Thống', subtitle: 'Chỉ số vận hành mạng xã hội Dorabox theo thời gian thực' },
-        'thanh-vien': { short: 'Thành Viên', title: 'Quản Lý Danh Sách Thành Viên', subtitle: 'Phân quyền, cấp tích xanh, xét duyệt Official Account & khóa tài khoản' },
-        'xet-duyet': { short: 'Xét Duyệt & Yêu Cầu', title: 'Hàng Đợi Xét Duyệt & Yêu Cầu Người Dùng', subtitle: 'Phê duyệt hồ sơ cấp Tích Xanh cá nhân, Tích Vàng OA và đề xuất cập nhật thông tin thương hiệu' },
-        'duyet-oa': { short: 'Xét Duyệt & Yêu Cầu', title: 'Hàng Đợi Xét Duyệt & Yêu Cầu Người Dùng', subtitle: 'Phê duyệt hồ sơ cấp Tích Xanh cá nhân, Tích Vàng OA và đề xuất cập nhật thông tin thương hiệu' },
-        'bao-cao': { short: 'Báo Cáo Vi Phạm', title: 'Kiểm Duyệt Báo Cáo Vi Phạm Tiêu Chuẩn Cộng Đồng', subtitle: 'Hàng đợi xử phạt bài viết, bình luận và tài khoản bị người dùng tố cáo vi phạm' },
-        'bai-viet': { short: 'Bài Viết', title: 'Quản Lý Bảng Tin & Bài Viết', subtitle: 'Kiểm duyệt nội dung bảng tin, hình ảnh đính kèm, ghim bài nổi bật & xóa vi phạm' },
-        'binh-luan': { short: 'Bình Luận', title: 'Quản Lý Bình Luận & Thảo Luận', subtitle: 'Giám sát tương tác thảo luận cộng đồng & ngăn chặn spam' },
-        'phat-thong-bao': { short: 'Push FCM', title: 'Broadcast Studio & Push FCM', subtitle: 'Soạn thảo và phát Push Notification tới ứng dụng kèm xem trước trên mobile' },
-        'bao-mat-audit': { short: 'Bảo Mật & Audit', title: 'Bảo Mật Hệ Thống & Nhật Ký Audit', subtitle: 'Giám sát khiên chống spam 120Hz, bảo trì dọn dẹp phản ứng rác & theo dõi an ninh' },
-        'ten-cam': { short: 'Tên Cấm & Bảo Lưu', title: 'Quản Lý Tên Người Dùng Cấm & Bảo Lưu', subtitle: 'Thiết lập danh sách các username không được phép sử dụng trên toàn hệ thống Dorabox' }
+        });
       };
 
-      if (tabId === 'ten-cam') {
-        loadBannedUsernames();
-      }
+      // ==============================================================
+      // COMMAND PALETTE (CTRL+K)
+      // ==============================================================
+      let cmdItems = [
+        { title: 'Tổng Quan Hệ Thống', icon: 'fa-chart-pie', action: () => switchTab('tong-quan') },
+        { title: 'Quản Lý Thành Viên', icon: 'fa-users', action: () => switchTab('thanh-vien') },
+        { title: 'Hàng Đợi Duyệt Tích & OA', icon: 'fa-id-badge', action: () => switchTab('xet-duyet') },
+        { title: 'Quản Lý Nhóm Trò Chuyện', icon: 'fa-comments', action: () => switchTab('nhom-tro-chuyen') },
+        { title: 'Tên Người Dùng Cấm & Bảo Lưu', icon: 'fa-ban', action: () => switchTab('ten-cam') },
+        { title: 'Kiểm Duyệt Bài Viết Feed', icon: 'fa-newspaper', action: () => switchTab('bai-viet') },
+        { title: 'Kiểm Duyệt Bình Luận', icon: 'fa-comment-dots', action: () => switchTab('binh-luan') },
+        { title: 'Xử Lý Báo Cáo Vi Phạm', icon: 'fa-flag', action: () => switchTab('bao-cao') },
+        { title: 'Phát Thông Báo Đẩy FCM', icon: 'fa-paper-plane', action: () => switchTab('phat-thong-bao') },
+        { title: 'Bảo Mật & Nhật Ký Audit', icon: 'fa-shield-halved', action: () => switchTab('bao-mat-audit') },
+        { title: 'Đổi Giao Diện Sáng / Tối', icon: 'fa-circle-half-stroke', action: () => toggleTheme() },
+        { title: 'Dọn Dẹp Rác Spam Bot', icon: 'fa-broom', action: () => cleanSpamReactions() },
+        { title: 'Làm Mới Toàn Bộ Dữ Liệu', icon: 'fa-sync-alt', action: () => refreshCurrentTab() },
+        { title: 'Đăng Xuất Phiên Quản Trị', icon: 'fa-arrow-right-from-bracket', action: () => doLogout() }
+      ];
 
-      if (titleMap[tabId]) {
-        document.getElementById('topbar-title').textContent = titleMap[tabId].title;
-        document.getElementById('topbar-subtitle').textContent = titleMap[tabId].subtitle;
-        const breadcrumbEl = document.getElementById('breadcrumb-title');
-        if (breadcrumbEl) breadcrumbEl.textContent = titleMap[tabId].short || titleMap[tabId].title;
-      }
-
-      // Close mobile sidebar if open
-      const sidebar = document.getElementById('app-sidebar');
-      const overlay = document.getElementById('sidebar-overlay');
-      if (sidebar.classList.contains('open')) {
-        sidebar.classList.remove('open');
-        overlay.classList.remove('active');
-      }
-    }
-
-    // Lightbox modal helper
-    function openLightbox(url) {
-      document.getElementById('lightbox-img').src = url;
-      const modal = new bootstrap.Modal(document.getElementById('lightboxModal'));
-      modal.show();
-    }
-
-    function escapeHtml(text) {
-      if (!text) return '';
-      return String(text)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#039;');
-    }
-  
-    // =========================================================================
-    // QUẢN LÝ NHÓM TRÒ CHUYỆN (GROUP CHATS)
-    // =========================================================================
-    let currentGroupsPage = 1;
-    let groupsSearchDebounce = null;
-
-    function handleGroupsSearch(e) {
-      clearTimeout(groupsSearchDebounce);
-      groupsSearchDebounce = setTimeout(() => {
-        loadGroups(1);
-      }, 350);
-    }
-
-    async function fetchGroups() {
-      await loadGroups(1);
-    }
-
-    async function loadGroups(page = 1) {
-      currentGroupsPage = page;
-      const tbody = document.getElementById('groups-table-body');
-      if (!tbody) return;
-      tbody.innerHTML = '<tr><td colspan="6" class="text-center py-5 text-muted"><div class="spinner-border spinner-border-sm text-primary me-2"></div> Đang tải danh sách nhóm...</td></tr>';
-
-      const searchInput = document.getElementById('groups-search-input');
-      const search = (searchInput ? searchInput.value : '').trim();
-      const url = '/api/admin/groups?page=' + page + '&limit=15&search=' + encodeURIComponent(search);
-      const data = await safeFetchJson(url, {
-        headers: { 'Authorization': 'Bearer ' + adminToken }
-      });
-
-      if (!data.success || !Array.isArray(data.groups)) {
-        tbody.innerHTML = '<tr><td colspan="6" class="text-center py-4 text-danger"><i class="fas fa-exclamation-triangle me-2"></i>' + escapeHtml(data.error || 'Lỗi khi tải danh sách nhóm') + '</td></tr>';
-        return;
-      }
-
-      const total = (data.pagination && data.pagination.total) || 0;
-      const badge = document.getElementById('groups-total-badge');
-      if (badge) badge.textContent = total + ' nhóm';
-      const sideBadge = document.getElementById('sidebar-groups-badge');
-      if (sideBadge) sideBadge.textContent = total;
-
-      if (data.groups.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" class="text-center py-5 text-muted"><i class="fas fa-users-slash fs-2 mb-2 d-block"></i>Không tìm thấy nhóm trò chuyện nào.</td></tr>';
-        renderGroupsPagination(data.pagination);
-        return;
-      }
-
-      let html = '';
-      data.groups.forEach(g => {
-        const creator = g.creator;
-        const creatorName = creator ? (creator.display_name || creator.username || 'Người dùng') : 'Hệ thống';
-        const creatorAvatar = creator ? creator.avatar_url : '';
-        const groupAvatar = g.avatar_url || '';
-        const groupName = escapeHtml(g.name || 'Nhóm trò chuyện');
-        const lastMsg = escapeHtml(g.last_message || 'Chưa có tin nhắn');
-        const timeStr = g.last_message_at ? new Date(g.last_message_at).toLocaleString('vi-VN') : '—';
-        const membersCount = g.member_count || 0;
-        const safeGroupName = groupName.replace(/'/g, "\\'");
-
-        html += '<tr>' +
-          '<td>' +
-            '<div class="d-flex align-items-center gap-2">' +
-              '<div class="avatar-wrap flex-shrink-0" style="width: 42px; height: 42px; border-radius: 12px; overflow: hidden; background: rgba(56, 189, 248, 0.15); display: flex; align-items: center; justify-content: center;">' +
-                (groupAvatar ? '<img src="' + escapeHtml(groupAvatar) + '" style="width: 100%; height: 100%; object-fit: cover;">' : '<i class="fas fa-users text-primary"></i>') +
-              '</div>' +
-              '<div style="min-width: 0;">' +
-                '<div class="fw-bold text-main text-truncate" style="max-width: 180px;" title="' + groupName + '">' + groupName + '</div>' +
-                '<div class="text-muted small font-monospace" style="font-size: 11px;">ID: ' + g.id.substring(0, 8) + '...</div>' +
-              '</div>' +
-            '</div>' +
-          '</td>' +
-          '<td>' +
-            '<div class="d-flex align-items-center gap-2">' +
-              '<div class="avatar-wrap flex-shrink-0" style="width: 32px; height: 32px; border-radius: 50%; overflow: hidden; background: #334155; display: flex; align-items: center; justify-content: center;">' +
-                (creatorAvatar ? '<img src="' + escapeHtml(creatorAvatar) + '" style="width: 100%; height: 100%; object-fit: cover;">' : '<i class="fas fa-user text-muted small"></i>') +
-              '</div>' +
-              '<div style="min-width: 0;">' +
-                '<div class="text-main fw-semibold text-truncate" style="max-width: 140px;">' + escapeHtml(creatorName) + '</div>' +
-                (creator && creator.username ? '<div class="text-muted small">@' + escapeHtml(creator.username) + '</div>' : '') +
-              '</div>' +
-            '</div>' +
-          '</td>' +
-          '<td class="text-center">' +
-            '<span class="badge rounded-pill bg-info text-dark fw-bold px-2 py-1">' +
-              '<i class="fas fa-user-friends me-1"></i>' + membersCount +
-            '</span>' +
-          '</td>' +
-          '<td>' +
-            '<div class="text-muted text-truncate small" style="max-width: 220px;" title="' + lastMsg + '">' +
-              lastMsg +
-            '</div>' +
-          '</td>' +
-          '<td>' +
-            '<span class="text-muted small">' + timeStr + '</span>' +
-          '</td>' +
-          '<td class="text-end">' +
-            '<div class="btn-group btn-group-sm">' +
-              '<button class="btn btn-outline-info" onclick="showGroupMembers(\\\'' + g.id + '\\\', \\\'' + safeGroupName + '\\\')" title="Xem danh sách thành viên">' +
-                '<i class="fas fa-users"></i>' +
-              '</button>' +
-              '<button class="btn btn-outline-danger" onclick="confirmDisbandGroup(\\\'' + g.id + '\\\', \\\'' + safeGroupName + '\\\')" title="Giải tán & xóa nhóm">' +
-                '<i class="fas fa-trash-alt"></i>' +
-              '</button>' +
-            '</div>' +
-          '</td>' +
-        '</tr>';
-      });
-
-      tbody.innerHTML = html;
-      renderGroupsPagination(data.pagination);
-    }
-
-    function renderGroupsPagination(p) {
-      const container = document.getElementById('groups-pagination');
-      if (!container) return;
-      if (!p || p.totalPages <= 1) {
-        container.innerHTML = '<span class="text-muted small">Hiển thị toàn bộ nhóm</span>';
-        return;
-      }
-
-      let html = '<span class="text-muted small">Trang ' + p.page + ' / ' + p.totalPages + ' (Tổng cộng ' + p.total + ' nhóm)</span><div class="btn-group btn-group-sm">';
-      if (p.page > 1) {
-        html += '<button class="btn btn-outline-secondary" onclick="loadGroups(' + (p.page - 1) + ')"><i class="fas fa-chevron-left"></i></button>';
-      }
-      for (let i = 1; i <= p.totalPages; i++) {
-        if (i === 1 || i === p.totalPages || (i >= p.page - 1 && i <= p.page + 1)) {
-          html += '<button class="btn ' + (i === p.page ? 'btn-primary' : 'btn-outline-secondary') + '" onclick="loadGroups(' + i + ')">' + i + '</button>';
-        } else if (i === p.page - 2 || i === p.page + 2) {
-          html += '<button class="btn btn-outline-secondary disabled">...</button>';
-        }
-      }
-      if (p.page < p.totalPages) {
-        html += '<button class="btn btn-outline-secondary" onclick="loadGroups(' + (p.page + 1) + ')"><i class="fas fa-chevron-right"></i></button>';
-      }
-      html += '</div>';
-      container.innerHTML = html;
-    }
-
-    async function showGroupMembers(groupId, groupName) {
-      const title = document.getElementById('groupMembersModalTitle');
-      const body = document.getElementById('groupMembersModalBody');
-      if (title) title.innerHTML = '<i class="fas fa-users text-primary me-2"></i> Thành Viên: <strong>' + escapeHtml(groupName) + '</strong>';
-      if (body) body.innerHTML = '<div class="text-center py-4 text-muted"><div class="spinner-border spinner-border-sm text-primary me-2"></div> Đang tải thông tin thành viên...</div>';
-
-      const modalEl = document.getElementById('groupMembersModal');
-      const modal = new bootstrap.Modal(modalEl);
-      modal.show();
-
-      const data = await safeFetchJson('/api/admin/groups/' + groupId + '/members', {
-        headers: { 'Authorization': 'Bearer ' + adminToken }
-      });
-
-      if (!data.success || !Array.isArray(data.members)) {
-        body.innerHTML = '<div class="alert alert-danger mb-0"><i class="fas fa-exclamation-triangle me-2"></i>' + escapeHtml(data.error || 'Không thể tải danh sách thành viên') + '</div>';
-        return;
-      }
-
-      if (data.members.length === 0) {
-        body.innerHTML = '<div class="text-center py-4 text-muted">Nhóm hiện không có thành viên nào.</div>';
-        return;
-      }
-
-      let html = '<div class="list-group list-group-flush">';
-      data.members.forEach(m => {
-        const dName = escapeHtml(m.display_name || m.username || 'Người dùng');
-        const uName = m.username ? '@' + escapeHtml(m.username) : '';
-        const nick = m.nickname ? escapeHtml(m.nickname) : null;
-        const avatar = m.avatar_url || '';
-        const isCreator = m.is_creator;
-
-        html += '<div class="list-group-item d-flex align-items-center justify-content-between p-2" style="background: transparent; border-color: var(--border-subtle);">' +
-          '<div class="d-flex align-items-center gap-3">' +
-            '<div class="avatar-wrap" style="width: 38px; height: 38px; border-radius: 50%; overflow: hidden; background: #334155; display: flex; align-items: center; justify-content: center;">' +
-              (avatar ? '<img src="' + escapeHtml(avatar) + '" style="width: 100%; height: 100%; object-fit: cover;">' : '<i class="fas fa-user text-muted"></i>') +
-            '</div>' +
-            '<div>' +
-              '<div class="d-flex align-items-center gap-2">' +
-                '<span class="fw-bold text-main">' + dName + '</span>' +
-                (nick ? '<span class="badge bg-secondary-subtle text-light border border-subtle small">Biệt danh: ' + nick + '</span>' : '') +
-                (isCreator ? '<span class="badge bg-warning text-dark fw-bold"><i class="fas fa-crown me-1"></i>Trưởng nhóm</span>' : '') +
-              '</div>' +
-              '<div class="text-muted small">' + uName + '</div>' +
-            '</div>' +
-          '</div>' +
-        '</div>';
-      });
-      html += '</div>';
-      body.innerHTML = html;
-    }
-
-    async function confirmDisbandGroup(groupId, groupName) {
-      const result = await Swal.fire({
-        title: 'Giải tán nhóm này?',
-        text: 'Bạn có chắc muốn xóa vĩnh viễn nhóm "' + groupName + '" và toàn bộ tin nhắn liên quan? Hành động này không thể hoàn tác!',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#f43f5e',
-        cancelButtonColor: '#475569',
-        confirmButtonText: '<i class="fas fa-trash-alt me-1"></i> Xác nhận xóa vĩnh viễn',
-        cancelButtonText: 'Hủy'
-      });
-
-      if (!result.isConfirmed) return;
-
-      Swal.showLoading();
-      const res = await safeFetchJson('/api/admin/groups/' + groupId, {
-        method: 'DELETE',
-        headers: { 'Authorization': 'Bearer ' + adminToken }
-      });
-
-      if (res.success) {
-        Swal.fire({
-          icon: 'success',
-          title: 'Đã giải tán nhóm!',
-          text: res.message || 'Nhóm trò chuyện đã bị xóa sạch hoàn toàn.',
-          timer: 2000,
-          showConfirmButton: false
-        });
-        loadGroups(currentGroupsPage);
-        fetchMetrics();
-      } else {
-        Swal.fire({
-          icon: 'error',
-          title: 'Lỗi',
-          text: res.error || 'Không thể xóa nhóm lúc này'
-        });
-      }
-    }
-
-    // =========================================================================
-    // QUẢN LÝ TÊN NGƯỜI DÙNG CẤM & BẢO LƯU (BANNED USERNAMES)
-    // =========================================================================
-    let allBannedUsernamesCache = [];
-
-    async function loadBannedUsernames() {
-      const tbody = document.getElementById('banned-table-body');
-      if (tbody) {
-        tbody.innerHTML = '<tr><td colspan="4" class="text-center py-5 text-muted"><div class="spinner-border spinner-border-sm text-danger me-2"></div> Đang tải danh sách tên người dùng cấm...</td></tr>';
-      }
-
-      try {
-        const data = await safeFetchJson('/api/admin/banned-usernames', {
-          headers: { 'Authorization': 'Bearer ' + adminToken }
-        });
-
-        if (data.success && data.bannedUsernames) {
-          allBannedUsernamesCache = data.bannedUsernames;
-          renderBannedUsernames(allBannedUsernamesCache);
-          updateBannedBadge(allBannedUsernamesCache.length);
-        } else {
-          if (tbody) tbody.innerHTML = '<tr><td colspan="4" class="text-center py-4 text-warning">Không thể nạp danh sách tên cấm.</td></tr>';
-        }
-      } catch (err) {
-        console.error('Lỗi loadBannedUsernames:', err);
-        if (tbody) tbody.innerHTML = '<tr><td colspan="4" class="text-center py-4 text-danger">Lỗi tải dữ liệu.</td></tr>';
-      }
-    }
-
-    function updateBannedBadge(count) {
-      const sideBadge = document.getElementById('sidebar-banned-badge');
-      if (sideBadge) sideBadge.textContent = count;
-      const totalBadge = document.getElementById('banned-total-badge');
-      if (totalBadge) totalBadge.textContent = count + ' tên';
-    }
-
-    function renderBannedUsernames(items) {
-      const tbody = document.getElementById('banned-table-body');
-      if (!tbody) return;
-
-      if (!items || items.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="4" class="text-center py-5 text-muted"><i class="fas fa-check-circle text-success fs-3 d-block mb-2"></i> Chưa có tên cấm nào trong danh sách.</td></tr>';
-        return;
-      }
-
-      tbody.innerHTML = items.map(item => {
-        const timeStr = item.created_at ? new Date(item.created_at).toLocaleString('vi-VN') : 'Mặc định hệ thống';
-        const safeU = escapeHtml(item.username || '');
-        const safeR = escapeHtml(item.reason || 'Bảo lưu bởi hệ thống');
-        const safeId = escapeHtml(item.id || '');
-        return '<tr>' +
-          '<td>' +
-            '<div class="d-flex align-items-center gap-2">' +
-              '<span class="badge bg-danger-subtle text-danger px-2 py-1 rounded-pill fw-bold" style="font-size: 13px;">' +
-                '<i class="fas fa-at me-1"></i>' + safeU +
-              '</span>' +
-            '</div>' +
-          '</td>' +
-          '<td><span class="text-light">' + safeR + '</span></td>' +
-          '<td><span class="text-muted small">' + timeStr + '</span></td>' +
-          '<td class="text-end">' +
-            '<button class="btn btn-outline-danger btn-sm rounded-pill px-3" data-id="' + safeId + '" data-username="' + safeU + '" onclick="confirmDeleteBannedUsername(this.dataset.id, this.dataset.username)">' +
-              '<i class="fas fa-trash-can me-1"></i> Gỡ Cấm' +
-            '</button>' +
-          '</td>' +
-        '</tr>';
-      }).join('');
-    }
-
-    function filterBannedUsernames() {
-      const q = (document.getElementById('banned-search-input')?.value || '').trim().toLowerCase();
-      if (!q) {
-        renderBannedUsernames(allBannedUsernamesCache);
-        return;
-      }
-      const filtered = allBannedUsernamesCache.filter(item => {
-        const u = (item.username || '').toLowerCase();
-        const r = (item.reason || '').toLowerCase();
-        return u.includes(q) || r.includes(q);
-      });
-      renderBannedUsernames(filtered);
-    }
-
-    async function handleAddBannedUsername(e) {
-      e.preventDefault();
-      const inputUsername = document.getElementById('input-banned-username');
-      const inputReason = document.getElementById('input-banned-reason');
-      const btn = document.getElementById('btn-add-banned');
-
-      const username = inputUsername.value.trim().toLowerCase().replace(/^@/, '');
-      const reason = inputReason.value.trim();
-
-      if (!username) {
-        Swal.fire({ icon: 'warning', title: 'Thiếu thông tin', text: 'Vui lòng nhập tên người dùng cần cấm' });
-        return;
-      }
-
-      btn.disabled = true;
-      btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Đang thêm...';
-
-      try {
-        const res = await safeFetchJson('/api/admin/banned-usernames', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + adminToken
-          },
-          body: JSON.stringify({ username, reason })
-        });
-
-        if (res.success) {
-          Swal.fire({
-            toast: true,
-            position: 'top-end',
-            icon: 'success',
-            title: 'Đã thêm cấm username "@' + username + '" thành công!',
-            showConfirmButton: false,
-            timer: 2000
+      function setupCommandPaletteData() {
+        const input = document.getElementById('cmd-palette-input');
+        if (input) {
+          input.addEventListener('input', () => {
+            const q = input.value.trim().toLowerCase();
+            renderCommandPaletteResults(q);
           });
-          inputUsername.value = '';
-          inputReason.value = '';
-          loadBannedUsernames();
-        } else {
-          Swal.fire({ icon: 'error', title: 'Lỗi thêm tên cấm', text: res.error || 'Có lỗi xảy ra' });
+          input.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeCommandPalette();
+          });
         }
-      } catch (err) {
-        Swal.fire({ icon: 'error', title: 'Lỗi', text: 'Không thể kết nối đến máy chủ' });
-      } finally {
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-plus me-1"></i> Thêm Tên Cấm';
       }
-    }
 
-    async function confirmDeleteBannedUsername(id, username) {
-      const confirm = await Swal.fire({
-        title: 'Gỡ cấm "@' + username + '"?',
-        text: 'Sau khi gỡ, người dùng sẽ có thể đăng ký hoặc sử dụng lại tên này.',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#ef4444',
-        cancelButtonColor: '#64748b',
-        confirmButtonText: 'Đồng ý gỡ cấm',
-        cancelButtonText: 'Hủy'
-      });
+      function renderCommandPaletteResults(query = '') {
+        const list = document.getElementById('cmd-results-list');
+        if (!list) return;
 
-      if (!confirm.isConfirmed) return;
+        const filtered = cmdItems.filter(item => 
+          !query || item.title.toLowerCase().includes(query)
+        );
 
-      try {
-        const res = await safeFetchJson('/api/admin/banned-usernames/' + encodeURIComponent(id), {
-          method: 'DELETE',
-          headers: { 'Authorization': 'Bearer ' + adminToken }
+        if (filtered.length === 0) {
+          list.innerHTML = '<div style="padding: 16px; text-align: center; color: var(--text-muted); font-size: 13px;">Không tìm thấy tác vụ phù hợp.</div>';
+          return;
+        }
+
+        let html = '';
+        filtered.forEach((item, idx) => {
+          html += \`
+            <div class="cmd-item \${idx === 0 ? 'selected' : ''}" onclick="executeCmdItem(\${idx})">
+              <div class="cmd-item-left">
+                <i class="fas \${item.icon}"></i>
+                <span>\${escapeHtml(item.title)}</span>
+              </div>
+              <i class="fas fa-arrow-turn-down" style="font-size: 11px; opacity: 0.4;"></i>
+            </div>
+          \`;
         });
 
-        if (res.success) {
-          Swal.fire({
-            toast: true,
-            position: 'top-end',
-            icon: 'success',
-            title: 'Đã gỡ cấm tên "@' + username + '"!',
-            showConfirmButton: false,
-            timer: 2000
-          });
-          loadBannedUsernames();
-        } else {
-          Swal.fire({ icon: 'error', title: 'Lỗi gỡ cấm', text: res.error || 'Có lỗi xảy ra' });
-        }
-      } catch (err) {
-        Swal.fire({ icon: 'error', title: 'Lỗi', text: 'Không thể kết nối đến máy chủ' });
+        list.innerHTML = html;
       }
-    }
+
+      window.executeCmdItem = function(idx) {
+        const input = document.getElementById('cmd-palette-input');
+        const q = input ? input.value.trim().toLowerCase() : '';
+        const filtered = cmdItems.filter(item => !q || item.title.toLowerCase().includes(q));
+        if (filtered[idx]) {
+          closeCommandPalette();
+          filtered[idx].action();
+        }
+      };
+
+      window.openCommandPalette = function() {
+        const p = document.getElementById('cmd-palette');
+        const input = document.getElementById('cmd-palette-input');
+        if (p) p.classList.add('show');
+        if (input) {
+          input.value = '';
+          input.focus();
+        }
+        renderCommandPaletteResults('');
+      };
+
+      window.closeCommandPalette = function() {
+        const p = document.getElementById('cmd-palette');
+        if (p) p.classList.remove('show');
+      };
+
+      function initKeyboardShortcuts() {
+        document.addEventListener('keydown', (e) => {
+          if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+            e.preventDefault();
+            const p = document.getElementById('cmd-palette');
+            if (p && p.classList.contains('show')) {
+              closeCommandPalette();
+            } else {
+              openCommandPalette();
+            }
+          } else if (e.key === 'Escape') {
+            closeCommandPalette();
+          }
+        });
+      }
+
+    })();
   </script>
 </body>
 </html>`;

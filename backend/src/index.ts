@@ -71,19 +71,20 @@ app.get('/api/health', (req, res) => {
 // App Version & OTA Update Check
 app.get('/api/app-version', (req, res) => {
   res.json({
-    latest_version: '1.4.5',
-    build_number: 18,
+    latest_version: '1.5.6',
+    build_number: 19,
     apk_url: 'https://doraboxcdn.zpiltk.io.vn/apk/Dorabox-arm64-v8a.apk',
     ios_url: 'https://dorabox.app/ios',
     force_update: false,
     changelog: [
-      'Tối ưu nâng cấp toàn diện giao diện và trải nghiệm soạn bài đăng mới.',
-      'Sửa lỗi vuốt tin nhắn tự hủy mượt mà và đồng bộ chính xác chuẩn Messenger.',
-      'Sửa lỗi trạng thái đã xem tin nhắn hiển thị chuẩn xác hai chiều.',
-      'Khắc phục lỗi xác thực OTP khi đổi địa chỉ email.',
-      'Khắc phục lỗi đăng bài tại trang cá nhân và tài khoản OA.',
-      'Nâng cấp tốc độ mở ứng dụng và thông báo trạng thái kết nối máy chủ.',
-      'Tối ưu giao diện cài đặt và dọn dẹp các tính năng trùng lặp.',
+      'Khắc phục lỗi nội dung tài khoản OA: khi người dùng bấm Quan tâm, nội dung hiển thị ngay lập tức, mặc định hiển thị toàn bộ bài viết.',
+      'Nâng cấp giao diện Đăng nhập / Đăng ký hiện đại với Segmented Tab chuyển đổi mượt mà và nút bấm gradient cao cấp.',
+      'Tối ưu hóa toàn bộ cài đặt theo Realtime: thay đổi cài đặt áp dụng tức thì mà không cần phải thoát ứng dụng.',
+      'Tối ưu lại toàn bộ biểu tượng (icon) và cấu trúc cài đặt: gom gọn thành 4 nhóm trực quan, loại bỏ hoàn toàn cảm giác rối rắm.',
+      'Tối ưu riêng cho tài khoản OA: loại bỏ các tính năng cá nhân dư thừa (kết bạn, người lạ), chỉ giữ lại tính năng thiết yếu cho doanh nghiệp.',
+      'Bổ sung thanh tiến trình tải lên (Upload Progress) thời gian thực hiển thị % chi tiết khi đăng bài, ảnh, video, âm thanh.',
+      'Khắc phục và tối ưu hóa chế độ Bạn bè và Chỉ người được xem (Custom) hoạt động chuẩn xác trên toàn bộ bài viết và thảo luận.',
+      'Dọn dẹp và loại bỏ triệt để các mã nguồn, công tắc và logic trùng lặp trong toàn bộ ứng dụng.',
     ]
   });
 });
