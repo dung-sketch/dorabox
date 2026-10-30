@@ -1277,7 +1277,7 @@ export function renderAdminPage(): string {
       </div>
 
       <div class="sidebar-footer">
-        <div>v1.5.6 <span style="color: var(--success); font-weight: 600;">● Live</span></div>
+        <div>v2.1.0 <span style="color: var(--success); font-weight: 600;">● Live</span></div>
         <div style="font-family: var(--font-mono); font-size: 11px;">Production</div>
       </div>
     </aside>
@@ -1796,7 +1796,7 @@ export function renderAdminPage(): string {
                 <form id="form-broadcast" onsubmit="event.preventDefault(); sendBroadcast();">
                   <div class="mb-3">
                     <label class="form-label" style="font-size: 13px; font-weight: 600;">Tiêu Đề Thông Báo *</label>
-                    <input type="text" id="bc-title" class="db-input" placeholder="Ví dụ: Cập nhật Dorabox v1.5.6 đã sẵn sàng!" style="padding-left: 12px;" required oninput="updateBroadcastPreview()">
+                    <input type="text" id="bc-title" class="db-input" placeholder="Ví dụ: Cập nhật Dorabox v2.1.0 đã sẵn sàng!" style="padding-left: 12px;" required oninput="updateBroadcastPreview()">
                   </div>
 
                   <div class="mb-3">

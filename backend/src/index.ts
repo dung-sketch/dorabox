@@ -71,20 +71,17 @@ app.get('/api/health', (req, res) => {
 // App Version & OTA Update Check
 app.get('/api/app-version', (req, res) => {
   res.json({
-    latest_version: '1.5.6',
-    build_number: 19,
+    latest_version: '2.1.0',
+    build_number: 23,
     apk_url: 'https://doraboxcdn.zpiltk.io.vn/apk/Dorabox-arm64-v8a.apk',
     ios_url: 'https://dorabox.app/ios',
     force_update: false,
     changelog: [
-      'Khắc phục lỗi nội dung tài khoản OA: khi người dùng bấm Quan tâm, nội dung hiển thị ngay lập tức, mặc định hiển thị toàn bộ bài viết.',
-      'Nâng cấp giao diện Đăng nhập / Đăng ký hiện đại với Segmented Tab chuyển đổi mượt mà và nút bấm gradient cao cấp.',
-      'Tối ưu hóa toàn bộ cài đặt theo Realtime: thay đổi cài đặt áp dụng tức thì mà không cần phải thoát ứng dụng.',
-      'Tối ưu lại toàn bộ biểu tượng (icon) và cấu trúc cài đặt: gom gọn thành 4 nhóm trực quan, loại bỏ hoàn toàn cảm giác rối rắm.',
-      'Tối ưu riêng cho tài khoản OA: loại bỏ các tính năng cá nhân dư thừa (kết bạn, người lạ), chỉ giữ lại tính năng thiết yếu cho doanh nghiệp.',
-      'Bổ sung thanh tiến trình tải lên (Upload Progress) thời gian thực hiển thị % chi tiết khi đăng bài, ảnh, video, âm thanh.',
-      'Khắc phục và tối ưu hóa chế độ Bạn bè và Chỉ người được xem (Custom) hoạt động chuẩn xác trên toàn bộ bài viết và thảo luận.',
-      'Dọn dẹp và loại bỏ triệt để các mã nguồn, công tắc và logic trùng lặp trong toàn bộ ứng dụng.',
+      'Khẩu hiệu thương hiệu mới: "Kết nối diệu kỳ, sẻ chia niềm vui! ✨" thân thiện, ngắn gọn và gần gũi.',
+      'Tính năng Dr: Đột phá trích dẫn Repost với câu hỏi trung tâm "Còn bạn thì sao?", hỗ trợ Dr Voice 15s thu âm câu trả lời tức thì.',
+      'Tính năng Stories Vamp 🧛‍♂️: Đưa câu chuyện phong cách Ma Cà Rồng vào đời sống với 3 chế độ độc quyền: Ban đêm (18h-6h), Xem lén chống nhìn trộm (Vamp Peek), Tiếp tế sinh mệnh tim (Energy Heart).',
+      'Tính năng D-Notes: Bong bóng chia sẻ trạng thái & suy nghĩ 24h đặt ngay đầu danh sách chat (Messenger / Instagram Notes style), kèm phản hồi 1 chạm.',
+      'Tối ưu hóa toàn diện hiệu năng và giao diện người dùng, dọn dẹp hệ thống sạch sẽ.'
     ]
   });
 });
