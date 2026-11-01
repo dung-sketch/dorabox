@@ -1574,8 +1574,16 @@ router.post('/broadcast', async (req, res) => {
       return res.json({ success: true, count: 0, message: 'Chưa có thành viên nào trong hệ thống.' });
     }
 
-    // 1. Tạo thông báo trong bảng notifications (In-app notifications)
-    const systemActorId = users[0]?.id;
+    // 1. Tìm tài khoản Admin hoặc Dorabox chính thức làm System Actor
+    const { data: adminProfile } = await supabaseAdmin
+      .from('profiles')
+      .select('id')
+      .or('role.eq.admin,username.ilike.%dorabox%')
+      .order('created_at', { ascending: true })
+      .limit(1)
+      .maybeSingle();
+
+    const systemActorId = adminProfile?.id || users[0]?.id;
     const notifs = users.map(u => ({
       recipient_id: u.id,
       actor_id: systemActorId,
@@ -1599,7 +1607,9 @@ router.post('/broadcast', async (req, res) => {
           body,
           data: {
             type: 'admin_broadcast',
-            click_action: 'FLUTTER_NOTIFICATION_CLICK'
+            click_action: 'FLUTTER_NOTIFICATION_CLICK',
+            sender: 'Dorabox',
+            avatar: 'icon/ic.png'
           }
         });
         fcmSentCount++;
