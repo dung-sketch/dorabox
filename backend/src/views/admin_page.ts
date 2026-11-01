@@ -566,9 +566,18 @@ export function renderAdminPage(): string {
       cursor: pointer;
     }
 
+    * {
+      text-decoration: none !important;
+    }
+
+    a, a:hover, a:focus, a:active,
+    button, .nav-item-btn, .id-pill, .filter-pill, .btn-icon, .btn-db, .cell-user-info, .stat-card {
+      text-decoration: none !important;
+      outline: none !important;
+    }
+
     .stat-card:hover {
       border-color: var(--primary-border);
-      transform: translateY(-2px);
     }
 
     .stat-card-top {
@@ -1212,35 +1221,34 @@ export function renderAdminPage(): string {
           </div>
         </button>
 
-        <div class="menu-group-label">Người Dùng & Tương Tác</div>
+        <div class="menu-group-label">Thành Viên & Tài Khoản</div>
         <button class="nav-item-btn" data-tab="thanh-vien" onclick="switchTab('thanh-vien')">
           <div class="nav-item-left">
             <i class="fas fa-users"></i>
-            <span>Thành Viên</span>
+            <span>Danh Sách Người Dùng</span>
           </div>
           <span class="nav-badge" id="badge-users-count">0</span>
         </button>
+
+        <div class="menu-group-label">Kiểm Duyệt & Báo Cáo</div>
+        <button class="nav-item-btn" data-tab="bao-cao" onclick="switchTab('bao-cao')">
+          <div class="nav-item-left">
+            <i class="fas fa-flag"></i>
+            <span>Báo Cáo Vi Phạm</span>
+          </div>
+          <span class="nav-badge danger" id="badge-reports-count">0</span>
+        </button>
+
+        <div class="menu-group-label">Xét Duyệt & Thẩm Định</div>
         <button class="nav-item-btn" data-tab="xet-duyet" onclick="switchTab('xet-duyet')">
           <div class="nav-item-left">
             <i class="fas fa-id-badge"></i>
-            <span>Duyệt Tích & OA</span>
+            <span>Hàng Đợi Xét Duyệt</span>
           </div>
           <span class="nav-badge warning" id="badge-requests-count">0</span>
         </button>
-        <button class="nav-item-btn" data-tab="nhom-tro-chuyen" onclick="switchTab('nhom-tro-chuyen')">
-          <div class="nav-item-left">
-            <i class="fas fa-comments"></i>
-            <span>Nhóm Trò Chuyện</span>
-          </div>
-        </button>
-        <button class="nav-item-btn" data-tab="ten-cam" onclick="switchTab('ten-cam')">
-          <div class="nav-item-left">
-            <i class="fas fa-ban"></i>
-            <span>Tên Người Dùng Cấm</span>
-          </div>
-        </button>
 
-        <div class="menu-group-label">Nội Dung & Kiểm Duyệt</div>
+        <div class="menu-group-label">Nội Dung Bảng Tin</div>
         <button class="nav-item-btn" data-tab="bai-viet" onclick="switchTab('bai-viet')">
           <div class="nav-item-left">
             <i class="fas fa-newspaper"></i>
@@ -1253,12 +1261,19 @@ export function renderAdminPage(): string {
             <span>Bình Luận</span>
           </div>
         </button>
-        <button class="nav-item-btn" data-tab="bao-cao" onclick="switchTab('bao-cao')">
+
+        <div class="menu-group-label">Hệ Thống & Truyền Thông</div>
+        <button class="nav-item-btn" data-tab="nhom-tro-chuyen" onclick="switchTab('nhom-tro-chuyen')">
           <div class="nav-item-left">
-            <i class="fas fa-flag"></i>
-            <span>Báo Cáo Vi Phạm</span>
+            <i class="fas fa-comments"></i>
+            <span>Nhóm Trò Chuyện</span>
           </div>
-          <span class="nav-badge danger" id="badge-reports-count">0</span>
+        </button>
+        <button class="nav-item-btn" data-tab="ten-cam" onclick="switchTab('ten-cam')">
+          <div class="nav-item-left">
+            <i class="fas fa-ban"></i>
+            <span>Tên Người Dùng Cấm</span>
+          </div>
         </button>
 
         <div class="menu-group-label">Hệ Thống & Truyền Thông</div>
@@ -2534,12 +2549,8 @@ export function renderAdminPage(): string {
             badgesHtml += '<span class="status-badge" style="color:#94a3b8; background: rgba(148,163,184,0.15);" title="Tài khoản bị ẩn khỏi toàn hệ thống & tìm kiếm"><i class="fas fa-eye-slash"></i> Đã Ẩn</span> ';
           }
           const vBadge = (u.verification_badge || '').toLowerCase();
-          if (vBadge === 'orange') {
-            badgesHtml += '<span class="status-badge" style="color:#f97316; background: rgba(249,115,22,0.15);"><i class="fas fa-certificate"></i> Tích Cam</span> ';
-          } else if (vBadge === 'green') {
-            badgesHtml += '<span class="status-badge" style="color:#10b981; background: rgba(16,185,129,0.15);"><i class="fas fa-certificate"></i> Tích Xanh Lá</span> ';
-          } else if (vBadge === 'cyan') {
-            badgesHtml += '<span class="status-badge" style="color:#00e5ff; background: rgba(0,229,255,0.15);"><i class="fas fa-certificate"></i> Tích Dev/Startup</span> ';
+          if (vBadge === 'dev' || vBadge === 'cyan') {
+            badgesHtml += '<span class="status-badge" style="color:#8b5cf6; background: rgba(139,92,246,0.15);"><i class="fas fa-code"></i> Tích Dev/Startup</span> ';
           } else if (vBadge === 'gold' || isVip) {
             badgesHtml += '<span class="status-badge oa" title="Tài khoản Doanh Nghiệp / OA"><i class="fas fa-star"></i> Tích Vàng OA</span> ';
           } else if (vBadge === 'blue' || isVerified) {
@@ -2575,13 +2586,9 @@ export function renderAdminPage(): string {
               <td style="font-size: 12.5px; color: var(--text-secondary);">\${formatDate(u.created_at)}</td>
               <td style="text-align: right;">
                 <div class="action-btn-group" style="justify-content: flex-end;">
-                  <!-- Multi-color Badge Selector -->
-                  <button class="btn-icon" onclick="promptSetBadge('\${u.id}', '\${escapeHtml(u.display_name || u.username)}', '\${u.verification_badge || 'none'}')" title="Cấp Huy Hiệu Xác Minh Đa Sắc (5 Loại)">
-                    <i class="fas fa-certificate" style="\${u.verification_badge === 'orange' ? 'color:#f97316' : (u.verification_badge === 'green' ? 'color:#10b981' : (u.verification_badge === 'cyan' ? 'color:#00e5ff' : (u.verification_badge === 'gold' ? 'color:#f59e0b' : (u.verification_badge === 'blue' ? 'color:#2563eb' : ''))))}"></i>
-                  </button>
-                  <!-- Toggle VIP / OA -->
-                  <button class="btn-icon" onclick="toggleVip('\${u.id}', \${!isVip})" title="\${isVip ? 'Gỡ Huy Hiệu OA' : 'Kích Hoạt Tích Vàng OA'}">
-                    <i class="fas fa-star" style="\${isVip ? 'color: #f59e0b;' : ''}"></i>
+                  <!-- Unified Badge Selector (Tích Xanh, Vàng OA, Tím Dev) -->
+                  <button class="btn-icon" onclick="promptSetBadge('\${u.id}', '\${escapeHtml(u.display_name || u.username)}', '\${u.verification_badge || (isVip ? 'gold' : (isVerified ? 'blue' : 'none'))}')" title="Cấp Huy Hiệu Xác Minh (Xanh / Vàng OA / Tím Dev)">
+                    <i class="fas fa-certificate" style="\${(u.verification_badge === 'dev' || u.verification_badge === 'cyan') ? 'color:#8b5cf6' : ((u.verification_badge === 'gold' || isVip) ? 'color:#f59e0b' : ((u.verification_badge === 'blue' || isVerified) ? 'color:#2563eb' : ''))}"></i>
                   </button>
                   <!-- Toggle Hide Account from System & Search -->
                   <button class="btn-icon \${u.is_hidden ? 'warning' : ''}" onclick="toggleHide('\${u.id}', \${!u.is_hidden})" title="\${u.is_hidden ? 'Bỏ Ẩn Tài Khoản' : 'Ẩn Khỏi Hệ Thống & Tìm Kiếm'}">
@@ -2627,21 +2634,21 @@ export function renderAdminPage(): string {
       };
 
       window.promptSetBadge = function(userId, name, currentBadge) {
+        let val = currentBadge;
+        if (val === 'cyan') val = 'dev';
         Swal.fire({
-          title: 'Cấp Huy Hiệu: ' + name,
+          title: 'Cấp Huy Hiệu Xác Minh: ' + name,
           input: 'select',
           inputOptions: {
-            'none': '⚪ Không có huy hiệu (none)',
+            'none': '⚪ Không có huy hiệu (Gỡ bỏ)',
             'blue': '🔵 Tích Xanh Dương (Cá nhân xác minh)',
-            'gold': '🟡 Tích Vàng (Doanh nghiệp OA truyền thống)',
-            'orange': '🟠 Tích Cam (Chính phủ & Thương hiệu chính thức)',
-            'green': '🟢 Tích Xanh Lá (Trang Ứng dụng & Dịch vụ số)',
-            'cyan': '💠 Tích Blue Gradient Neon (Nhà phát triển / Startup)'
+            'gold': '🟡 Tích Vàng OA (Doanh nghiệp & Tổ chức)',
+            'dev': '🟣 Tích Tím Công Nghệ (Nhà phát triển & Startup)'
           },
-          inputValue: currentBadge,
+          inputValue: val || 'none',
           showCancelButton: true,
-          confirmButtonText: 'Cập Nhật Ngay',
-          cancelButtonText: 'Hủy'
+          confirmButtonText: 'Cập Nhật Huy Hiệu',
+          cancelButtonText: 'Đóng'
         }).then(async (res) => {
           if (res.isConfirmed) {
             const data = await safeFetchJson('/api/admin/users/' + userId + '/set-badge', {
