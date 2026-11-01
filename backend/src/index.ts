@@ -68,20 +68,23 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// App Version & OTA Update Check
+// App Version & OTA Update Check v2.2.1
 app.get('/api/app-version', (req, res) => {
   res.json({
-    latest_version: '2.1.0',
-    build_number: 23,
-    apk_url: 'https://doraboxcdn.zpiltk.io.vn/apk/Dorabox-arm64-v8a.apk',
+    latest_version: '2.2.1',
+    build_number: 24,
+    apk_url: 'https://doraboxcdn.zpiltk.io.vn/apk/Dorabox-v2.2.1-arm64.apk',
     ios_url: 'https://dorabox.app/ios',
     force_update: false,
     changelog: [
-      'Khẩu hiệu thương hiệu mới: "Kết nối diệu kỳ, sẻ chia niềm vui! ✨" thân thiện, ngắn gọn và gần gũi.',
-      'Tính năng Dr: Đột phá trích dẫn Repost với câu hỏi trung tâm "Còn bạn thì sao?", hỗ trợ Dr Voice 15s thu âm câu trả lời tức thì.',
-      'Tính năng Stories Vamp 🧛‍♂️: Đưa câu chuyện phong cách Ma Cà Rồng vào đời sống với 3 chế độ độc quyền: Ban đêm (18h-6h), Xem lén chống nhìn trộm (Vamp Peek), Tiếp tế sinh mệnh tim (Energy Heart).',
-      'Tính năng D-Notes: Bong bóng chia sẻ trạng thái & suy nghĩ 24h đặt ngay đầu danh sách chat (Messenger / Instagram Notes style), kèm phản hồi 1 chạm.',
-      'Tối ưu hóa toàn diện hiệu năng và giao diện người dùng, dọn dẹp hệ thống sạch sẽ.'
+      'Nâng cấp toàn diện Material 3 Designer và 1 Font chữ thương hiệu Be Vietnam Pro đồng bộ.',
+      'Nâng cấp hiệu ứng kính lỏng Liquid Glass xuyên thấu quang học chuẩn iOS 27.1 siêu mượt mà.',
+      'Thẻ phương tiện hỗn hợp thông minh: Tự động gộp ảnh và video vào 1 thẻ duy nhất kéo vuốt chuyển tiếp mượt mà kèm thanh chỉ báo.',
+      'Chuyển đổi 100% sang mô hình Theo dõi (Follow / Following) như Fanpage Facebook & Instagram.',
+      'Bổ sung hệ thống 5 loại huy hiệu xác minh đa sắc: Tích Xanh Dương (Cá nhân), Tích Vàng (Doanh nghiệp OA), Tích Cam (Chính phủ & Thương hiệu), Tích Xanh Lá (Ứng dụng số), Tích Blue Gradient Neon (Nhà phát triển & Khởi nghiệp).',
+      'Quản trị viên tối thượng: Hỗ trợ tạm đình chỉ tài khoản theo giờ/ngày hoặc vĩnh viễn, ẩn tài khoản toàn hệ thống và cưỡng chế đăng xuất tức thì qua Realtime.',
+      'Tùy chỉnh chế độ bài viết luôn công khai dành cho các trang Official Account (OA).',
+      'Nâng cấp bảo mật Backend: Che giấu toàn bộ logic nội bộ, cấu trúc CSDL và mã lỗi nhạy cảm để đảm bảo an toàn tuyệt đối.'
     ]
   });
 });

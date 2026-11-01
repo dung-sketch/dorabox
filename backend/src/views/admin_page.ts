@@ -2522,15 +2522,28 @@ export function renderAdminPage(): string {
 
           let badgesHtml = '';
           if (isBanned) {
-            badgesHtml += '<span class="status-badge banned"><i class="fas fa-ban"></i> Bị Khóa</span> ';
+            if (u.ban_type === 'temporary') {
+              badgesHtml += '<span class="status-badge warning" style="color:#f59e0b; background: rgba(245,158,11,0.15);" title="Tạm đình chỉ"><i class="fas fa-hourglass-half"></i> Tạm Đình Chỉ</span> ';
+            } else {
+              badgesHtml += '<span class="status-badge banned"><i class="fas fa-ban"></i> Khóa Vĩnh Viễn</span> ';
+            }
           } else {
             badgesHtml += '<span class="status-badge active"><i class="fas fa-circle" style="font-size: 6px;"></i> Hoạt Động</span> ';
           }
-          if (isVerified) {
-            badgesHtml += '<span class="status-badge verified" title="Tài khoản tích xanh"><i class="fas fa-circle-check"></i> Tích Xanh</span> ';
+          if (u.is_hidden) {
+            badgesHtml += '<span class="status-badge" style="color:#94a3b8; background: rgba(148,163,184,0.15);" title="Tài khoản bị ẩn khỏi toàn hệ thống & tìm kiếm"><i class="fas fa-eye-slash"></i> Đã Ẩn</span> ';
           }
-          if (isVip) {
-            badgesHtml += '<span class="status-badge oa" title="Tài khoản Doanh Nghiệp / OA"><i class="fas fa-star"></i> OA</span> ';
+          const vBadge = (u.verification_badge || '').toLowerCase();
+          if (vBadge === 'orange') {
+            badgesHtml += '<span class="status-badge" style="color:#f97316; background: rgba(249,115,22,0.15);"><i class="fas fa-certificate"></i> Tích Cam</span> ';
+          } else if (vBadge === 'green') {
+            badgesHtml += '<span class="status-badge" style="color:#10b981; background: rgba(16,185,129,0.15);"><i class="fas fa-certificate"></i> Tích Xanh Lá</span> ';
+          } else if (vBadge === 'cyan') {
+            badgesHtml += '<span class="status-badge" style="color:#00e5ff; background: rgba(0,229,255,0.15);"><i class="fas fa-certificate"></i> Tích Dev/Startup</span> ';
+          } else if (vBadge === 'gold' || isVip) {
+            badgesHtml += '<span class="status-badge oa" title="Tài khoản Doanh Nghiệp / OA"><i class="fas fa-star"></i> Tích Vàng OA</span> ';
+          } else if (vBadge === 'blue' || isVerified) {
+            badgesHtml += '<span class="status-badge verified" title="Tài khoản tích xanh cá nhân"><i class="fas fa-circle-check"></i> Tích Xanh</span> ';
           }
 
           html += \`
@@ -2562,21 +2575,25 @@ export function renderAdminPage(): string {
               <td style="font-size: 12.5px; color: var(--text-secondary);">\${formatDate(u.created_at)}</td>
               <td style="text-align: right;">
                 <div class="action-btn-group" style="justify-content: flex-end;">
-                  <!-- Toggle Verify -->
-                  <button class="btn-icon \${isVerified ? 'success' : ''}" onclick="toggleVerify('\${u.id}', \${!isVerified})" title="\${isVerified ? 'Gỡ Tích Xanh' : 'Cấp Tích Xanh'}">
-                    <i class="fas fa-check-double"></i>
+                  <!-- Multi-color Badge Selector -->
+                  <button class="btn-icon" onclick="promptSetBadge('\${u.id}', '\${escapeHtml(u.display_name || u.username)}', '\${u.verification_badge || 'none'}')" title="Cấp Huy Hiệu Xác Minh Đa Sắc (5 Loại)">
+                    <i class="fas fa-certificate" style="\${u.verification_badge === 'orange' ? 'color:#f97316' : (u.verification_badge === 'green' ? 'color:#10b981' : (u.verification_badge === 'cyan' ? 'color:#00e5ff' : (u.verification_badge === 'gold' ? 'color:#f59e0b' : (u.verification_badge === 'blue' ? 'color:#2563eb' : ''))))}"></i>
                   </button>
                   <!-- Toggle VIP / OA -->
                   <button class="btn-icon" onclick="toggleVip('\${u.id}', \${!isVip})" title="\${isVip ? 'Gỡ Huy Hiệu OA' : 'Kích Hoạt Tích Vàng OA'}">
                     <i class="fas fa-star" style="\${isVip ? 'color: #f59e0b;' : ''}"></i>
                   </button>
+                  <!-- Toggle Hide Account from System & Search -->
+                  <button class="btn-icon \${u.is_hidden ? 'warning' : ''}" onclick="toggleHide('\${u.id}', \${!u.is_hidden})" title="\${u.is_hidden ? 'Bỏ Ẩn Tài Khoản' : 'Ẩn Khỏi Hệ Thống & Tìm Kiếm'}">
+                    <i class="fas \${u.is_hidden ? 'fa-eye-slash' : 'fa-eye'}" style="\${u.is_hidden ? 'color:#f59e0b' : ''}"></i>
+                  </button>
                   <!-- Change Role -->
                   <button class="btn-icon" onclick="promptChangeRole('\${u.id}', '\${escapeHtml(u.display_name || u.username)}', '\${role}')" title="Phân Quyền Vai Trò">
                     <i class="fas fa-user-shield"></i>
                   </button>
-                  <!-- Toggle Ban -->
-                  <button class="btn-icon \${isBanned ? 'danger' : ''}" onclick="toggleBan('\${u.id}', \${!isBanned})" title="\${isBanned ? 'Mở Khóa Nick' : 'Khóa Tài Khoản'}">
-                    <i class="fas \${isBanned ? 'fa-lock' : 'fa-lock-open'}"></i>
+                  <!-- Suspension / Ban Modal -->
+                  <button class="btn-icon \${isBanned ? 'danger' : ''}" onclick="openBanModal('\${u.id}', '\${escapeHtml(u.display_name || u.username)}', \${isBanned}, '\${u.ban_type || 'none'}', '\${escapeHtml(u.ban_reason || '')}')" title="\${isBanned ? 'Quản Lý Đình Chỉ / Mở Khóa' : 'Đình Chỉ Tài Khoản'}">
+                    <i class="fas \${isBanned ? 'fa-gavel' : 'fa-lock-open'}"></i>
                   </button>
                   <!-- Reset OA Edit -->
                   <button class="btn-icon" onclick="resetOaEditCount('\${u.id}', '\${escapeHtml(u.display_name || u.username)}')" title="Cấp Lại Lượt Sửa Thông Tin OA">
@@ -2606,6 +2623,146 @@ export function renderAdminPage(): string {
             showConfirmButton: false,
             timer: 1200
           });
+        });
+      };
+
+      window.promptSetBadge = function(userId, name, currentBadge) {
+        Swal.fire({
+          title: 'Cấp Huy Hiệu: ' + name,
+          input: 'select',
+          inputOptions: {
+            'none': '⚪ Không có huy hiệu (none)',
+            'blue': '🔵 Tích Xanh Dương (Cá nhân xác minh)',
+            'gold': '🟡 Tích Vàng (Doanh nghiệp OA truyền thống)',
+            'orange': '🟠 Tích Cam (Chính phủ & Thương hiệu chính thức)',
+            'green': '🟢 Tích Xanh Lá (Trang Ứng dụng & Dịch vụ số)',
+            'cyan': '💠 Tích Blue Gradient Neon (Nhà phát triển / Startup)'
+          },
+          inputValue: currentBadge,
+          showCancelButton: true,
+          confirmButtonText: 'Cập Nhật Ngay',
+          cancelButtonText: 'Hủy'
+        }).then(async (res) => {
+          if (res.isConfirmed) {
+            const data = await safeFetchJson('/api/admin/users/' + userId + '/set-badge', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + adminToken },
+              body: JSON.stringify({ badge: res.value })
+            });
+            if (data.success) {
+              Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: data.message, showConfirmButton: false, timer: 1500 });
+              fetchUsers();
+            } else {
+              Swal.fire({ icon: 'error', title: 'Lỗi', text: data.error });
+            }
+          }
+        });
+      };
+
+      window.openBanModal = function(userId, name, isBanned, currentBanType, currentReason) {
+        if (isBanned) {
+          Swal.fire({
+            title: 'Mở khóa tài khoản?',
+            html: 'Tài khoản <b>' + name + '</b> đang bị đình chỉ (' + (currentBanType === 'temporary' ? 'Tạm thời' : 'Vĩnh viễn') + '). Bạn có muốn gỡ bỏ lệnh đình chỉ và khôi phục quyền truy cập?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Mở Khóa Ngay',
+            cancelButtonText: 'Hủy'
+          }).then(async (res) => {
+            if (res.isConfirmed) {
+              const data = await safeFetchJson('/api/admin/users/' + userId + '/toggle-ban', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + adminToken },
+                body: JSON.stringify({ isBanned: false })
+              });
+              if (data.success) {
+                Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: data.message, showConfirmButton: false, timer: 1500 });
+                fetchUsers();
+              } else {
+                Swal.fire({ icon: 'error', title: 'Lỗi', text: data.error });
+              }
+            }
+          });
+        } else {
+          Swal.fire({
+            title: 'Đình chỉ tài khoản: ' + name,
+            html: '<div style="text-align: left; font-size: 13.5px;">' +
+              '<label style="font-weight: 600; margin-bottom: 4px; display: block;">Thời hạn đình chỉ:</label>' +
+              '<select id="swal-ban-type" class="swal2-select" style="width: 100%; margin: 0 0 12px 0;">' +
+                '<option value="temporary_1">Tạm đình chỉ 1 giờ</option>' +
+                '<option value="temporary_12">Tạm đình chỉ 12 giờ</option>' +
+                '<option value="temporary_24" selected>Tạm đình chỉ 24 giờ (1 ngày)</option>' +
+                '<option value="temporary_72">Tạm đình chỉ 3 ngày</option>' +
+                '<option value="temporary_168">Tạm đình chỉ 7 ngày (1 tuần)</option>' +
+                '<option value="permanent">Đình chỉ vĩnh viễn (Khóa vĩnh viễn)</option>' +
+              '</select>' +
+              '<label style="font-weight: 600; margin-bottom: 4px; display: block;">Lý do đình chỉ (hiển thị khi tài khoản bị văng ra):</label>' +
+              '<input id="swal-ban-reason" class="swal2-input" placeholder="Lý do vi phạm tiêu chuẩn cộng đồng..." value="Vi phạm tiêu chuẩn cộng đồng Dorabox." style="width: 100%; margin: 0;">' +
+            '</div>',
+            focusConfirm: false,
+            showCancelButton: true,
+            confirmButtonText: 'Thực Thi Đình Chỉ',
+            confirmButtonColor: '#ef4444',
+            cancelButtonText: 'Hủy',
+            preConfirm: () => {
+              const banTypeVal = document.getElementById('swal-ban-type').value;
+              const banReasonVal = document.getElementById('swal-ban-reason').value;
+              let isTemp = banTypeVal.startsWith('temporary');
+              let durationHours = 24;
+              if (isTemp) {
+                durationHours = Number(banTypeVal.split('_')[1]) || 24;
+              }
+              return {
+                banType: isTemp ? 'temporary' : 'permanent',
+                durationHours: durationHours,
+                banReason: banReasonVal.trim() || 'Vi phạm tiêu chuẩn cộng đồng Dorabox.'
+              };
+            }
+          }).then(async (res) => {
+            if (res.isConfirmed && res.value) {
+              const data = await safeFetchJson('/api/admin/users/' + userId + '/toggle-ban', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + adminToken },
+                body: JSON.stringify({
+                  isBanned: true,
+                  banType: res.value.banType,
+                  durationHours: res.value.durationHours,
+                  banReason: res.value.banReason
+                })
+              });
+              if (data.success) {
+                Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: data.message, showConfirmButton: false, timer: 1500 });
+                fetchUsers();
+              } else {
+                Swal.fire({ icon: 'error', title: 'Lỗi', text: data.error });
+              }
+            }
+          });
+        }
+      };
+
+      window.toggleHide = async function(userId, newStatus) {
+        const confirmMsg = newStatus ? 'Ẩn toàn bộ tài khoản này khỏi hệ thống & kết quả tìm kiếm?' : 'Hiển thị lại tài khoản này trên hệ thống?';
+        Swal.fire({
+          title: confirmMsg,
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonText: newStatus ? 'Ẩn Toàn Bộ' : 'Hiển Thị Lại',
+          cancelButtonText: 'Hủy'
+        }).then(async (res) => {
+          if (res.isConfirmed) {
+            const data = await safeFetchJson('/api/admin/users/' + userId + '/toggle-hide', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + adminToken },
+              body: JSON.stringify({ isHidden: newStatus })
+            });
+            if (data.success) {
+              Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: data.message, showConfirmButton: false, timer: 1500 });
+              fetchUsers();
+            } else {
+              Swal.fire({ icon: 'error', title: 'Lỗi', text: data.error });
+            }
+          }
         });
       };
 

@@ -1,0 +1,241 @@
+================================================================================
+           DORABOX SOCIAL - NHẬT KÝ ĐẠI CẬP NHẬT SIÊU LỚN (BIG UPDATE)
+                     TỪ PHIÊN BẢN v1.7.8 LÊN THẾ HỆ v2.0.x / v2.1.0
+          Khẩu hiệu thương hiệu: "Kết nối diệu kỳ, sẻ chia niềm vui! ✨"
+================================================================================
+
+Bước nhảy vọt từ thế hệ v1.7.8 lên v2.0.x / v2.1.0 là một cuộc cách mạng toàn diện
+của Dorabox Social, bao gồm cả kiến trúc cơ sở dữ liệu Supabase, logic backend API,
+trình quản trị Admin Portal, và toàn bộ trải nghiệm người dùng trên ứng dụng di động.
+
+Dưới đây là chi tiết toàn bộ các tính năng mới và cải tiến siêu lớn:
+
+--------------------------------------------------------------------------------
+1. KIẾN TRÚC BẢN QUYỀN TẢI NỘI DUNG TÁCH BIỆT (ẢNH vs VIDEO)
+--------------------------------------------------------------------------------
+- Tách biệt độc lập 100% giữa quyền tải ảnh và quyền tải video:
+  + Thay vì chỉ có 1 nút gộp "Cho phép lưu nội dung" như v1.7.8, hệ thống đã tách
+    thành 2 quyền hạn độc lập: "Cho phép tải ảnh" và "Cho phép tải video".
+  + Chủ bài viết có thể linh hoạt cho phép người xem lưu ảnh nhưng khóa không cho
+    lưu video (hoặc ngược lại) ngay khi đăng bài hoặc cài đặt mặc định tài khoản.
+- Đồng bộ thời gian thực đa thiết bị (Realtime Zero-Latency Sync):
+  + Khi bật/tắt quyền tải trong Cài đặt, toàn bộ bài viết trong quá khứ của tác giả
+    được cập nhật tức thì trên máy của tất cả người dùng khác, bảo vệ bản quyền
+    tuyệt đối mà không thể lách luật hay qua mặt.
+
+--------------------------------------------------------------------------------
+2. ĐẠI TU HỆ THỐNG DOANH NGHIỆP OA (OFFICIAL ACCOUNT) CHUYÊN BIỆT
+--------------------------------------------------------------------------------
+- Tinh gọn giao diện & loại bỏ tính năng thừa cho tài khoản OA:
+  + Tự động ẩn hoàn toàn các tính năng chỉ dành cho cá nhân (kết bạn, danh sách
+    bạn bè, chế độ "chỉ bạn bè mới liên hệ").
+  + Thay thế bằng menu doanh nghiệp chuyên nghiệp: "Tên tổ chức / Doanh nghiệp",
+    "Mô tả doanh nghiệp", "Nhận tin nhắn từ khách hàng & đối tác", "Tích Vàng OA".
+- Trang cá nhân OA luôn công khai 100%:
+  + Bài viết của tài khoản OA luôn hiển thị công khai cho mọi người theo dõi và
+    tiếp cận, tối đa hóa hiệu quả truyền thông và kinh doanh của doanh nghiệp.
+- Nhận diện thương hiệu Tích Vàng OA nổi bật trên toàn ứng dụng.
+
+--------------------------------------------------------------------------------
+3. ĐỘT PHÁ TRÌNH PHÁT VIDEO & TRÌNH XEM ẢNH TOÀN MÀN HÌNH
+--------------------------------------------------------------------------------
+- Khắc phục triệt để lỗi xoay ngoài ý muốn khi cuộn lướt video.
+- Chế độ hiển thị video kép thông minh:
+  + Chế độ Gốc (100% Fit): Giữ nguyên tỉ lệ khung hình gốc của video, không bao
+    giờ bị mất viền hay cắt xén nội dung.
+  + Chế độ Phóng to (Zoom Fill): Lấp đầy màn hình trải nghiệm sống động.
+- Thanh chấm chỉ báo (Dot indicators) thiết kế lại siêu nhỏ gọn, vuốt kéo êm ái.
+- Bộ xem ảnh toàn màn hình (FullScreenImageViewer):
+  + Phóng to / thu nhỏ đa điểm (Pinch-to-zoom) siêu mượt.
+  + Kéo vuốt nhẹ để đóng ảnh với hiệu ứng chuyển cảnh vật lý tự nhiên.
+
+--------------------------------------------------------------------------------
+4. TÍNH NĂNG MỚI: D-NOTES (GHI CHÚ SUY NGHĨ & ÂM NHẠC 24H)
+--------------------------------------------------------------------------------
+- Thanh D-Notes thế hệ mới đặt ngay đầu danh sách chat và bảng tin:
+  + Chia sẻ suy nghĩ, tâm trạng ngắn (tối đa 120 ký tự) kèm biểu tượng cảm xúc.
+  + Tích hợp nhãn bài hát / giai điệu yêu thích ngay trên bong bóng ghi chú.
+  + Thiết kế bong bóng suy nghĩ (thought bubble) bồng bềnh, trẻ trung, hiện đại.
+- Tương tác 1 chạm:
+  + Bạn bè có thể thả tim tức thì hoặc gửi tin nhắn phản hồi trực tiếp vào hộp thoại.
+  + Tự động biến mất sạch sẽ sau 24 giờ.
+
+--------------------------------------------------------------------------------
+5. NÂNG CẤP TRÌNH ĐĂNG BÀI (CREATE POST) THẾ HỆ MỚI
+--------------------------------------------------------------------------------
+- Tích hợp vòng quay tiến trình (Upload Progress Spinner) trực tiếp vào nút đăng:
+  + Không còn dùng banner tải lên thô cứng che mất màn hình soạn thảo.
+  + Người dùng có thể theo dõi tiến trình tải ảnh/video trực quan ngay trên nút.
+- Chèn liên kết web thông minh:
+  + Hỗ trợ đặt tiêu đề liên kết tùy chỉnh (link_title) kèm xem trước tên miền sạch.
+- Bộ chọn đối tượng bài viết trực quan:
+  + Công khai (mọi người), Bạn bè, Chỉ mình tôi, hoặc Tùy chọn từng người xem.
+- Loại bỏ hoàn toàn tính năng khóa mật khẩu bài viết để bài viết hiển thị trực tiếp,
+  mượt mà, không gây phiền toái hay che chắn nội dung của tác giả.
+
+--------------------------------------------------------------------------------
+6. MÀN HÌNH CHÍNH SÁCH & QUYỀN RIÊNG TƯ TOÀN MÀN HÌNH (PRIVACY POLICY)
+--------------------------------------------------------------------------------
+- Màn hình chuyên biệt toàn màn hình PrivacyPolicyScreen:
+  + Giao diện thẻ mở rộng (ExpansionTile) hiện đại, mặc định đóng gọn gàng khi mở.
+  + Thanh tìm kiếm thời gian thực: tìm nhanh theo từ khóa (video, tải ảnh, xóa nick).
+  + Bổ sung Mục 3 riêng biệt: "Tài khoản Cá nhân Xác minh (Tích Xanh)", khẳng định
+    tiêu chuẩn xác minh danh tính thật, chống mạo danh và bảo mật hồ sơ thẩm định.
+
+--------------------------------------------------------------------------------
+7. HỆ THỐNG CẬP NHẬT OTA THẾ HỆ MỚI & QUÉT MÃ ĐỘC PLAY PROTECT
+--------------------------------------------------------------------------------
+- Trình kiểm tra cập nhật thông minh:
+  + Chỉ bật hộp thoại OTA khi thực sự có phiên bản mới từ máy chủ.
+  + Nếu đang ở bản mới nhất, chỉ hiển thị thông báo nhẹ nhàng, không làm phiền.
+- Tích hợp quét mã độc và chữ ký số tự động đạt chuẩn Google Play Protect trước
+  khi mở cài đặt file APK.
+- Hỗ trợ cài đặt trực tiếp qua native channel FileProvider an toàn và nhanh chóng.
+
+--------------------------------------------------------------------------------
+8. ĐẠI TU TOÀN DIỆN GIAO DIỆN CÀI ĐẶT (SETTINGS UI OVERHAUL)
+--------------------------------------------------------------------------------
+- Triệt tiêu 100% lỗi tràn chữ (RenderFlex Overflow) và mất chữ:
+  + Bọc toàn bộ tiêu đề cài đặt bằng Flexible kết hợp maxLines: 1 và TextOverflow.ellipsis.
+  + Thu nhỏ nút bật/tắt (Switch scale 0.85 & shrinkWrap) giải phóng diện tích.
+  + Đảm bảo hiển thị hoàn hảo trên tất cả các dòng máy từ màn hình nhỏ đến màn hình lớn.
+- Tinh gọn câu từ, loại bỏ dài dòng văn tự:
+  + "Cho phép người khác xem mà không cần kết bạn" -> "Cho người lạ xem trang"
+  + "Chống chụp màn hình & Bảo vệ nội dung" -> "Chống chụp màn hình"
+  + "Chế độ giao diện (Sáng / Tối)" -> "Giao diện tối (Dark mode)"
+  + "Biên nhận đã xem tin nhắn" -> "Thông báo đã xem"
+  + "Trạng thái đang soạn tin nhắn" -> "Trạng thái đang soạn tin"
+  + "Đối tượng bài viết mặc định" -> "Quyền xem bài viết mặc định"
+  + Rút gọn toàn bộ phụ đề về 1 dòng hiển thị thanh thoát, chuẩn UX quốc tế.
+- Tinh giản đa ngôn ngữ: Giữ lại chuẩn 2 ngôn ngữ sắc nét nhất là Tiếng Việt và Tiếng Anh.
+
+--------------------------------------------------------------------------------
+9. TIN NHẮN, CUỘC GỌI & BẢO MẬT CHỐNG CHỤP MÀN HÌNH
+--------------------------------------------------------------------------------
+- Căn chỉnh góc phải tin nhắn thanh lịch: Thời gian và trạng thái tin nhắn (đã gửi,
+  đã xem) luôn nằm ngay ngắn góc dưới, không còn bị tụt dòng hay thụt lề sai lệch.
+- Tính năng Secure Screen Protection: Chặn chụp màn hình và ghi hình màn hình với
+  tin nhắn bí mật và hình ảnh xem 1 lần.
+- Cuộc gọi thoại & video call WebRTC mã hóa đầu cuối mượt mà, bảo mật cao.
+
+--------------------------------------------------------------------------------
+10. TỐI ƯU CƠ SỞ DỮ LIỆU & DỌN DẸP SẠCH SẼ HỆ THỐNG (SQL CLEANUP)
+--------------------------------------------------------------------------------
+- Loại bỏ hoàn toàn các bảng và cột thừa trên Supabase:
+  + Xóa bảng stories, story_reactions (Migration 28).
+  + Xóa các cột thử nghiệm dr_parent_id, dr_prompt, dr_voice_url, content_password.
+  + Bảo toàn nguyên vẹn bảng user_notes phục vụ D-Notes.
+- Tối ưu màu sắc biểu tượng: Trái tim đỏ (Icons.favorite_rounded #EF4444) luôn rực rỡ,
+  chuẩn màu trên mọi thiết bị và hệ điều hành.
+- Mã nguồn đạt chuẩn phân tích Dart: 0 lỗi, 0 cảnh báo (dart analyze pass 100%).
+================================================================================
+
+
+
+================================================================================
+           DORABOX SOCIAL - ĐẠI CẬP NHẬT KỶ NGUYÊN MỚI: PHIÊN BẢN v2.2.1
+                             (BUILD NUMBER 24)
+           Khẩu hiệu thương hiệu: "Kết nối diệu kỳ, sẻ chia niềm vui! ✨"
+================================================================================
+
+Phiên bản v2.2.1 là bước chuyển mình mang tính bước ngoặt, đưa Dorabox Social lên
+chuẩn mực mạng xã hội hiện đại bậc nhất với thiết kế Material 3 đỉnh cao, hiệu ứng
+kính lỏng Liquid Glass chuẩn iOS 27.1, bảo mật chống rò rỉ nghiệp vụ triệt để,
+và cơ chế Theo dõi (Follow) 1 chạm thay thế hoàn toàn hệ thống kết bạn truyền thống.
+
+CHI TIẾT 10 HẠNG MỤC NÂNG CẤP SIÊU ĐỘT PHÁ TRÊN v2.2.1:
+
+--------------------------------------------------------------------------------
+1. THIẾT KẾ TOÀN DIỆN MATERIAL 3 & FONT THƯƠNG HIỆU BE VIETNAM PRO
+--------------------------------------------------------------------------------
+- Áp dụng triệt để chuẩn thiết kế Google Material 3 (useMaterial3: true) trên toàn bộ ứng dụng:
+  + Màu sắc theo gam màu động, bo góc chuẩn mực, bóng đổ chuyển tiếp tự nhiên.
+  + Giao diện Light & Dark Theme được tinh chỉnh tương phản hoàn hảo.
+- Chuẩn hóa duy nhất 1 font chữ thương hiệu cao cấp: Be Vietnam Pro (GoogleFonts):
+  + Tối ưu hiển thị dấu thanh tiếng Việt sắc nét, đều nét, không lỗi khoảng cách.
+  + Mang lại vẻ đẹp hiện đại, thanh thoát và trải nghiệm đọc mượt mà trên mọi màn hình.
+
+--------------------------------------------------------------------------------
+2. HIỆU ỨNG KÍNH LỎNG XUYÊN THẤU LIQUID GLASS CHUẨN iOS 27.1
+--------------------------------------------------------------------------------
+- Nâng cấp bộ lọc khúc xạ ánh sáng (LiquidGlass) với độ mờ xuyên thấu siêu thực:
+  + Lớp phủ gương specular phản chiếu ánh sáng tinh tế viền cạnh.
+  + Độ mờ nền backdrop filter mượt mà, chiều sâu thị giác nổi khối ấn tượng.
+  + Tối ưu hiệu năng render GPU, không gây nóng máy hay sụt khung hình khi lướt bảng tin.
+
+--------------------------------------------------------------------------------
+3. THẺ NỘI DUNG HỖN HỢP GỘP CHUNG (MIXED MEDIA CAROUSEL: ẢNH + VIDEO)
+--------------------------------------------------------------------------------
+- Bài đăng chứa cả ảnh và video được gộp chung vào 1 thẻ trượt duy nhất:
+  + Không còn tình trạng phân tách rời rạc hay chiếm diện tích màn hình.
+  + Vuốt ngang mượt mà để xem lần lượt ảnh và video trong cùng 1 bài.
+  + Huy hiệu phân trang góc trên (Ví dụ: 1/4) hiển thị số lượng và vị trí hiện tại.
+  + Thanh chấm chỉ báo (Dot indicators) thiết kế thanh mảnh, đổi màu theo tiến trình lướt.
+  + Trình xem ảnh phóng to đa điểm (Pinch-to-zoom) và trình phát video tự động tối ưu.
+
+--------------------------------------------------------------------------------
+4. BỎ HOÀN TOÀN KẾT BẠN - THAY THẾ BẰNG CƠ CHẾ THEO DÕI 1 CHẠM (FOLLOW)
+--------------------------------------------------------------------------------
+- Loại bỏ 100% cơ chế kết bạn 2 chiều rườm rà (yêu cầu kết bạn, chờ đồng ý, hủy kết bạn).
+- Chuyển sang mô hình Theo dõi (Follow / Following) hiện đại như Facebook Fanpage & Instagram:
+  + Nút bấm 1 chạm: "Theo dõi" chuyển sang "Đang theo dõi" kèm hiệu ứng êm ái.
+  + Hiển thị số lượng Người theo dõi (Followers) và Đang theo dõi (Following) trên Profile.
+  + Bảng cơ sở dữ liệu mới `public.follows` kèm chỉ mục tối ưu, hỗ trợ Realtime tức thì.
+
+--------------------------------------------------------------------------------
+5. HỆ THỐNG 5 HUY HIỆU TÍCH XÁC MINH CHÍNH THỨC (MULTI-COLOR BADGES)
+--------------------------------------------------------------------------------
+- 🔵 Tích Xanh Dương (Blue): Dành cho Cá nhân xác minh danh tính thật (Personal Verified).
+- 🟡 Tích Vàng (Gold): Dành cho Tài khoản Doanh nghiệp OA truyền thống (Official Account).
+- 🟠 Tích Cam (Orange): Dành cho Cơ quan Chính phủ hoặc Thương hiệu / Tập đoàn chính thức.
+- 🟢 Tích Xanh Lá (Green): Dành cho Ứng dụng di động & Nền tảng số chính thức (Official App).
+- 💠 Tích Blue Gradient Neon (Cyan): Dành cho Nhà phát triển phần mềm hoặc Dự án Khởi nghiệp (Developer / Startup).
+- Tích hợp vòng nhẫn phát sáng tương ứng màu tích xung quanh Avatar người dùng (DoraboxAvatar).
+
+--------------------------------------------------------------------------------
+6. BẢO MẬT ĐỈNH CAO: BỌC MÃ LỖI (SANITIZED ERRORS) CHỐNG RÒ RỈ LOGIC
+--------------------------------------------------------------------------------
+- Xóa bỏ triệt để tình trạng lộ thông báo lỗi cơ sở dữ liệu, cú pháp RLS, Postgrest hay schema:
+  + Lớp xử lý ErrorSanitizer chặn toàn bộ thông báo nhạy cảm trước khi hiển thị cho người dùng.
+  + Tự động chuyển đổi thành câu từ tiếng Việt lịch sự, thân thiện, dễ hiểu.
+  + Ngăn chặn nguy cơ tin tặc thăm dò cấu trúc database và logic nghiệp vụ của hệ thống.
+
+--------------------------------------------------------------------------------
+7. TÙY CHỌN BÀI VIẾT LUÔN CÔNG KHAI DÀNH CHO TÀI KHOẢN OA (OA ALWAYS PUBLIC)
+--------------------------------------------------------------------------------
+- Tích hợp trường cấu hình `oa_always_public` trong bảng điều khiển và hồ sơ OA:
+  + Cho phép doanh nghiệp OA bật tùy chọn để mọi bài viết luôn công khai 100%.
+  + Đảm bảo khách hàng và công chúng luôn tiếp cận được thông tin khuyến mãi, tin tức OA.
+
+--------------------------------------------------------------------------------
+8. SIÊU TRÌNH QUẢN TRỊ ADMIN PORTAL & CƠ CHẾ FORCE LOGOUT TỨC THÌ
+--------------------------------------------------------------------------------
+- Nâng cấp giao diện Admin Portal trực quan, hiện đại:
+  + Quản trị viên có thể Đình chỉ tài khoản tạm thời (1h, 12h, 24h, 3 ngày, 7 ngày) kèm lý do cụ thể.
+  + Hỗ trợ Khóa vĩnh viễn (Permanent Ban) đối với tài khoản vi phạm nghiêm trọng.
+  + Tính năng Ẩn toàn diện (Hide Account): Ẩn hoàn toàn tài khoản khỏi tìm kiếm, gợi ý và bảng tin.
+  + Bộ chọn gán 5 loại Huy hiệu Tích Xác minh nhanh chóng cho từng người dùng.
+- Cơ chế Đăng xuất cưỡng chế tức thì (Realtime Force Logout):
+  + Khi một tài khoản bị ban, ứng dụng phát hiện qua Supabase Realtime và lập tức đăng xuất.
+  + Hiển thị hộp thoại thông báo vi phạm tiêu chuẩn cộng đồng, thời hạn mở khóa và lý do rõ ràng.
+
+--------------------------------------------------------------------------------
+9. NÂNG CẤP HẠ THẦNG THÔNG BÁO & TINH GỌN CÀI ĐẶT
+--------------------------------------------------------------------------------
+- Tinh giản nội dung thông báo hệ thống:
+  + Không còn câu từ rườm rà, thông báo theo dõi mới hiển thị ngắn gọn: "Đã bắt đầu theo dõi bạn ✨".
+- Phần Cài đặt (Settings) được tối ưu hóa toàn bộ nhãn hiển thị:
+  + Triệt tiêu lỗi tràn chữ, căn lề chuẩn mực, bố cục thoáng đãng và dễ thao tác.
+
+--------------------------------------------------------------------------------
+10. TỐI ƯU CƠ SỞ DỮ LIỆU & KIỂM THỬ MÃ NGUỒN HOÀN HẢO
+--------------------------------------------------------------------------------
+- Bản cập nhật Supabase Migration 29 (`29_dorabox_v2_2_upgrade.sql`):
+  + Bổ sung trường `verification_badge`, `is_banned`, `ban_type`, `banned_until`, `ban_reason`, `is_hidden`, `oa_always_public`.
+  + Thiết lập chính sách bảo mật RLS nghiêm ngặt trên bảng `follows`.
+  + Tối ưu các chỉ mục (indexes) phục vụ truy vấn tốc độ cao.
+- Kiểm thử mã nguồn nghiêm ngặt:
+  + `dart analyze lib` đạt kết quả tuyệt đối: 0 lỗi, 0 cảnh báo (No issues found!).
+  + Backend TypeScript biên dịch không lỗi (0 error).
+  + Đóng gói thành công APK Release v2.2.1 build 24.
+================================================================================

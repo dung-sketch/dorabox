@@ -304,7 +304,7 @@ router.get('/users', async (req, res) => {
     const { q, filter } = req.query;
     let query = supabaseAdmin
       .from('profiles')
-      .select('id, username, display_name, avatar_url, bio, is_verified, is_vip, is_oa, account_type, is_banned, role, created_at, oa_category, oa_status, oa_info_edited_count, oa_pending_status, oa_pending_update')
+      .select('id, username, display_name, avatar_url, bio, is_verified, is_vip, is_oa, account_type, is_banned, ban_type, banned_until, ban_reason, is_hidden, verification_badge, role, created_at, oa_category, oa_status, oa_info_edited_count, oa_pending_status, oa_pending_update, oa_always_public')
       .order('created_at', { ascending: false });
 
     if (q && typeof q === 'string' && q.trim()) {
@@ -358,15 +358,32 @@ router.post('/users/:id/toggle-verify', async (req, res) => {
   }
 });
 
-// Khóa / Mở Khóa Tài Khoản (Ban / Unban)
+// Khóa / Đình chỉ / Mở Khóa Tài Khoản (Hỗ trợ tạm đình chỉ theo giờ và đình chỉ vĩnh viễn)
 router.post('/users/:id/toggle-ban', async (req, res) => {
   try {
     const { id } = req.params;
-    const { isBanned } = req.body;
+    const { isBanned, banType = 'permanent', durationHours, banReason } = req.body;
+
+    const banned = Boolean(isBanned);
+    let bannedUntil: string | null = null;
+    let effectiveBanType = 'none';
+
+    if (banned) {
+      effectiveBanType = banType === 'temporary' ? 'temporary' : 'permanent';
+      if (effectiveBanType === 'temporary') {
+        const hours = Number(durationHours) || 24;
+        bannedUntil = new Date(Date.now() + hours * 3600 * 1000).toISOString();
+      }
+    }
 
     const { data, error } = await supabaseAdmin
       .from('profiles')
-      .update({ is_banned: Boolean(isBanned) })
+      .update({
+        is_banned: banned,
+        ban_type: effectiveBanType,
+        banned_until: bannedUntil,
+        ban_reason: banned ? (banReason || 'Vi phạm tiêu chuẩn cộng đồng Dorabox.') : null,
+      })
       .eq('id', id)
       .select()
       .single();
@@ -375,26 +392,102 @@ router.post('/users/:id/toggle-ban', async (req, res) => {
 
     // Đồng bộ trạng thái khóa trực tiếp vào Supabase Auth
     try {
+      let authDuration = 'none';
+      if (banned) {
+        authDuration = effectiveBanType === 'temporary' ? `${Number(durationHours) || 24}h` : '876000h';
+      }
       await supabaseAdmin.auth.admin.updateUserById(id, {
-        ban_duration: isBanned ? '876000h' : 'none'
+        ban_duration: authDuration,
       });
     } catch (authBanErr) {
       console.warn('👉 Notice on updateUserById ban_duration:', authBanErr);
     }
 
     logSecurityEvent(
-      isBanned ? 'user_ban' : 'user_unban',
-      `${isBanned ? 'KHÓA VĨNH VIỄN' : 'Mở khóa hoạt động'} cho tài khoản (UID: ${id.substring(0, 8)}...)`,
-      isBanned ? 'alert' : 'info'
+      banned ? 'user_ban' : 'user_unban',
+      `${banned ? (effectiveBanType === 'temporary' ? `TẠM ĐÌNH CHỈ (${durationHours || 24}h)` : 'KHÓA VĨNH VIỄN') : 'Mở khóa hoạt động'} cho tài khoản (UID: ${id.substring(0, 8)}...)`,
+      banned ? 'alert' : 'info'
     );
 
     return res.json({
       success: true,
       user: data,
-      message: isBanned ? 'Đã khóa tài khoản thành công.' : 'Đã mở khóa tài khoản.'
+      message: banned
+        ? (effectiveBanType === 'temporary' ? `Đã tạm đình chỉ tài khoản ${durationHours || 24} giờ.` : 'Đã khóa tài khoản vĩnh viễn.')
+        : 'Đã mở khóa tài khoản thành công.'
     });
   } catch (err: any) {
-    return res.status(500).json({ error: err.message });
+    return res.status(500).json({ error: 'Đã có lỗi xảy ra khi xử lý đình chỉ tài khoản.' });
+  }
+});
+
+// Cập nhật Huy hiệu xác minh đa màu sắc (none, blue, gold, orange, green, cyan)
+router.post('/users/:id/set-badge', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { badge } = req.body;
+
+    const badgeStr = String(badge || 'none').toLowerCase().trim();
+    const isVerified = badgeStr === 'blue';
+    const isOA = badgeStr === 'gold' || badgeStr === 'orange' || badgeStr === 'green';
+
+    const { data, error } = await supabaseAdmin
+      .from('profiles')
+      .update({
+        verification_badge: badgeStr,
+        is_verified: isVerified,
+        is_oa: isOA,
+      })
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    logSecurityEvent(
+      'verify_toggle',
+      `Cập nhật huy hiệu [${badgeStr.toUpperCase()}] cho tài khoản (UID: ${id.substring(0, 8)}...)`,
+      'info'
+    );
+
+    return res.json({
+      success: true,
+      user: data,
+      message: `Đã cập nhật huy hiệu xác minh: ${badgeStr.toUpperCase()}`,
+    });
+  } catch (err: any) {
+    return res.status(500).json({ error: 'Đã có lỗi xảy ra khi cập nhật huy hiệu.' });
+  }
+});
+
+// Ẩn / Hiện Toàn Bộ Tài Khoản Khỏi Hệ Thống & Tìm Kiếm
+router.post('/users/:id/toggle-hide', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { isHidden } = req.body;
+
+    const { data, error } = await supabaseAdmin
+      .from('profiles')
+      .update({ is_hidden: Boolean(isHidden) })
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    logSecurityEvent(
+      'role_change',
+      `${isHidden ? 'ẨN TOÀN BỘ' : 'HIỂN THỊ LẠI'} tài khoản khỏi hệ thống & tìm kiếm (UID: ${id.substring(0, 8)}...)`,
+      isHidden ? 'warning' : 'info'
+    );
+
+    return res.json({
+      success: true,
+      user: data,
+      message: isHidden ? 'Đã ẩn tài khoản khỏi hệ thống & tìm kiếm.' : 'Đã khôi phục hiển thị tài khoản.',
+    });
+  } catch (err: any) {
+    return res.status(500).json({ error: 'Đã có lỗi xảy ra khi cập nhật trạng thái ẩn tài khoản.' });
   }
 });
 

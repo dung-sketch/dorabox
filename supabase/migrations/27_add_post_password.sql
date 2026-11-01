@@ -1,0 +1,3 @@
+-- 27_add_post_password.sql: [ĐÃ HỦY / DEPRECATED]
+-- Tính năng mật khẩu bài viết đã được loại bỏ hoàn toàn trong migration 28.
+-- Không cần chạy file này nữa.
