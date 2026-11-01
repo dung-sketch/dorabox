@@ -122,3 +122,4 @@ end;
 $$;
 
 grant execute on function public.admin_set_user_role(uuid, text) to anon, authenticated, service_role;
+

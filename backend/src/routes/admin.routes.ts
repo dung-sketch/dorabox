@@ -430,7 +430,8 @@ router.post('/users/:id/toggle-ban', async (req, res) => {
         : 'Đã mở khóa tài khoản thành công.'
     });
   } catch (err: any) {
-    return res.status(500).json({ error: 'Đã có lỗi xảy ra khi xử lý đình chỉ tài khoản.' });
+    console.error('Final error in toggle-ban:', err);
+    return res.status(500).json({ error: err.message || 'Đã có lỗi xảy ra khi xử lý đình chỉ tài khoản.' });
   }
 });
 
