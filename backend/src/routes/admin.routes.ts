@@ -376,19 +376,32 @@ router.post('/users/:id/toggle-ban', async (req, res) => {
       }
     }
 
-    const { data, error } = await supabaseAdmin
-      .from('profiles')
-      .update({
-        is_banned: banned,
-        ban_type: effectiveBanType,
-        banned_until: bannedUntil,
-        ban_reason: banned ? (banReason || 'Vi phạm tiêu chuẩn cộng đồng Dorabox.') : null,
-      })
-      .eq('id', id)
-      .select()
-      .single();
+    let userResult: any = null;
+    const { data: rpcData, error: rpcErr } = await supabaseAdmin.rpc('admin_set_user_ban', {
+      p_user_id: id,
+      p_is_banned: banned,
+      p_ban_type: effectiveBanType,
+      p_banned_until: bannedUntil,
+      p_ban_reason: banned ? (banReason || 'Vi phạm tiêu chuẩn cộng đồng Dorabox.') : null,
+    });
 
-    if (error) throw error;
+    if (!rpcErr && rpcData) {
+      userResult = rpcData;
+    } else {
+      const { data, error } = await supabaseAdmin
+        .from('profiles')
+        .update({
+          is_banned: banned,
+          ban_type: effectiveBanType,
+          banned_until: bannedUntil,
+          ban_reason: banned ? (banReason || 'Vi phạm tiêu chuẩn cộng đồng Dorabox.') : null,
+        })
+        .eq('id', id)
+        .select()
+        .single();
+      if (error) throw error;
+      userResult = data;
+    }
 
     // Đồng bộ trạng thái khóa trực tiếp vào Supabase Auth
     try {
@@ -411,7 +424,7 @@ router.post('/users/:id/toggle-ban', async (req, res) => {
 
     return res.json({
       success: true,
-      user: data,
+      user: userResult,
       message: banned
         ? (effectiveBanType === 'temporary' ? `Đã tạm đình chỉ tài khoản ${durationHours || 24} giờ.` : 'Đã khóa tài khoản vĩnh viễn.')
         : 'Đã mở khóa tài khoản thành công.'
@@ -431,18 +444,30 @@ router.post('/users/:id/set-badge', async (req, res) => {
     const isVerified = badgeStr === 'blue';
     const isOA = badgeStr === 'gold' || badgeStr === 'orange' || badgeStr === 'green';
 
-    const { data, error } = await supabaseAdmin
-      .from('profiles')
-      .update({
-        verification_badge: badgeStr,
-        is_verified: isVerified,
-        is_oa: isOA,
-      })
-      .eq('id', id)
-      .select()
-      .single();
+    let userResult: any = null;
+    const { data: rpcData, error: rpcErr } = await supabaseAdmin.rpc('admin_set_user_badge', {
+      p_user_id: id,
+      p_badge: badgeStr,
+      p_is_verified: isVerified,
+      p_is_oa: isOA,
+    });
 
-    if (error) throw error;
+    if (!rpcErr && rpcData) {
+      userResult = rpcData;
+    } else {
+      const { data, error } = await supabaseAdmin
+        .from('profiles')
+        .update({
+          verification_badge: badgeStr,
+          is_verified: isVerified,
+          is_oa: isOA,
+        })
+        .eq('id', id)
+        .select()
+        .single();
+      if (error) throw error;
+      userResult = data;
+    }
 
     logSecurityEvent(
       'verify_toggle',
@@ -452,11 +477,12 @@ router.post('/users/:id/set-badge', async (req, res) => {
 
     return res.json({
       success: true,
-      user: data,
+      user: userResult,
       message: `Đã cập nhật huy hiệu xác minh: ${badgeStr.toUpperCase()}`,
     });
   } catch (err: any) {
-    return res.status(500).json({ error: 'Đã có lỗi xảy ra khi cập nhật huy hiệu.' });
+    console.error('Final error in set-badge:', err);
+    return res.status(500).json({ error: err.message || 'Đã có lỗi xảy ra khi cập nhật huy hiệu.' });
   }
 });
 
@@ -466,14 +492,24 @@ router.post('/users/:id/toggle-hide', async (req, res) => {
     const { id } = req.params;
     const { isHidden } = req.body;
 
-    const { data, error } = await supabaseAdmin
-      .from('profiles')
-      .update({ is_hidden: Boolean(isHidden) })
-      .eq('id', id)
-      .select()
-      .single();
+    let userResult: any = null;
+    const { data: rpcData, error: rpcErr } = await supabaseAdmin.rpc('admin_set_user_hidden', {
+      p_user_id: id,
+      p_is_hidden: Boolean(isHidden),
+    });
 
-    if (error) throw error;
+    if (!rpcErr && rpcData) {
+      userResult = rpcData;
+    } else {
+      const { data, error } = await supabaseAdmin
+        .from('profiles')
+        .update({ is_hidden: Boolean(isHidden) })
+        .eq('id', id)
+        .select()
+        .single();
+      if (error) throw error;
+      userResult = data;
+    }
 
     logSecurityEvent(
       'role_change',
@@ -483,11 +519,12 @@ router.post('/users/:id/toggle-hide', async (req, res) => {
 
     return res.json({
       success: true,
-      user: data,
+      user: userResult,
       message: isHidden ? 'Đã ẩn tài khoản khỏi hệ thống & tìm kiếm.' : 'Đã khôi phục hiển thị tài khoản.',
     });
   } catch (err: any) {
-    return res.status(500).json({ error: 'Đã có lỗi xảy ra khi cập nhật trạng thái ẩn tài khoản.' });
+    console.error('Final error in toggle-hide:', err);
+    return res.status(500).json({ error: err.message || 'Đã có lỗi xảy ra khi cập nhật trạng thái ẩn tài khoản.' });
   }
 });
 
@@ -532,14 +569,24 @@ router.post('/users/:id/change-role', async (req, res) => {
       return res.status(400).json({ error: 'Vai trò không hợp lệ (phải là user, moderator hoặc admin)' });
     }
 
-    const { data, error } = await supabaseAdmin
-      .from('profiles')
-      .update({ role })
-      .eq('id', id)
-      .select()
-      .single();
+    let userResult: any = null;
+    const { data: rpcData, error: rpcErr } = await supabaseAdmin.rpc('admin_set_user_role', {
+      p_user_id: id,
+      p_role: role,
+    });
 
-    if (error) throw error;
+    if (!rpcErr && rpcData) {
+      userResult = rpcData;
+    } else {
+      const { data, error } = await supabaseAdmin
+        .from('profiles')
+        .update({ role })
+        .eq('id', id)
+        .select()
+        .single();
+      if (error) throw error;
+      userResult = data;
+    }
 
     logSecurityEvent(
       'role_change',
@@ -547,7 +594,7 @@ router.post('/users/:id/change-role', async (req, res) => {
       'alert'
     );
 
-    return res.json({ success: true, user: data, message: `Đã phân quyền tài khoản thành: ${role}` });
+    return res.json({ success: true, user: userResult, message: `Đã phân quyền tài khoản thành: ${role}` });
   } catch (err: any) {
     return res.status(500).json({ error: err.message });
   }
