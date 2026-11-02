@@ -446,6 +446,7 @@ router.post('/users/:id/set-badge', async (req, res) => {
     const isOA = badgeStr === 'gold' || badgeStr === 'orange' || badgeStr === 'green';
 
     let userResult: any = null;
+    let badgeForDb = badgeStr;
     const { data: rpcData, error: rpcErr } = await supabaseAdmin.rpc('admin_set_user_badge', {
       p_user_id: id,
       p_badge: badgeStr,
@@ -456,16 +457,40 @@ router.post('/users/:id/set-badge', async (req, res) => {
     if (!rpcErr && rpcData) {
       userResult = rpcData;
     } else {
-      const { data, error } = await supabaseAdmin
+      if (rpcErr) {
+        console.warn('admin_set_user_badge RPC notice:', rpcErr.message || rpcErr);
+      }
+      // Thử cập nhật trực tiếp bảng profiles
+      let { data, error } = await supabaseAdmin
         .from('profiles')
         .update({
-          verification_badge: badgeStr,
+          verification_badge: badgeForDb,
           is_verified: isVerified,
           is_oa: isOA,
+          updated_at: new Date().toISOString(),
         })
         .eq('id', id)
         .select()
-        .single();
+        .maybeSingle();
+
+      // Nếu db cũ chưa có 'dev' constraint, tự động map sang 'cyan'
+      if (error && badgeForDb === 'dev') {
+        badgeForDb = 'cyan';
+        const retry = await supabaseAdmin
+          .from('profiles')
+          .update({
+            verification_badge: badgeForDb,
+            is_verified: isVerified,
+            is_oa: isOA,
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', id)
+          .select()
+          .maybeSingle();
+        data = retry.data;
+        error = retry.error;
+      }
+
       if (error) throw error;
       userResult = data;
     }

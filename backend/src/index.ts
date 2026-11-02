@@ -68,23 +68,21 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// App Version & OTA Update Check v2.2.1
+// App Version & OTA Update Check v2.3.2 (Developer's 23rd Birthday Edition)
 app.get('/api/app-version', (req, res) => {
   res.json({
-    latest_version: '2.2.1',
-    build_number: 24,
-    apk_url: 'https://doraboxcdn.zpiltk.io.vn/apk/Dorabox-v2.2.1-arm64.apk',
+    latest_version: '2.3.2',
+    build_number: 25,
+    apk_url: 'https://doraboxcdn.zpiltk.io.vn/apk/Dorabox-v2.3.2-arm64.apk',
     ios_url: 'https://dorabox.app/ios',
     force_update: false,
     changelog: [
-      'Nâng cấp toàn diện Material 3 Designer và 1 Font chữ thương hiệu Be Vietnam Pro đồng bộ.',
-      'Nâng cấp hiệu ứng kính lỏng Liquid Glass xuyên thấu quang học chuẩn iOS 27.1 siêu mượt mà.',
-      'Thẻ phương tiện hỗn hợp thông minh: Tự động gộp ảnh và video vào 1 thẻ duy nhất kéo vuốt chuyển tiếp mượt mà kèm thanh chỉ báo.',
-      'Chuyển đổi 100% sang mô hình Theo dõi (Follow / Following) như Fanpage Facebook & Instagram.',
-      'Bổ sung hệ thống 5 loại huy hiệu xác minh đa sắc: Tích Xanh Dương (Cá nhân), Tích Vàng (Doanh nghiệp OA), Tích Cam (Chính phủ & Thương hiệu), Tích Xanh Lá (Ứng dụng số), Tích Blue Gradient Neon (Nhà phát triển & Khởi nghiệp).',
-      'Quản trị viên tối thượng: Hỗ trợ tạm đình chỉ tài khoản theo giờ/ngày hoặc vĩnh viễn, ẩn tài khoản toàn hệ thống và cưỡng chế đăng xuất tức thì qua Realtime.',
-      'Tùy chỉnh chế độ bài viết luôn công khai dành cho các trang Official Account (OA).',
-      'Nâng cấp bảo mật Backend: Che giấu toàn bộ logic nội bộ, cấu trúc CSDL và mã lỗi nhạy cảm để đảm bảo an toàn tuyệt đối.'
+      '🎂 Kỷ niệm sinh nhật lần thứ 23 của Nhà phát triển sáng lập Dorabox cùng hiệu ứng pháo hoa và huy hiệu đặc biệt.',
+      '🖼️ Chuẩn hóa định dạng ảnh WebP cao cấp (High-Fidelity) không suy giảm chất lượng, giảm 70% dung lượng và tốc độ lướt tức thì.',
+      '🔞 Nâng ngưỡng tạo tài khoản bắt buộc từ 18+ tuổi trở lên và cơ chế xác minh danh tính hệ thống bảo mật.',
+      '✨ Đại tu toàn bộ giao diện: Kính lỏng Liquid Glass quang học xuyên thấu mới, bộ icon nét mỏng hiện đại tinh tế.',
+      '⚡ Thuật toán phân phối Bảng tin Smart Feed 2.0 khử sạch bài trùng lặp, lướt mượt mà không khựng lag.',
+      'Dọn dẹp triệt để các tính năng thừa, tối ưu hóa toàn bộ hệ thống.'
     ]
   });
 });
@@ -155,7 +153,7 @@ app.all('/api/upload/presigned-url', async (req, res) => {
 
     const result = await generateUploadUrl(
       String(userId),
-      (folder === 'avatars' || folder === 'chat') ? folder : 'posts',
+      (folder === 'avatars' || folder === 'chat' || folder === 'covers') ? folder : 'posts',
       String(contentType),
       fileExt ? String(fileExt) : undefined
     );

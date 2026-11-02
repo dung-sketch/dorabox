@@ -30,7 +30,7 @@ export interface PresignedUrlResult {
  */
 export async function generateUploadUrl(
   userId: string,
-  folder: 'posts' | 'avatars' | 'chat' = 'posts',
+  folder: 'posts' | 'avatars' | 'chat' | 'covers' = 'posts',
   contentType: string = 'image/webp',
   fileExt?: string
 ): Promise<PresignedUrlResult> {
@@ -46,10 +46,15 @@ export async function generateUploadUrl(
     else if (contentType.includes('m4a') || contentType.includes('audio')) extension = 'm4a';
     else extension = 'jpg';
   }
-  // Đối với avatar, lưu trực tiếp ghi đè vào key duy nhất của user để không lưu trùng ảnh
-  const key = folder === 'avatars'
-    ? `${folder}/${userId}/avatar.${extension}`
-    : `${folder}/${userId}/${Date.now()}-${fileHash}.${extension}`;
+  // Đối với avatar/cover, lưu trực tiếp ghi đè vào key duy nhất của user để không lưu trùng ảnh
+  let key: string;
+  if (folder === 'avatars') {
+    key = `${folder}/${userId}/avatar.${extension}`;
+  } else if (folder === 'covers') {
+    key = `${folder}/${userId}/cover.${extension}`;
+  } else {
+    key = `${folder}/${userId}/${Date.now()}-${fileHash}.${extension}`;
+  }
 
   const command = new PutObjectCommand({
     Bucket: R2_BUCKET_NAME,
