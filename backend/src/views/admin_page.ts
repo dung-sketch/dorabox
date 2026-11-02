@@ -2565,9 +2565,7 @@ export function renderAdminPage(): string {
                   <div class="user-text-meta">
                     <span class="user-display-name">
                       \${escapeHtml(u.display_name || u.username || 'Người dùng')}
-                      \${isVerified ? '<i class="fas fa-circle-check text-primary" style="font-size: 13px;"></i>' : ''}
-                      \${isVip ? '<i class="fas fa-star" style="color: #f59e0b; font-size: 13px;"></i>' : ''}
-                    </span>
+                      \\n                    </span>
                     <span class="user-handle">@\${escapeHtml(u.username || 'chua_dat_ten')}</span>
                   </div>
                 </div>

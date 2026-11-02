@@ -467,6 +467,7 @@ router.post('/users/:id/set-badge', async (req, res) => {
           verification_badge: badgeForDb,
           is_verified: isVerified,
           is_oa: isOA,
+          account_type: isOA ? 'oa' : 'personal',
           updated_at: new Date().toISOString(),
         })
         .eq('id', id)

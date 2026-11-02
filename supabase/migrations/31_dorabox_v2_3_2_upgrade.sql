@@ -59,6 +59,7 @@ begin
     verification_badge = v_badge,
     is_verified = v_verified,
     is_oa = v_oa,
+    account_type = case when v_oa then 'oa' else 'personal' end,
     updated_at = timezone('utc'::text, now())
   where id = p_user_id;
 
