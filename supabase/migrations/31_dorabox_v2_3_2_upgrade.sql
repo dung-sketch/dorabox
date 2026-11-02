@@ -155,8 +155,7 @@ language sql
 stable
 as $$
   select * from public.posts
-  where user_id = p_user_id
-    and is_hidden = false
+  where author_id = p_user_id
     and (
       -- 1 tháng trước (khoảng 30 ngày)
       (created_at::date = (current_date - interval '1 month')::date)
@@ -171,3 +170,4 @@ as $$
 $$;
 
 grant execute on function public.get_user_memories(uuid) to anon, authenticated, service_role;
+
