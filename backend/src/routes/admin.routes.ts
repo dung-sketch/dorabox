@@ -1685,71 +1685,70 @@ router.get(['/security-logs', '/system/audit-logs'], async (req, res) => {
 // Quét & dọn sạch phản ứng spam trùng lặp, đồng bộ lượt thích chuẩn xác
 router.post(['/clean-spam-reactions', '/system/clean-spam'], async (req, res) => {
   try {
-    // 1. Quét bảng post_reactions
+    // 1. Quét bảng post_reactions (post_reactions dùng composite primary key: post_id, user_id)
     const { data: reactions, error: rErr } = await supabaseAdmin
       .from('post_reactions')
-      .select('id, post_id, user_id, reaction_type, created_at')
+      .select('post_id, user_id, reaction_type, created_at')
       .order('created_at', { ascending: false });
 
     if (rErr) throw rErr;
 
-    // 2. Tìm duplicate reactions theo cặp (user_id, post_id)
-    const seen = new Set<string>();
-    const duplicateIds: string[] = [];
-    const affectedPostIds = new Set<string>();
+    // 2. Quét danh sách bài viết hiện có và thành viên bị khóa
+    const [postsRes, bannedRes] = await Promise.all([
+      supabaseAdmin.from('posts').select('id'),
+      supabaseAdmin.from('profiles').select('id').eq('is_banned', true),
+    ]);
+
+    const validPostIds = new Set<string>((postsRes.data || []).map(p => p.id));
+    const bannedUserIds = new Set<string>((bannedRes.data || []).map(u => u.id));
+
+    // 3. Tìm phản ứng rác (từ tài khoản bị khóa hoặc bài viết không còn tồn tại)
+    let cleanedSpamCount = 0;
+    const postReactionCounts = new Map<string, number>();
 
     for (const r of (reactions || [])) {
-      const key = `${r.user_id}_${r.post_id}`;
-      if (seen.has(key)) {
-        duplicateIds.push(r.id);
-        affectedPostIds.add(r.post_id);
-      } else {
-        seen.add(key);
-        affectedPostIds.add(r.post_id);
-      }
-    }
+      const isOrphaned = !validPostIds.has(r.post_id);
+      const isBannedUser = bannedUserIds.has(r.user_id);
 
-    let deletedCount = 0;
-    if (duplicateIds.length > 0) {
-      const { error: delErr } = await supabaseAdmin
-        .from('post_reactions')
-        .delete()
-        .in('id', duplicateIds);
-
-      if (!delErr) {
-        deletedCount = duplicateIds.length;
-      }
-    }
-
-    // 3. Cập nhật lại số lượng likes_count chuẩn xác cho các bài viết bị ảnh hưởng
-    let updatedPostsCount = 0;
-    for (const postId of Array.from(affectedPostIds).slice(0, 60)) {
-      try {
-        const { count } = await supabaseAdmin
+      if (isOrphaned || isBannedUser) {
+        // Dọn phản ứng rác
+        await supabaseAdmin
           .from('post_reactions')
-          .select('id', { count: 'exact', head: true })
-          .eq('post_id', postId);
+          .delete()
+          .match({ post_id: r.post_id, user_id: r.user_id });
+        cleanedSpamCount++;
+      } else {
+        // Đếm tương tác hợp lệ cho từng bài viết
+        postReactionCounts.set(r.post_id, (postReactionCounts.get(r.post_id) || 0) + 1);
+      }
+    }
 
+    // 4. Đồng bộ lại số lượng likes_count chuẩn xác cho tất cả bài viết
+    let updatedPostsCount = 0;
+    const allPosts = postsRes.data || [];
+    for (const p of allPosts) {
+      try {
+        const accurateCount = postReactionCounts.get(p.id) || 0;
         await supabaseAdmin
           .from('posts')
-          .update({ likes_count: count || 0 })
-          .eq('id', postId);
+          .update({ likes_count: accurateCount })
+          .eq('id', p.id);
         updatedPostsCount++;
       } catch (_) {}
     }
 
     logSecurityEvent(
       'spam_clean',
-      `Bảo trì hoàn tất: Quét ${reactions?.length || 0} lượt phản ứng, dọn sạch ${deletedCount} phản ứng rác trùng lặp, đồng bộ ${updatedPostsCount} bài viết.`,
-      deletedCount > 0 ? 'warning' : 'info'
+      `Bảo trì hoàn tất: Quét ${reactions?.length || 0} lượt phản ứng, dọn sạch ${cleanedSpamCount} phản ứng spam/rác, đồng bộ ${updatedPostsCount} bài viết.`,
+      cleanedSpamCount > 0 ? 'warning' : 'info'
     );
 
     return res.json({
       success: true,
       scannedReactions: reactions?.length || 0,
-      duplicatesCleaned: deletedCount,
+      duplicatesCleaned: cleanedSpamCount,
       postsSynchronized: updatedPostsCount,
-      message: `Đã hoàn tất bảo trì: Dọn sạch ${deletedCount} phản ứng spam và đồng bộ chính xác ${updatedPostsCount} bài viết.`
+      message: `Đã hoàn tất bảo trì: Quét ${reactions?.length || 0} phản ứng, dọn sạch ${cleanedSpamCount} phản ứng spam/rác và đồng bộ chính xác ${updatedPostsCount} bài viết.`
     });
   } catch (err: any) {
     return res.status(500).json({ error: err.message });
