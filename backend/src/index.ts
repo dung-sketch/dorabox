@@ -77,7 +77,7 @@ app.get('/api/app-version', (req, res) => {
     ios_url: 'https://dorabox.app/ios',
     force_update: false,
     changelog: [
-      '🎂 Kỷ niệm sinh nhật lần thứ 23 của Nhà phát triển sáng lập Dorabox cùng hiệu ứng pháo hoa và huy hiệu đặc biệt.',
+      '🎂 Mở màn chuỗi sự kiện kỷ niệm sinh nhật Nhà phát triển sáng lập (06/12/2004) cùng hiệu ứng pháo hoa và huy hiệu đặc biệt.',
       '🖼️ Chuẩn hóa định dạng ảnh WebP cao cấp (High-Fidelity) không suy giảm chất lượng, giảm 70% dung lượng và tốc độ lướt tức thì.',
       '🔞 Nâng ngưỡng tạo tài khoản bắt buộc từ 18+ tuổi trở lên và cơ chế xác minh danh tính hệ thống bảo mật.',
       '✨ Đại tu toàn bộ giao diện: Kính lỏng Liquid Glass quang học xuyên thấu mới, bộ icon nét mỏng hiện đại tinh tế.',
