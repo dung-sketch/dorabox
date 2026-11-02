@@ -2550,7 +2550,7 @@ export function renderAdminPage(): string {
           }
           const vBadge = (u.verification_badge || '').toLowerCase();
           if (vBadge === 'dev' || vBadge === 'cyan') {
-            badgesHtml += '<span class="status-badge" style="color:#8b5cf6; background: rgba(139,92,246,0.15);"><i class="fas fa-code"></i> Tích Dev/Startup</span> ';
+            badgesHtml += '<span class="status-badge" style="color:#ff7a00; background: rgba(255,122,0,0.15);"><i class="fas fa-code"></i> Tích Nhà Phát Triển</span> ';
           } else if (vBadge === 'gold' || isVip) {
             badgesHtml += '<span class="status-badge oa" title="Tài khoản Doanh Nghiệp / OA"><i class="fas fa-star"></i> Tích Vàng OA</span> ';
           } else if (vBadge === 'blue' || isVerified) {
@@ -2587,8 +2587,8 @@ export function renderAdminPage(): string {
               <td style="text-align: right;">
                 <div class="action-btn-group" style="justify-content: flex-end;">
                   <!-- Unified Badge Selector (Tích Xanh, Vàng OA, Tím Dev) -->
-                  <button class="btn-icon" onclick="promptSetBadge('\${u.id}', '\${escapeHtml(u.display_name || u.username)}', '\${u.verification_badge || (isVip ? 'gold' : (isVerified ? 'blue' : 'none'))}')" title="Cấp Huy Hiệu Xác Minh (Xanh / Vàng OA / Tím Dev)">
-                    <i class="fas fa-certificate" style="\${(u.verification_badge === 'dev' || u.verification_badge === 'cyan') ? 'color:#8b5cf6' : ((u.verification_badge === 'gold' || isVip) ? 'color:#f59e0b' : ((u.verification_badge === 'blue' || isVerified) ? 'color:#2563eb' : ''))}"></i>
+                  <button class="btn-icon" onclick="promptSetBadge('\${u.id}', '\${escapeHtml(u.display_name || u.username)}', '\${u.verification_badge || (isVip ? 'gold' : (isVerified ? 'blue' : 'none'))}')" title="Cấp Huy Hiệu Xác Minh (Xanh / Vàng OA / Vàng Cam Dev)">
+                    <i class="fas fa-certificate" style="\${(u.verification_badge === 'dev' || u.verification_badge === 'cyan') ? 'color:#ff7a00' : ((u.verification_badge === 'gold' || isVip) ? 'color:#eab308' : ((u.verification_badge === 'blue' || isVerified) ? 'color:#2563eb' : ''))}"></i>
                   </button>
                   <!-- Toggle Hide Account from System & Search -->
                   <button class="btn-icon \${u.is_hidden ? 'warning' : ''}" onclick="toggleHide('\${u.id}', \${!u.is_hidden})" title="\${u.is_hidden ? 'Bỏ Ẩn Tài Khoản' : 'Ẩn Khỏi Hệ Thống & Tìm Kiếm'}">
@@ -2641,9 +2641,9 @@ export function renderAdminPage(): string {
           input: 'select',
           inputOptions: {
             'none': '⚪ Không có huy hiệu (Gỡ bỏ)',
-            'blue': '🔵 Tích Xanh Dương (Cá nhân xác minh)',
-            'gold': '🟡 Tích Vàng OA (Doanh nghiệp & Tổ chức)',
-            'dev': '🟣 Tích Tím Công Nghệ (Nhà phát triển & Startup)'
+            'blue': '🔵 Tích Xanh (Cá nhân xác minh)',
+            'gold': '🟡 Tích Vàng (Doanh nghiệp OA)',
+            'dev': '🟠 Tích Vàng Cam (Nhà phát triển)'
           },
           inputValue: val || 'none',
           showCancelButton: true,
