@@ -68,12 +68,12 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// App Version & OTA Update Check v2.3.2 (Developer's 23rd Birthday Edition)
+// App Version & OTA Update Check v2.3.3 (Developer's 23rd Birthday Edition)
 app.get('/api/app-version', (req, res) => {
   res.json({
-    latest_version: '2.3.2',
-    build_number: 25,
-    apk_url: 'https://doraboxcdn.zpiltk.io.vn/apk/Dorabox-v2.3.2-arm64.apk',
+    latest_version: '2.3.3',
+    build_number: 26,
+    apk_url: 'https://doraboxcdn.zpiltk.io.vn/apk/Dorabox-v2.3.3-arm64.apk',
     ios_url: 'https://dorabox.app/ios',
     force_update: false,
     changelog: [
