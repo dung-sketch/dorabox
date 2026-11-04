@@ -842,6 +842,37 @@ router.delete('/posts/:id', async (req, res) => {
   }
 });
 
+// Trạng thái cấu hình Bảng tin hệ thống (In-memory & Fallback)
+export const feedConfigState = {
+  shuffle_enabled: true,
+  updated_at: new Date().toISOString()
+};
+
+// Lấy cấu hình Bảng tin
+router.get('/feed-config', async (req, res) => {
+  return res.json({ success: true, ...feedConfigState });
+});
+
+// Cập nhật cấu hình Bảng tin (Bật/Tắt xáo trộn thông minh ngẫu nhiên)
+router.post('/feed-config', async (req, res) => {
+  try {
+    const { shuffle_enabled } = req.body;
+    if (typeof shuffle_enabled === 'boolean') {
+      feedConfigState.shuffle_enabled = shuffle_enabled;
+      feedConfigState.updated_at = new Date().toISOString();
+      logSecurityEvent(
+        'admin_login',
+        `Quản trị viên đã ${shuffle_enabled ? 'BẬT' : 'TẮT'} chế độ xáo trộn bài viết bảng tin ngẫu nhiên.`,
+        'info',
+        'superadmin'
+      );
+    }
+    return res.json({ success: true, ...feedConfigState });
+  } catch (err: any) {
+    return res.status(500).json({ error: err.message });
+  }
+});
+
 // -------------------------------------------------------------
 // 4. COMMENTS MANAGEMENT (Quản lý Bình luận)
 // -------------------------------------------------------------

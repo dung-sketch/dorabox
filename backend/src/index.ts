@@ -3,7 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import { generateUploadUrl } from './services/r2.service.js';
 import { supabaseAdmin } from './services/supabase.service.js';
-import adminRouter, { wipeUserAccountCompletely } from './routes/admin.routes.js';
+import adminRouter, { wipeUserAccountCompletely, feedConfigState } from './routes/admin.routes.js';
 import { renderAdminPage } from './views/admin_page.js';
 import { renderArtPlayerPage } from './views/artplayer_page.js';
 import { sendFcmHttpV1Message } from './services/firebase.service.js';
@@ -54,6 +54,11 @@ app.get('/watch', (req, res) => {
 // Admin REST APIs
 app.use('/api/admin', adminRouter);
 
+// Public Feed Configuration API
+app.get('/api/feed-config', (req, res) => {
+  res.json({ success: true, ...feedConfigState });
+});
+
 // Ẩn hoàn toàn máy chủ tại trang chủ (Giả chết 404 Not Found chuẩn Express)
 app.get('/', (req, res) => {
   res.status(404).send('Cannot GET /');
@@ -73,6 +78,7 @@ app.get('/api/app-version', (req, res) => {
   res.json({
     latest_version: '2.4.5',
     build_number: 28,
+    feed_shuffle_enabled: feedConfigState.shuffle_enabled,
     apk_url: 'https://doraboxcdn.zpiltk.io.vn/apk/Dorabox-v2.4.5-arm64.apk',
     ios_url: 'https://dorabox.app/ios',
     force_update: false,

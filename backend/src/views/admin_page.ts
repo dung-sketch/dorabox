@@ -1584,6 +1584,30 @@ export function renderAdminPage(): string {
             </div>
           </div>
 
+          <div class="db-card" style="margin-bottom: 16px; padding: 16px 20px; background: linear-gradient(135deg, rgba(56, 189, 248, 0.08), rgba(99, 102, 241, 0.08)); border: 1px solid rgba(56, 189, 248, 0.25);">
+            <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+              <div style="display: flex; align-items: center; gap: 14px;">
+                <div style="width: 44px; height: 44px; border-radius: 12px; background: rgba(56, 189, 248, 0.2); display: flex; align-items: center; justify-content: center; color: #38bdf8; font-size: 20px;">
+                  <i class="fas fa-random"></i>
+                </div>
+                <div>
+                  <div style="font-weight: 700; font-size: 15px; color: var(--text-main);">Chế Độ Bảng Tin Khám Phá & Xáo Trộn Ngẫu Nhiên (Smart Shuffle Feed)</div>
+                  <div style="font-size: 13px; color: var(--text-muted); margin-top: 2px;">
+                    Tự động phân bổ đan xen các tác giả khác nhau, kích hoạt hiển thị phong phú và chống trùng lặp liên tiếp.
+                  </div>
+                </div>
+              </div>
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <span id="shuffle-feed-status-badge" class="badge" style="background: rgba(16, 185, 129, 0.15); color: #10b981; font-weight: 600; padding: 6px 12px; border-radius: 8px;">
+                  <i class="fas fa-check-circle me-1"></i> Đang Kích Hoạt
+                </span>
+                <button id="btn-toggle-shuffle" class="btn-db btn-db-sm btn-db-outline" onclick="toggleFeedShuffle()">
+                  <i class="fas fa-power-off me-1"></i> Tạm Tắt Xáo Trộn
+                </button>
+              </div>
+            </div>
+          </div>
+
           <div class="db-card">
             <div class="db-card-header">
               <div class="search-input-wrap">
@@ -3347,7 +3371,73 @@ export function renderAdminPage(): string {
         }, 250);
       };
 
+      let feedShuffleActive = true;
+
+      window.loadFeedConfig = async function() {
+        try {
+          const res = await safeFetchJson('/api/admin/feed-config', {
+            headers: { 'Authorization': 'Bearer ' + adminToken }
+          });
+          if (res && res.shuffle_enabled !== undefined) {
+            feedShuffleActive = Boolean(res.shuffle_enabled);
+            updateFeedShuffleUI();
+          }
+        } catch (e) {
+          console.error('Error loading feed config:', e);
+        }
+      };
+
+      function updateFeedShuffleUI() {
+        const badge = document.getElementById('shuffle-feed-status-badge');
+        const btn = document.getElementById('btn-toggle-shuffle');
+        if (badge) {
+          if (feedShuffleActive) {
+            badge.style.background = 'rgba(16, 185, 129, 0.15)';
+            badge.style.color = '#10b981';
+            badge.innerHTML = '<i class="fas fa-check-circle me-1"></i> Đang Kích Hoạt';
+          } else {
+            badge.style.background = 'rgba(239, 68, 68, 0.15)';
+            badge.style.color = '#ef4444';
+            badge.innerHTML = '<i class="fas fa-times-circle me-1"></i> Đang Tắt (Thứ tự tuần tự)';
+          }
+        }
+        if (btn) {
+          btn.innerHTML = feedShuffleActive
+            ? '<i class="fas fa-power-off me-1"></i> Tạm Tắt Xáo Trộn'
+            : '<i class="fas fa-random me-1"></i> Bật Xáo Trộn Thông Minh';
+        }
+      }
+
+      window.toggleFeedShuffle = async function() {
+        try {
+          const newState = !feedShuffleActive;
+          const res = await safeFetchJson('/api/admin/feed-config', {
+            method: 'POST',
+            headers: {
+              'Authorization': 'Bearer ' + adminToken,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ shuffle_enabled: newState })
+          });
+          if (res && res.success) {
+            feedShuffleActive = newState;
+            updateFeedShuffleUI();
+            Swal.fire({
+              toast: true,
+              position: 'top-end',
+              icon: 'success',
+              title: newState ? 'Đã kích hoạt xáo trộn ngẫu nhiên bảng tin!' : 'Đã chuyển về thứ tự bảng tin tuần tự.',
+              showConfirmButton: false,
+              timer: 2000
+            });
+          }
+        } catch (err) {
+          Swal.fire('Lỗi', 'Không thể cập nhật cấu hình: ' + err.message, 'error');
+        }
+      };
+
       async function fetchPosts(showToast = false) {
+        loadFeedConfig();
         const q = (document.getElementById('posts-search-input')?.value || '').trim();
         let url = '/api/admin/posts';
         if (q) url += '?q=' + encodeURIComponent(q);
