@@ -46,12 +46,12 @@ export async function generateUploadUrl(
     else if (contentType.includes('m4a') || contentType.includes('audio')) extension = 'm4a';
     else extension = 'jpg';
   }
-  // Đối với avatar/cover, lưu trực tiếp ghi đè vào key duy nhất của user để không lưu trùng ảnh
+  // Đặt key duy nhất kèm timestamp để vô hiệu hóa hoàn toàn lỗi cache CDN và hiển thị ảnh mới tức thì
   let key: string;
   if (folder === 'avatars') {
-    key = `${folder}/${userId}/avatar.${extension}`;
+    key = `${folder}/${userId}/avatar_${Date.now()}.${extension}`;
   } else if (folder === 'covers') {
-    key = `${folder}/${userId}/cover.${extension}`;
+    key = `${folder}/${userId}/cover_${Date.now()}.${extension}`;
   } else {
     key = `${folder}/${userId}/${Date.now()}-${fileHash}.${extension}`;
   }
@@ -64,9 +64,7 @@ export async function generateUploadUrl(
 
   // URL có hiệu lực trong 5 phút
   const uploadUrl = await getSignedUrl(s3Client, command, { expiresIn: 300 });
-  const publicUrl = folder === 'avatars'
-    ? `${R2_PUBLIC_URL.replace(/\/$/, '')}/${key}?t=${Date.now()}`
-    : `${R2_PUBLIC_URL.replace(/\/$/, '')}/${key}`;
+  const publicUrl = `${R2_PUBLIC_URL.replace(/\/$/, '')}/${key}`;
 
   return { uploadUrl, publicUrl, key };
 }
