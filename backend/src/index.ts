@@ -68,21 +68,23 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// App Version & OTA Update Check v2.3.4
+// App Version & OTA Update Check v2.4.5
 app.get('/api/app-version', (req, res) => {
   res.json({
-    latest_version: '2.3.4',
-    build_number: 27,
-    apk_url: 'https://doraboxcdn.zpiltk.io.vn/apk/Dorabox-v2.3.4-arm64.apk',
+    latest_version: '2.4.5',
+    build_number: 28,
+    apk_url: 'https://doraboxcdn.zpiltk.io.vn/apk/Dorabox-v2.4.5-arm64.apk',
     ios_url: 'https://dorabox.app/ios',
     force_update: false,
     changelog: [
-      '🎂 Mở màn chuỗi sự kiện kỷ niệm sinh nhật Nhà phát triển Nguyễn Mạnh Dũng (06.12.2004 — 06.12.2026) cùng hiệu ứng và huy hiệu đặc biệt.',
-      '🖼️ Chuẩn hóa định dạng ảnh WebP cao cấp (High-Fidelity) không suy giảm chất lượng, giảm 70% dung lượng và tốc độ lướt tức thì.',
-      '🔞 Nâng ngưỡng tạo tài khoản bắt buộc từ 18+ tuổi trở lên và cơ chế xác minh danh tính hệ thống bảo mật.',
-      '✨ Đại tu toàn bộ giao diện: Kính lỏng Liquid Glass quang học xuyên thấu mới, bộ icon nét mỏng hiện đại tinh tế.',
-      '⚡ Thuật toán phân phối Bảng tin Smart Feed 2.0 khử sạch bài trùng lặp, lướt mượt mà không khựng lag.',
-      'Dọn dẹp triệt để các tính năng thừa, tối ưu hóa toàn bộ hệ thống.'
+      '✨ Nâng cấp toàn diện giao diện Modern Minimalism + Material Design influences + Native Platform Design.',
+      '☁️ Khắc phục triệt để lỗi cài lại app bị đặt lại cài đặt: Đồng bộ cài đặt vĩnh viễn từ hồ sơ tài khoản.',
+      '🎯 Khử trùng lặp tính năng: Bỏ thiết lập tải ảnh/video thừa trong bài đăng, tự động áp dụng theo tài khoản.',
+      '📜 Thêm trang Tiêu chuẩn cộng đồng Dorabox mới trong Chính sách & Quyền riêng tư.',
+      '⭕ Tối ưu tiến trình tải lên tròn mượt mà chuẩn Facebook, tự động nạp từ từ theo thời gian thực.',
+      '⚡ Thiết kế lại màn hình khởi động (Splash) với quầng sáng thở và thanh nạp tối giản siêu mượt.',
+      '📐 Tối ưu căn lề, khoảng cách dòng và trải nghiệm đọc văn bản chuẩn xác và đẹp mắt.',
+      '🛡️ Đồng bộ toàn diện hệ thống Di động, Backend OTA và Quản trị viên lên phiên bản 2.4.5.'
     ]
   });
 });

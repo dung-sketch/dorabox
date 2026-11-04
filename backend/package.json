@@ -1,6 +1,6 @@
 {
   "name": "dorabox-backend",
-  "version": "2.3.4",
+  "version": "2.4.5",
   "description": "Dorabox Social Backend API with Supabase & Cloudflare R2",
   "main": "dist/index.js",
   "scripts": {
