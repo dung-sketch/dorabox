@@ -97,11 +97,13 @@ export async function sendFcmHttpV1Message(params: {
       };
     }
 
-    // FCM HTTP v1 yêu cầu toàn bộ value trong data phải là dạng chuỗi (string)
+    // FCM HTTP v1 yêu cầu toàn bộ value trong data phải là dạng chuỗi (string) và không được null/undefined
     const stringData: Record<string, string> = {};
     if (params.data) {
       for (const [k, v] of Object.entries(params.data)) {
-        stringData[k] = typeof v === 'string' ? v : String(v);
+        if (v !== undefined && v !== null) {
+          stringData[k] = typeof v === 'string' ? v : String(v);
+        }
       }
     }
 
@@ -114,12 +116,15 @@ export async function sendFcmHttpV1Message(params: {
     const isCall = channel.includes('calls') || stringData.type === 'call';
     const isMessage = channel.includes('messages') || stringData.type === 'message' || stringData.conversation_id != null;
 
+    const safeTitle = String(params.title || 'Dorabox');
+    const safeBody = String(params.body || '');
+
     const messagePayload: any = {
       token: params.token,
       data: {
         ...stringData,
-        title: params.title,
-        body: params.body,
+        title: safeTitle,
+        body: safeBody,
       },
       android: {
         priority: 'high',
@@ -127,8 +132,8 @@ export async function sendFcmHttpV1Message(params: {
     };
 
     messagePayload.notification = {
-      title: params.title,
-      body: params.body,
+      title: safeTitle,
+      body: safeBody,
     };
 
     if (isCall) {

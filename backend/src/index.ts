@@ -73,25 +73,25 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// App Version & OTA Update Check v2.6.6
+// App Version & OTA Update Check v2.7.8
 app.get('/api/app-version', (req, res) => {
   res.json({
-    latest_version: '2.6.6',
-    build_number: 30,
+    latest_version: '2.7.8',
+    build_number: 31,
     feed_shuffle_enabled: feedConfigState.shuffle_enabled,
-    apk_url: 'https://doraboxcdn.zpiltk.io.vn/apk/Dorabox-v2.6.6.apk',
+    apk_url: 'https://doraboxcdn.zpiltk.io.vn/apk/Dorabox-v2.7.8.apk',
     ios_url: 'https://dorabox.app/ios',
     force_update: false,
     changelog: [
-      '🎬 Tinh chỉnh Trình phát Video V2.6.6: Hạ thấp thanh công cụ bảng tin ôm sát viền dưới cực đẹp, không bị lơ lửng.',
-      '📱 Tối ưu Toàn màn hình & Xoay ngang: Thu gọn thanh điều khiển kính lỏng ArtPlayer siêu mỏng, không còn cảm giác to thô hay cấn màn hình khi xoay ngang.',
-      '🎨 Cân bằng thương hiệu Chân trang: Tinh chỉnh "from Dorabox Team" thanh mảnh, cân xứng chuẩn nhận diện cao cấp.',
-      '✨ Siêu giao diện mới 2026: Kính lỏng xuyên thấu Ultra Liquid Glass, icon hiện đại chống chồng chéo.',
-      '🌓 Hỗ trợ 3 chế độ Giao diện: Tự động theo Hệ thống (System), Sáng (Light) và Tối (Dark). Triệt tiêu lỗi tự bật chế độ tối.',
-      '🚀 Đại tu trình đăng bài: Tách biệt rõ tiến trình tải media và đăng bài, thiết kế nút Đăng phong cách mới.',
-      '🔔 Thông báo khi được gắn thẻ: Nhận thông báo tức thì khi bạn bè nhắc tên @mention trong bài viết và bình luận.',
-      '👑 Nhận diện độc quyền: Huy hiệu Tích Vàng Cam dành riêng cho Nhà phát triển chính thức.',
-      '🛡️ Chuẩn hóa và đồng bộ duy nhất bản phát hành tối ưu V2.6.6 trên toàn hệ thống.'
+      '💬 Chuẩn hóa kích thước Tin nhắn Chat: Khắc phục triệt để tin nhắn và media khổng lồ, giao diện nhắn tin cân đối, thanh thoát.',
+      '📞 Đàm thoại nổi PiP chuẩn Messenger: Thu nhỏ cuộc gọi thành bong bóng nổi tiện lợi, vừa đàm thoại vừa lướt app mượt mà.',
+      '🎙️ Nâng cấp giao diện cuộc gọi: Thiết kế giao diện gọi thoại & video mới sang trọng, thanh điều khiển kính mờ và nút thu nhỏ PiP 1 chạm.',
+      '🛠️ Chấm dứt lỗi nhảy màn hình bảo trì ngẫu nhiên khi quản trị viên chưa kích hoạt.',
+      '⚡ Triệt tiêu giật lag & Tối ưu thông báo: Giảm tải tác vụ nền, khắc phục triệt để độ trễ thông báo FCM tức thì.',
+      '✨ Đại tu giao diện Đăng nhập / Đăng ký: Phong cách Midnight Glassmorphism đẳng cấp và hiện đại.',
+      '🎬 Tinh chỉnh Trình phát Video: Thu gọn thanh điều khiển ArtPlayer ôm sát đáy, không cấn khi xoay ngang.',
+      '🎨 Cân bằng chân trang: Tinh chỉnh "from Dorabox Team" thanh mảnh, cân xứng chuẩn nhận diện cao cấp.',
+      '🛡️ Xuất bản và đồng bộ bản phát hành duy nhất V2.7.8+31 tối ưu trên toàn hệ thống.'
     ]
   });
 });
