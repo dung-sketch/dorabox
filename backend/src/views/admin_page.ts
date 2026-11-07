@@ -1292,7 +1292,7 @@ export function renderAdminPage(): string {
       </div>
 
       <div class="sidebar-footer">
-        <div>v2.5.6 <span style="color: var(--success); font-weight: 600;">● Live</span></div>
+        <div>v2.6.6 <span style="color: var(--success); font-weight: 600;">● Live</span></div>
         <div style="font-family: var(--font-mono); font-size: 11px;">Production</div>
       </div>
     </aside>
@@ -1494,11 +1494,11 @@ export function renderAdminPage(): string {
                   </div>
                   <div class="mb-2">
                     <label class="form-label" style="font-size: 12px; color: var(--text-secondary); margin-bottom: 4px;">Tiêu đề thông báo bảo trì</label>
-                    <input type="text" id="maint-title-input" class="db-input" value="Dorabox đang bảo trì nâng cấp V2.5.6" style="padding: 7px 10px; font-size: 12.5px;">
+                    <input type="text" id="maint-title-input" class="db-input" value="Dorabox đang bảo trì nâng cấp V2.6.6" style="padding: 7px 10px; font-size: 12.5px;">
                   </div>
                   <div class="mb-3">
                     <label class="form-label" style="font-size: 12px; color: var(--text-secondary); margin-bottom: 4px;">Thông điệp gửi người dùng</label>
-                    <textarea id="maint-msg-input" class="db-input" rows="2" style="padding: 7px 10px; font-size: 12.5px;">Hệ thống đang được nâng cấp định kỳ lên phiên bản V2.5.6 để mang lại trải nghiệm tối ưu nhất. Vui lòng quay lại sau ít phút!</textarea>
+                    <textarea id="maint-msg-input" class="db-input" rows="2" style="padding: 7px 10px; font-size: 12.5px;">Hệ thống đang được nâng cấp định kỳ lên phiên bản V2.6.6 để mang lại trải nghiệm tối ưu nhất. Vui lòng quay lại sau ít phút!</textarea>
                   </div>
                   <button class="btn-db btn-db-primary btn-db-sm w-100" onclick="saveMaintenanceSettings()">
                     <i class="fas fa-save me-1"></i> Áp Dụng Thiết Lập Bảo Trì
@@ -1860,7 +1860,7 @@ export function renderAdminPage(): string {
                 <form id="form-broadcast" onsubmit="event.preventDefault(); sendBroadcast();">
                   <div class="mb-3">
                     <label class="form-label" style="font-size: 13px; font-weight: 600;">Tiêu Đề Thông Báo *</label>
-                    <input type="text" id="bc-title" class="db-input" placeholder="Ví dụ: Cập nhật Dorabox v2.5.6 đã sẵn sàng!" style="padding-left: 12px;" required oninput="updateBroadcastPreview()">
+                    <input type="text" id="bc-title" class="db-input" placeholder="Ví dụ: Cập nhật Dorabox v2.6.6 đã sẵn sàng!" style="padding-left: 12px;" required oninput="updateBroadcastPreview()">
                   </div>
 
                   <div class="mb-3">

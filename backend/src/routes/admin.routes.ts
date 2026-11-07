@@ -1955,7 +1955,7 @@ export interface MaintenanceConfig {
 export let maintenanceConfigState: MaintenanceConfig = {
   enabled: false,
   title: 'Dorabox đang bảo trì hệ thống',
-  message: 'Hệ thống đang được nâng cấp lên phiên bản V2.5.6 để mang lại trải nghiệm tối ưu nhất. Vui lòng quay lại sau ít phút!',
+  message: 'Hệ thống đang được nâng cấp lên phiên bản V2.6.6 để mang lại trải nghiệm tối ưu nhất. Vui lòng quay lại sau ít phút!',
   estimated_end: null,
   updated_at: new Date().toISOString(),
 };

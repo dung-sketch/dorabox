@@ -73,25 +73,25 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// App Version & OTA Update Check v2.5.6
+// App Version & OTA Update Check v2.6.6
 app.get('/api/app-version', (req, res) => {
   res.json({
-    latest_version: '2.5.6',
-    build_number: 29,
+    latest_version: '2.6.6',
+    build_number: 30,
     feed_shuffle_enabled: feedConfigState.shuffle_enabled,
-    apk_url: 'https://doraboxcdn.zpiltk.io.vn/apk/Dorabox-v2.5.6.apk',
+    apk_url: 'https://doraboxcdn.zpiltk.io.vn/apk/Dorabox-v2.6.6.apk',
     ios_url: 'https://dorabox.app/ios',
     force_update: false,
     changelog: [
+      '🎬 Tinh chỉnh Trình phát Video V2.6.6: Hạ thấp thanh công cụ bảng tin ôm sát viền dưới cực đẹp, không bị lơ lửng.',
+      '📱 Tối ưu Toàn màn hình & Xoay ngang: Thu gọn thanh điều khiển kính lỏng ArtPlayer siêu mỏng, không còn cảm giác to thô hay cấn màn hình khi xoay ngang.',
+      '🎨 Cân bằng thương hiệu Chân trang: Tinh chỉnh "from Dorabox Team" thanh mảnh, cân xứng chuẩn nhận diện cao cấp.',
       '✨ Siêu giao diện mới 2026: Kính lỏng xuyên thấu Ultra Liquid Glass, icon hiện đại chống chồng chéo.',
       '🌓 Hỗ trợ 3 chế độ Giao diện: Tự động theo Hệ thống (System), Sáng (Light) và Tối (Dark). Triệt tiêu lỗi tự bật chế độ tối.',
-      '🎬 Đột phá Trình phát Video: Loại bỏ hoàn toàn thanh đen 2 bên, sửa lỗi đơ, hỗ trợ chụm phóng to mượt mà và thanh tua chạm kéo mượt trên bảng tin.',
       '🚀 Đại tu trình đăng bài: Tách biệt rõ tiến trình tải media và đăng bài, thiết kế nút Đăng phong cách mới.',
       '🔔 Thông báo khi được gắn thẻ: Nhận thông báo tức thì khi bạn bè nhắc tên @mention trong bài viết và bình luận.',
       '👑 Nhận diện độc quyền: Huy hiệu Tích Vàng Cam dành riêng cho Nhà phát triển chính thức.',
-      '🎂 Hệ thống Sinh nhật thông minh: Tối ưu banner sinh nhật, khử trùng lặp và chúc mừng bạn bè tự động.',
-      '🛠️ Hệ thống Bảo trì quản trị tập trung: Hỗ trợ kích hoạt bảo trì thông minh trực tiếp từ Quản trị viên.',
-      '🛡️ Đồng bộ toàn diện hệ thống Di động, Backend OTA và Quản trị viên lên phiên bản V2.5.6.'
+      '🛡️ Chuẩn hóa và đồng bộ duy nhất bản phát hành tối ưu V2.6.6 trên toàn hệ thống.'
     ]
   });
 });
