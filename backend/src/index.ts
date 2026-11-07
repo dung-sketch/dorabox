@@ -3,7 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import { generateUploadUrl } from './services/r2.service.js';
 import { supabaseAdmin } from './services/supabase.service.js';
-import adminRouter, { wipeUserAccountCompletely, feedConfigState } from './routes/admin.routes.js';
+import adminRouter, { wipeUserAccountCompletely, feedConfigState, maintenanceConfigState } from './routes/admin.routes.js';
 import { renderAdminPage } from './views/admin_page.js';
 import { renderArtPlayerPage } from './views/artplayer_page.js';
 import { sendFcmHttpV1Message } from './services/firebase.service.js';
@@ -73,25 +73,34 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// App Version & OTA Update Check v2.4.5
+// App Version & OTA Update Check v2.5.6
 app.get('/api/app-version', (req, res) => {
   res.json({
-    latest_version: '2.4.5',
-    build_number: 28,
+    latest_version: '2.5.6',
+    build_number: 29,
     feed_shuffle_enabled: feedConfigState.shuffle_enabled,
-    apk_url: 'https://doraboxcdn.zpiltk.io.vn/apk/Dorabox-v2.4.5-arm64.apk',
+    apk_url: 'https://doraboxcdn.zpiltk.io.vn/apk/Dorabox-v2.5.6-arm64.apk',
     ios_url: 'https://dorabox.app/ios',
     force_update: false,
     changelog: [
-      '✨ Nâng cấp toàn diện giao diện Modern Minimalism + Material Design influences + Native Platform Design.',
-      '☁️ Khắc phục triệt để lỗi cài lại app bị đặt lại cài đặt: Đồng bộ cài đặt vĩnh viễn từ hồ sơ tài khoản.',
-      '🎯 Khử trùng lặp tính năng: Bỏ thiết lập tải ảnh/video thừa trong bài đăng, tự động áp dụng theo tài khoản.',
-      '📜 Thêm trang Tiêu chuẩn cộng đồng Dorabox mới trong Chính sách & Quyền riêng tư.',
-      '⭕ Tối ưu tiến trình tải lên tròn mượt mà chuẩn Facebook, tự động nạp từ từ theo thời gian thực.',
-      '⚡ Thiết kế lại màn hình khởi động (Splash) với quầng sáng thở và thanh nạp tối giản siêu mượt.',
-      '📐 Tối ưu căn lề, khoảng cách dòng và trải nghiệm đọc văn bản chuẩn xác và đẹp mắt.',
-      '🛡️ Đồng bộ toàn diện hệ thống Di động, Backend OTA và Quản trị viên lên phiên bản 2.4.5.'
+      '✨ Siêu giao diện mới 2026: Kính lỏng xuyên thấu Ultra Liquid Glass, icon hiện đại chống chồng chéo.',
+      '🌓 Hỗ trợ 3 chế độ Giao diện: Tự động theo Hệ thống (System), Sáng (Light) và Tối (Dark). Triệt tiêu lỗi tự bật chế độ tối.',
+      '🎬 Đột phá Trình phát Video: Loại bỏ hoàn toàn thanh đen 2 bên, sửa lỗi đơ, hỗ trợ chụm phóng to mượt mà và thanh tua chạm kéo mượt trên bảng tin.',
+      '🚀 Đại tu trình đăng bài: Tách biệt rõ tiến trình tải media và đăng bài, thiết kế nút Đăng phong cách mới.',
+      '🔔 Thông báo khi được gắn thẻ: Nhận thông báo tức thì khi bạn bè nhắc tên @mention trong bài viết và bình luận.',
+      '👑 Nhận diện độc quyền: Huy hiệu Tích Vàng Cam dành riêng cho Nhà phát triển chính thức.',
+      '🎂 Hệ thống Sinh nhật thông minh: Tối ưu banner sinh nhật, khử trùng lặp và chúc mừng bạn bè tự động.',
+      '🛠️ Hệ thống Bảo trì quản trị tập trung: Hỗ trợ kích hoạt bảo trì thông minh trực tiếp từ Quản trị viên.',
+      '🛡️ Đồng bộ toàn diện hệ thống Di động, Backend OTA và Quản trị viên lên phiên bản V2.5.6.'
     ]
+  });
+});
+
+// Kiểm tra trạng thái bảo trì hệ thống thời gian thực (Public System Maintenance Check)
+app.get(['/api/system/maintenance', '/api/maintenance'], (req, res) => {
+  res.json({
+    success: true,
+    maintenance: maintenanceConfigState,
   });
 });
 

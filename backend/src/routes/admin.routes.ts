@@ -443,7 +443,8 @@ router.post('/users/:id/set-badge', async (req, res) => {
 
     const badgeStr = String(badge || 'none').toLowerCase().trim();
     const isVerified = badgeStr === 'blue';
-    const isOA = badgeStr === 'gold' || badgeStr === 'orange' || badgeStr === 'green';
+    const isOA = badgeStr === 'gold';
+    const isDev = badgeStr === 'dev' || badgeStr === 'orange' || badgeStr === 'cyan';
 
     let userResult: any = null;
     let badgeForDb = badgeStr;
@@ -565,8 +566,7 @@ router.post('/users/:id/toggle-vip', async (req, res) => {
       .from('profiles')
       .update({ 
         is_vip: Boolean(isVip),
-        is_oa: Boolean(isVip),
-        account_type: Boolean(isVip) ? 'oa' : 'personal',
+        updated_at: new Date().toISOString(),
       })
       .eq('id', id)
       .select()
@@ -576,11 +576,11 @@ router.post('/users/:id/toggle-vip', async (req, res) => {
 
     logSecurityEvent(
       'verify_toggle',
-      `${isVip ? 'Cấp' : 'Gỡ'} Tích Vàng OA ⭐ cho tài khoản (UID: ${id.substring(0, 8)}...)`,
+      `${isVip ? 'Cấp' : 'Gỡ'} Huy hiệu Thành viên VIP ⭐ cho tài khoản (UID: ${id.substring(0, 8)}...)`,
       'info'
     );
 
-    return res.json({ success: true, user: data, message: isVip ? 'Đã kích hoạt Tích Vàng OA ⭐' : 'Đã hủy Tích Vàng OA' });
+    return res.json({ success: true, user: data, message: isVip ? 'Đã kích hoạt Thành viên VIP ⭐' : 'Đã hủy Thành viên VIP' });
   } catch (err: any) {
     return res.status(500).json({ error: err.message });
   }
@@ -1935,6 +1935,62 @@ router.get(['/system-health', '/system/health'], async (req, res) => {
           heapUsedMb: Math.round(memoryUsage.heapUsed / 1024 / 1024),
         }
       }
+    });
+  } catch (err: any) {
+    return res.status(500).json({ error: err.message });
+  }
+});
+
+// -------------------------------------------------------------
+// CHẾ ĐỘ BẢO TRÌ HỆ THỐNG (SYSTEM MAINTENANCE ENGINE)
+// -------------------------------------------------------------
+export interface MaintenanceConfig {
+  enabled: boolean;
+  title: string;
+  message: string;
+  estimated_end: string | null;
+  updated_at: string;
+}
+
+export let maintenanceConfigState: MaintenanceConfig = {
+  enabled: false,
+  title: 'Dorabox đang bảo trì hệ thống',
+  message: 'Hệ thống đang được nâng cấp lên phiên bản V2.5.6 để mang lại trải nghiệm tối ưu nhất. Vui lòng quay lại sau ít phút!',
+  estimated_end: null,
+  updated_at: new Date().toISOString(),
+};
+
+router.get(['/system/maintenance', '/maintenance'], (req, res) => {
+  return res.json({
+    success: true,
+    maintenance: maintenanceConfigState,
+  });
+});
+
+router.post(['/system/maintenance', '/maintenance'], async (req, res) => {
+  try {
+    const { enabled, title, message, estimated_end } = req.body;
+
+    maintenanceConfigState = {
+      enabled: Boolean(enabled),
+      title: title ? String(title).trim() : maintenanceConfigState.title,
+      message: message ? String(message).trim() : maintenanceConfigState.message,
+      estimated_end: estimated_end || null,
+      updated_at: new Date().toISOString(),
+    };
+
+    logSecurityEvent(
+      'role_change',
+      `Quản trị viên đã ${maintenanceConfigState.enabled ? 'KÍCH HOẠT' : 'TẮT'} CHẾ ĐỘ BẢO TRÌ HỆ THỐNG: "${maintenanceConfigState.title}"`,
+      maintenanceConfigState.enabled ? 'warning' : 'info'
+    );
+
+    return res.json({
+      success: true,
+      maintenance: maintenanceConfigState,
+      message: maintenanceConfigState.enabled
+        ? 'Đã bật chế độ bảo trì hệ thống thành công.'
+        : 'Đã tắt chế độ bảo trì. Hệ thống hoạt động bình thường.'
     });
   } catch (err: any) {
     return res.status(500).json({ error: err.message });

@@ -1292,7 +1292,7 @@ export function renderAdminPage(): string {
       </div>
 
       <div class="sidebar-footer">
-        <div>v2.4.5 <span style="color: var(--success); font-weight: 600;">● Live</span></div>
+        <div>v2.5.6 <span style="color: var(--success); font-weight: 600;">● Live</span></div>
         <div style="font-family: var(--font-mono); font-size: 11px;">Production</div>
       </div>
     </aside>
@@ -1478,6 +1478,31 @@ export function renderAdminPage(): string {
                       </div>
                     </div>
                   </div>
+                </div>
+              </div>
+
+              <!-- THIẾT LẬP BẢO TRÌ HỆ THỐNG (MAINTENANCE CONTROL) -->
+              <div class="db-card mt-3" style="border: 1px solid var(--border-subtle);">
+                <div class="db-card-header" style="background: rgba(245, 158, 11, 0.06);">
+                  <h3 class="db-card-title"><i class="fas fa-tools text-warning"></i> Chế Độ Bảo Trì Hệ Thống</h3>
+                  <span id="badge-maint-status" class="badge bg-success" style="font-size: 11px;">● Đang Hoạt Động</span>
+                </div>
+                <div class="db-card-body">
+                  <div class="form-check form-switch mb-3">
+                    <input class="form-check-input" type="checkbox" id="switch-maintenance-mode" style="cursor: pointer;">
+                    <label class="form-check-label fw-bold" for="switch-maintenance-mode" style="font-size: 13px; cursor: pointer;">Kích hoạt bảo trì toàn hệ thống</label>
+                  </div>
+                  <div class="mb-2">
+                    <label class="form-label" style="font-size: 12px; color: var(--text-secondary); margin-bottom: 4px;">Tiêu đề thông báo bảo trì</label>
+                    <input type="text" id="maint-title-input" class="db-input" value="Dorabox đang bảo trì nâng cấp V2.5.6" style="padding: 7px 10px; font-size: 12.5px;">
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label" style="font-size: 12px; color: var(--text-secondary); margin-bottom: 4px;">Thông điệp gửi người dùng</label>
+                    <textarea id="maint-msg-input" class="db-input" rows="2" style="padding: 7px 10px; font-size: 12.5px;">Hệ thống đang được nâng cấp định kỳ lên phiên bản V2.5.6 để mang lại trải nghiệm tối ưu nhất. Vui lòng quay lại sau ít phút!</textarea>
+                  </div>
+                  <button class="btn-db btn-db-primary btn-db-sm w-100" onclick="saveMaintenanceSettings()">
+                    <i class="fas fa-save me-1"></i> Áp Dụng Thiết Lập Bảo Trì
+                  </button>
                 </div>
               </div>
             </div>
@@ -1835,7 +1860,7 @@ export function renderAdminPage(): string {
                 <form id="form-broadcast" onsubmit="event.preventDefault(); sendBroadcast();">
                   <div class="mb-3">
                     <label class="form-label" style="font-size: 13px; font-weight: 600;">Tiêu Đề Thông Báo *</label>
-                    <input type="text" id="bc-title" class="db-input" placeholder="Ví dụ: Cập nhật Dorabox v2.4.5 đã sẵn sàng!" style="padding-left: 12px;" required oninput="updateBroadcastPreview()">
+                    <input type="text" id="bc-title" class="db-input" placeholder="Ví dụ: Cập nhật Dorabox v2.5.6 đã sẵn sàng!" style="padding-left: 12px;" required oninput="updateBroadcastPreview()">
                   </div>
 
                   <div class="mb-3">
@@ -2304,6 +2329,7 @@ export function renderAdminPage(): string {
           case 'tong-quan':
             fetchMetrics();
             fetchSystemHealth();
+            fetchMaintenanceStatus();
             break;
           case 'thanh-vien':
             fetchUsers();
@@ -3433,6 +3459,80 @@ export function renderAdminPage(): string {
           }
         } catch (err) {
           Swal.fire('Lỗi', 'Không thể cập nhật cấu hình: ' + err.message, 'error');
+        }
+      };
+
+      async function fetchMaintenanceStatus() {
+        try {
+          const res = await safeFetchJson('/api/admin/maintenance', {
+            headers: { 'Authorization': 'Bearer ' + adminToken }
+          });
+          if (res && res.maintenance) {
+            const m = res.maintenance;
+            const sw = document.getElementById('switch-maintenance-mode');
+            if (sw) sw.checked = Boolean(m.enabled);
+            const titleInput = document.getElementById('maint-title-input');
+            if (titleInput && m.title) titleInput.value = m.title;
+            const msgInput = document.getElementById('maint-msg-input');
+            if (msgInput && m.message) msgInput.value = m.message;
+
+            const badge = document.getElementById('badge-maint-status');
+            if (badge) {
+              if (m.enabled) {
+                badge.className = 'badge bg-danger';
+                badge.textContent = '● Đang Bảo Trì';
+              } else {
+                badge.className = 'badge bg-success';
+                badge.textContent = '● Đang Hoạt Động';
+              }
+            }
+          }
+        } catch (e) {
+          console.error('Error fetching maintenance status:', e);
+        }
+      }
+
+      window.saveMaintenanceSettings = async function() {
+        try {
+          const sw = document.getElementById('switch-maintenance-mode');
+          const titleInput = document.getElementById('maint-title-input');
+          const msgInput = document.getElementById('maint-msg-input');
+
+          const enabled = sw ? sw.checked : false;
+          const title = titleInput ? titleInput.value.trim() : '';
+          const message = msgInput ? msgInput.value.trim() : '';
+
+          const res = await safeFetchJson('/api/admin/maintenance', {
+            method: 'POST',
+            headers: {
+              'Authorization': 'Bearer ' + adminToken,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ enabled, title, message })
+          });
+
+          if (res && res.success) {
+            const badge = document.getElementById('badge-maint-status');
+            if (badge) {
+              if (enabled) {
+                badge.className = 'badge bg-danger';
+                badge.textContent = '● Đang Bảo Trì';
+              } else {
+                badge.className = 'badge bg-success';
+                badge.textContent = '● Đang Hoạt Động';
+              }
+            }
+            Swal.fire({
+              icon: enabled ? 'warning' : 'success',
+              title: enabled ? 'Đã kích hoạt Chế độ Bảo trì!' : 'Đã tắt Chế độ Bảo trì!',
+              text: res.message || 'Cài đặt đã được áp dụng toàn hệ thống.',
+              timer: 2500
+            });
+          } else {
+            Swal.fire('Lỗi', res.error || 'Không thể lưu cài đặt bảo trì', 'error');
+          }
+        } catch (err) {
+          Swal.fire('Lỗi', err.message, 'error');
         }
       };
 
