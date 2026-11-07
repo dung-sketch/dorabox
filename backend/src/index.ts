@@ -79,7 +79,7 @@ app.get('/api/app-version', (req, res) => {
     latest_version: '2.5.6',
     build_number: 29,
     feed_shuffle_enabled: feedConfigState.shuffle_enabled,
-    apk_url: 'https://doraboxcdn.zpiltk.io.vn/apk/Dorabox-v2.5.6-Team.apk',
+    apk_url: 'https://doraboxcdn.zpiltk.io.vn/apk/Dorabox-v2.5.6.apk',
     ios_url: 'https://dorabox.app/ios',
     force_update: false,
     changelog: [
