@@ -95,7 +95,7 @@ app.get(['/p/:id', '/post/:id'], (req, res) => {
     <h1>Chỉ mở được trên ứng dụng Dorabox</h1>
     <p>Bài viết này được thiết kế và bảo mật dành riêng cho ứng dụng Dorabox. Bạn không thể xem trực tiếp qua trình duyệt web khi chưa cài đặt ứng dụng.</p>
     <a href="dorabox://post/${postId}" class="btn-open">Mở trên ứng dụng Dorabox</a>
-    <a href="https://doraboxcdn.zpiltk.io.vn/apk/Dorabox-v2.7.9.apk" class="btn-download">Tải ứng dụng Dorabox (v2.7.9 APK)</a>
+    <a href="https://doraboxcdn.zpiltk.io.vn/apk/Dorabox-v2.8.9.apk" class="btn-download">Tải ứng dụng Dorabox (v2.8.9 APK)</a>
     <div class="footer-text">from Tinelfi • Bảo mật liên kết độc quyền</div>
   </div>
 </body>
@@ -120,26 +120,26 @@ app.get('/api/health', (req, res) => {
   res.json({
     platform: 'Dorabox API',
     status: 'online',
+    version: '2.8.9',
     timestamp: new Date().toISOString(),
   });
 });
 
-// App Version & OTA Update Check v2.7.9
+// App Version & OTA Update Check v2.8.9
 app.get('/api/app-version', (req, res) => {
   res.json({
-    latest_version: '2.7.9',
-    build_number: 32,
+    latest_version: '2.8.9',
+    build_number: 33,
     feed_shuffle_enabled: feedConfigState.shuffle_enabled,
-    apk_url: 'https://doraboxcdn.zpiltk.io.vn/apk/Dorabox-v2.7.9.apk',
+    apk_url: 'https://doraboxcdn.zpiltk.io.vn/apk/Dorabox-v2.8.9.apk',
     ios_url: 'https://dorabox.app/ios',
     force_update: false,
     changelog: [
-      '🖼️ Hiển thị bài đăng nhiều ảnh chuẩn 1:1 & 4:3: Album ảnh hiển thị vuông vắn, cân đối tuyệt đối theo chuẩn Instagram/Facebook.',
-      '✨ Thêm nhiều ảnh cùng lúc khi sửa bài viết: Hỗ trợ chọn đồng loạt nhiều ảnh khi chỉnh sửa bài đăng thay vì chọn từng ảnh.',
-      '📂 Mở trọn vẹn Album & Thư viện gốc của máy: Truy cập sâu toàn bộ thư mục ảnh/video trong máy qua Photo Picker gốc, không bị giới hạn theo kiểu file.',
-      '💬 Bong bóng tin nhắn thanh thoát ôm sát chữ và thanh điều khiển ArtPlayer floating pills tinh tế.',
-      '📞 Đàm thoại nổi PiP chuẩn Messenger, mượt mà và không giật lag.',
-      '🛡️ Xuất bản và đồng bộ bản phát hành duy nhất V2.7.9+32 tối ưu trên toàn hệ thống.'
+      '🎬 Trình phát video ArtPlayer chuẩn điện ảnh: Thanh điều khiển nổi bo tròn tinh tế, scrubber mượt mà nút tròn vàng cùng nút Gốc/Đầy, tốc độ 1.0x và âm lượng.',
+      '✨ Giao diện Floating Pills siêu gọn: Các viên thuốc thời lượng, tốc độ, loa và toàn màn hình ôm sát mép video chuẩn mẫu.',
+      '🖼️ Bố cục đa ảnh & nhạc nền chuẩn Facebook: Hiển thị 2 ảnh trên, 3 ảnh dưới kèm huy hiệu +N và nút loa 🔊 nổi bật/tắt nhạc trực tiếp.',
+      '🏷️ Nhận diện thương hiệu "from Tinelfi": Chuẩn hóa toàn bộ chân trang màn hình khởi động sang "from Tinelfi" thanh mảnh, hiện đại.',
+      '🛡️ Xuất bản và đồng bộ bản phát hành duy nhất V2.8.9+33 tối ưu trên toàn hệ thống.'
     ]
   });
 });
