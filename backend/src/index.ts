@@ -95,7 +95,7 @@ app.get(['/p/:id', '/post/:id'], (req, res) => {
     <h1>Chỉ mở được trên ứng dụng Dorabox</h1>
     <p>Bài viết này được thiết kế và bảo mật dành riêng cho ứng dụng Dorabox. Bạn không thể xem trực tiếp qua trình duyệt web khi chưa cài đặt ứng dụng.</p>
     <a href="dorabox://post/${postId}" class="btn-open">Mở trên ứng dụng Dorabox</a>
-    <a href="https://doraboxcdn.zpiltk.io.vn/apk/Dorabox-v2.9.11.apk" class="btn-download">Tải ứng dụng Dorabox (v2.9.11 APK)</a>
+    <a href="https://doraboxcdn.zpiltk.io.vn/apk/Dorabox-v2.10.11.apk" class="btn-download">Tải ứng dụng Dorabox (v2.10.11 APK)</a>
     <div class="footer-text">from Tinelfi • Bảo mật liên kết độc quyền</div>
   </div>
 </body>
@@ -120,27 +120,28 @@ app.get('/api/health', (req, res) => {
   res.json({
     platform: 'Dorabox API',
     status: 'online',
-    version: '2.9.11',
+    version: '2.10.11',
     timestamp: new Date().toISOString(),
   });
 });
 
-// App Version & OTA Update Check v2.9.11
+// App Version & OTA Update Check v2.10.11
 app.get('/api/app-version', (req, res) => {
   res.json({
-    latest_version: '2.9.11',
-    build_number: 35,
+    latest_version: '2.10.11',
+    build_number: 36,
     feed_shuffle_enabled: feedConfigState.shuffle_enabled,
-    apk_url: 'https://doraboxcdn.zpiltk.io.vn/apk/Dorabox-v2.9.11.apk',
+    apk_url: 'https://doraboxcdn.zpiltk.io.vn/apk/Dorabox-v2.10.11.apk',
     ios_url: 'https://dorabox.app/ios',
     force_update: false,
     changelog: [
+      '✨ Nâng cấp phông chữ Quicksand tròn trịa, thanh thoát và siêu nịnh mắt trên toàn bộ giao diện ứng dụng.',
       '🌐 Chuyển đổi tên miền máy chủ chính thức sang https://www.zpiltk.io.vn: Tốc độ kết nối nhanh và ổn định hơn.',
       '🔗 Chuẩn hóa liên kết chia sẻ độc quyền https://www.zpiltk.io.vn/p/... tự động nhận diện và mở app.',
       '✨ Lướt đa ảnh phong cách X với chấm chỉ báo tinh tế: Cho phép đăng và xem album ảnh vô hạn lướt ngang mượt mà kèm loa 🔊 phát nhạc nền.',
       '🎵 Chỉnh sửa đa phương tiện toàn diện: Thêm, đổi hoặc gỡ nhạc nền trực tiếp khi chỉnh sửa bài viết; chọn thêm nhiều ảnh cùng lúc không giới hạn.',
-      '🎬 Tối ưu trình phát nổi ArtPlayer: Hạ thấp các thanh điều khiển (pills) sát mép dưới, cân đối hoàn hảo và không còn cảm giác lơ lửng.',
-      '🛡️ Xuất bản và đồng bộ bản phát hành duy nhất V2.9.11+35 tối ưu trên toàn hệ thống.'
+      '🎬 Tối ưu trình phát nổi ArtPlayer: Hạ thấp các thanh điều khiển sát mép dưới, cân đối hoàn hảo.',
+      '🛡️ Xuất bản và đồng bộ bản phát hành duy nhất V2.10.11+36 tối ưu trên toàn hệ thống.'
     ]
   });
 });
