@@ -51,6 +51,57 @@ app.get('/watch', (req, res) => {
   res.send(renderArtPlayerPage(videoUrl, title));
 });
 
+// Cổng bảo vệ chia sẻ bài viết: CHỈ MỞ ĐƯỢC KHI CÓ ỨNG DỤNG DORABOX
+app.get(['/p/:id', '/post/:id'], (req, res) => {
+  const postId = req.params.id || '';
+  res.send(`<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dorabox - Bài viết bảo mật</title>
+  <meta property="og:title" content="Bài viết trên Ứng dụng Dorabox">
+  <meta property="og:description" content="Bài viết này chỉ có thể mở và xem trên ứng dụng Dorabox. Tải ngay ứng dụng để trải nghiệm!">
+  <meta property="og:image" content="https://doraboxcdn.zpiltk.io.vn/apk/dorabox_logo.png">
+  <meta name="theme-color" content="#0F172A">
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background: radial-gradient(circle at top, #1E293B, #0F172A 70%); color:#fff; min-height:100vh; display:flex; align-items:center; justify-content:center; padding:20px; }
+    .card { background:rgba(30, 41, 59, 0.7); border:1px solid rgba(255,255,255,0.12); border-radius:28px; padding:36px 24px; max-width:400px; width:100%; text-align:center; box-shadow:0 25px 50px -12px rgba(0,0,0,0.6); backdrop-filter:blur(24px); }
+    .icon-box { width:64px; height:64px; border-radius:20px; background:rgba(255,183,3,0.15); border:1px solid rgba(255,183,3,0.3); display:inline-flex; align-items:center; justify-content:center; font-size:28px; margin-bottom:20px; box-shadow:0 0 25px rgba(255,183,3,0.2); }
+    .badge { display:inline-block; background:rgba(2,132,199,0.15); color:#38BDF8; border:1px solid rgba(56,189,248,0.3); border-radius:20px; padding:4px 14px; font-size:12px; font-weight:700; margin-bottom:14px; letter-spacing:0.3px; }
+    h1 { font-size:19px; font-weight:800; margin-bottom:10px; line-height:1.4; color:#F8FAFC; }
+    p { font-size:13.5px; color:#94A3B8; line-height:1.6; margin-bottom:28px; }
+    .btn-open { display:block; width:100%; background:linear-gradient(135deg, #0284C7, #0369A1); color:#fff; padding:14px; border-radius:16px; font-size:15px; font-weight:700; text-decoration:none; margin-bottom:12px; transition:0.2s; box-shadow:0 8px 20px rgba(2,132,199,0.35); }
+    .btn-open:hover { transform:translateY(-1px); }
+    .btn-download { display:block; width:100%; background:rgba(255,255,255,0.06); color:#E2E8F0; padding:13px; border-radius:16px; font-size:13.5px; font-weight:600; text-decoration:none; border:1px solid rgba(255,255,255,0.12); transition:0.2s; }
+    .btn-download:hover { background:rgba(255,255,255,0.12); }
+    .footer-text { margin-top:20px; font-size:11px; color:#64748B; }
+  </style>
+  <script>
+    // Tự động kích hoạt DeepLink mở trực tiếp bài viết nếu thiết bị đã cài ứng dụng Dorabox
+    window.onload = function() {
+      const postId = "${postId}";
+      if (postId) {
+        window.location.href = "dorabox://post/" + postId;
+      }
+    };
+  </script>
+</head>
+<body>
+  <div class="card">
+    <div class="icon-box">🔒</div>
+    <div><span class="badge">NỘI DUNG ĐỘC QUYỀN</span></div>
+    <h1>Chỉ mở được trên ứng dụng Dorabox</h1>
+    <p>Bài viết này được thiết kế và bảo mật dành riêng cho ứng dụng Dorabox. Bạn không thể xem trực tiếp qua trình duyệt web khi chưa cài đặt ứng dụng.</p>
+    <a href="dorabox://post/${postId}" class="btn-open">Mở trên ứng dụng Dorabox</a>
+    <a href="https://doraboxcdn.zpiltk.io.vn/apk/Dorabox-v2.7.9.apk" class="btn-download">Tải ứng dụng Dorabox (v2.7.9 APK)</a>
+    <div class="footer-text">from Dorabox Team • Bảo mật liên kết độc quyền</div>
+  </div>
+</body>
+</html>`);
+});
+
 // Admin REST APIs
 app.use('/api/admin', adminRouter);
 
