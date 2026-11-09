@@ -73,25 +73,22 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// App Version & OTA Update Check v2.7.8
+// App Version & OTA Update Check v2.7.9
 app.get('/api/app-version', (req, res) => {
   res.json({
-    latest_version: '2.7.8',
-    build_number: 31,
+    latest_version: '2.7.9',
+    build_number: 32,
     feed_shuffle_enabled: feedConfigState.shuffle_enabled,
-    apk_url: 'https://doraboxcdn.zpiltk.io.vn/apk/Dorabox-v2.7.8.apk',
+    apk_url: 'https://doraboxcdn.zpiltk.io.vn/apk/Dorabox-v2.7.9.apk',
     ios_url: 'https://dorabox.app/ios',
     force_update: false,
     changelog: [
-      '💬 Chuẩn hóa kích thước Tin nhắn Chat: Khắc phục triệt để tin nhắn và media khổng lồ, giao diện nhắn tin cân đối, thanh thoát.',
-      '📞 Đàm thoại nổi PiP chuẩn Messenger: Thu nhỏ cuộc gọi thành bong bóng nổi tiện lợi, vừa đàm thoại vừa lướt app mượt mà.',
-      '🎙️ Nâng cấp giao diện cuộc gọi: Thiết kế giao diện gọi thoại & video mới sang trọng, thanh điều khiển kính mờ và nút thu nhỏ PiP 1 chạm.',
-      '🛠️ Chấm dứt lỗi nhảy màn hình bảo trì ngẫu nhiên khi quản trị viên chưa kích hoạt.',
-      '⚡ Triệt tiêu giật lag & Tối ưu thông báo: Giảm tải tác vụ nền, khắc phục triệt để độ trễ thông báo FCM tức thì.',
-      '✨ Đại tu giao diện Đăng nhập / Đăng ký: Phong cách Midnight Glassmorphism đẳng cấp và hiện đại.',
-      '🎬 Tinh chỉnh Trình phát Video: Thu gọn thanh điều khiển ArtPlayer ôm sát đáy, không cấn khi xoay ngang.',
-      '🎨 Cân bằng chân trang: Tinh chỉnh "from Dorabox Team" thanh mảnh, cân xứng chuẩn nhận diện cao cấp.',
-      '🛡️ Xuất bản và đồng bộ bản phát hành duy nhất V2.7.8+31 tối ưu trên toàn hệ thống.'
+      '🖼️ Hiển thị bài đăng nhiều ảnh chuẩn 1:1 & 4:3: Album ảnh hiển thị vuông vắn, cân đối tuyệt đối theo chuẩn Instagram/Facebook.',
+      '✨ Thêm nhiều ảnh cùng lúc khi sửa bài viết: Hỗ trợ chọn đồng loạt nhiều ảnh khi chỉnh sửa bài đăng thay vì chọn từng ảnh.',
+      '📂 Mở trọn vẹn Album & Thư viện gốc của máy: Truy cập sâu toàn bộ thư mục ảnh/video trong máy qua Photo Picker gốc, không bị giới hạn theo kiểu file.',
+      '💬 Bong bóng tin nhắn thanh thoát ôm sát chữ và thanh điều khiển ArtPlayer floating pills tinh tế.',
+      '📞 Đàm thoại nổi PiP chuẩn Messenger, mượt mà và không giật lag.',
+      '🛡️ Xuất bản và đồng bộ bản phát hành duy nhất V2.7.9+32 tối ưu trên toàn hệ thống.'
     ]
   });
 });
