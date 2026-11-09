@@ -95,7 +95,7 @@ app.get(['/p/:id', '/post/:id'], (req, res) => {
     <h1>Chỉ mở được trên ứng dụng Dorabox</h1>
     <p>Bài viết này được thiết kế và bảo mật dành riêng cho ứng dụng Dorabox. Bạn không thể xem trực tiếp qua trình duyệt web khi chưa cài đặt ứng dụng.</p>
     <a href="dorabox://post/${postId}" class="btn-open">Mở trên ứng dụng Dorabox</a>
-    <a href="https://doraboxcdn.zpiltk.io.vn/apk/Dorabox-v2.8.9.apk" class="btn-download">Tải ứng dụng Dorabox (v2.8.9 APK)</a>
+    <a href="https://doraboxcdn.zpiltk.io.vn/apk/Dorabox-v2.9.10.apk" class="btn-download">Tải ứng dụng Dorabox (v2.9.10 APK)</a>
     <div class="footer-text">from Tinelfi • Bảo mật liên kết độc quyền</div>
   </div>
 </body>
@@ -120,26 +120,26 @@ app.get('/api/health', (req, res) => {
   res.json({
     platform: 'Dorabox API',
     status: 'online',
-    version: '2.8.9',
+    version: '2.9.10',
     timestamp: new Date().toISOString(),
   });
 });
 
-// App Version & OTA Update Check v2.8.9
+// App Version & OTA Update Check v2.9.10
 app.get('/api/app-version', (req, res) => {
   res.json({
-    latest_version: '2.8.9',
-    build_number: 33,
+    latest_version: '2.9.10',
+    build_number: 34,
     feed_shuffle_enabled: feedConfigState.shuffle_enabled,
-    apk_url: 'https://doraboxcdn.zpiltk.io.vn/apk/Dorabox-v2.8.9.apk',
+    apk_url: 'https://doraboxcdn.zpiltk.io.vn/apk/Dorabox-v2.9.10.apk',
     ios_url: 'https://dorabox.app/ios',
     force_update: false,
     changelog: [
-      '🎬 Trình phát video ArtPlayer chuẩn điện ảnh: Thanh điều khiển nổi bo tròn tinh tế, scrubber mượt mà nút tròn vàng cùng nút Gốc/Đầy, tốc độ 1.0x và âm lượng.',
-      '✨ Giao diện Floating Pills siêu gọn: Các viên thuốc thời lượng, tốc độ, loa và toàn màn hình ôm sát mép video chuẩn mẫu.',
-      '🖼️ Bố cục đa ảnh & nhạc nền chuẩn Facebook: Hiển thị 2 ảnh trên, 3 ảnh dưới kèm huy hiệu +N và nút loa 🔊 nổi bật/tắt nhạc trực tiếp.',
-      '🏷️ Nhận diện thương hiệu "from Tinelfi": Chuẩn hóa toàn bộ chân trang màn hình khởi động sang "from Tinelfi" thanh mảnh, hiện đại.',
-      '🛡️ Xuất bản và đồng bộ bản phát hành duy nhất V2.8.9+33 tối ưu trên toàn hệ thống.'
+      '✨ Lướt đa ảnh phong cách X với chấm chỉ báo tinh tế: Cho phép đăng và xem album ảnh vô hạn lướt ngang mượt mà kèm loa 🔊 phát nhạc nền.',
+      '🎵 Chỉnh sửa đa phương tiện toàn diện: Thêm, đổi hoặc gỡ nhạc nền trực tiếp khi chỉnh sửa bài viết; chọn thêm nhiều ảnh cùng lúc không giới hạn.',
+      '🎬 Tối ưu trình phát nổi ArtPlayer: Hạ thấp các thanh điều khiển (pills) sát mép dưới, cân đối hoàn hảo và không còn cảm giác lơ lửng.',
+      '🔗 Nút chia sẻ bài viết thanh lịch: Tối giản giao diện chia sẻ, ẩn đường dẫn thô chỉ giữ nút thao tác tiện lợi và thẩm mỹ.',
+      '🛡️ Xuất bản và đồng bộ bản phát hành duy nhất V2.9.10+34 tối ưu trên toàn hệ thống.'
     ]
   });
 });

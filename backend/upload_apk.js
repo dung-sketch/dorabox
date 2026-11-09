@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const { S3Client, PutObjectCommand, HeadObjectCommand } = require('@aws-sdk/client-s3');
-require('dotenv').config();
+require('dotenv').config({ path: path.resolve(__dirname, '.env') });
 
 async function upload() {
   const accountId = process.env.R2_ACCOUNT_ID;
@@ -15,13 +15,13 @@ async function upload() {
     credentials: { accessKeyId, secretAccessKey },
   });
 
-  const apkPath = path.resolve(__dirname, '../release/Dorabox-v2.8.9.apk');
+  const apkPath = path.resolve(__dirname, '../release/Dorabox-v2.9.10.apk');
   console.log('Reading APK file from:', apkPath);
   const fileStat = fs.statSync(apkPath);
   console.log(`APK Size: ${(fileStat.size / (1024 * 1024)).toFixed(2)} MB`);
 
   const fileStream = fs.createReadStream(apkPath);
-  const key = 'apk/Dorabox-v2.8.9.apk';
+  const key = 'apk/Dorabox-v2.9.10.apk';
 
   console.log(`Uploading to R2 [${bucketName}] / ${key} ...`);
   const putCommand = new PutObjectCommand({
