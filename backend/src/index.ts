@@ -96,7 +96,7 @@ app.get(['/p/:id', '/post/:id'], (req, res) => {
     <p>Bài viết này được thiết kế và bảo mật dành riêng cho ứng dụng Dorabox. Bạn không thể xem trực tiếp qua trình duyệt web khi chưa cài đặt ứng dụng.</p>
     <a href="dorabox://post/${postId}" class="btn-open">Mở trên ứng dụng Dorabox</a>
     <a href="https://doraboxcdn.zpiltk.io.vn/apk/Dorabox-v2.7.9.apk" class="btn-download">Tải ứng dụng Dorabox (v2.7.9 APK)</a>
-    <div class="footer-text">from Dorabox Team • Bảo mật liên kết độc quyền</div>
+    <div class="footer-text">from Tinelfi • Bảo mật liên kết độc quyền</div>
   </div>
 </body>
 </html>`);
