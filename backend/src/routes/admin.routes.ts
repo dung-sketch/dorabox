@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 import { supabaseAdmin } from '../services/supabase.service.js';
 import { sendFcmHttpV1Message, getFirebaseProjectId } from '../services/firebase.service.js';
+import { deleteFilesFromR2 } from '../services/r2.service.js';
 
 const router = Router();
 
@@ -632,9 +633,11 @@ export async function wipeUserAccountCompletely(userId: string): Promise<{ succe
   try {
     console.log(`🧹 [Account Wipe] Bắt đầu xóa sạch toàn bộ dữ liệu người dùng: ${userId}`);
 
-    // Lấy FCM token trước khi xóa để gửi thông báo đăng xuất khẩn cấp tới thiết bị
+    // Lấy thông tin profile (FCM token, avatar, cover) trước khi xóa
+    let prof: any = null;
     try {
-      const { data: prof } = await supabaseAdmin.from('profiles').select('fcm_token').eq('id', userId).maybeSingle();
+      const { data } = await supabaseAdmin.from('profiles').select('fcm_token, avatar_url, cover_url').eq('id', userId).maybeSingle();
+      prof = data;
       if (prof?.fcm_token) {
         await sendFcmHttpV1Message({
           token: prof.fcm_token,
@@ -645,6 +648,30 @@ export async function wipeUserAccountCompletely(userId: string): Promise<{ succe
             reason: 'account_deleted',
           },
         }).catch(() => {});
+      }
+    } catch (_) {}
+
+    // Thu thập toàn bộ tệp media của tài khoản trên R2 (ảnh đại diện, ảnh bìa, toàn bộ ảnh/video/nhạc bài viết) để giải phóng triệt để dung lượng
+    try {
+      const { data: userPosts } = await supabaseAdmin
+        .from('posts')
+        .select('media_urls')
+        .eq('author_id', userId);
+
+      const allMediaToDelete: string[] = [];
+      if (prof?.avatar_url) allMediaToDelete.push(prof.avatar_url);
+      if (prof?.cover_url) allMediaToDelete.push(prof.cover_url);
+      if (userPosts && Array.isArray(userPosts)) {
+        for (const p of userPosts) {
+          if (p.media_urls && Array.isArray(p.media_urls)) {
+            allMediaToDelete.push(...p.media_urls);
+          }
+        }
+      }
+      if (allMediaToDelete.length > 0) {
+        deleteFilesFromR2(allMediaToDelete).catch((e) =>
+          console.error(`Lỗi dọn R2 khi xóa tài khoản ${userId}:`, e)
+        );
       }
     } catch (_) {}
 
@@ -818,11 +845,19 @@ router.post('/posts/:id/toggle-pin', async (req, res) => {
   }
 });
 
-// Xóa bài viết vi phạm
+// Xóa bài viết vi phạm (kèm dọn sạch R2)
 router.delete('/posts/:id', async (req, res) => {
   try {
     const { id } = req.params;
 
+    // 1. Lấy thông tin media_urls trước khi xóa record
+    const { data: postData } = await supabaseAdmin
+      .from('posts')
+      .select('id, media_urls')
+      .eq('id', id)
+      .maybeSingle();
+
+    // 2. Xóa bài viết khỏi cơ sở dữ liệu
     const { error } = await supabaseAdmin
       .from('posts')
       .delete()
@@ -830,13 +865,20 @@ router.delete('/posts/:id', async (req, res) => {
 
     if (error) throw error;
 
-    // Đánh dấu các báo cáo liên quan thành reviewed
+    // 3. Đánh dấu các báo cáo liên quan thành reviewed
     await supabaseAdmin
       .from('reports')
       .update({ status: 'reviewed' })
       .eq('target_id', id);
 
-    return res.json({ success: true, message: 'Đã xóa bài viết vi phạm thành công.' });
+    // 4. Xóa vĩnh viễn toàn bộ tệp media trên Cloudflare R2 để giải phóng dung lượng
+    if (postData?.media_urls && Array.isArray(postData.media_urls) && postData.media_urls.length > 0) {
+      deleteFilesFromR2(postData.media_urls).catch((e) =>
+        console.error(`[Admin] Lỗi dọn R2 cho bài viết ${id}:`, e)
+      );
+    }
+
+    return res.json({ success: true, message: 'Đã xóa bài viết vi phạm và dọn sạch dữ liệu R2 thành công.' });
   } catch (err: any) {
     return res.status(500).json({ error: err.message });
   }

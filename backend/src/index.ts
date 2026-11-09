@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import { generateUploadUrl } from './services/r2.service.js';
+import { generateUploadUrl, deleteFilesFromR2, extractR2Key } from './services/r2.service.js';
 import { supabaseAdmin } from './services/supabase.service.js';
 import adminRouter, { wipeUserAccountCompletely, feedConfigState, maintenanceConfigState } from './routes/admin.routes.js';
 import { renderAdminPage } from './views/admin_page.js';
@@ -230,6 +230,112 @@ app.all('/api/upload/presigned-url', async (req, res) => {
   } catch (error: any) {
     console.error('Error generating presigned URL:', error);
     return res.status(500).json({ error: error.message || 'Internal Server Error' });
+  }
+});
+
+/**
+ * Endpoint Xóa Danh Sách Tệp Media Trên Cloudflare R2 (Giải Phóng Dung Lượng)
+ * POST /api/media/delete-batch
+ * Body: { urls: string[] }
+ */
+app.post('/api/media/delete-batch', async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+    const token = authHeader?.replace(/^Bearer\s+/i, '');
+    if (!token) return res.status(401).json({ error: 'Missing Bearer token' });
+
+    const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(token);
+    if (authError || !user) return res.status(401).json({ error: 'Phiên đăng nhập không hợp lệ' });
+
+    const { urls } = req.body;
+    if (!Array.isArray(urls) || urls.length === 0) {
+      return res.json({ success: true, deleted: [] });
+    }
+
+    // Bảo mật: Người dùng chỉ được xóa tệp trong thư mục của chính mình (hoặc admin)
+    const targetUrls = urls.filter((u: any) => {
+      if (typeof u !== 'string') return false;
+      const key = extractR2Key(u);
+      if (!key) return false;
+      return key.includes(`/${user.id}/`) || key.startsWith(`${user.id}/`);
+    });
+
+    if (targetUrls.length === 0) {
+      return res.json({ success: true, deleted: [], note: 'Không có tệp hợp lệ thuộc quyền sở hữu' });
+    }
+
+    const result = await deleteFilesFromR2(targetUrls);
+    return res.json({
+      success: true,
+      deleted: result.deleted,
+      errors: result.errors,
+      count: result.deleted.length,
+    });
+  } catch (err: any) {
+    console.error('Error deleting media batch:', err);
+    return res.status(500).json({ error: err.message || 'Internal Server Error' });
+  }
+});
+
+/**
+ * Endpoint Xóa Bài Viết & Dọn Sạch Toàn Bộ Media Đính Kèm Trên Cloudflare R2
+ * DELETE /api/posts/:id hoặc DELETE /api/user/posts/:id
+ */
+app.delete(['/api/posts/:id', '/api/user/posts/:id'], async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+    const token = authHeader?.replace(/^Bearer\s+/i, '');
+    if (!token) return res.status(401).json({ error: 'Missing Bearer token' });
+
+    const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(token);
+    if (authError || !user) return res.status(401).json({ error: 'Phiên đăng nhập không hợp lệ' });
+
+    const postId = req.params.id;
+    if (!postId) return res.status(400).json({ error: 'Thiếu postId' });
+
+    // 1. Kiểm tra bài viết & quyền sở hữu
+    const { data: post, error: fetchErr } = await supabaseAdmin
+      .from('posts')
+      .select('id, author_id, media_urls')
+      .eq('id', postId)
+      .maybeSingle();
+
+    if (fetchErr || !post) {
+      return res.status(404).json({ error: 'Không tìm thấy bài viết' });
+    }
+
+    if (post.author_id !== user.id) {
+      return res.status(403).json({ error: 'Bạn không có quyền xóa bài viết của người khác' });
+    }
+
+    // 2. Xóa bài viết khỏi cơ sở dữ liệu Supabase
+    const { error: delErr } = await supabaseAdmin
+      .from('posts')
+      .delete()
+      .eq('id', postId);
+
+    if (delErr) throw delErr;
+
+    // 3. Xóa các báo cáo liên quan
+    try {
+      await supabaseAdmin.from('reports').delete().eq('target_id', postId);
+    } catch (_) {}
+
+    // 4. Xóa toàn bộ file media (ảnh, video, nhạc) trên Cloudflare R2 để giải phóng dung lượng
+    let r2Result = { deleted: [] as string[], errors: [] as any[] };
+    if (post.media_urls && Array.isArray(post.media_urls) && post.media_urls.length > 0) {
+      r2Result = await deleteFilesFromR2(post.media_urls);
+    }
+
+    return res.json({
+      success: true,
+      message: 'Đã xóa bài viết và giải phóng dung lượng Cloudflare R2 thành công',
+      deletedFilesCount: r2Result.deleted.length,
+      deletedFiles: r2Result.deleted,
+    });
+  } catch (err: any) {
+    console.error('Error deleting post with R2 cleanup:', err);
+    return res.status(500).json({ error: err.message || 'Internal Server Error' });
   }
 });
 
