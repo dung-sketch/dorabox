@@ -145,6 +145,7 @@ export async function sendFcmHttpV1Message(params: {
         defaultVibrateTimings: true,
         priority: 'max',
         visibility: 'public',
+        clickAction: 'FLUTTER_NOTIFICATION_CLICK',
       };
       messagePayload.android.ttl = 60 * 1000;
       messagePayload.apns = {
@@ -168,6 +169,7 @@ export async function sendFcmHttpV1Message(params: {
         defaultVibrateTimings: true,
         priority: 'max',
         visibility: 'public',
+        clickAction: 'FLUTTER_NOTIFICATION_CLICK',
       };
       messagePayload.apns = {
         payload: {
