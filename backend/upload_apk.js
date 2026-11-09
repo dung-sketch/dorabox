@@ -23,33 +23,26 @@ async function upload() {
   const fileStat = fs.statSync(apkPath);
   console.log(`APK Size: ${(fileStat.size / (1024 * 1024)).toFixed(2)} MB`);
 
-  const fileStream = fs.createReadStream(apkPath);
-  const key = 'apk/Dorabox-v3.0.0-arm64.apk';
+  const targetKeys = [
+    'apk/Dorabox-v3.0.0.apk',
+    'apk/Dorabox-v3.0.0-arm64.apk',
+    'apk/Dorabox-latest.apk'
+  ];
 
-  console.log(`Uploading to R2 [${bucketName}] / ${key} ...`);
-  const putCommand = new PutObjectCommand({
-    Bucket: bucketName,
-    Key: key,
-    Body: fileStream,
-    ContentType: 'application/vnd.android.package-archive',
-    ContentLength: fileStat.size,
-  });
-
-  await s3.send(putCommand);
-  console.log('Upload complete! Verifying with HeadObject...');
-
-  const head = await s3.send(new HeadObjectCommand({
-    Bucket: bucketName,
-    Key: key,
-  }));
-
-  console.log('Verified on R2:', {
-    key,
-    size: head.ContentLength,
-    contentType: head.ContentType,
-    lastModified: head.LastModified,
-  });
-  console.log(`Public URL: https://doraboxcdn.zpiltk.io.vn/${key}`);
+  for (const key of targetKeys) {
+    console.log(`Uploading to R2 [${bucketName}] / ${key} ...`);
+    const fileStream = fs.createReadStream(apkPath);
+    const putCommand = new PutObjectCommand({
+      Bucket: bucketName,
+      Key: key,
+      Body: fileStream,
+      ContentType: 'application/vnd.android.package-archive',
+      ContentLength: fileStat.size,
+    });
+    await s3.send(putCommand);
+    console.log(`✅ Uploaded to ${key}`);
+  }
+  console.log(`Public URL: https://doraboxcdn.zpiltk.io.vn/apk/Dorabox-v3.0.0.apk`);
 }
 
 upload().catch((err) => {
