@@ -4,7 +4,7 @@ import fs from 'fs';
 import path from 'path';
 
 let firebaseApp: App | null = null;
-let activeProjectId: string = 'dorabox-c4c55';
+let activeProjectId: string = 'mcn-tinelfi-dorabox';
 
 export function getFirebaseProjectId(): string {
   return activeProjectId;
