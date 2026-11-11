@@ -105,8 +105,9 @@ app.get(['/p/:id', '/post/:id'], (req, res) => {
 // Admin REST APIs
 app.use('/api/admin', adminRouter);
 
-// Public Feed Configuration API
+// Public Feed Configuration API (Edge Caching 30s)
 app.get('/api/feed-config', (req, res) => {
+  res.setHeader('Cache-Control', 'public, s-maxage=30, stale-while-revalidate=120');
   res.json({ success: true, ...feedConfigState });
 });
 
@@ -115,8 +116,9 @@ app.get('/', (req, res) => {
   res.status(404).send('Cannot GET /');
 });
 
-// Health check
+// Health check (Edge Caching 15s)
 app.get('/api/health', (req, res) => {
+  res.setHeader('Cache-Control', 'public, s-maxage=15, stale-while-revalidate=60');
   res.json({
     platform: 'Dorabox API',
     status: 'online',
@@ -125,8 +127,9 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// App Version & OTA Update Check v3.0.0
+// App Version & OTA Update Check v3.0.0 (Edge Caching 60s)
 app.get('/api/app-version', (req, res) => {
+  res.setHeader('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300');
   res.json({
     latest_version: '3.0.0',
     build_number: 37,
@@ -144,8 +147,9 @@ app.get('/api/app-version', (req, res) => {
   });
 });
 
-// Kiểm tra trạng thái bảo trì hệ thống thời gian thực (Public System Maintenance Check)
+// Kiểm tra trạng thái bảo trì hệ thống thời gian thực (Public System Maintenance Check - Edge Caching 15s)
 app.get(['/api/system/maintenance', '/api/maintenance'], (req, res) => {
+  res.setHeader('Cache-Control', 'public, s-maxage=15, stale-while-revalidate=60');
   res.json({
     success: true,
     maintenance: maintenanceConfigState,

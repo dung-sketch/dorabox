@@ -53,7 +53,7 @@ export function initFirebaseAdmin(): boolean {
         process.env.FIREBASE_SERVICE_ACCOUNT_PATH,
         process.env.GOOGLE_APPLICATION_CREDENTIALS,
         path.resolve(process.cwd(), 'mcn-tinelfi-dorabox-firebase-adminsdk.json'),
-        path.resolve(process.cwd(), '../mcn-tinelfi-dorabox-firebase-adminsdk-fbsvc-b0231a6218.json'),
+        path.resolve(process.cwd(), '../mcn-tinelfi-dorabox-firebase-adminsdk-fbsvc-7f9e2eb92485.json'),
       ].filter(Boolean) as string[];
 
       for (const filePath of possiblePaths) {
