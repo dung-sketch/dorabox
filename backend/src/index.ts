@@ -57,7 +57,7 @@ app.get('/watch', (req, res) => {
 // Cổng chia sẻ bài viết thông minh & bảo mật (Smart Post Preview & OpenGraph SSR)
 app.get(['/p/:id', '/post/:id'], async (req, res) => {
   const postId = req.params.id ? String(req.params.id).trim() : '';
-  const host = req.get('host') || 'dorabox.zpiltk.io.vn';
+  const host = req.get('host') || 'www.zpiltk.io.vn';
   const apkUrl = 'https://doraboxcdn.zpiltk.io.vn/apk/Dorabox-v3.0.0.apk';
   const version = '3.0.0';
 

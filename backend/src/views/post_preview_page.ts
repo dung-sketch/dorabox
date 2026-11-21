@@ -96,7 +96,7 @@ export function renderPostPreviewPage(
     isRestricted?: boolean;
   } = {}
 ): string {
-  const host = options.host || 'dorabox.zpiltk.io.vn';
+  const host = options.host || 'www.zpiltk.io.vn';
   const apkUrl = options.apkUrl || 'https://doraboxcdn.zpiltk.io.vn/apk/Dorabox-v3.0.0.apk';
   const version = options.version || '3.0.0';
 
