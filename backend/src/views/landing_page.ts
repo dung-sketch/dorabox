@@ -157,63 +157,80 @@ export function renderLandingPage(config: LandingPageConfig): string {
     .qr-text h4 { font-size: 14.5px; font-weight: 700; color: var(--text-main); margin-bottom: 3px; }
     .qr-text p { font-size: 12.5px; color: var(--text-muted); margin: 0; line-height: 1.4; }
 
-    /* Phone Device Mockup */
+    /* Phone Device Mockup - Light Mode Premium */
     .mockup-wrap { position: relative; display: flex; justify-content: center; }
     .phone-frame {
-      width: 320px; background: #000; border-radius: 46px; padding: 12px;
-      box-shadow: 0 35px 80px -15px rgba(15, 23, 42, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+      width: 326px; background: #FFFFFF;
+      border: 6px solid #CBD5E1; border-radius: 48px; padding: 6px;
+      box-shadow: 0 30px 70px -10px rgba(0, 102, 255, 0.15), 0 15px 35px rgba(15, 23, 42, 0.08);
       position: relative;
     }
     .phone-screen {
-      background: #0F172A; border-radius: 36px; overflow: hidden;
-      display: flex; flex-direction: column; color: #fff; position: relative;
+      background: #F8FAFC; border-radius: 40px; overflow: hidden;
+      display: flex; flex-direction: column; color: #0F172A; position: relative;
+      border: 1px solid rgba(0, 0, 0, 0.05);
     }
-    .phone-notch {
-      width: 110px; height: 22px; background: #000; border-radius: 0 0 14px 14px;
-      margin: 0 auto; z-index: 10;
+    .phone-status-bar {
+      height: 38px; padding: 10px 20px 0 20px; display: flex; justify-content: space-between; align-items: center;
+      font-size: 11px; font-weight: 700; color: #0F172A;
     }
-    
-    /* Mockup App Interface */
-    .phone-app-content { padding: 16px 14px 20px 14px; }
-    .app-top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-    .app-logo { font-size: 16px; font-weight: 800; color: #38BDF8; font-family:'Quicksand'; }
-    
-    /* D-Notes Bubble Mockup */
+    .dynamic-island {
+      width: 86px; height: 18px; background: #0F172A; border-radius: 12px; margin: 0 auto;
+    }
+    .phone-app-content { padding: 8px 14px 18px 14px; }
+    .app-top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; padding: 0 4px; }
+    .app-logo { font-size: 17px; font-weight: 800; color: #0066FF; font-family:'Quicksand'; letter-spacing: -0.3px; }
+    .app-icons { display: flex; gap: 10px; color: #64748B; font-size: 13px; }
+
+    /* D-Notes (Light Mode) */
     .d-notes-preview {
-      display: flex; gap: 10px; margin-bottom: 16px; overflow: hidden;
+      display: flex; gap: 18px; margin-bottom: 16px; padding: 0 6px;
     }
-    .note-avatar-item { text-align: center; font-size: 10px; color: #94A3B8; position: relative; }
-    .note-avatar {
-      width: 44px; height: 44px; border-radius: 50%; border: 2px solid #0066FF;
-      background: #1E293B; margin-bottom: 4px;
+    .note-avatar-item { text-align: center; font-size: 11px; font-weight: 700; color: #475569; position: relative; }
+    .note-avatar-box {
+      width: 48px; height: 48px; border-radius: 50%; padding: 2px;
+      background: linear-gradient(135deg, #0066FF, #38BDF8);
+      display: flex; align-items: center; justify-content: center; margin: 0 auto 4px auto;
     }
+    .note-avatar-box.gold {
+      background: linear-gradient(135deg, #FFB800, #F59E0B);
+    }
+    .note-avatar-inner {
+      width: 100%; height: 100%; border-radius: 50%; background: #FFFFFF;
+      display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 15px; color: #0066FF;
+      overflow: hidden;
+    }
+    .note-avatar-inner.gold { color: #D97706; }
     .note-bubble {
-      position: absolute; top: -10px; right: -8px; background: #FFFFFF; color: #0F172A;
-      font-size: 9px; font-weight: 700; padding: 2px 7px; border-radius: 12px;
-      box-shadow: 0 3px 8px rgba(0,0,0,0.25); white-space: nowrap;
+      position: absolute; top: -11px; left: 50%; transform: translateX(-50%);
+      background: #FFFFFF; color: #0F172A; font-size: 9px; font-weight: 700; padding: 3px 8px; border-radius: 12px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.1); border: 1px solid #E2E8F0; white-space: nowrap; z-index: 5;
     }
 
-    /* Feed Post Card Mockup */
+    /* Mock Post Cards (Light Mode) */
     .mock-post-card {
-      background: #1E293B; border-radius: 18px; padding: 14px; border: 1px solid rgba(255,255,255,0.06);
+      background: #FFFFFF; border-radius: 18px; padding: 13px; border: 1px solid #E2E8F0;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.03); margin-bottom: 10px; text-align: left;
     }
-    .mock-post-author { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-    .mock-avatar { width: 34px; height: 34px; border-radius: 50%; background: #0066FF; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; color: #fff; }
-    .mock-author-name { font-size: 12.5px; font-weight: 700; color: #F8FAFC; }
+    .mock-post-author { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+    .mock-avatar { width: 34px; height: 34px; border-radius: 50%; background: #EFF6FF; border: 1px solid #BFDBFE; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; color: #0066FF; overflow:hidden; flex-shrink:0; }
+    .mock-avatar.gold { background: #FFFBEB; border-color: #FDE68A; color: #D97706; }
+    .mock-author-name { font-size: 12.5px; font-weight: 800; color: #0F172A; }
     .mock-author-tag { font-size: 10px; color: #94A3B8; }
-    .mock-badge-oa { font-size: 9px; background: rgba(255,184,0,0.15); color: #FFB800; border: 1px solid rgba(255,184,0,0.3); padding: 1px 5px; border-radius: 8px; margin-left: 4px; }
-    .mock-post-text { font-size: 12px; color: #E2E8F0; margin-bottom: 10px; line-height: 1.5; }
+    .mock-badge-oa { font-size: 9px; font-weight: 700; background: #FFFBEB; color: #D97706; border: 1px solid rgba(217,119,6,0.25); padding: 1px 6px; border-radius: 8px; margin-left: 4px; }
+    .mock-post-text { font-size: 11.5px; color: #334155; margin-bottom: 9px; line-height: 1.5; }
     .mock-post-media {
-      width: 100%; height: 140px; border-radius: 12px;
-      background: linear-gradient(135deg, #0284C7, #0047AB);
-      display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600;
-      color: rgba(255,255,255,0.9); margin-bottom: 10px; position: relative;
+      width: 100%; height: 125px; border-radius: 12px;
+      background: linear-gradient(135deg, #0066FF 0%, #38BDF8 60%, #FFB800 100%);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      color: #FFFFFF; margin-bottom: 9px; position: relative; overflow: hidden;
     }
-    .mock-lock-badge {
-      position: absolute; bottom: 8px; left: 8px; background: rgba(15,23,42,0.85);
-      padding: 3px 8px; border-radius: 10px; font-size: 9px; display: flex; align-items: center; gap: 4px; color: #F8FAFC;
+    .mock-media-tag {
+      background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(8px);
+      padding: 4px 10px; border-radius: 10px; font-size: 9.5px; font-weight: 600;
+      display: flex; align-items: center; gap: 5px; color: #FFFFFF;
     }
-    .mock-actions { display: flex; gap: 14px; font-size: 11px; color: #94A3B8; }
+    .mock-actions { display: flex; gap: 14px; font-size: 10.5px; color: #64748B; font-weight: 600; }
 
     /* Features Section */
     .section-features {
@@ -372,64 +389,101 @@ export function renderLandingPage(config: LandingPageConfig): string {
         </div>
       </div>
 
-      <!-- Smartphone Mockup -->
+      <!-- Smartphone Mockup - Light Mode Demo -->
       <div class="mockup-wrap">
         <div class="phone-frame">
           <div class="phone-screen">
-            <div class="phone-notch"></div>
+            <!-- Dynamic Island & Status Bar -->
+            <div class="phone-status-bar">
+              <span>9:41</span>
+              <div class="dynamic-island"></div>
+              <span>5G</span>
+            </div>
             
             <div class="phone-app-content">
+              <!-- App Bar -->
               <div class="app-top-bar">
                 <span class="app-logo">Dorabox ✨</span>
-                <span style="font-size:12px; color:#94A3B8;">🔔</span>
+                <div class="app-icons">
+                  <span>🔍</span>
+                  <span>🔔</span>
+                </div>
               </div>
 
-              <!-- D-Notes Bubbles -->
+              <!-- D-Notes Preview (Chỉ 2 tài khoản: Dorabox & Dorabox Creators) -->
               <div class="d-notes-preview">
+                <!-- 1. Dorabox -->
                 <div class="note-avatar-item">
-                  <div class="note-bubble">Giai điệu hè 🎵</div>
-                  <div class="note-avatar" style="background:#0284C7;"></div>
-                  <span>Bạn bè</span>
+                  <div class="note-bubble">Chào bạn mới! 🎵</div>
+                  <div class="note-avatar-box">
+                    <div class="note-avatar-inner">
+                      <img src="https://doraboxcdn.zpiltk.io.vn/apk/dorabox_logo.png" style="width:100%; height:100%; object-fit:cover;" alt="Dorabox">
+                    </div>
+                  </div>
+                  <span>Dorabox</span>
                 </div>
+
+                <!-- 2. Dorabox Creators -->
                 <div class="note-avatar-item">
-                  <div class="note-bubble">Hôm nay vui ✨</div>
-                  <div class="note-avatar" style="background:#8B5CF6;"></div>
-                  <span>Minh Anh</span>
-                </div>
-                <div class="note-avatar-item">
-                  <div class="note-avatar" style="background:#10B981;"></div>
-                  <span>Hoàng</span>
+                  <div class="note-bubble">Sáng tạo diệu kỳ ✨</div>
+                  <div class="note-avatar-box gold">
+                    <div class="note-avatar-inner gold">⭐</div>
+                  </div>
+                  <span>Dorabox Creators</span>
                 </div>
               </div>
 
-              <!-- Post Card Mockup -->
+              <!-- Feed Card 1: Dorabox Chính Thức -->
               <div class="mock-post-card">
                 <div class="mock-post-author">
-                  <div class="mock-avatar">D</div>
+                  <div class="mock-avatar">
+                    <img src="https://doraboxcdn.zpiltk.io.vn/apk/dorabox_logo.png" style="width:100%; height:100%; object-fit:cover;" alt="Dorabox">
+                  </div>
                   <div>
                     <div style="display:flex; align-items:center;">
-                      <span class="mock-author-name">Dora Studio</span>
+                      <span class="mock-author-name">Dorabox</span>
                       <span class="mock-badge-oa">★ OA</span>
                     </div>
-                    <span class="mock-author-tag">@dorastudio • 15 phút trước</span>
+                    <span class="mock-author-tag">@dorabox • Vừa xong</span>
                   </div>
                 </div>
 
                 <div class="mock-post-text">
-                  Khoảnh khắc tuyệt đẹp buổi hoàng hôn cùng bạn bè tại thành phố ✨
+                  Chào mừng bạn đến với Dorabox! Kết nối diệu kỳ, sẻ chia niềm vui và bảo vệ quyền tác giả độc quyền cho ảnh & video ✨
                 </div>
 
                 <div class="mock-post-media">
-                  <span>📸 Khoảnh khắc chất lượng cao</span>
-                  <div class="mock-lock-badge">
+                  <div class="mock-media-tag">
                     <span>🛡️</span>
                     <span>Bảo vệ quyền tác giả</span>
                   </div>
                 </div>
 
                 <div class="mock-actions">
-                  <span>❤️ 128 thích</span>
-                  <span>💬 24 bình luận</span>
+                  <span>❤️ 1.2k thích</span>
+                  <span>💬 186 bình luận</span>
+                  <span>↗️ Chia sẻ</span>
+                </div>
+              </div>
+
+              <!-- Feed Card 2: Dorabox Creators -->
+              <div class="mock-post-card" style="opacity:0.9; margin-bottom:0;">
+                <div class="mock-post-author">
+                  <div class="mock-avatar gold">⭐</div>
+                  <div>
+                    <div style="display:flex; align-items:center;">
+                      <span class="mock-author-name">Dorabox Creators</span>
+                      <span class="mock-badge-oa">★ OA</span>
+                    </div>
+                    <span class="mock-author-tag">@creators • 1 giờ trước</span>
+                  </div>
+                </div>
+                <div class="mock-post-text" style="margin-bottom:6px;">
+                  Khám phá những giai điệu D-Notes được yêu thích nhất tuần này! 🎧
+                </div>
+                <div class="mock-actions">
+                  <span>❤️ 840 thích</span>
+                  <span>💬 92 bình luận</span>
                 </div>
               </div>
             </div>
