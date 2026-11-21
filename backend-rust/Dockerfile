@@ -1,32 +1,35 @@
-# Multi-stage Docker build for Dorabox Rust Backend
-FROM rust:1.80-alpine AS builder
+# Multi-stage Docker build for Dorabox Rust Backend (Debian Slim)
+FROM rust:1.82-slim AS builder
 
-RUN apk add --no-cache musl-dev pkgconfig openssl-dev
+# Install required build tools for OpenSSL
+RUN apt-get update && apt-get install -y \
+    pkg-config \
+    libssl-dev \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
-# Cache dependencies
+# Copy all project files directly
 COPY Cargo.toml Cargo.lock ./
-RUN mkdir src && echo "fn main() {}" > src/main.rs
-RUN cargo build --release
-RUN rm -rf src
-
-# Copy source and build
 COPY src ./src
-RUN touch src/main.rs
+
+# Build release binary
 RUN cargo build --release
 
-# Final runtime image
-FROM alpine:3.20
+# Final minimal runtime image (~35MB)
+FROM debian:bookworm-slim
 
-RUN apk add --no-cache ca-certificates tzdata
+RUN apt-get update && apt-get install -y \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
 COPY --from=builder /app/target/release/backend-rust /app/dorabox-backend
 
-EXPOSE 4000
+EXPOSE 10000
 
-ENV PORT=4000
+ENV PORT=10000
 
 CMD ["/app/dorabox-backend"]
