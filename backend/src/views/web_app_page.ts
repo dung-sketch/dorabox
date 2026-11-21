@@ -908,7 +908,7 @@ export function renderWebAppPage(config: WebAppConfig): string {
       try {
         const { data: notes } = await supabase
           .from('user_notes')
-          .select(\`id, content, song_title, song_artist, created_at, profiles!user_id(display_name, username, avatar_url, is_oa)\`)
+          .select(\`id, content, mood_emoji, audio_url, audio_title, created_at, profiles!user_id(display_name, username, avatar_url, is_oa)\`)
           .gt('expires_at', new Date().toISOString())
           .order('created_at', { ascending: false })
           .limit(10);
@@ -918,7 +918,7 @@ export function renderWebAppPage(config: WebAppConfig): string {
             const p = n.profiles || {};
             const avatar = p.avatar_url || 'https://doraboxcdn.zpiltk.io.vn/apk/dorabox_logo.png';
             const name = escapeHtml(p.display_name || p.username || 'Người dùng');
-            const bubble = escapeHtml(n.song_title ? ('🎵 ' + n.song_title) : (n.content || '...'));
+            const bubble = escapeHtml(n.audio_title ? ('🎵 ' + n.audio_title) : (n.content || (n.mood_emoji || '...')));
             return \`
               <div class="d-note-item">
                 <div class="d-note-bubble">\${bubble}</div>
