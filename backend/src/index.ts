@@ -6,6 +6,9 @@ import { supabaseAdmin } from './services/supabase.service.js';
 import adminRouter, { wipeUserAccountCompletely, feedConfigState, maintenanceConfigState } from './routes/admin.routes.js';
 import { renderAdminPage } from './views/admin_page.js';
 import { renderArtPlayerPage } from './views/artplayer_page.js';
+import { renderLandingPage } from './views/landing_page.js';
+import { renderPostPreviewPage } from './views/post_preview_page.js';
+import { renderPrivacyPolicyPage, renderTermsOfServicePage } from './views/legal_pages.js';
 import { sendFcmHttpV1Message } from './services/firebase.service.js';
 import pkgAgora from 'agora-token';
 const { RtcTokenBuilder, RtcRole } = pkgAgora;
@@ -51,55 +54,76 @@ app.get('/watch', (req, res) => {
   res.send(renderArtPlayerPage(videoUrl, title));
 });
 
-// Cổng bảo vệ chia sẻ bài viết: CHỈ MỞ ĐƯỢC KHI CÓ ỨNG DỤNG DORABOX
-app.get(['/p/:id', '/post/:id'], (req, res) => {
-  const postId = req.params.id || '';
-  res.send(`<!DOCTYPE html>
-<html lang="vi">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dorabox - Bài viết bảo mật</title>
-  <meta property="og:title" content="Bài viết trên Ứng dụng Dorabox">
-  <meta property="og:description" content="Bài viết này chỉ có thể mở và xem trên ứng dụng Dorabox. Tải ngay ứng dụng để trải nghiệm!">
-  <meta property="og:image" content="https://doraboxcdn.zpiltk.io.vn/apk/dorabox_logo.png">
-  <meta name="theme-color" content="#0F172A">
-  <style>
-    * { margin:0; padding:0; box-sizing:border-box; font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    body { background: radial-gradient(circle at top, #1E293B, #0F172A 70%); color:#fff; min-height:100vh; display:flex; align-items:center; justify-content:center; padding:20px; }
-    .card { background:rgba(30, 41, 59, 0.7); border:1px solid rgba(255,255,255,0.12); border-radius:28px; padding:36px 24px; max-width:400px; width:100%; text-align:center; box-shadow:0 25px 50px -12px rgba(0,0,0,0.6); backdrop-filter:blur(24px); }
-    .icon-box { width:64px; height:64px; border-radius:20px; background:rgba(255,183,3,0.15); border:1px solid rgba(255,183,3,0.3); display:inline-flex; align-items:center; justify-content:center; font-size:28px; margin-bottom:20px; box-shadow:0 0 25px rgba(255,183,3,0.2); }
-    .badge { display:inline-block; background:rgba(2,132,199,0.15); color:#38BDF8; border:1px solid rgba(56,189,248,0.3); border-radius:20px; padding:4px 14px; font-size:12px; font-weight:700; margin-bottom:14px; letter-spacing:0.3px; }
-    h1 { font-size:19px; font-weight:800; margin-bottom:10px; line-height:1.4; color:#F8FAFC; }
-    p { font-size:13.5px; color:#94A3B8; line-height:1.6; margin-bottom:28px; }
-    .btn-open { display:block; width:100%; background:linear-gradient(135deg, #0284C7, #0369A1); color:#fff; padding:14px; border-radius:16px; font-size:15px; font-weight:700; text-decoration:none; margin-bottom:12px; transition:0.2s; box-shadow:0 8px 20px rgba(2,132,199,0.35); }
-    .btn-open:hover { transform:translateY(-1px); }
-    .btn-download { display:block; width:100%; background:rgba(255,255,255,0.06); color:#E2E8F0; padding:13px; border-radius:16px; font-size:13.5px; font-weight:600; text-decoration:none; border:1px solid rgba(255,255,255,0.12); transition:0.2s; }
-    .btn-download:hover { background:rgba(255,255,255,0.12); }
-    .footer-text { margin-top:20px; font-size:11px; color:#64748B; }
-  </style>
-  <script>
-    // Tự động kích hoạt DeepLink mở trực tiếp bài viết nếu thiết bị đã cài ứng dụng Dorabox
-    window.onload = function() {
-      const postId = "${postId}";
-      if (postId) {
-        window.location.href = "dorabox://post/" + postId;
-      }
-    };
-  </script>
-</head>
-<body>
-  <div class="card">
-    <div class="icon-box">🔒</div>
-    <div><span class="badge">NỘI DUNG ĐỘC QUYỀN</span></div>
-    <h1>Chỉ mở được trên ứng dụng Dorabox</h1>
-    <p>Bài viết này được thiết kế và bảo mật dành riêng cho ứng dụng Dorabox. Bạn không thể xem trực tiếp qua trình duyệt web khi chưa cài đặt ứng dụng.</p>
-    <a href="dorabox://post/${postId}" class="btn-open">Mở trên ứng dụng Dorabox</a>
-    <a href="https://doraboxcdn.zpiltk.io.vn/apk/Dorabox-v3.0.0.apk" class="btn-download">Tải ứng dụng Dorabox (v3.0.0 APK)</a>
-    <div class="footer-text">from Tinelfi • Bảo mật liên kết độc quyền</div>
-  </div>
-</body>
-</html>`);
+// Cổng chia sẻ bài viết thông minh & bảo mật (Smart Post Preview & OpenGraph SSR)
+app.get(['/p/:id', '/post/:id'], async (req, res) => {
+  const postId = req.params.id ? String(req.params.id).trim() : '';
+  const host = req.get('host') || 'dorabox.zpiltk.io.vn';
+  const apkUrl = 'https://doraboxcdn.zpiltk.io.vn/apk/Dorabox-v3.0.0.apk';
+  const version = '3.0.0';
+
+  if (!postId) {
+    return res.status(404).send(renderPostPreviewPage(null, { notFound: true, host, apkUrl, version }));
+  }
+
+  try {
+    const { data: post, error } = await supabaseAdmin
+      .from('posts')
+      .select(`
+        id,
+        content,
+        media_urls,
+        link_url,
+        link_title,
+        likes_count,
+        comments_count,
+        visibility,
+        allow_download_images,
+        allow_download_videos,
+        created_at,
+        author:profiles (
+          id,
+          username,
+          display_name,
+          avatar_url,
+          bio,
+          is_verified,
+          is_vip,
+          is_oa,
+          account_type
+        )
+      `)
+      .eq('id', postId)
+      .maybeSingle();
+
+    if (error || !post) {
+      return res.status(404).send(renderPostPreviewPage(null, { notFound: true, host, apkUrl, version }));
+    }
+
+    // Kiểm tra quyền riêng tư đồng bộ với Mobile App
+    const author = Array.isArray(post.author) ? post.author[0] : post.author;
+    const isOA = author?.is_oa === true || author?.account_type === 'oa';
+    const isPublic = !post.visibility || post.visibility === 'public' || isOA;
+
+    // Edge Caching cho bài viết công khai để tối ưu tải
+    if (isPublic) {
+      res.setHeader('Cache-Control', 'public, s-maxage=30, stale-while-revalidate=120');
+    }
+
+    res.send(
+      renderPostPreviewPage(
+        { ...post, author },
+        {
+          host,
+          apkUrl,
+          version,
+          isRestricted: !isPublic,
+        }
+      )
+    );
+  } catch (err: any) {
+    console.error('Error rendering post preview:', err);
+    res.status(500).send(renderPostPreviewPage(null, { notFound: true, host, apkUrl, version }));
+  }
 });
 
 // Admin REST APIs
@@ -111,9 +135,33 @@ app.get('/api/feed-config', (req, res) => {
   res.json({ success: true, ...feedConfigState });
 });
 
-// Ẩn hoàn toàn máy chủ tại trang chủ (Giả chết 404 Not Found chuẩn Express)
+// Trang chủ Dorabox Social - Showcase & Download Portal chính thức (Edge Caching 60s)
 app.get('/', (req, res) => {
-  res.status(404).send('Cannot GET /');
+  res.setHeader('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300');
+  res.send(
+    renderLandingPage({
+      latestVersion: '3.0.0',
+      buildNumber: 37,
+      apkUrl: 'https://doraboxcdn.zpiltk.io.vn/apk/Dorabox-v3.0.0.apk',
+      changelog: [
+        '🚀 Nâng cấp Dorabox lên thế hệ 3.0.0 với Package Name com.tinelfi.dorabox.',
+        '🛡️ Bản quyền tải tách biệt: Toàn quyền kiểm soát độc lập lưu ảnh và video.',
+        '🔔 Sửa triệt để lỗi thông báo đẩy FCM trên Android 13/14+.',
+        '⚡ Tối ưu bảng tin Dành cho bạn mượt mà 120 FPS không giật lag.'
+      ]
+    })
+  );
+});
+
+// Điều khoản dịch vụ và Chính sách quyền riêng tư chuẩn mực cho App Store & Play Store
+app.get(['/privacy', '/privacy-policy'], (req, res) => {
+  res.setHeader('Cache-Control', 'public, s-maxage=3600, stale-while-revalidate=86400');
+  res.send(renderPrivacyPolicyPage());
+});
+
+app.get(['/terms', '/terms-of-service'], (req, res) => {
+  res.setHeader('Cache-Control', 'public, s-maxage=3600, stale-while-revalidate=86400');
+  res.send(renderTermsOfServicePage());
 });
 
 // Health check (Edge Caching 15s)
