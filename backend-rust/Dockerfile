@@ -24,7 +24,6 @@ RUN apk add --no-cache ca-certificates tzdata
 WORKDIR /app
 
 COPY --from=builder /app/target/release/backend-rust /app/dorabox-backend
-COPY .env /app/.env
 
 EXPOSE 4000
 

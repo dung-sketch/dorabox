@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: dorabox-backend-rust
+    env: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    plan: free
+    region: singapore
+    autoDeploy: true
+    healthCheckPath: /api/health
+    envVars:
+      - key: PORT
+        value: 10000
