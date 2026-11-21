@@ -1,5 +1,5 @@
 # Multi-stage Docker build for Dorabox Rust Backend
-FROM rust:1.82-bookworm AS builder
+FROM rust:latest AS builder
 
 WORKDIR /app
 
