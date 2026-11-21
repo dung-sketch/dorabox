@@ -136,14 +136,71 @@ app.get('/api/feed-config', (req, res) => {
   res.json({ success: true, ...feedConfigState });
 });
 
-// Trang chủ Dorabox Social - Showcase & Download Portal chính thức (Edge Caching 60s)
-app.get('/', (req, res) => {
-  res.setHeader('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300');
+// Trang chủ Dorabox Social - Showcase & Download Portal chính thức (Edge Caching 30s)
+app.get('/', async (req, res) => {
+  res.setHeader('Cache-Control', 'public, s-maxage=30, stale-while-revalidate=120');
+
+  let realPosts: any[] = [];
+  let oaProfiles: any[] = [];
+
+  try {
+    // 1. Lấy bài viết chính thức từ Dorabox OA và Dorabox Creators OA
+    const { data: postsData } = await supabaseAdmin
+      .from('posts')
+      .select(`
+        id,
+        content,
+        media_urls,
+        likes_count,
+        comments_count,
+        created_at,
+        allow_download_images,
+        allow_download_videos,
+        author:profiles!author_id (
+          id,
+          username,
+          display_name,
+          avatar_url,
+          is_oa
+        )
+      `)
+      .in('author_id', ['f1b9d3fc-6a20-4e56-8de5-7477c0c1a864', 'f56d69ef-e2d0-4bb4-b64b-47c1371f3d28'])
+      .order('created_at', { ascending: false })
+      .limit(6);
+
+    if (postsData && postsData.length > 0) {
+      const doraboxPost = postsData.find((p: any) => p.author?.username === 'dorabox');
+      const creatorPost = postsData.find((p: any) => p.author?.username === 'doraboxcreators');
+
+      if (doraboxPost) realPosts.push(doraboxPost);
+      if (creatorPost) realPosts.push(creatorPost);
+
+      for (const p of postsData) {
+        if (realPosts.length >= 2) break;
+        if (!realPosts.some((x: any) => x.id === p.id)) realPosts.push(p);
+      }
+    }
+
+    // 2. Lấy thông tin hồ sơ OA chính thức
+    const { data: profilesData } = await supabaseAdmin
+      .from('profiles')
+      .select('id, username, display_name, avatar_url, is_oa')
+      .in('username', ['dorabox', 'doraboxcreators']);
+
+    if (profilesData) {
+      oaProfiles = profilesData;
+    }
+  } catch (err: any) {
+    console.error('Error fetching showcase data for landing page:', err);
+  }
+
   res.send(
     renderLandingPage({
       latestVersion: '3.0.0',
       buildNumber: 37,
       apkUrl: 'https://doraboxcdn.zpiltk.io.vn/apk/Dorabox-v3.0.0.apk',
+      realPosts,
+      oaProfiles,
       changelog: [
         'Nâng cấp giao diện người dùng mượt mà, thân thiện.',
         'Tính năng bảo vệ quyền tác giả độc lập cho ảnh và video.',

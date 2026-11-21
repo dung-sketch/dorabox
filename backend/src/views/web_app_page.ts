@@ -247,23 +247,25 @@ export function renderWebAppPage(config: WebAppConfig): string {
   <!-- Main Feed Area -->
   <main class="app-main">
     <!-- D-Notes Scroller -->
-    <div class="d-notes-scroller">
-      <!-- Dorabox Note -->
+    <div id="dNotesContainer" class="d-notes-scroller">
+      <!-- 1. Dorabox Official -->
       <div class="d-note-item">
-        <div class="d-note-bubble">Chào bạn! 🎵</div>
+        <div class="d-note-bubble">Dorabox 3.0 🚀</div>
         <div class="d-note-avatar-box">
           <div class="d-note-avatar-inner">
-            <img src="https://doraboxcdn.zpiltk.io.vn/apk/dorabox_logo.png" style="width:100%; height:100%; object-fit:cover;" alt="Dorabox">
+            <img src="https://doraboxcdn.zpiltk.io.vn/avatars/f1b9d3fc-6a20-4e56-8de5-7477c0c1a864/avatar.png?t=1792690365146" style="width:100%; height:100%; object-fit:cover;" alt="Dorabox" onerror="this.src='https://doraboxcdn.zpiltk.io.vn/apk/dorabox_logo.png'">
           </div>
         </div>
         <span>Dorabox</span>
       </div>
 
-      <!-- Dorabox Creators Note -->
+      <!-- 2. Dorabox Creators Official -->
       <div class="d-note-item">
-        <div class="d-note-bubble">Sáng tạo ✨</div>
+        <div class="d-note-bubble">Creator Tips 💡</div>
         <div class="d-note-avatar-box gold">
-          <div class="d-note-avatar-inner" style="color:#D97706; font-weight:800;">⭐</div>
+          <div class="d-note-avatar-inner">
+            <img src="https://doraboxcdn.zpiltk.io.vn/avatars/f56d69ef-e2d0-4bb4-b64b-47c1371f3d28/avatar_1793992083930.webp" style="width:100%; height:100%; object-fit:cover;" alt="Dorabox Creators" onerror="this.src='https://doraboxcdn.zpiltk.io.vn/apk/dorabox_logo.png'">
+          </div>
         </div>
         <span>Creators</span>
       </div>
@@ -382,7 +384,48 @@ export function renderWebAppPage(config: WebAppConfig): string {
     window.addEventListener('load', async () => {
       await checkAuthSession();
       loadFeedPosts();
+      loadDNotes();
     });
+
+    async function loadDNotes() {
+      const container = document.getElementById('dNotesContainer');
+      if (!container) return;
+      try {
+        const { data: notes } = await supabase
+          .from('user_notes')
+          .select(\`
+            id, content, song_title, song_artist, created_at,
+            profiles!user_id (
+              display_name, username, avatar_url, is_oa
+            )
+          \`)
+          .gt('expires_at', new Date().toISOString())
+          .order('created_at', { ascending: false })
+          .limit(10);
+
+        if (notes && notes.length > 0) {
+          container.innerHTML = notes.map(n => {
+            const p = n.profiles || {};
+            const avatar = p.avatar_url || 'https://doraboxcdn.zpiltk.io.vn/apk/dorabox_logo.png';
+            const name = escapeHtml(p.display_name || p.username || 'Người dùng');
+            const bubble = escapeHtml(n.song_title ? ('🎵 ' + n.song_title) : (n.content || '...'));
+            return \`
+              <div class="d-note-item">
+                <div class="d-note-bubble">\${bubble}</div>
+                <div class="d-note-avatar-box \${p.is_oa ? 'gold' : ''}">
+                  <div class="d-note-avatar-inner">
+                    <img src="\${avatar}" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='https://doraboxcdn.zpiltk.io.vn/apk/dorabox_logo.png'">
+                  </div>
+                </div>
+                <span>\${name}</span>
+              </div>
+            \`;
+          }).join('');
+        }
+      } catch (e) {
+        console.error('Error loading D-Notes:', e);
+      }
+    }
 
     async function checkAuthSession() {
       const { data: { session } } = await supabase.auth.getSession();

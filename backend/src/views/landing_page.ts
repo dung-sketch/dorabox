@@ -10,12 +10,137 @@ export interface LandingPageConfig {
   buildNumber: number;
   apkUrl: string;
   changelog?: string[];
+  realPosts?: any[];
+  oaProfiles?: any[];
+}
+
+function escapeHtml(str: string = ''): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function formatMockTime(dateStr?: string): string {
+  if (!dateStr) return 'Gần đây';
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 60) return `${Math.max(1, mins)} phút trước`;
+  const hours = Math.floor(mins / 60);
+  if (hours < 24) return `${hours} giờ trước`;
+  const days = Math.floor(hours / 24);
+  if (days < 30) return `${days} ngày trước`;
+  const d = new Date(dateStr);
+  return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`;
 }
 
 export function renderLandingPage(config: LandingPageConfig): string {
   const version = config.latestVersion || '3.0.0';
   const apkUrl = config.apkUrl || 'https://doraboxcdn.zpiltk.io.vn/apk/Dorabox-v3.0.0.apk';
   const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(apkUrl)}&color=0066FF&bgcolor=FFFFFF`;
+
+  const doraboxProfile = (config.oaProfiles || []).find((p: any) => p.username === 'dorabox');
+  const creatorsProfile = (config.oaProfiles || []).find((p: any) => p.username === 'doraboxcreators');
+
+  const doraboxAvatar = doraboxProfile?.avatar_url || 'https://doraboxcdn.zpiltk.io.vn/avatars/f1b9d3fc-6a20-4e56-8de5-7477c0c1a864/avatar.png?t=1792690365146';
+  const creatorsAvatar = creatorsProfile?.avatar_url || 'https://doraboxcdn.zpiltk.io.vn/avatars/f56d69ef-e2d0-4bb4-b64b-47c1371f3d28/avatar_1793992083930.webp';
+
+  function renderMockPost(post: any): string {
+    const author = post.author || {};
+    const authorName = escapeHtml(author.display_name || 'Dorabox');
+    const authorUsername = escapeHtml(author.username || 'dorabox');
+    const avatarUrl = author.avatar_url || (authorUsername === 'doraboxcreators' ? creatorsAvatar : doraboxAvatar);
+    const isOA = author.is_oa !== false;
+    const timeAgo = formatMockTime(post.created_at);
+    const rawContent = (post.content || '').trim();
+    const contentPreview = escapeHtml(rawContent.length > 130 ? rawContent.substring(0, 130) + '...' : rawContent);
+    const mediaList = Array.isArray(post.media_urls) ? post.media_urls : [];
+    const imageUrls = mediaList.filter((u: string) => !/\.(mp4|mov|webm)/i.test(u) && !/\.(mp3|m4a|wav)/i.test(u));
+    const videoUrls = mediaList.filter((u: string) => /\.(mp4|mov|webm)/i.test(u));
+
+    let mediaHtml = '';
+    if (videoUrls.length > 0) {
+      mediaHtml = `
+        <div class="mock-post-media">
+          <video src="${videoUrls[0]}" muted loop autoplay playsinline class="mock-post-video"></video>
+          <div class="mock-media-tag">
+            <span>🎬</span>
+            <span>Video bản quyền</span>
+          </div>
+        </div>
+      `;
+    } else if (imageUrls.length > 0) {
+      mediaHtml = `
+        <div class="mock-post-media">
+          <img src="${imageUrls[0]}" alt="${authorName}" class="mock-post-img" loading="lazy">
+          <div class="mock-media-tag">
+            <span>🛡️</span>
+            <span>Bảo vệ quyền tác giả</span>
+          </div>
+        </div>
+      `;
+    }
+
+    return `
+      <a href="/p/${post.id}" target="_blank" class="mock-post-card">
+        <div class="mock-post-author">
+          <div class="mock-avatar ${isOA ? 'gold' : ''}">
+            <img src="${avatarUrl}" style="width:100%; height:100%; object-fit:cover;" alt="${authorName}" onerror="this.src='https://doraboxcdn.zpiltk.io.vn/apk/dorabox_logo.png'">
+          </div>
+          <div style="min-width:0; flex:1;">
+            <div style="display:flex; align-items:center; gap:4px;">
+              <span class="mock-author-name">${authorName}</span>
+              ${isOA ? '<span class="mock-badge-oa">★ OA</span>' : ''}
+            </div>
+            <span class="mock-author-tag">@${authorUsername} • ${timeAgo}</span>
+          </div>
+        </div>
+
+        ${contentPreview ? `<div class="mock-post-text">${contentPreview}</div>` : ''}
+        ${mediaHtml}
+
+        <div class="mock-actions">
+          <span>❤️ ${post.likes_count || 0} thích</span>
+          <span>💬 ${post.comments_count || 0} bình luận</span>
+          <span style="margin-left:auto; color:#0066FF; font-weight:700;">Xem chi tiết →</span>
+        </div>
+      </a>
+    `;
+  }
+
+  const postsHtml = (config.realPosts && config.realPosts.length > 0)
+    ? config.realPosts.slice(0, 2).map(renderMockPost).join('')
+    : `
+      ${renderMockPost({
+        id: '56f5fdaf-6241-469f-a975-314387db03a1',
+        content: 'Phiên bản Dorabox 3.0.0 đã sẵn sàng, chúng tôi đã cập nhật cân bằng tải hiệu xuất vượt trội với tốc độ cực nhanh cùng hiệu xuất cực mượt mà.',
+        likes_count: 0,
+        comments_count: 0,
+        created_at: '2026-11-11T08:47:45.081111+00:00',
+        author: {
+          username: 'dorabox',
+          display_name: 'Dorabox',
+          avatar_url: doraboxAvatar,
+          is_oa: true
+        }
+      })}
+      ${renderMockPost({
+        id: 'be67d217-1177-46fc-89d4-6dcddd1e9606',
+        content: 'CREATOR TIPS | 4:3 – Tỷ lệ khung hình được khuyến nghị trên Dorabox mang đến không gian hiển thị rộng rãi và hài hòa nhất.',
+        media_urls: ['https://doraboxcdn.zpiltk.io.vn/posts/f56d69ef-e2d0-4bb4-b64b-47c1371f3d28/1793993711519-489ea1ba7d46dac9febbb49e77e87f1b.webp'],
+        likes_count: 0,
+        comments_count: 0,
+        created_at: '2026-11-06T19:35:15.621239+00:00',
+        author: {
+          username: 'doraboxcreators',
+          display_name: 'Dorabox Creators',
+          avatar_url: creatorsAvatar,
+          is_oa: true
+        }
+      })}
+    `;
 
   return `<!DOCTYPE html>
 <html lang="vi">
@@ -252,6 +377,11 @@ export function renderLandingPage(config: LandingPageConfig): string {
     .mock-post-card {
       background: #FFFFFF; border-radius: 18px; padding: 13px; border: 1px solid #E2E8F0;
       box-shadow: 0 4px 12px rgba(0,0,0,0.03); margin-bottom: 10px; text-align: left;
+      text-decoration: none; color: inherit; display: block; transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .mock-post-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 18px rgba(0, 102, 255, 0.08);
     }
     .mock-post-author { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
     .mock-avatar { width: 34px; height: 34px; border-radius: 50%; background: #EFF6FF; border: 1px solid #BFDBFE; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; color: #0066FF; overflow:hidden; flex-shrink:0; }
@@ -259,19 +389,21 @@ export function renderLandingPage(config: LandingPageConfig): string {
     .mock-author-name { font-size: 12.5px; font-weight: 800; color: #0F172A; }
     .mock-author-tag { font-size: 10px; color: #94A3B8; }
     .mock-badge-oa { font-size: 9px; font-weight: 700; background: #FFFBEB; color: #D97706; border: 1px solid rgba(217,119,6,0.25); padding: 1px 6px; border-radius: 8px; margin-left: 4px; }
-    .mock-post-text { font-size: 11.5px; color: #334155; margin-bottom: 9px; line-height: 1.5; }
+    .mock-post-text { font-size: 11.5px; color: #334155; margin-bottom: 9px; line-height: 1.5; word-break: break-word; }
     .mock-post-media {
-      width: 100%; height: 125px; border-radius: 12px;
-      background: linear-gradient(135deg, #0066FF 0%, #38BDF8 60%, #FFB800 100%);
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      color: #FFFFFF; margin-bottom: 9px; position: relative; overflow: hidden;
+      width: 100%; height: 135px; border-radius: 12px;
+      position: relative; overflow: hidden; margin-bottom: 9px; background: #0F172A;
+    }
+    .mock-post-img, .mock-post-video {
+      width: 100%; height: 100%; object-fit: cover; display: block;
     }
     .mock-media-tag {
-      background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(8px);
-      padding: 4px 10px; border-radius: 10px; font-size: 9.5px; font-weight: 600;
-      display: flex; align-items: center; gap: 5px; color: #FFFFFF;
+      position: absolute; bottom: 8px; left: 8px;
+      background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(8px);
+      padding: 3px 8px; border-radius: 8px; font-size: 9px; font-weight: 600;
+      display: flex; align-items: center; gap: 4px; color: #FFFFFF;
     }
-    .mock-actions { display: flex; gap: 14px; font-size: 10.5px; color: #64748B; font-weight: 600; }
+    .mock-actions { display: flex; align-items: center; gap: 14px; font-size: 10.5px; color: #64748B; font-weight: 600; }
 
     /* Features Section */
     .section-features {
@@ -458,10 +590,10 @@ export function renderLandingPage(config: LandingPageConfig): string {
               <div class="d-notes-preview">
                 <!-- 1. Dorabox -->
                 <div class="note-avatar-item">
-                  <div class="note-bubble">Chào bạn mới! 🎵</div>
+                  <div class="note-bubble">Dorabox 3.0 🚀</div>
                   <div class="note-avatar-box">
                     <div class="note-avatar-inner">
-                      <img src="https://doraboxcdn.zpiltk.io.vn/apk/dorabox_logo.png" style="width:100%; height:100%; object-fit:cover;" alt="Dorabox">
+                      <img src="${doraboxAvatar}" style="width:100%; height:100%; object-fit:cover;" alt="Dorabox" onerror="this.src='https://doraboxcdn.zpiltk.io.vn/apk/dorabox_logo.png'">
                     </div>
                   </div>
                   <span>Dorabox</span>
@@ -469,66 +601,19 @@ export function renderLandingPage(config: LandingPageConfig): string {
 
                 <!-- 2. Dorabox Creators -->
                 <div class="note-avatar-item">
-                  <div class="note-bubble">Sáng tạo diệu kỳ ✨</div>
+                  <div class="note-bubble">Creator Tips 💡</div>
                   <div class="note-avatar-box gold">
-                    <div class="note-avatar-inner gold">⭐</div>
+                    <div class="note-avatar-inner gold">
+                      <img src="${creatorsAvatar}" style="width:100%; height:100%; object-fit:cover;" alt="Dorabox Creators" onerror="this.src='https://doraboxcdn.zpiltk.io.vn/apk/dorabox_logo.png'">
+                    </div>
                   </div>
-                  <span>Dorabox Creators</span>
+                  <span>Creators</span>
                 </div>
               </div>
 
-              <!-- Feed Card 1: Dorabox Chính Thức -->
-              <div class="mock-post-card">
-                <div class="mock-post-author">
-                  <div class="mock-avatar">
-                    <img src="https://doraboxcdn.zpiltk.io.vn/apk/dorabox_logo.png" style="width:100%; height:100%; object-fit:cover;" alt="Dorabox">
-                  </div>
-                  <div>
-                    <div style="display:flex; align-items:center;">
-                      <span class="mock-author-name">Dorabox</span>
-                      <span class="mock-badge-oa">★ OA</span>
-                    </div>
-                    <span class="mock-author-tag">@dorabox • Vừa xong</span>
-                  </div>
-                </div>
-
-                <div class="mock-post-text">
-                  Chào mừng bạn đến với Dorabox! Kết nối diệu kỳ, sẻ chia niềm vui và bảo vệ quyền tác giả độc quyền cho ảnh & video ✨
-                </div>
-
-                <div class="mock-post-media">
-                  <div class="mock-media-tag">
-                    <span>🛡️</span>
-                    <span>Bảo vệ quyền tác giả</span>
-                  </div>
-                </div>
-
-                <div class="mock-actions">
-                  <span>❤️ 1.2k thích</span>
-                  <span>💬 186 bình luận</span>
-                  <span>↗️ Chia sẻ</span>
-                </div>
-              </div>
-
-              <!-- Feed Card 2: Dorabox Creators -->
-              <div class="mock-post-card" style="opacity:0.9; margin-bottom:0;">
-                <div class="mock-post-author">
-                  <div class="mock-avatar gold">⭐</div>
-                  <div>
-                    <div style="display:flex; align-items:center;">
-                      <span class="mock-author-name">Dorabox Creators</span>
-                      <span class="mock-badge-oa">★ OA</span>
-                    </div>
-                    <span class="mock-author-tag">@creators • 1 giờ trước</span>
-                  </div>
-                </div>
-                <div class="mock-post-text" style="margin-bottom:6px;">
-                  Khám phá những giai điệu D-Notes được yêu thích nhất tuần này! 🎧
-                </div>
-                <div class="mock-actions">
-                  <span>❤️ 840 thích</span>
-                  <span>💬 92 bình luận</span>
-                </div>
+              <!-- Real Live Posts Showcase -->
+              <div class="mock-posts-container">
+                ${postsHtml}
               </div>
             </div>
           </div>
