@@ -1,20 +1,13 @@
-# Multi-stage Docker build for Dorabox Rust Backend (Debian Slim)
-FROM rust:1.82-slim AS builder
-
-# Install required build tools for OpenSSL
-RUN apt-get update && apt-get install -y \
-    pkg-config \
-    libssl-dev \
-    ca-certificates \
-    && rm -rf /var/lib/apt/lists/*
+# Multi-stage Docker build for Dorabox Rust Backend
+FROM rust:1.82-bookworm AS builder
 
 WORKDIR /app
 
-# Copy all project files directly
-COPY Cargo.toml Cargo.lock ./
+# Copy project configuration and sources
+COPY Cargo.toml Cargo.lock* ./
 COPY src ./src
 
-# Build release binary
+# Build production binary using full Rust toolchain
 RUN cargo build --release
 
 # Final minimal runtime image (~35MB)
@@ -22,6 +15,7 @@ FROM debian:bookworm-slim
 
 RUN apt-get update && apt-get install -y \
     ca-certificates \
+    libssl3 \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
