@@ -682,6 +682,10 @@ export function renderWebAppPage(config: WebAppConfig): string {
       </div>
 
       <form id="authForm" onsubmit="handleAuthSubmit(event)">
+        <div style="font-size:12.5px; color:var(--text-sub); margin-bottom:14px; background:#F1F5F9; padding:8px 12px; border-radius:10px;">
+          💡 <strong>Mẹo:</strong> Bạn có thể đăng nhập bằng Email hoặc @username (ví dụ: <code>@nmd</code>) cùng mật khẩu đã đăng ký trên ứng dụng.
+        </div>
+
         <div id="signupFields" style="display:none;">
           <div class="form-group">
             <label class="form-label">Tên hiển thị</label>
@@ -731,6 +735,14 @@ export function renderWebAppPage(config: WebAppConfig): string {
         </div>
         <button type="submit" id="btnSaveProfile" class="btn-submit">Lưu thay đổi</button>
       </form>
+    </div>
+  </div>
+
+  <!-- Modal Phóng to xem ảnh (Lightbox) -->
+  <div id="imageLightboxModal" class="modal-backdrop" onclick="closeImageLightbox(event)" style="background:rgba(0,0,0,0.92); z-index:300;">
+    <div style="position:relative; max-width:92vw; max-height:92vh; display:flex; align-items:center; justify-content:center;">
+      <button onclick="closeImageLightboxDirect()" style="position:absolute; top:-40px; right:0; background:none; border:none; color:#fff; font-size:32px; cursor:pointer;">✕</button>
+      <img id="lightboxImg" src="" style="max-width:100%; max-height:86vh; border-radius:12px; object-fit:contain; box-shadow:0 10px 40px rgba(0,0,0,0.5);">
     </div>
   </div>
 
@@ -869,7 +881,7 @@ export function renderWebAppPage(config: WebAppConfig): string {
           </div>
         \` : (imageUrls.length > 0 ? \`
           <div class="post-media-box">
-            <img src="\${imageUrls[0]}" class="post-img" \${post.allow_download_images === false ? 'oncontextmenu="return false;" draggable="false"' : ''}>
+            <img src="\${imageUrls[0]}" class="post-img" onclick="openImageLightbox('\${imageUrls[0]}')" \${post.allow_download_images === false ? 'oncontextmenu="return false;" draggable="false"' : ''}>
           </div>
         \` : '')}
 
@@ -891,6 +903,10 @@ export function renderWebAppPage(config: WebAppConfig): string {
               <svg viewBox="0 0 24 24"><path d="M21.99 4c0-1.1-.89-2-1.99-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4-.01-18zM18 14H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/></svg>
               <span>\${post.comments_count || 0}</span>
             </button>
+
+            <a href="/p/\${post.id}" target="_blank" class="btn-action" style="text-decoration:none;">
+              <span>🔗 Mở trang</span>
+            </a>
           </div>
 
           <button class="btn-action" onclick="sharePostLink('\${post.id}')">
@@ -1229,7 +1245,7 @@ export function renderWebAppPage(config: WebAppConfig): string {
 
       const { data: comments } = await supabase
         .from('comments')
-        .select('id, content, created_at, profiles(display_name, avatar_url)')
+        .select('id, content, created_at, profiles!user_id(display_name, avatar_url)')
         .eq('post_id', postId)
         .order('created_at', { ascending: true });
 
@@ -1279,6 +1295,20 @@ export function renderWebAppPage(config: WebAppConfig): string {
       }
     }
 
+    // Phóng to ảnh (Lightbox)
+    function openImageLightbox(url) {
+      if (!url) return;
+      document.getElementById('lightboxImg').src = url;
+      document.getElementById('imageLightboxModal').style.display = 'flex';
+    }
+    function closeImageLightboxDirect() {
+      document.getElementById('imageLightboxModal').style.display = 'none';
+      document.getElementById('lightboxImg').src = '';
+    }
+    function closeImageLightbox(e) {
+      if (e.target.id === 'imageLightboxModal') closeImageLightboxDirect();
+    }
+
     // 9. Xác thực Đăng nhập / Đăng ký
     async function handleAuthSubmit(e) {
       e.preventDefault();
@@ -1292,7 +1322,14 @@ export function renderWebAppPage(config: WebAppConfig): string {
       try {
         if (isSignUpMode) {
           const displayName = document.getElementById('authDisplayName').value.trim();
-          const username = document.getElementById('authUsername').value.trim().toLowerCase();
+          const username = document.getElementById('authUsername').value.trim().toLowerCase().replace(/^@/, '');
+
+          if (!identifier.includes('@') || !identifier.includes('.')) {
+            alert('Vui lòng nhập địa chỉ email hợp lệ (ví dụ: name@example.com) để đăng ký tài khoản!');
+            btn.disabled = false;
+            btn.innerText = 'Đăng ký ngay';
+            return;
+          }
 
           const { data, error } = await supabase.auth.signUp({
             email: identifier,
@@ -1308,17 +1345,53 @@ export function renderWebAppPage(config: WebAppConfig): string {
           alert('Đăng ký tài khoản thành công! Bạn có thể đăng nhập ngay bây giờ.');
           toggleAuthMode();
         } else {
-          let emailToLogin = identifier;
-          if (!identifier.includes('@')) {
-            const { data: resolved } = await supabase.rpc('get_email_by_username', { p_username: identifier });
-            if (resolved) emailToLogin = resolved;
+          let emailToLogin = identifier.trim();
+          const isEmail = emailToLogin.includes('@') && emailToLogin.includes('.') && !emailToLogin.startsWith('@');
+
+          if (!isEmail) {
+            const cleanUser = emailToLogin.replace(/^@/, '').trim().toLowerCase();
+            // 1. Thử RPC get_email_by_username
+            try {
+              const { data: resolved } = await supabase.rpc('get_email_by_username', { p_username: cleanUser });
+              if (resolved && typeof resolved === 'string' && resolved.includes('@')) {
+                emailToLogin = resolved.trim();
+              }
+            } catch (_) {}
+
+            // 2. Dự phòng gọi backend endpoint /api/auth/resolve-username
+            if (!emailToLogin.includes('@') || emailToLogin.startsWith('@')) {
+              try {
+                const res = await fetch('/api/auth/resolve-username', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ username: cleanUser })
+                });
+                const resData = await res.json();
+                if (resData.success && resData.email) {
+                  emailToLogin = resData.email.trim();
+                } else if (resData.error) {
+                  throw new Error(resData.error);
+                }
+              } catch (resErr) {
+                if (resErr && resErr.message) throw resErr;
+              }
+            }
+          }
+
+          if (!emailToLogin.includes('@') || emailToLogin.startsWith('@')) {
+            throw new Error('Tên người dùng không tồn tại hoặc chưa liên kết email!');
           }
 
           const { data, error } = await supabase.auth.signInWithPassword({
             email: emailToLogin,
             password: password
           });
-          if (error) throw error;
+          if (error) {
+            if (error.message.includes('Invalid login credentials')) {
+              throw new Error('Mật khẩu không chính xác hoặc tài khoản không tồn tại!');
+            }
+            throw error;
+          }
           currentUser = data.user;
           await loadMyProfile(currentUser.id);
           updateAuthUI(true);
