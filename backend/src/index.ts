@@ -9,6 +9,7 @@ import { renderArtPlayerPage } from './views/artplayer_page.js';
 import { renderLandingPage } from './views/landing_page.js';
 import { renderPostPreviewPage } from './views/post_preview_page.js';
 import { renderPrivacyPolicyPage, renderTermsOfServicePage } from './views/legal_pages.js';
+import { renderWebAppPage } from './views/web_app_page.js';
 import { sendFcmHttpV1Message } from './services/firebase.service.js';
 import pkgAgora from 'agora-token';
 const { RtcTokenBuilder, RtcRole } = pkgAgora;
@@ -164,6 +165,23 @@ app.get(['/terms', '/terms-of-service'], (req, res) => {
   res.send(renderTermsOfServicePage());
 });
 
+// Giao diện Web App Dorabox Client (/app hoặc /feed)
+app.get(['/app', '/feed'], (req, res) => {
+  const supabaseUrl = process.env.SUPABASE_URL || 'https://vcmsmyaupsksbjusnzoy.supabase.co';
+  const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZjbXNteWF1cHNrc2JqdXNuem95Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIwNTI5NzEsImV4cCI6MjEwNzYyODk3MX0.zqtVl4Ke59u41gX8fPifJp7AJBqIlGt5-2huSP53xcA';
+  const apkUrl = 'https://doraboxcdn.zpiltk.io.vn/apk/Dorabox-v3.0.0.apk';
+  const version = '3.0.0';
+
+  res.send(
+    renderWebAppPage({
+      supabaseUrl,
+      supabaseAnonKey,
+      apkUrl,
+      version,
+    })
+  );
+});
+
 // SEO Sitemap.xml tự động cập nhật bài viết công khai mới nhất (Edge Caching 1 giờ)
 app.get('/sitemap.xml', async (req, res) => {
   res.setHeader('Content-Type', 'application/xml');
@@ -243,8 +261,8 @@ app.get(['/manifest.json', '/site.webmanifest'], (req, res) => {
     name: 'Dorabox Social',
     short_name: 'Dorabox',
     description: 'Mạng xã hội kết nối diệu kỳ, sẻ chia niềm vui!',
-    start_url: '/',
-    id: '/',
+    start_url: '/app',
+    id: '/app',
     display: 'standalone',
     orientation: 'portrait',
     background_color: '#FFFFFF',
