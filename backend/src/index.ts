@@ -80,7 +80,7 @@ app.get(['/p/:id', '/post/:id'], async (req, res) => {
         allow_download_images,
         allow_download_videos,
         created_at,
-        author:profiles (
+        author:profiles!author_id (
           id,
           username,
           display_name,
