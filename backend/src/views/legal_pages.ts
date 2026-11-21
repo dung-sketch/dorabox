@@ -11,7 +11,7 @@ export function renderPrivacyPolicyPage(): string {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Chính sách Quyền riêng tư - Dorabox</title>
-  <link rel="icon" href="https://doraboxcdn.zpiltk.io.vn/apk/dorabox_logo.png">
+  <link rel="icon" href="https://doraboxcdn.zpiltk.io.vn/avatars/f1b9d3fc-6a20-4e56-8de5-7477c0c1a864/avatar.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Quicksand:wght@600;700;800&display=swap" rel="stylesheet">
@@ -44,7 +44,7 @@ export function renderPrivacyPolicyPage(): string {
 <body>
   <div class="container">
     <div class="header">
-      <img src="https://doraboxcdn.zpiltk.io.vn/apk/dorabox_logo.png" alt="Dorabox" class="logo-img">
+      <img src="https://doraboxcdn.zpiltk.io.vn/avatars/f1b9d3fc-6a20-4e56-8de5-7477c0c1a864/avatar.png" alt="Dorabox" class="logo-img">
       <h1>Chính sách Quyền riêng tư</h1>
       <div class="date">Cập nhật: Tháng 11/2026 • Áp dụng cho nền tảng Dorabox</div>
     </div>
@@ -87,7 +87,7 @@ export function renderTermsOfServicePage(): string {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Điều khoản Dịch vụ - Dorabox</title>
-  <link rel="icon" href="https://doraboxcdn.zpiltk.io.vn/apk/dorabox_logo.png">
+  <link rel="icon" href="https://doraboxcdn.zpiltk.io.vn/avatars/f1b9d3fc-6a20-4e56-8de5-7477c0c1a864/avatar.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Quicksand:wght@600;700;800&display=swap" rel="stylesheet">
@@ -119,7 +119,7 @@ export function renderTermsOfServicePage(): string {
 <body>
   <div class="container">
     <div class="header">
-      <img src="https://doraboxcdn.zpiltk.io.vn/apk/dorabox_logo.png" alt="Dorabox" class="logo-img">
+      <img src="https://doraboxcdn.zpiltk.io.vn/avatars/f1b9d3fc-6a20-4e56-8de5-7477c0c1a864/avatar.png" alt="Dorabox" class="logo-img">
       <h1>Điều khoản Dịch vụ</h1>
       <div class="date">Cập nhật: Tháng 11/2026 • Áp dụng cho nền tảng Dorabox</div>
     </div>

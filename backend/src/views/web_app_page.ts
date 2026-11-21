@@ -36,8 +36,8 @@ export function renderWebAppPage(config: WebAppConfig): string {
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Dorabox">
-  <link rel="apple-touch-icon" href="https://doraboxcdn.zpiltk.io.vn/apk/dorabox_logo.png">
-  <link rel="icon" href="https://doraboxcdn.zpiltk.io.vn/apk/dorabox_logo.png">
+  <link rel="apple-touch-icon" href="https://doraboxcdn.zpiltk.io.vn/avatars/f1b9d3fc-6a20-4e56-8de5-7477c0c1a864/avatar.png">
+  <link rel="icon" href="https://doraboxcdn.zpiltk.io.vn/avatars/f1b9d3fc-6a20-4e56-8de5-7477c0c1a864/avatar.png">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -373,7 +373,7 @@ export function renderWebAppPage(config: WebAppConfig): string {
     <aside class="sidebar-left">
       <div>
         <a href="/" class="brand-link">
-          <img src="https://doraboxcdn.zpiltk.io.vn/apk/dorabox_logo.png" alt="Dorabox" class="brand-logo">
+          <img src="https://doraboxcdn.zpiltk.io.vn/avatars/f1b9d3fc-6a20-4e56-8de5-7477c0c1a864/avatar.png" alt="Dorabox" class="brand-logo">
           <span class="brand-title">Dorabox<span>.</span></span>
         </a>
 
@@ -404,7 +404,7 @@ export function renderWebAppPage(config: WebAppConfig): string {
       <!-- User Auth State Pill -->
       <div id="desktopUserPill" style="display:none;" class="user-pill-bottom">
         <div class="user-pill-info" onclick="switchTab('profile')">
-          <img id="pillAvatar" src="https://doraboxcdn.zpiltk.io.vn/apk/dorabox_logo.png" class="user-pill-avatar" alt="User">
+          <img id="pillAvatar" src="https://doraboxcdn.zpiltk.io.vn/avatars/f1b9d3fc-6a20-4e56-8de5-7477c0c1a864/avatar.png" class="user-pill-avatar" alt="User">
           <div style="min-width:0;">
             <div id="pillName" class="user-pill-name">Người dùng</div>
             <div id="pillUsername" class="user-pill-tag">@user</div>
@@ -425,7 +425,7 @@ export function renderWebAppPage(config: WebAppConfig): string {
       <!-- Top Sticky Bar -->
       <div class="top-bar-sticky">
         <a href="/" class="mobile-logo-header">
-          <img src="https://doraboxcdn.zpiltk.io.vn/apk/dorabox_logo.png" alt="Dorabox" class="mobile-logo-img">
+          <img src="https://doraboxcdn.zpiltk.io.vn/avatars/f1b9d3fc-6a20-4e56-8de5-7477c0c1a864/avatar.png" alt="Dorabox" class="mobile-logo-img">
           <span style="font-weight:800; font-size:17px; color:var(--primary);">Dorabox</span>
         </a>
         <span id="topBarTitle" class="top-bar-title">Bảng tin</span>
@@ -461,7 +461,7 @@ export function renderWebAppPage(config: WebAppConfig): string {
 
         <!-- Quick Post Trigger -->
         <div class="quick-post-box" onclick="openCreatePostModal()">
-          <img id="quickPostAvatar" src="https://doraboxcdn.zpiltk.io.vn/apk/dorabox_logo.png" class="quick-post-avatar" alt="Avatar">
+          <img id="quickPostAvatar" src="https://doraboxcdn.zpiltk.io.vn/avatars/f1b9d3fc-6a20-4e56-8de5-7477c0c1a864/avatar.png" class="quick-post-avatar" alt="Avatar">
           <div class="quick-post-trigger">Bạn đang nghĩ gì hôm nay? Bấm để chia sẻ...</div>
         </div>
 
@@ -527,7 +527,7 @@ export function renderWebAppPage(config: WebAppConfig): string {
         <div class="profile-cover"></div>
         <div class="profile-details">
           <div class="profile-avatar-wrap">
-            <img id="profileAvatarImg" src="https://doraboxcdn.zpiltk.io.vn/apk/dorabox_logo.png" class="profile-avatar-img" alt="Avatar">
+            <img id="profileAvatarImg" src="https://doraboxcdn.zpiltk.io.vn/avatars/f1b9d3fc-6a20-4e56-8de5-7477c0c1a864/avatar.png" class="profile-avatar-img" alt="Avatar">
           </div>
           <div class="profile-name-row">
             <div>
@@ -699,12 +699,12 @@ export function renderWebAppPage(config: WebAppConfig): string {
 
         <div class="form-group">
           <label class="form-label">Email hoặc @username</label>
-          <input type="text" id="authIdentifier" class="form-input" placeholder="name@example.com hoặc username" required>
+          <input type="text" id="authIdentifier" class="form-input" placeholder="name@example.com hoặc username" autocomplete="username" required>
         </div>
 
         <div class="form-group">
           <label class="form-label">Mật khẩu</label>
-          <input type="password" id="authPassword" class="form-input" placeholder="••••••••" required>
+          <input type="password" id="authPassword" class="form-input" placeholder="••••••••" autocomplete="current-password" required>
         </div>
 
         <button type="submit" id="btnAuthSubmit" class="btn-submit">Đăng nhập</button>
@@ -749,7 +749,8 @@ export function renderWebAppPage(config: WebAppConfig): string {
   <script>
     const SUPABASE_URL = '${supabaseUrl}';
     const SUPABASE_ANON_KEY = '${supabaseAnonKey}';
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    window.sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const sb = window.sb;
 
     let currentUser = null;
     let currentUserProfile = null;
@@ -794,7 +795,7 @@ export function renderWebAppPage(config: WebAppConfig): string {
 
     // 1. Quản lý Phiên xác thực (Auth Session)
     async function checkAuthSession() {
-      const { data: { session } } = await supabase.auth.getSession();
+      const { data: { session } } = await sb.auth.getSession();
       if (session && session.user) {
         currentUser = session.user;
         await loadMyProfile(currentUser.id);
@@ -805,10 +806,10 @@ export function renderWebAppPage(config: WebAppConfig): string {
     }
 
     async function loadMyProfile(userId) {
-      const { data } = await supabase.from('profiles').select('*').eq('id', userId).maybeSingle();
+      const { data } = await sb.from('profiles').select('*').eq('id', userId).maybeSingle();
       if (data) {
         currentUserProfile = data;
-        const avatar = data.avatar_url || 'https://doraboxcdn.zpiltk.io.vn/apk/dorabox_logo.png';
+        const avatar = data.avatar_url || 'https://doraboxcdn.zpiltk.io.vn/avatars/f1b9d3fc-6a20-4e56-8de5-7477c0c1a864/avatar.png';
         document.getElementById('pillAvatar').src = avatar;
         document.getElementById('pillName').innerText = data.display_name || 'Người dùng';
         document.getElementById('pillUsername').innerText = '@' + (data.username || 'user');
@@ -828,7 +829,7 @@ export function renderWebAppPage(config: WebAppConfig): string {
       container.innerHTML = '<div style="text-align:center; padding:30px; color:var(--text-muted);">Đang tải bảng tin...</div>';
 
       try {
-        const { data: posts, error } = await supabase
+        const { data: posts, error } = await sb
           .from('posts')
           .select(\`
             id, content, media_urls, likes_count, comments_count,
@@ -854,7 +855,7 @@ export function renderWebAppPage(config: WebAppConfig): string {
       const author = post.author || {};
       const authorName = escapeHtml(author.display_name || 'Người dùng Dorabox');
       const authorUsername = escapeHtml(author.username || 'user');
-      const avatarUrl = author.avatar_url || 'https://doraboxcdn.zpiltk.io.vn/apk/dorabox_logo.png';
+      const avatarUrl = author.avatar_url || 'https://doraboxcdn.zpiltk.io.vn/avatars/f1b9d3fc-6a20-4e56-8de5-7477c0c1a864/avatar.png';
       const isOA = author.is_oa === true;
       const mediaList = Array.isArray(post.media_urls) ? post.media_urls : [];
       const imageUrls = mediaList.filter(u => !/\\.(mp4|mov|webm)/i.test(u) && !/\\.(mp3|m4a|wav)/i.test(u));
@@ -863,7 +864,7 @@ export function renderWebAppPage(config: WebAppConfig): string {
       return \`
       <article class="post-card" id="post-\${post.id}">
         <div class="post-header">
-          <img src="\${avatarUrl}" class="author-avatar" onclick="viewUserProfile('\${author.id}')" onerror="this.src='https://doraboxcdn.zpiltk.io.vn/apk/dorabox_logo.png'">
+          <img src="\${avatarUrl}" class="author-avatar" onclick="viewUserProfile('\${author.id}')" onerror="this.src='https://doraboxcdn.zpiltk.io.vn/avatars/f1b9d3fc-6a20-4e56-8de5-7477c0c1a864/avatar.png'">
           <div class="author-meta">
             <div class="author-name-row">
               <span class="author-name" onclick="viewUserProfile('\${author.id}')">\${authorName}</span>
@@ -922,7 +923,7 @@ export function renderWebAppPage(config: WebAppConfig): string {
       const container = document.getElementById('dNotesContainer');
       if (!container) return;
       try {
-        const { data: notes } = await supabase
+        const { data: notes } = await sb
           .from('user_notes')
           .select(\`id, content, mood_emoji, audio_url, audio_title, created_at, profiles!user_id(display_name, username, avatar_url, is_oa)\`)
           .gt('expires_at', new Date().toISOString())
@@ -932,7 +933,7 @@ export function renderWebAppPage(config: WebAppConfig): string {
         if (notes && notes.length > 0) {
           container.innerHTML = notes.map(n => {
             const p = n.profiles || {};
-            const avatar = p.avatar_url || 'https://doraboxcdn.zpiltk.io.vn/apk/dorabox_logo.png';
+            const avatar = p.avatar_url || 'https://doraboxcdn.zpiltk.io.vn/avatars/f1b9d3fc-6a20-4e56-8de5-7477c0c1a864/avatar.png';
             const name = escapeHtml(p.display_name || p.username || 'Người dùng');
             const bubble = escapeHtml(n.audio_title ? ('🎵 ' + n.audio_title) : (n.content || (n.mood_emoji || '...')));
             return \`
@@ -940,7 +941,7 @@ export function renderWebAppPage(config: WebAppConfig): string {
                 <div class="d-note-bubble">\${bubble}</div>
                 <div class="d-note-avatar-box \${p.is_oa ? 'gold' : ''}">
                   <div class="d-note-avatar-inner">
-                    <img src="\${avatar}" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='https://doraboxcdn.zpiltk.io.vn/apk/dorabox_logo.png'">
+                    <img src="\${avatar}" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='https://doraboxcdn.zpiltk.io.vn/avatars/f1b9d3fc-6a20-4e56-8de5-7477c0c1a864/avatar.png'">
                   </div>
                 </div>
                 <span>\${name}</span>
@@ -955,7 +956,7 @@ export function renderWebAppPage(config: WebAppConfig): string {
 
     // 4. Khám phá (Explore) & Tìm kiếm
     async function loadExploreOAs() {
-      const { data: oas } = await supabase
+      const { data: oas } = await sb
         .from('profiles')
         .select('id, username, display_name, avatar_url, is_oa')
         .in('username', ['dorabox', 'doraboxcreators', 'wangliu']);
@@ -965,7 +966,7 @@ export function renderWebAppPage(config: WebAppConfig): string {
         container.innerHTML = oas.map(oa => \`
           <div class="oa-suggest-item">
             <div class="oa-suggest-left" onclick="viewUserProfile('\${oa.id}')">
-              <img src="\${oa.avatar_url || 'https://doraboxcdn.zpiltk.io.vn/apk/dorabox_logo.png'}" class="oa-avatar-sm">
+              <img src="\${oa.avatar_url || 'https://doraboxcdn.zpiltk.io.vn/avatars/f1b9d3fc-6a20-4e56-8de5-7477c0c1a864/avatar.png'}" class="oa-avatar-sm">
               <div>
                 <div style="font-size:13.5px; font-weight:800;">\${escapeHtml(oa.display_name)} <span class="badge-oa">★ OA</span></div>
                 <div style="font-size:11.5px; color:var(--text-muted);">@\${escapeHtml(oa.username)}</div>
@@ -990,13 +991,13 @@ export function renderWebAppPage(config: WebAppConfig): string {
       }
       container.innerHTML = '<div style="text-align:center; padding:20px; color:var(--text-muted);">Đang tìm kiếm...</div>';
 
-      const { data: users } = await supabase
+      const { data: users } = await sb
         .from('profiles')
         .select('id, username, display_name, avatar_url, is_oa')
         .or(\`display_name.ilike.%\${query}%,username.ilike.%\${query}%\`)
         .limit(6);
 
-      const { data: posts } = await supabase
+      const { data: posts } = await sb
         .from('posts')
         .select('id, content, media_urls, created_at, author:profiles!author_id(display_name, username, avatar_url)')
         .ilike('content', \`%\${query}%\`)
@@ -1008,7 +1009,7 @@ export function renderWebAppPage(config: WebAppConfig): string {
         html += users.map(u => \`
           <div class="oa-suggest-item" onclick="viewUserProfile('\${u.id}')" style="cursor:pointer;">
             <div class="oa-suggest-left">
-              <img src="\${u.avatar_url || 'https://doraboxcdn.zpiltk.io.vn/apk/dorabox_logo.png'}" class="oa-avatar-sm">
+              <img src="\${u.avatar_url || 'https://doraboxcdn.zpiltk.io.vn/avatars/f1b9d3fc-6a20-4e56-8de5-7477c0c1a864/avatar.png'}" class="oa-avatar-sm">
               <div>
                 <div style="font-size:13.5px; font-weight:800;">\${escapeHtml(u.display_name)} \${u.is_oa ? '<span class=\"badge-oa\">★ OA</span>' : ''}</div>
                 <div style="font-size:11.5px; color:var(--text-muted);">@\${escapeHtml(u.username)}</div>
@@ -1042,16 +1043,16 @@ export function renderWebAppPage(config: WebAppConfig): string {
         return;
       }
 
-      const { data: profile } = await supabase.from('profiles').select('*').eq('id', userId).maybeSingle();
+      const { data: profile } = await sb.from('profiles').select('*').eq('id', userId).maybeSingle();
       if (profile) {
-        document.getElementById('profileAvatarImg').src = profile.avatar_url || 'https://doraboxcdn.zpiltk.io.vn/apk/dorabox_logo.png';
+        document.getElementById('profileAvatarImg').src = profile.avatar_url || 'https://doraboxcdn.zpiltk.io.vn/avatars/f1b9d3fc-6a20-4e56-8de5-7477c0c1a864/avatar.png';
         document.getElementById('profileDisplayName').innerText = profile.display_name || 'Người dùng';
         document.getElementById('profileUsernameTag').innerText = '@' + (profile.username || 'user');
         document.getElementById('profileOaBadge').style.display = profile.is_oa ? 'inline-block' : 'none';
         document.getElementById('profileBioText').innerText = profile.bio || 'Chào mừng bạn đến với trang cá nhân Dorabox!';
 
         // Tải bài viết của người đó
-        const { data: userPosts } = await supabase
+        const { data: userPosts } = await sb
           .from('posts')
           .select('id, content, media_urls, likes_count, comments_count, created_at, allow_download_images, allow_download_videos')
           .eq('author_id', userId)
@@ -1074,14 +1075,14 @@ export function renderWebAppPage(config: WebAppConfig): string {
     }
 
     async function viewUserProfileByUsername(username) {
-      const { data } = await supabase.from('profiles').select('id').eq('username', username).maybeSingle();
+      const { data } = await sb.from('profiles').select('id').eq('username', username).maybeSingle();
       if (data) viewUserProfile(data.id);
     }
 
     // 6. Tin nhắn thời gian thực (Chat 1-1)
     async function loadConversationsList() {
       const list = document.getElementById('chatConversationsList');
-      const { data: oas } = await supabase
+      const { data: oas } = await sb
         .from('profiles')
         .select('id, display_name, username, avatar_url, is_oa')
         .in('username', ['dorabox', 'doraboxcreators']);
@@ -1104,7 +1105,7 @@ export function renderWebAppPage(config: WebAppConfig): string {
       activeChatPeer = { id: peerId, name: peerName, avatar: peerAvatar };
       document.getElementById('chatRoomEmpty').style.display = 'none';
       document.getElementById('chatRoomActive').style.display = 'flex';
-      document.getElementById('chatPeerAvatar').src = peerAvatar || 'https://doraboxcdn.zpiltk.io.vn/apk/dorabox_logo.png';
+      document.getElementById('chatPeerAvatar').src = peerAvatar || 'https://doraboxcdn.zpiltk.io.vn/avatars/f1b9d3fc-6a20-4e56-8de5-7477c0c1a864/avatar.png';
       document.getElementById('chatPeerName').innerText = peerName;
 
       // Mock live messages history
@@ -1199,7 +1200,7 @@ export function renderWebAppPage(config: WebAppConfig): string {
           }
         }
 
-        await supabase.from('posts').insert({
+        await sb.from('posts').insert({
           author_id: currentUser.id,
           content: content,
           media_urls: mediaUrls,
@@ -1229,7 +1230,7 @@ export function renderWebAppPage(config: WebAppConfig): string {
       countSpan.innerText = count + 1;
 
       try {
-        await supabase.from('post_reactions').insert({
+        await sb.from('post_reactions').insert({
           post_id: postId,
           user_id: currentUser.id,
           reaction_type: 'like'
@@ -1243,7 +1244,7 @@ export function renderWebAppPage(config: WebAppConfig): string {
       const container = document.getElementById('commentsListContainer');
       container.innerHTML = '<div style="text-align:center; padding:10px; color:var(--text-muted);">Đang tải bình luận...</div>';
 
-      const { data: comments } = await supabase
+      const { data: comments } = await sb
         .from('comments')
         .select('id, content, created_at, profiles!user_id(display_name, avatar_url)')
         .eq('post_id', postId)
@@ -1256,7 +1257,7 @@ export function renderWebAppPage(config: WebAppConfig): string {
 
       container.innerHTML = comments.map(c => \`
         <div style="display:flex; gap:10px; align-items:flex-start; padding:6px 0;">
-          <img src="\${c.profiles?.avatar_url || 'https://doraboxcdn.zpiltk.io.vn/apk/dorabox_logo.png'}" style="width:32px; height:32px; border-radius:50%; object-fit:cover;">
+          <img src="\${c.profiles?.avatar_url || 'https://doraboxcdn.zpiltk.io.vn/avatars/f1b9d3fc-6a20-4e56-8de5-7477c0c1a864/avatar.png'}" style="width:32px; height:32px; border-radius:50%; object-fit:cover;">
           <div style="background:#F1F5F9; padding:8px 12px; border-radius:14px; font-size:13.5px;">
             <div style="font-weight:700;">\${escapeHtml(c.profiles?.display_name || 'Người dùng')}</div>
             <div>\${escapeHtml(c.content)}</div>
@@ -1276,7 +1277,7 @@ export function renderWebAppPage(config: WebAppConfig): string {
       if (!text || !activeCommentPostId) return;
 
       input.value = '';
-      await supabase.from('comments').insert({
+      await sb.from('comments').insert({
         post_id: activeCommentPostId,
         user_id: currentUser.id,
         content: text
@@ -1331,7 +1332,7 @@ export function renderWebAppPage(config: WebAppConfig): string {
             return;
           }
 
-          const { data, error } = await supabase.auth.signUp({
+          const { data, error } = await sb.auth.signUp({
             email: identifier,
             password: password,
             options: {
@@ -1352,7 +1353,7 @@ export function renderWebAppPage(config: WebAppConfig): string {
             const cleanUser = emailToLogin.replace(/^@/, '').trim().toLowerCase();
             // 1. Thử RPC get_email_by_username
             try {
-              const { data: resolved } = await supabase.rpc('get_email_by_username', { p_username: cleanUser });
+              const { data: resolved } = await sb.rpc('get_email_by_username', { p_username: cleanUser });
               if (resolved && typeof resolved === 'string' && resolved.includes('@')) {
                 emailToLogin = resolved.trim();
               }
@@ -1382,7 +1383,7 @@ export function renderWebAppPage(config: WebAppConfig): string {
             throw new Error('Tên người dùng không tồn tại hoặc chưa liên kết email!');
           }
 
-          const { data, error } = await supabase.auth.signInWithPassword({
+          const { data, error } = await sb.auth.signInWithPassword({
             email: emailToLogin,
             password: password
           });
@@ -1407,7 +1408,7 @@ export function renderWebAppPage(config: WebAppConfig): string {
     }
 
     async function handleLogout() {
-      await supabase.auth.signOut();
+      await sb.auth.signOut();
       currentUser = null;
       currentUserProfile = null;
       updateAuthUI(false);
@@ -1435,7 +1436,7 @@ export function renderWebAppPage(config: WebAppConfig): string {
       btn.innerText = 'Đang lưu...';
 
       try {
-        await supabase.from('profiles').update({
+        await sb.from('profiles').update({
           display_name: newName,
           bio: newBio
         }).eq('id', currentUser.id);

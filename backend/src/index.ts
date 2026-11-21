@@ -326,13 +326,13 @@ app.get(['/manifest.json', '/site.webmanifest'], (req, res) => {
     theme_color: '#0066FF',
     icons: [
       {
-        src: 'https://doraboxcdn.zpiltk.io.vn/apk/dorabox_logo.png',
+        src: 'https://doraboxcdn.zpiltk.io.vn/avatars/f1b9d3fc-6a20-4e56-8de5-7477c0c1a864/avatar.png',
         sizes: '192x192',
         type: 'image/png',
         purpose: 'any maskable'
       },
       {
-        src: 'https://doraboxcdn.zpiltk.io.vn/apk/dorabox_logo.png',
+        src: 'https://doraboxcdn.zpiltk.io.vn/avatars/f1b9d3fc-6a20-4e56-8de5-7477c0c1a864/avatar.png',
         sizes: '512x512',
         type: 'image/png',
         purpose: 'any maskable'
@@ -351,7 +351,7 @@ const PRECACHE_URLS = [
   '/manifest.json',
   '/privacy',
   '/terms',
-  'https://doraboxcdn.zpiltk.io.vn/apk/dorabox_logo.png'
+  'https://doraboxcdn.zpiltk.io.vn/avatars/f1b9d3fc-6a20-4e56-8de5-7477c0c1a864/avatar.png'
 ];
 
 self.addEventListener('install', (event) => {

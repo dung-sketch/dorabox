@@ -87,7 +87,7 @@ export function renderLandingPage(config: LandingPageConfig): string {
       <a href="/p/${post.id}" target="_blank" class="mock-post-card">
         <div class="mock-post-author">
           <div class="mock-avatar ${isOA ? 'gold' : ''}">
-            <img src="${avatarUrl}" style="width:100%; height:100%; object-fit:cover;" alt="${authorName}" onerror="this.src='https://doraboxcdn.zpiltk.io.vn/apk/dorabox_logo.png'">
+            <img src="${avatarUrl}" style="width:100%; height:100%; object-fit:cover;" alt="${authorName}" onerror="this.src='https://doraboxcdn.zpiltk.io.vn/avatars/f1b9d3fc-6a20-4e56-8de5-7477c0c1a864/avatar.png'">
           </div>
           <div style="min-width:0; flex:1;">
             <div style="display:flex; align-items:center; gap:4px;">
@@ -153,7 +153,7 @@ export function renderLandingPage(config: LandingPageConfig): string {
   <meta property="og:site_name" content="Dorabox">
   <meta property="og:title" content="Dorabox - Kết nối diệu kỳ, sẻ chia niềm vui!">
   <meta property="og:description" content="Tải ngay ứng dụng Dorabox phiên bản ${version} chính thức. Không gian kết nối chân thực cho bạn và bạn bè.">
-  <meta property="og:image" content="https://doraboxcdn.zpiltk.io.vn/apk/dorabox_logo.png">
+  <meta property="og:image" content="https://doraboxcdn.zpiltk.io.vn/avatars/f1b9d3fc-6a20-4e56-8de5-7477c0c1a864/avatar.png">
   <meta property="og:type" content="website">
   <link rel="canonical" href="https://www.zpiltk.io.vn/">
 
@@ -164,7 +164,7 @@ export function renderLandingPage(config: LandingPageConfig): string {
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Dorabox">
-  <link rel="apple-touch-icon" href="https://doraboxcdn.zpiltk.io.vn/apk/dorabox_logo.png">
+  <link rel="apple-touch-icon" href="https://doraboxcdn.zpiltk.io.vn/avatars/f1b9d3fc-6a20-4e56-8de5-7477c0c1a864/avatar.png">
 
   <!-- Schema.org JSON-LD Structured Data -->
   <script type="application/ld+json">
@@ -190,7 +190,7 @@ export function renderLandingPage(config: LandingPageConfig): string {
   }
   </script>
 
-  <link rel="icon" href="https://doraboxcdn.zpiltk.io.vn/apk/dorabox_logo.png">
+  <link rel="icon" href="https://doraboxcdn.zpiltk.io.vn/avatars/f1b9d3fc-6a20-4e56-8de5-7477c0c1a864/avatar.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -509,7 +509,7 @@ export function renderLandingPage(config: LandingPageConfig): string {
   <header>
     <div class="nav-wrap">
       <a href="/" class="brand-link">
-        <img src="https://doraboxcdn.zpiltk.io.vn/apk/dorabox_logo.png" alt="Dorabox" class="brand-avatar">
+        <img src="https://doraboxcdn.zpiltk.io.vn/avatars/f1b9d3fc-6a20-4e56-8de5-7477c0c1a864/avatar.png" alt="Dorabox" class="brand-avatar">
         <span class="brand-text">Dorabox<span>.</span></span>
       </a>
 
@@ -593,7 +593,7 @@ export function renderLandingPage(config: LandingPageConfig): string {
                   <div class="note-bubble">Dorabox 3.0 🚀</div>
                   <div class="note-avatar-box">
                     <div class="note-avatar-inner">
-                      <img src="${doraboxAvatar}" style="width:100%; height:100%; object-fit:cover;" alt="Dorabox" onerror="this.src='https://doraboxcdn.zpiltk.io.vn/apk/dorabox_logo.png'">
+                      <img src="${doraboxAvatar}" style="width:100%; height:100%; object-fit:cover;" alt="Dorabox" onerror="this.src='https://doraboxcdn.zpiltk.io.vn/avatars/f1b9d3fc-6a20-4e56-8de5-7477c0c1a864/avatar.png'">
                     </div>
                   </div>
                   <span>Dorabox</span>
@@ -604,7 +604,7 @@ export function renderLandingPage(config: LandingPageConfig): string {
                   <div class="note-bubble">Creator Tips 💡</div>
                   <div class="note-avatar-box gold">
                     <div class="note-avatar-inner gold">
-                      <img src="${creatorsAvatar}" style="width:100%; height:100%; object-fit:cover;" alt="Dorabox Creators" onerror="this.src='https://doraboxcdn.zpiltk.io.vn/apk/dorabox_logo.png'">
+                      <img src="${creatorsAvatar}" style="width:100%; height:100%; object-fit:cover;" alt="Dorabox Creators" onerror="this.src='https://doraboxcdn.zpiltk.io.vn/avatars/f1b9d3fc-6a20-4e56-8de5-7477c0c1a864/avatar.png'">
                     </div>
                   </div>
                   <span>Creators</span>

@@ -109,7 +109,7 @@ export function renderPostPreviewPage(
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Bài viết không khả dụng - Dorabox</title>
-  <link rel="icon" href="https://doraboxcdn.zpiltk.io.vn/apk/dorabox_logo.png">
+  <link rel="icon" href="https://doraboxcdn.zpiltk.io.vn/avatars/f1b9d3fc-6a20-4e56-8de5-7477c0c1a864/avatar.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Quicksand:wght@600;700;800&display=swap" rel="stylesheet">
@@ -138,7 +138,7 @@ export function renderPostPreviewPage(
   const author = post.author || {};
   const authorName = escapeHtml(author.display_name || 'Người dùng Dorabox');
   const authorUsername = escapeHtml(author.username || 'user');
-  const authorAvatar = author.avatar_url || 'https://doraboxcdn.zpiltk.io.vn/apk/dorabox_logo.png';
+  const authorAvatar = author.avatar_url || 'https://doraboxcdn.zpiltk.io.vn/avatars/f1b9d3fc-6a20-4e56-8de5-7477c0c1a864/avatar.png';
   const isOA = author.is_oa === true || author.account_type === 'oa';
   const isVerified = author.is_verified === true || isOA || author.is_vip === true;
   const rawContent = (post.content || '').trim();
@@ -156,7 +156,7 @@ export function renderPostPreviewPage(
   const isRestricted = options.isRestricted || (post.visibility && post.visibility !== 'public' && !isOA);
 
   // Chọn ảnh thumbnail tốt nhất cho OpenGraph
-  let ogImage = 'https://doraboxcdn.zpiltk.io.vn/apk/dorabox_logo.png';
+  let ogImage = 'https://doraboxcdn.zpiltk.io.vn/avatars/f1b9d3fc-6a20-4e56-8de5-7477c0c1a864/avatar.png';
   if (!isRestricted && imageUrls.length > 0) {
     ogImage = imageUrls[0];
   } else if (authorAvatar) {
@@ -204,7 +204,7 @@ export function renderPostPreviewPage(
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Dorabox">
-  <link rel="apple-touch-icon" href="https://doraboxcdn.zpiltk.io.vn/apk/dorabox_logo.png">
+  <link rel="apple-touch-icon" href="https://doraboxcdn.zpiltk.io.vn/avatars/f1b9d3fc-6a20-4e56-8de5-7477c0c1a864/avatar.png">
 
   <!-- Schema.org JSON-LD Structured Data -->
   ${
@@ -228,7 +228,7 @@ export function renderPostPreviewPage(
       "name": "Dorabox",
       "logo": {
         "@type": "ImageObject",
-        "url": "https://doraboxcdn.zpiltk.io.vn/apk/dorabox_logo.png"
+        "url": "https://doraboxcdn.zpiltk.io.vn/avatars/f1b9d3fc-6a20-4e56-8de5-7477c0c1a864/avatar.png"
       }
     }
   }
@@ -236,7 +236,7 @@ export function renderPostPreviewPage(
       : ''
   }
 
-  <link rel="icon" href="https://doraboxcdn.zpiltk.io.vn/apk/dorabox_logo.png">
+  <link rel="icon" href="https://doraboxcdn.zpiltk.io.vn/avatars/f1b9d3fc-6a20-4e56-8de5-7477c0c1a864/avatar.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Quicksand:wght@600;700;800&display=swap" rel="stylesheet">
@@ -377,7 +377,7 @@ export function renderPostPreviewPage(
   <!-- Header -->
   <header class="top-nav">
     <a href="/" class="brand">
-      <img src="https://doraboxcdn.zpiltk.io.vn/apk/dorabox_logo.png" alt="Dorabox" class="brand-logo">
+      <img src="https://doraboxcdn.zpiltk.io.vn/avatars/f1b9d3fc-6a20-4e56-8de5-7477c0c1a864/avatar.png" alt="Dorabox" class="brand-logo">
       <span class="brand-text">Dorabox<span>.</span></span>
     </a>
     <a href="${apkUrl}" class="btn-top-get">Tải ứng dụng</a>
@@ -387,7 +387,7 @@ export function renderPostPreviewPage(
     <article class="post-card">
       <div class="post-header">
         <div class="avatar-wrapper">
-          <img src="${escapeHtml(authorAvatar)}" alt="${authorName}" class="author-avatar" onerror="this.src='https://doraboxcdn.zpiltk.io.vn/apk/dorabox_logo.png'">
+          <img src="${escapeHtml(authorAvatar)}" alt="${authorName}" class="author-avatar" onerror="this.src='https://doraboxcdn.zpiltk.io.vn/avatars/f1b9d3fc-6a20-4e56-8de5-7477c0c1a864/avatar.png'">
         </div>
         <div class="author-info">
           <div class="author-name-row">
