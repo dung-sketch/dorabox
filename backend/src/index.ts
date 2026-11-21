@@ -164,6 +164,144 @@ app.get(['/terms', '/terms-of-service'], (req, res) => {
   res.send(renderTermsOfServicePage());
 });
 
+// SEO Sitemap.xml tự động cập nhật bài viết công khai mới nhất (Edge Caching 1 giờ)
+app.get('/sitemap.xml', async (req, res) => {
+  res.setHeader('Content-Type', 'application/xml');
+  res.setHeader('Cache-Control', 'public, s-maxage=3600, stale-while-revalidate=86400');
+
+  let dynamicPostUrls = '';
+  try {
+    const { data: posts } = await supabaseAdmin
+      .from('posts')
+      .select('id, created_at')
+      .or('visibility.eq.public,visibility.is.null')
+      .order('created_at', { ascending: false })
+      .limit(60);
+
+    if (posts && posts.length > 0) {
+      dynamicPostUrls = posts
+        .map(
+          (p) => `
+  <url>
+    <loc>https://www.zpiltk.io.vn/p/${p.id}</loc>
+    <lastmod>${new Date(p.created_at || Date.now()).toISOString().split('T')[0]}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>`
+        )
+        .join('');
+    }
+  } catch (err: any) {
+    console.error('Error generating sitemap posts:', err);
+  }
+
+  const sitemapXml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://www.zpiltk.io.vn/</loc>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://www.zpiltk.io.vn/privacy</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://www.zpiltk.io.vn/terms</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>${dynamicPostUrls}
+</urlset>`;
+
+  res.send(sitemapXml.trim());
+});
+
+// SEO Robots.txt cho Google Search Console
+app.get('/robots.txt', (req, res) => {
+  res.setHeader('Content-Type', 'text/plain');
+  res.setHeader('Cache-Control', 'public, s-maxage=86400, stale-while-revalidate=604800');
+  res.send(`User-agent: *
+Allow: /
+Allow: /p/
+Allow: /post/
+Allow: /privacy
+Allow: /terms
+Disallow: /api/
+Disallow: /dorabox@dungkito.com
+Disallow: /watch
+
+Sitemap: https://www.zpiltk.io.vn/sitemap.xml
+`);
+});
+
+// PWA Web App Manifest (Hỗ trợ Thêm vào màn hình chính trên iOS và Android)
+app.get(['/manifest.json', '/site.webmanifest'], (req, res) => {
+  res.setHeader('Content-Type', 'application/manifest+json');
+  res.setHeader('Cache-Control', 'public, s-maxage=86400, stale-while-revalidate=604800');
+  res.json({
+    name: 'Dorabox Social',
+    short_name: 'Dorabox',
+    description: 'Mạng xã hội kết nối diệu kỳ, sẻ chia niềm vui!',
+    start_url: '/',
+    id: '/',
+    display: 'standalone',
+    orientation: 'portrait',
+    background_color: '#FFFFFF',
+    theme_color: '#0066FF',
+    icons: [
+      {
+        src: 'https://doraboxcdn.zpiltk.io.vn/apk/dorabox_logo.png',
+        sizes: '192x192',
+        type: 'image/png',
+        purpose: 'any maskable'
+      },
+      {
+        src: 'https://doraboxcdn.zpiltk.io.vn/apk/dorabox_logo.png',
+        sizes: '512x512',
+        type: 'image/png',
+        purpose: 'any maskable'
+      }
+    ]
+  });
+});
+
+// PWA Service Worker
+app.get('/sw.js', (req, res) => {
+  res.setHeader('Content-Type', 'application/javascript');
+  res.setHeader('Cache-Control', 'public, s-maxage=3600, stale-while-revalidate=86400');
+  res.send(`const CACHE_NAME = 'dorabox-pwa-v1';
+const PRECACHE_URLS = [
+  '/',
+  '/manifest.json',
+  '/privacy',
+  '/terms',
+  'https://doraboxcdn.zpiltk.io.vn/apk/dorabox_logo.png'
+];
+
+self.addEventListener('install', (event) => {
+  event.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(PRECACHE_URLS)).then(() => self.skipWaiting())
+  );
+});
+
+self.addEventListener('activate', (event) => {
+  event.waitUntil(
+    caches.keys().then((keys) =>
+      Promise.all(keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key)))
+    ).then(() => self.clients.claim())
+  );
+});
+
+self.addEventListener('fetch', (event) => {
+  if (event.request.method !== 'GET') return;
+  event.respondWith(
+    fetch(event.request).catch(() => caches.match(event.request))
+  );
+});
+`);
+});
+
 // Health check (Edge Caching 15s)
 app.get('/api/health', (req, res) => {
   res.setHeader('Cache-Control', 'public, s-maxage=15, stale-while-revalidate=60');

@@ -195,6 +195,47 @@ export function renderPostPreviewPage(
   <meta name="twitter:description" content="${escapeHtml(ogDesc)}">
   <meta name="twitter:image" content="${escapeHtml(ogImage)}">
 
+  <link rel="canonical" href="https://${host}/p/${post.id}">
+
+  <!-- PWA & Apple Web App Meta Tags -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#0066FF">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Dorabox">
+  <link rel="apple-touch-icon" href="https://doraboxcdn.zpiltk.io.vn/apk/dorabox_logo.png">
+
+  <!-- Schema.org JSON-LD Structured Data -->
+  ${
+    !isRestricted
+      ? `
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SocialMediaPosting",
+    "headline": "${escapeHtml(contentExcerpt.replace(/\n/g, ' '))}",
+    "articleBody": "${escapeHtml(rawContent.replace(/\n/g, ' '))}",
+    "datePublished": "${post.created_at || new Date().toISOString()}",
+    "image": "${escapeHtml(ogImage)}",
+    "author": {
+      "@type": "Person",
+      "name": "${authorName}",
+      "url": "https://${host}/p/${post.id}"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Dorabox",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://doraboxcdn.zpiltk.io.vn/apk/dorabox_logo.png"
+      }
+    }
+  }
+  </script>`
+      : ''
+  }
+
   <link rel="icon" href="https://doraboxcdn.zpiltk.io.vn/apk/dorabox_logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

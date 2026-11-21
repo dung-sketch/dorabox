@@ -30,6 +30,40 @@ export function renderLandingPage(config: LandingPageConfig): string {
   <meta property="og:description" content="Tải ngay ứng dụng Dorabox phiên bản ${version} chính thức. Không gian kết nối chân thực cho bạn và bạn bè.">
   <meta property="og:image" content="https://doraboxcdn.zpiltk.io.vn/apk/dorabox_logo.png">
   <meta property="og:type" content="website">
+  <link rel="canonical" href="https://www.zpiltk.io.vn/">
+
+  <!-- PWA & Apple Web App Meta Tags -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#0066FF">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Dorabox">
+  <link rel="apple-touch-icon" href="https://doraboxcdn.zpiltk.io.vn/apk/dorabox_logo.png">
+
+  <!-- Schema.org JSON-LD Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Dorabox",
+    "operatingSystem": "Android, iOS, Web",
+    "applicationCategory": "SocialNetworkingApplication",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "VND"
+    },
+    "description": "Dorabox - Mạng xã hội kết nối diệu kỳ, sẻ chia niềm vui!",
+    "downloadUrl": "${apkUrl}",
+    "softwareVersion": "${version}",
+    "author": {
+      "@type": "Organization",
+      "name": "Dorabox",
+      "url": "https://www.zpiltk.io.vn"
+    }
+  }
+  </script>
 
   <link rel="icon" href="https://doraboxcdn.zpiltk.io.vn/apk/dorabox_logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -602,6 +636,13 @@ export function renderLandingPage(config: LandingPageConfig): string {
     }
     function closeIosModalDirect() {
       document.getElementById('iosModal').style.display = 'none';
+    }
+
+    // Register PWA Service Worker
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function() {
+        navigator.serviceWorker.register('/sw.js').catch(function() {});
+      });
     }
   </script>
 </body>
