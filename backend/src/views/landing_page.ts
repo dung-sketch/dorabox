@@ -195,13 +195,6 @@ export function renderLandingPage(config: LandingPageConfig): string {
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-  <script>
-    // Tự động chuyển thẳng vào Bảng tin (/app) nếu người dùng mở từ icon màn hình chính (PWA)
-    if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
-      window.location.replace('/app');
-    }
-  </script>
-
   <style>
     :root {
       --primary: #0066FF;
@@ -520,10 +513,7 @@ export function renderLandingPage(config: LandingPageConfig): string {
         <a href="/terms" class="nav-item">Điều khoản</a>
       </nav>
 
-      <div style="display:flex; align-items:center; gap:12px;">
-        <a href="/app" class="nav-item" style="color:var(--primary); font-weight:700; text-decoration:none;">Lướt Web App</a>
-        <a href="${apkUrl}" class="btn-top-download">Tải ứng dụng</a>
-      </div>
+      <a href="${apkUrl}" class="btn-top-download">Tải ứng dụng</a>
     </div>
   </header>
 
@@ -716,10 +706,7 @@ export function renderLandingPage(config: LandingPageConfig): string {
       <p>
         Trong khi bản cập nhật App Store đang được hoàn thiện, bạn có thể mở trang web bằng Safari trên iPhone và chọn <strong>"Thêm vào Màn hình chính" (Add to Home Screen)</strong> để sử dụng thuận tiện như ứng dụng cài đặt.
       </p>
-      <div style="display:flex; justify-content:center; gap:10px; flex-wrap:wrap;">
-        <a href="/app" class="btn-modal-close" style="display:inline-block; text-decoration:none;">Vào lướt Web App ngay</a>
-        <button class="btn-modal-close" onclick="closeIosModalDirect()" style="background:#F1F5F9; color:#0F172A;">Đóng</button>
-      </div>
+      <button class="btn-modal-close" onclick="closeIosModalDirect()">Đã hiểu</button>
     </div>
   </div>
 
