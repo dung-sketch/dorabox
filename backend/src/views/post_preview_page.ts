@@ -411,7 +411,7 @@ export function renderPostPreviewPage(
           ? `
       <div class="copyright-tag">
         <span>🛡️</span>
-        <span>Bài viết kích hoạt bản quyền Dorabox: ${!allowDownloadImages ? 'Khóa lưu ảnh • ' : ''}${!allowDownloadVideos ? 'Khóa tải video' : ''}</span>
+        <span>Nội dung đã được tác giả bật chế độ bảo vệ quyền sở hữu</span>
       </div>
       `
           : ''
@@ -423,7 +423,7 @@ export function renderPostPreviewPage(
           <div class="stat-item">❤️ ${post.likes_count || 0} lượt thích</div>
           <div class="stat-item">💬 ${post.comments_count || 0} bình luận</div>
         </div>
-        <div>from Tinelfi</div>
+        <div>Dorabox</div>
       </div>
       `
       }
@@ -433,8 +433,8 @@ export function renderPostPreviewPage(
   <!-- Sticky Bottom Action Bar -->
   <div class="bottom-bar">
     <div class="bottom-inner">
-      <a href="dorabox://post/${post.id}" class="btn-app">Mở bằng Dorabox</a>
-      <a href="${apkUrl}" class="btn-apk">Tải APK v${version}</a>
+      <a href="dorabox://post/${post.id}" class="btn-app">Mở trong Dorabox</a>
+      <a href="${apkUrl}" class="btn-apk">Tải ứng dụng</a>
     </div>
   </div>
 </body>

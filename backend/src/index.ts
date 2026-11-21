@@ -144,10 +144,10 @@ app.get('/', (req, res) => {
       buildNumber: 37,
       apkUrl: 'https://doraboxcdn.zpiltk.io.vn/apk/Dorabox-v3.0.0.apk',
       changelog: [
-        '🚀 Nâng cấp Dorabox lên thế hệ 3.0.0 với Package Name com.tinelfi.dorabox.',
-        '🛡️ Bản quyền tải tách biệt: Toàn quyền kiểm soát độc lập lưu ảnh và video.',
-        '🔔 Sửa triệt để lỗi thông báo đẩy FCM trên Android 13/14+.',
-        '⚡ Tối ưu bảng tin Dành cho bạn mượt mà 120 FPS không giật lag.'
+        'Nâng cấp giao diện người dùng mượt mà, thân thiện.',
+        'Tính năng bảo vệ quyền tác giả độc lập cho ảnh và video.',
+        'Ghi chú suy nghĩ D-Notes 24 giờ cùng giai điệu âm nhạc.',
+        'Hệ sinh thái trang Doanh nghiệp (OA) chính thức.'
       ]
     })
   );
